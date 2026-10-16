@@ -64,7 +64,7 @@
       for (var c = 0; c < 9; c++) {
         el('rect', { x: cellPos(c), y: cellPos(r), width: CELL, height: CELL, rx: 9, fill: '#111c30', stroke: '#26364f', 'stroke-width': 2 }, world);
         if (r === 0) el('rect', { x: cellPos(c), y: cellPos(r), width: CELL, height: CELL, rx: 9, fill: '#42d9f5', 'fill-opacity': 0.13 }, world);
-        if (r === 8) el('rect', { x: cellPos(c), y: cellPos(r), width: CELL, height: CELL, rx: 9, fill: '#ffffff', 'fill-opacity': 0.08 }, world);
+        if (r === 8) el('rect', { x: cellPos(c), y: cellPos(r), width: CELL, height: CELL, rx: 9, fill: '#ff9f43', 'fill-opacity': 0.13 }, world);
       }
     }
     var gHints = el('g', {}, world), gWalls = el('g', {}, world), gPreview = el('g', {}, world),
@@ -152,11 +152,7 @@
         var active = game.winner === null && game.turn === i;
         if (game.winner === i) el('circle', { cx: cx, cy: cy, r: 36, fill: 'none', stroke: '#5eead4', 'stroke-width': 4 }, gPawns);
         else if (active) el('circle', { cx: cx, cy: cy, r: 35, fill: 'none', stroke: '#ffffff', 'stroke-opacity': 0.45, 'stroke-width': 2 }, gPawns);
-        if (i === 0) {
-          el('circle', { cx: cx, cy: cy, r: 27, fill: '#42d9f5' }, gPawns);
-        } else {
-          el('circle', { cx: cx, cy: cy, r: 24, fill: '#0b1220', stroke: '#ffffff', 'stroke-width': 9 }, gPawns);
-        }
+        el('circle', { cx: cx, cy: cy, r: 27, fill: i === 0 ? '#42d9f5' : '#ff9f43' }, gPawns);
       }
 
       if (state.keyboard && document.activeElement === svg) {

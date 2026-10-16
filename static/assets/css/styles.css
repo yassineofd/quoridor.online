@@ -7,6 +7,7 @@
   --color-text-muted: #91a4bf;
   --color-accent: #42d9f5;
   --color-accent-2: #5267f2;
+  --color-player-2: #ff9f43;
   --color-border: #26364f;
   --color-danger: #ff8a96;
   --color-success: #5eead4;
@@ -494,7 +495,7 @@ a:hover { color: #8fe9fa; }
 .player-card.is-winner { border: 3px solid var(--color-success); padding: calc(var(--space-3) - 2px); }
 .pawn-glyph { flex: none; width: 24px; height: 24px; border-radius: 50%; }
 .pawn-glyph--0 { background: var(--color-accent); }
-.pawn-glyph--1 { background: var(--color-bg); border: 6px solid var(--color-text); }
+.pawn-glyph--1 { background: var(--color-player-2); }
 .player-text { flex: 1 1 5em; min-width: 0; overflow-wrap: anywhere; font-weight: 600; }
 .player-tag { color: var(--color-text-muted); font-weight: 400; }
 .player-walls { flex: 1 0 100%; font-size: 0.875rem; color: var(--color-text-muted); }
