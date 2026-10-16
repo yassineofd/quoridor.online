@@ -16,6 +16,7 @@ from pathlib import Path
 from urllib.parse import unquote, urlsplit
 
 from build import ROOM_HEADERS, SECURITY_HEADERS
+from lib import BASE_PATH
 
 PUBLIC = (Path(__file__).resolve().parent / "public").resolve()
 mimetypes.add_type("image/svg+xml", ".svg")
@@ -56,6 +57,17 @@ class Handler(BaseHTTPRequestHandler):
         url = urlsplit(self.path)
         path = unquote(url.path)
 
+        if BASE_PATH:  # site.json base_path: serve under the same sub-folder a project host would use
+            if path in ("/", BASE_PATH):
+                self.send_response(301)
+                self.send_header("Location", BASE_PATH + "/")
+                self.send_header("Content-Length", "0")
+                self.end_headers()
+                return
+            if not path.startswith(BASE_PATH + "/"):
+                return self._not_found()
+            path = path[len(BASE_PATH):]
+
         if ROOM_RE.match(path):
             return self._file(PUBLIC / "room" / "index.html", 200, ROOM_HEADERS)
 
@@ -69,7 +81,7 @@ class Handler(BaseHTTPRequestHandler):
         if target.is_dir():
             if not path.endswith("/"):
                 self.send_response(301)
-                self.send_header("Location", path + "/" + (f"?{url.query}" if url.query else ""))
+                self.send_header("Location", BASE_PATH + path + "/" + (f"?{url.query}" if url.query else ""))
                 self.send_header("Content-Length", "0")
                 self.end_headers()
                 return
@@ -92,7 +104,7 @@ def main():
     if not PUBLIC.exists():
         sys.exit("public/ not found. Run: python build.py")
     httpd = ThreadingHTTPServer(("127.0.0.1", port), Handler)
-    print(f"Serving {PUBLIC} at http://localhost:{port}/  (Ctrl+C to stop)")
+    print(f"Serving {PUBLIC} at http://localhost:{port}{BASE_PATH}/  (Ctrl+C to stop)")
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:

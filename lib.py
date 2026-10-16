@@ -1,10 +1,21 @@
-"""Shared helpers for the Quoridor.online static site generator: config, Page model, icons, board art."""
+"""Shared helpers for the static site generator: config, Page model, icons, board art."""
 
+import json
 from dataclasses import dataclass, field
 from html import escape
+from pathlib import Path
 
-BASE_URL = "https://quoridor.online"
-SITE_NAME = "Quoridor.online"
+# Deployment settings live in site.json so the site isn't tied to any one domain:
+#   site_url  - full origin once you know it, e.g. "https://yourname.github.io" (leave "" until then;
+#               canonical URLs, sitemap.xml and absolute Open Graph URLs are skipped while it is empty)
+#   base_path - sub-folder the site is served from, e.g. "/quoridor-online" on GitHub Pages project
+#               sites; leave "" when the site lives at the root of its host.
+_cfg = json.loads((Path(__file__).resolve().parent / "site.json").read_text(encoding="utf-8"))
+BASE_URL = _cfg.get("site_url", "").strip().rstrip("/")
+BASE_PATH = _cfg.get("base_path", "").strip().rstrip("/")
+if BASE_PATH and not BASE_PATH.startswith("/"):
+    BASE_PATH = "/" + BASE_PATH
+SITE_NAME = "Quoridor Online"
 
 # Feature flags. Public copy may only describe a feature as available once its flag is True
 # (docs/architecture-spec.md, honesty rule). Flip these as each mode is actually implemented.
@@ -40,7 +51,8 @@ class Page:
 
     @property
     def url(self):
-        return BASE_URL + self.path
+        """Absolute canonical URL, or None while no site_url is configured."""
+        return BASE_URL + BASE_PATH + self.path if BASE_URL else None
 
 
 _ICONS = {

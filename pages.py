@@ -1,7 +1,7 @@
-"""Page content for Quoridor.online. Each function returns a lib.Page; build.py renders the shared layout."""
+"""Page content for Quoridor Online. Each function returns a lib.Page; build.py renders the shared layout."""
 
 from lib import (
-    FEATURES, INDEX_MODE_PAGES, Page, icon, board_svg,
+    FEATURES, INDEX_MODE_PAGES, SITE_NAME, Page, icon, board_svg,
     HERO_WALLS, HERO_PAWNS, HERO_ALT,
 )
 
@@ -260,7 +260,7 @@ def home():
         description=desc,
         body=body,
         nav_key="home",
-        schema=[{"@context": "https://schema.org", "@type": "WebSite", "name": "Quoridor.online", "url": "https://quoridor.online/"}],
+        schema=[{"@context": "https://schema.org", "@type": "WebSite", "name": SITE_NAME}],
     )
 
 
@@ -520,7 +520,7 @@ def room():
   </div>
 </div>"""
     return Page(
-        path="/room/_/", title="Private room | Quoridor.online",
+        path="/room/_/", title="Private room | Quoridor Online",
         description="Private Quoridor room.",
         body=body, indexable=False, robots="noindex, nofollow, noarchive",
         canonical=False, scripts=["/assets/js/play.js", "/assets/js/room.js"],
@@ -698,7 +698,7 @@ def board_game():
     sections = [
         ("what", "What the Quoridor board game is", """
 <p>Quoridor is an abstract strategy board game for two or four players. There are no dice, cards or hidden information: both players see everything, so the result depends on planning. It was designed by Mirko Marchesi and published by Gigamic.</p>
-<p class="small text-muted">Quoridor.online is an independent website. It is not affiliated with or endorsed by the game's designer or publisher.</p>"""),
+<p class="small text-muted">Quoridor Online is an independent website. It is not affiliated with or endorsed by the game's designer or publisher.</p>"""),
         ("components", "Board layout and components", """
 <p>A standard set contains a 9×9 board with grooves between the squares, four pawns and twenty walls. In a two-player game each player uses one pawn and ten walls. Pawns start at the middle of opposite edges.</p>
 <p>For the exact step-by-step rules, see the <a href="/quoridor-rules/">Quoridor rules</a>.</p>"""),
@@ -743,7 +743,7 @@ def about():
     )
     content = f"""
 <h2>Our purpose</h2>
-<p>Quoridor.online is a simple, accessible place to play and learn the Quoridor strategy game in your browser, with no account needed.</p>
+<p>Quoridor Online is a simple, accessible place to play and learn the Quoridor strategy game in your browser, with no account needed.</p>
 <h2>What we focus on</h2>
 <ul>
 <li>A clear, distraction-free board that works on phones, tablets and desktops.</li>
@@ -753,9 +753,9 @@ def about():
 <h2>Where things stand</h2>
 <p>{status} We only describe a feature as available once it works.</p>
 <h2>Independence</h2>
-<p>Quoridor.online is an independent project. It isn't affiliated with or endorsed by the designer or publisher of the Quoridor board game.</p>
+<p>Quoridor Online is an independent project. It isn't affiliated with or endorsed by the designer or publisher of the Quoridor board game.</p>
 <p><a class="btn btn--primary" href="/play/">Play Now</a></p>"""
-    return simple_page("/about/", "About Quoridor.online", "About Quoridor.online: an independent, browser-based home for the Quoridor strategy game.",
+    return simple_page("/about/", "About Quoridor Online", "About Quoridor Online: an independent, browser-based home for the Quoridor strategy game.",
                        "About us", "An accessible, browser-based place for strategy gaming.", content, "About us")
 
 
@@ -768,7 +768,7 @@ def contact():
 <p>Something not working? Helpful to include: your device, browser and version, what you did, and what you expected to happen. Please don't send passwords or personal data.</p>
 <h2 id="business">Business inquiries</h2>
 <p>Partnerships, press and other business matters. Helpful to include: who you are, your organization and what you propose.</p>"""
-    return simple_page("/contact/", "Contact Quoridor.online", "How to contact Quoridor.online for feedback, technical support or business inquiries.",
+    return simple_page("/contact/", "Contact Quoridor Online", "How to contact Quoridor Online for feedback, technical support or business inquiries.",
                        "Contact us", "Feedback, technical support and business inquiries.", content, "Contact us")
 
 
@@ -784,8 +784,8 @@ def privacy():
 <li>How long data is kept, who can access it, and how people can exercise their rights.</li>
 <li>How to contact us about privacy, and the date the policy took effect.</li>
 </ul>"""
-    return simple_page("/privacy-policy/", "Privacy Policy | Quoridor.online", "Privacy policy for Quoridor.online (draft placeholder).",
-                       "Privacy policy", "How Quoridor.online handles information. Draft placeholder.", content, "Privacy policy")
+    return simple_page("/privacy-policy/", "Privacy Policy | Quoridor Online", "Privacy policy for Quoridor Online (draft placeholder).",
+                       "Privacy policy", "How Quoridor Online handles information. Draft placeholder.", content, "Privacy policy")
 
 
 def terms():
@@ -800,8 +800,8 @@ def terms():
 <li>Intellectual property and the site's independence from the game's designer and publisher.</li>
 <li>Limitation of liability, changes to the terms, and governing law.</li>
 </ul>"""
-    return simple_page("/terms/", "Terms of Use | Quoridor.online", "Terms of use for Quoridor.online (draft placeholder).",
-                       "Terms of use", "The rules for using Quoridor.online. Draft placeholder.", content, "Terms of use")
+    return simple_page("/terms/", "Terms of Use | Quoridor Online", "Terms of use for Quoridor Online (draft placeholder).",
+                       "Terms of use", "The rules for using Quoridor Online. Draft placeholder.", content, "Terms of use")
 
 
 def not_found():
@@ -815,7 +815,7 @@ def not_found():
     <a class="btn btn--secondary" href="/play/">Go to Play</a>
   </div>
 </div>"""
-    return Page(path="/404/", title="Page not found | Quoridor.online", description="This page could not be found.",
+    return Page(path="/404/", title="Page not found | Quoridor Online", description="This page could not be found.",
                 body=body, indexable=False, robots="noindex, follow", canonical=False, out_file="404.html", http_status=404)
 
 

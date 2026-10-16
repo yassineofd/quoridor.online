@@ -1,4 +1,4 @@
-# Quoridor.online
+# Quoridor Online
 
 Static website built from `docs/architecture-spec.md`. Only Python 3.10+ is needed (no Node, no packages).
 
@@ -10,6 +10,20 @@ python serve.py     # open http://localhost:8000
 ```
 
 Run `python check.py` to verify status codes, SEO metadata, links, headings, sitemap and robots rules (17 pages).
+
+## Hosting on a free host (no domain needed)
+
+The site isn't tied to any domain. Deployment settings live in `site.json`:
+
+| Setting | When to set it |
+|---|---|
+| `site_url` | Once you know your public address, e.g. `"https://yourname.github.io"`. While empty, canonical tags, absolute Open Graph URLs and `sitemap.xml` are left out (they require a real address). |
+| `base_path` | Only if the host serves the site from a sub-folder, e.g. `"/quoridor.online"` on a GitHub Pages project site (`https://yourname.github.io/quoridor.online/`). Leave `""` on Netlify, Cloudflare Pages, Vercel or a custom domain. |
+
+Then run `python build.py` and upload/deploy the `public/` folder. Changing domains later is just editing `site.json` and rebuilding.
+
+Notes: `public/` includes `_headers` and `_redirects` (Netlify / Cloudflare Pages), and `.nojekyll` (GitHub Pages). Static hosts cannot
+serve a private-room URL like `/room/<id>/` without a server, which doesn't exist yet, so on GitHub Pages those links show the 404 page.
 
 ## What is built (and what is not)
 
@@ -45,5 +59,6 @@ badges and which features the homepage claims. Flip a flag only when the feature
 - `og-image.svg` should be exported to a 1200x630 PNG (most social networks ignore SVG previews) and referenced in `build.py`.
 - Add PNG icons (180, 192, 512) for iOS and the web manifest.
 - Replace the Privacy Policy and Terms drafts with reviewed text; add a real contact channel on `/contact/`.
-- Review the "Quoridor" name and domain for trademark issues.
-- Host so unknown URLs return 404 and `/room/<id>/` serves `room/index.html` with a 200 (see `serve.py`; `public/_headers` has the headers).
+- Review the "Quoridor" name (and any domain you pick) for trademark issues.
+- Set `site_url` in `site.json` once the final address is known, then rebuild.
+- When rooms exist, the host must serve `/room/<id>/` from `room/index.html` with a 200 (see `serve.py`; `_redirects` does this on Netlify / Cloudflare Pages).

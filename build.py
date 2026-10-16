@@ -1,4 +1,4 @@
-"""Static site generator for Quoridor.online.
+"""Static site generator for Quoridor Online.
 
 Usage:  python build.py        (writes the finished site to ./public)
 Then:   python serve.py        (serves ./public on http://localhost:8000)
@@ -6,11 +6,12 @@ Then:   python serve.py        (serves ./public on http://localhost:8000)
 
 import datetime
 import json
+import re
 import shutil
 from html import escape
 from pathlib import Path
 
-from lib import BASE_URL, SITE_NAME, icon
+from lib import BASE_PATH, BASE_URL, SITE_NAME, icon
 from pages import all_pages
 
 ROOT = Path(__file__).resolve().parent
@@ -61,9 +62,9 @@ def header_html(page):
     return f"""
 <header class="site-header">
   <div class="container header-bar">
-    <a class="brand" href="/" aria-label="Quoridor.online home">
+    <a class="brand" href="/" aria-label="Quoridor Online home">
       <img src="/assets/img/logo-mark.svg" alt="" width="32" height="32">
-      <span class="brand-name">Quoridor<span class="tld">.online</span></span>
+      <span class="brand-name">Quoridor <span class="tld">Online</span></span>
     </a>
     <nav class="site-nav" id="site-nav" aria-label="Main">
       <ul>{''.join(items)}</ul>
@@ -86,7 +87,7 @@ def footer_html():
   <div class="container">
     <div class="footer-grid">
       <div class="footer-brand">
-        <a class="brand" href="/" aria-label="Quoridor.online home"><img src="/assets/img/logo-mark.svg" alt="" width="32" height="32"><span>Quoridor<span class="tld">.online</span></span></a>
+        <a class="brand" href="/" aria-label="Quoridor Online home"><img src="/assets/img/logo-mark.svg" alt="" width="32" height="32"><span>Quoridor <span class="tld">Online</span></span></a>
         <p>A simple place to play and learn the Quoridor strategy game in your browser.</p>
       </div>
       {col('Learn', FOOTER_LEARN)}
@@ -117,7 +118,7 @@ def render(page):
     ]
     if page.path.startswith("/room/"):
         head.append('<meta name="referrer" content="no-referrer">')
-    if page.canonical:
+    if page.canonical and page.url:
         head.append(f'<link rel="canonical" href="{page.url}">')
     head += [
         '<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">',
@@ -129,20 +130,23 @@ def render(page):
         head += [
             f'<meta property="og:title" content="{escape(page.title, quote=True)}">',
             f'<meta property="og:description" content="{escape(page.description, quote=True)}">',
-            f'<meta property="og:url" content="{page.url}">',
-            f'<meta property="og:image" content="{BASE_URL}/assets/img/og-image.svg">',
-            '<meta property="og:image:alt" content="Quoridor.online logo and tagline on a deep navy background">',
             '<meta name="twitter:card" content="summary_large_image">',
         ]
+        if BASE_URL:  # absolute URLs are only valid once the real address is known
+            head += [
+                f'<meta property="og:url" content="{page.url}">',
+                f'<meta property="og:image" content="{BASE_URL}{BASE_PATH}/assets/img/og-image.svg">',
+                '<meta property="og:image:alt" content="Quoridor Online logo and tagline on a deep navy background">',
+            ]
     head += ['<link rel="stylesheet" href="/assets/css/styles.css">', '<script src="/assets/js/head.js"></script>']
 
     schema = list(page.schema)
-    if page.indexable and page.breadcrumbs:
+    if BASE_URL and page.indexable and page.breadcrumbs:
         crumbs = [("Home", "/")] + list(page.breadcrumbs)
         schema.append({
             "@context": "https://schema.org", "@type": "BreadcrumbList",
             "itemListElement": [
-                {"@type": "ListItem", "position": i + 1, "name": n, "item": BASE_URL + p}
+                {"@type": "ListItem", "position": i + 1, "name": n, "item": BASE_URL + BASE_PATH + p}
                 for i, (n, p) in enumerate(crumbs)
             ],
         })
@@ -151,14 +155,22 @@ def render(page):
 
     scripts = ["/assets/js/site.js"] + page.scripts
     script_tags = "".join(f'<script src="{s}" defer></script>' for s in scripts)
-    return (
+    html = (
         "<!doctype html>\n"
-        '<html lang="en">\n<head>\n' + "\n".join(head) + "\n</head>\n<body>\n"
+        f'<html lang="en" data-base="{BASE_PATH}">\n<head>\n' + "\n".join(head) + "\n</head>\n<body>\n"
         '<a class="skip-link" href="#main">Skip to main content</a>\n'
         + header_html(page)
         + '\n<main id="main" tabindex="-1">\n' + page.body + "\n</main>\n"
         + footer_html() + "\n" + script_tags + "\n</body>\n</html>\n"
     )
+    return prefix_paths(html)
+
+
+def prefix_paths(html):
+    """Serve from a sub-folder (e.g. GitHub Pages project sites): prefix root-relative URLs."""
+    if not BASE_PATH:
+        return html
+    return re.sub(r'\b(href|src|action)="/(?!/)', rf'\1="{BASE_PATH}/', html)
 
 
 def out_path(page):
@@ -182,21 +194,26 @@ def main():
 
     # Sitemap: canonical, indexable public pages only. No rooms, tokens, or noindex pages.
     urls = [p for p in pages if (p.in_sitemap if p.in_sitemap is not None else p.indexable)]
-    sm = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
-    sm += [f"  <url><loc>{p.url}</loc></url>" for p in urls]
-    sm.append("</urlset>")
-    (OUT / "sitemap.xml").write_text("\n".join(sm) + "\n", encoding="utf-8")
+    # Sitemaps need absolute URLs, so none is written until site_url is set in site.json.
+    robots = f"User-agent: *\nAllow: /\nDisallow: {BASE_PATH}/room/\nDisallow: {BASE_PATH}/api/\nDisallow: {BASE_PATH}/ws/\n"
+    if BASE_URL:
+        sm = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+        sm += [f"  <url><loc>{p.url}</loc></url>" for p in urls]
+        sm.append("</urlset>")
+        (OUT / "sitemap.xml").write_text("\n".join(sm) + "\n", encoding="utf-8")
+        robots += f"\nSitemap: {BASE_URL}{BASE_PATH}/sitemap.xml\n"
+    (OUT / "robots.txt").write_text(robots, encoding="utf-8")
 
-    (OUT / "robots.txt").write_text(
-        "User-agent: *\nAllow: /\nDisallow: /room/\nDisallow: /api/\nDisallow: /ws/\n\n"
-        f"Sitemap: {BASE_URL}/sitemap.xml\n",
-        encoding="utf-8",
-    )
+    # Host config files (ignored by hosts that don't use them).
+    (OUT / ".nojekyll").write_text("", encoding="utf-8")  # GitHub Pages: serve every file as-is
+    if not BASE_PATH:  # Netlify / Cloudflare Pages: any /room/<id>/ shows the room shell
+        (OUT / "_redirects").write_text("/room/*  /room/index.html  200\n", encoding="utf-8")
 
     hdr = ["/*"] + [f"  {k}: {v}" for k, v in SECURITY_HEADERS.items()] + ["", "/room/*"] + [f"  {k}: {v}" for k, v in ROOM_HEADERS.items()]
     (OUT / "_headers").write_text("\n".join(hdr) + "\n", encoding="utf-8")
 
-    print(f"Built {len(pages)} pages, {len(urls)} in sitemap -> {OUT}")
+    where = f"{BASE_URL}{BASE_PATH}" or "(no site_url set yet)"
+    print(f"Built {len(pages)} pages -> {OUT}\nSite address: {where}")
 
 
 if __name__ == "__main__":

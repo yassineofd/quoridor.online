@@ -17,7 +17,7 @@
   // Preview-only sample values; real values will come from the room server.
   var linkEl = document.getElementById('invite-link');
   var codeEl = document.getElementById('invite-code');
-  if (linkEl) linkEl.textContent = window.location.origin + '/room/EXAMPLE-ROOM-ID/';
+  if (linkEl) linkEl.textContent = window.location.origin + (document.documentElement.getAttribute('data-base') || '') + '/room/EXAMPLE-ROOM-ID/';
   if (codeEl) codeEl.textContent = 'K7M2QX';
 
   var status = document.getElementById('copy-status');

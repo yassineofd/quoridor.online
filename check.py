@@ -14,6 +14,7 @@ from http.server import ThreadingHTTPServer
 from urllib.parse import urljoin, urlsplit
 
 import serve
+from lib import BASE_PATH, BASE_URL
 
 PORT = 8765
 BASE = f"http://127.0.0.1:{PORT}"
@@ -39,6 +40,8 @@ opener = urllib.request.build_opener(NoRedirect)
 
 
 def get(path):
+    if BASE_PATH and not path.startswith(BASE_PATH + "/"):
+        path = BASE_PATH + path
     try:
         r = opener.open(BASE + path)
         return r.status, dict(r.headers), r.read().decode("utf-8", "replace")
@@ -135,6 +138,7 @@ def main():
         else:
             url, label = p.path, p.path
         status, hdr, body = get(url)
+        url = BASE_PATH + url
         want = p.http_status
         if status != want:
             fail(f"{label}: status {status}, expected {want}")
@@ -172,8 +176,10 @@ def main():
                 prev = lvl
 
         if p.indexable:
-            if d.canonical != p.url:
+            if p.url and d.canonical != p.url:
                 fail(f"{label}: canonical {d.canonical!r} != {p.url!r}")
+            if not p.url and d.canonical:
+                fail(f"{label}: canonical present although no site_url is set")
             if "noindex" in d.meta.get("robots", ""):
                 fail(f"{label}: indexable page has noindex")
             titles.setdefault(d.title, []).append(label)
@@ -202,17 +208,32 @@ def main():
                 fail(f"duplicate {name} on {v}")
 
     print("Sitemap and robots")
-    status, _, sm = get("/sitemap.xml")
-    locs = re.findall(r"<loc>([^<]+)</loc>", sm)
-    indexable = {p.url for p in pages if p.indexable}
-    if set(locs) != indexable:
-        fail(f"sitemap mismatch: extra={set(locs) - indexable}, missing={indexable - set(locs)}")
-    for loc in locs:
-        if "/room/" in loc or "?" in loc:
-            fail(f"sitemap contains private/parameterised URL {loc}")
     status, _, rb = get("/robots.txt")
-    if "Disallow: /room/" not in rb or "Sitemap:" not in rb:
-        fail("robots.txt must disallow /room/ and reference the sitemap")
+    if f"Disallow: {BASE_PATH}/room/" not in rb:
+        fail("robots.txt must disallow the room path")
+    status, _, sm = get("/sitemap.xml")
+    if BASE_URL:
+        locs = re.findall(r"<loc>([^<]+)</loc>", sm)
+        indexable = {p.url for p in pages if p.indexable}
+        if set(locs) != indexable:
+            fail(f"sitemap mismatch: extra={set(locs) - indexable}, missing={indexable - set(locs)}")
+        for loc in locs:
+            if "/room/" in loc or "?" in loc:
+                fail(f"sitemap contains private/parameterised URL {loc}")
+        if "Sitemap:" not in rb:
+            fail("robots.txt must reference the sitemap")
+    else:
+        print("  (no site_url set: sitemap.xml correctly not generated)")
+        if status != 404 or "Sitemap:" in rb:
+            fail("with no site_url there must be no sitemap.xml and no Sitemap: line")
+
+    print("Domain independence")
+    host = BASE_URL.split("//")[-1].lower()
+    for f in serve.PUBLIC.rglob("*"):
+        if f.is_file() and f.suffix in (".html", ".js", ".css", ".svg", ".xml", ".txt", ".webmanifest"):
+            text = f.read_text(encoding="utf-8").lower()
+            if "quoridor.online" in text and host != "quoridor.online":
+                fail(f"{f.relative_to(serve.PUBLIC)} mentions quoridor.online")
 
     httpd.shutdown()
     print(f"\n{len(failures)} failure(s), {len(warnings)} warning(s), {len(pages)} pages checked")
