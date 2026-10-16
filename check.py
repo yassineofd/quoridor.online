@@ -16,6 +16,8 @@ from urllib.parse import urljoin, urlsplit
 import serve
 from lib import BASE_PATH, BASE_URL
 
+PREFIX = serve.PREFIX
+
 PORT = 8765
 BASE = f"http://127.0.0.1:{PORT}"
 failures, warnings = [], []
@@ -40,8 +42,8 @@ opener = urllib.request.build_opener(NoRedirect)
 
 
 def get(path):
-    if BASE_PATH and not path.startswith(BASE_PATH + "/"):
-        path = BASE_PATH + path
+    if PREFIX and not path.startswith(PREFIX + "/"):
+        path = PREFIX + path
     try:
         r = opener.open(BASE + path)
         return r.status, dict(r.headers), r.read().decode("utf-8", "replace")
@@ -138,7 +140,7 @@ def main():
         else:
             url, label = p.path, p.path
         status, hdr, body = get(url)
-        url = BASE_PATH + url
+        url = PREFIX + url
         want = p.http_status
         if status != want:
             fail(f"{label}: status {status}, expected {want}")
@@ -154,6 +156,10 @@ def main():
             fail(f"{label}: empty title")
         if not d.meta.get("description"):
             fail(f"{label}: missing meta description")
+        if label != "404":
+            root_abs = [h for h in d.hrefs + d.srcs if h.startswith("/") and not h.startswith("//")]
+            if root_abs:
+                fail(f"{label}: root-absolute URLs would break in a sub-folder: {root_abs[:3]}")
         if d.inline_styles:
             fail(f"{label}: {d.inline_styles} inline style attribute(s) (breaks strict CSP)")
         if d.imgs_no_alt:
@@ -198,7 +204,10 @@ def main():
                 pass  # preview links to the room shell
             code = 200 if href.startswith("#") else get(target.path)[0]
             if code >= 400:
-                fail(f"{label}: broken link {href} ({code})")
+                if label == "404" and PREFIX != BASE_PATH:
+                    warn(f"{label}: {href} needs base_path={PREFIX!r} in site.json (404 pages can't use relative URLs)")
+                else:
+                    fail(f"{label}: broken link {href} ({code})")
             if frag and target.path == url and frag not in d.ids:
                 fail(f"{label}: fragment #{frag} has no target")
 

@@ -11,19 +11,28 @@ python serve.py     # open http://localhost:8000
 
 Run `python check.py` to verify status codes, SEO metadata, links, headings, sitemap and robots rules (17 pages).
 
-## Hosting on a free host (no domain needed)
+## Hosting anywhere (no domain or address needed)
 
-The site isn't tied to any domain. Deployment settings live in `site.json`:
+Every internal link and asset path in the built pages is relative to the page ("../assets/css/styles.css"), so the contents of
+`public/` work as they are on any host, any domain, and in any sub-folder (`https://host.example/me/quoridor/`). There is nothing to
+configure: run `python build.py` and upload the `public/` folder.
 
-| Setting | When to set it |
+To prove it, serve the site from an arbitrary sub-folder and run the checks there:
+
+```powershell
+$env:SERVE_PREFIX="/any/folder"; python serve.py     # open http://localhost:8000/any/folder/
+$env:SERVE_PREFIX="/any/folder"; python check.py
+```
+
+`site.json` is optional and only matters for things that need a full address:
+
+| Setting | Effect |
 |---|---|
-| `site_url` | Once you know your public address, e.g. `"https://yourname.github.io"`. While empty, canonical tags, absolute Open Graph URLs and `sitemap.xml` are left out (they require a real address). |
-| `base_path` | Only if the host serves the site from a sub-folder, e.g. `"/quoridor.online"` on a GitHub Pages project site (`https://yourname.github.io/quoridor.online/`). Leave `""` on Netlify, Cloudflare Pages, Vercel or a custom domain. |
+| `site_url` (default `""`) | Set to your public address (e.g. `"https://yourname.github.io"`) to add canonical tags, absolute Open Graph URLs and `sitemap.xml`. While empty these are left out rather than guessed. |
+| `base_path` (default `""`) | Only for the 404 page, which hosts serve at whatever URL was missing and which therefore can't use relative paths. Set it (e.g. `"/me/quoridor"`) if your host serves the site from a sub-folder; otherwise leave it empty. |
 
-Then run `python build.py` and upload/deploy the `public/` folder. Changing domains later is just editing `site.json` and rebuilding.
-
-Notes: `public/` includes `_headers` and `_redirects` (Netlify / Cloudflare Pages), and `.nojekyll` (GitHub Pages). Static hosts cannot
-serve a private-room URL like `/room/<id>/` without a server, which doesn't exist yet, so on GitHub Pages those links show the 404 page.
+Notes: `public/` includes `_headers` and `_redirects` (Netlify / Cloudflare Pages) and `.nojekyll` (GitHub Pages). Static hosts can't serve a
+private-room URL like `/room/<id>/` without a server, which doesn't exist yet, so on hosts without that rewrite those links show the 404 page.
 
 ## What is built (and what is not)
 

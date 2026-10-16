@@ -157,20 +157,29 @@ def render(page):
     script_tags = "".join(f'<script src="{s}" defer></script>' for s in scripts)
     html = (
         "<!doctype html>\n"
-        f'<html lang="en" data-base="{BASE_PATH}">\n<head>\n' + "\n".join(head) + "\n</head>\n<body>\n"
+        '<html lang="en">\n<head>\n' +"\n".join(head) + "\n</head>\n<body>\n"
         '<a class="skip-link" href="#main">Skip to main content</a>\n'
         + header_html(page)
         + '\n<main id="main" tabindex="-1">\n' + page.body + "\n</main>\n"
         + footer_html() + "\n" + script_tags + "\n</body>\n</html>\n"
     )
-    return prefix_paths(html)
+    return localize_urls(html, page)
 
 
-def prefix_paths(html):
-    """Serve from a sub-folder (e.g. GitHub Pages project sites): prefix root-relative URLs."""
-    if not BASE_PATH:
-        return html
-    return re.sub(r'\b(href|src|action)="/(?!/)', rf'\1="{BASE_PATH}/', html)
+def localize_urls(html, page):
+    """Make internal URLs independent of the domain and of any sub-folder.
+
+    Pages are written with root-relative URLs ("/play/"). Each page rewrites them relative to its
+    own location ("../play/"), so the same files work on any host, domain or sub-folder with no
+    configuration. The 404 page is the exception: a host serves it at whatever URL was missing,
+    so it has no stable depth and uses site.json's base_path instead.
+    """
+    if page.http_status == 404:
+        prefix = BASE_PATH + "/"
+    else:
+        depth = len([s for s in page.path.split("/") if s])
+        prefix = "../" * depth if depth else "./"
+    return re.sub(r'\b(href|src|action)="/(?!/)', lambda m: f'{m.group(1)}="{prefix}', html)
 
 
 def out_path(page):

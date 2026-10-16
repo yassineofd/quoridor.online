@@ -9,6 +9,7 @@ Behaves like a production host should:
 """
 
 import mimetypes
+import os
 import re
 import sys
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -17,6 +18,9 @@ from urllib.parse import unquote, urlsplit
 
 from build import ROOM_HEADERS, SECURITY_HEADERS
 from lib import BASE_PATH
+
+# SERVE_PREFIX lets you test that the site works from any sub-folder, whatever site.json says.
+PREFIX = os.environ.get("SERVE_PREFIX", BASE_PATH).rstrip("/")
 
 PUBLIC = (Path(__file__).resolve().parent / "public").resolve()
 mimetypes.add_type("image/svg+xml", ".svg")
@@ -57,17 +61,23 @@ class Handler(BaseHTTPRequestHandler):
         url = urlsplit(self.path)
         path = unquote(url.path)
 
-        if BASE_PATH:  # site.json base_path: serve under the same sub-folder a project host would use
-            if path in ("/", BASE_PATH):
+        if PREFIX:  # serve under a sub-folder, the way a project host would
+            if path in ("/", PREFIX):
                 self.send_response(301)
-                self.send_header("Location", BASE_PATH + "/")
+                self.send_header("Location", PREFIX + "/")
                 self.send_header("Content-Length", "0")
                 self.end_headers()
                 return
-            if not path.startswith(BASE_PATH + "/"):
+            if not path.startswith(PREFIX + "/"):
                 return self._not_found()
-            path = path[len(BASE_PATH):]
+            path = path[len(PREFIX):]
 
+        if re.match(r"^/room/[A-Za-z0-9_-]{1,64}$", path):  # relative URLs need the trailing slash
+            self.send_response(301)
+            self.send_header("Location", PREFIX + path + "/")
+            self.send_header("Content-Length", "0")
+            self.end_headers()
+            return
         if ROOM_RE.match(path):
             return self._file(PUBLIC / "room" / "index.html", 200, ROOM_HEADERS)
 
@@ -81,7 +91,7 @@ class Handler(BaseHTTPRequestHandler):
         if target.is_dir():
             if not path.endswith("/"):
                 self.send_response(301)
-                self.send_header("Location", BASE_PATH + path + "/" + (f"?{url.query}" if url.query else ""))
+                self.send_header("Location", PREFIX + path + "/" + (f"?{url.query}" if url.query else ""))
                 self.send_header("Content-Length", "0")
                 self.end_headers()
                 return
@@ -104,7 +114,7 @@ def main():
     if not PUBLIC.exists():
         sys.exit("public/ not found. Run: python build.py")
     httpd = ThreadingHTTPServer(("127.0.0.1", port), Handler)
-    print(f"Serving {PUBLIC} at http://localhost:{port}{BASE_PATH}/  (Ctrl+C to stop)")
+    print(f"Serving {PUBLIC} at http://localhost:{port}{PREFIX}/  (Ctrl+C to stop)")
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
