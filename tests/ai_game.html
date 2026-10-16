@@ -1,0 +1,22 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>AI game log</title>
+<pre id="result">running</pre>
+<script src="../static/assets/js/engine.js"></script>
+<script src="../static/assets/js/ai.js"></script>
+<script>
+(function () {
+  var Q = window.Quoridor, AI = window.QuoridorAI;
+  var cfg = JSON.parse(decodeURIComponent(location.hash.slice(1)));
+  var levels = cfg.levels, g = new Q.Game(), log = [];
+  function seeded(seed) { return function () { seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; }; }
+  var rng = seeded(cfg.seed || 1);
+  while (g.winner === null && g.moves.length < 160) {
+    var p = g.turn, stats = {};
+    var m = AI.chooseMove(g, { level: levels[p], rng: rng, stats: stats });
+    g.apply(m);
+    log.push((g.moves.length) + ' ' + (p === 0 ? 'A' : 'B') + ':' + levels[p][0] + ' ' + Q.moveName(m) + ' d=' + g.distance(0) + '/' + g.distance(1) + ' w=' + g.wallsLeft.join('/') + (stats.depth ? ' depth' + stats.depth : ''));
+  }
+  document.getElementById('result').textContent = JSON.stringify({ winner: g.winner, log: log, moves: g.moves });
+})();
+</script>

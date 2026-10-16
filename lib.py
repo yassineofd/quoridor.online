@@ -1,6 +1,7 @@
 """Shared helpers for the static site generator: config, Page model, icons, board art."""
 
 import json
+import os
 from dataclasses import dataclass, field
 from html import escape
 from pathlib import Path
@@ -17,13 +18,19 @@ if BASE_PATH and not BASE_PATH.startswith("/"):
     BASE_PATH = "/" + BASE_PATH
 SITE_NAME = "Quoridor Online"
 
+# Online play (matchmaking and private rooms) needs the Python game server in server/ (run by
+# serve.py). A static host such as Vercel or GitHub Pages cannot run it, so it is off by default:
+# set "online_server": true in site.json only when you deploy serve.py (or the server/ package)
+# behind your domain. QUORIDOR_ONLINE=1 forces it on for a local build.
+ONLINE_SERVER = bool(_cfg.get("online_server", False)) or os.environ.get("QUORIDOR_ONLINE") == "1"
+
 # Feature flags. Public copy may only describe a feature as available once its flag is True
-# (docs/architecture-spec.md, honesty rule). Flip these as each mode is actually implemented.
+# (docs/architecture-spec.md, honesty rule). Local and computer play run entirely in the browser.
 FEATURES = {
-    "online": False,
-    "computer": False,
-    "local": False,
-    "rooms": False,
+    "online": ONLINE_SERVER,
+    "computer": True,
+    "local": True,
+    "rooms": ONLINE_SERVER,
 }
 
 # Spec §1/§11 recommendation: index only /play/ at launch; mode pages stay noindex until

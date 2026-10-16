@@ -6,6 +6,7 @@ Then:   python serve.py        (serves ./public on http://localhost:8000)
 
 import datetime
 import json
+import os
 import re
 import shutil
 from html import escape
@@ -15,7 +16,9 @@ from lib import BASE_PATH, BASE_URL, SITE_NAME, icon
 from pages import all_pages
 
 ROOT = Path(__file__).resolve().parent
-OUT = ROOT / "public"
+# QUORIDOR_BUILD_DIR builds somewhere else (used by the UI tests so ./public is left alone).
+CUSTOM_OUT = os.environ.get("QUORIDOR_BUILD_DIR")
+OUT = Path(CUSTOM_OUT).resolve() if CUSTOM_OUT else ROOT / "public"
 STATIC = ROOT / "static"
 
 NAV = [
@@ -191,7 +194,7 @@ def out_path(page):
 
 def main():
     if OUT.exists():
-        assert OUT.resolve().parent == ROOT, "refusing to delete unexpected directory"
+        assert CUSTOM_OUT or OUT.resolve().parent == ROOT, "refusing to delete unexpected directory"
         shutil.rmtree(OUT)
     shutil.copytree(STATIC, OUT)
 

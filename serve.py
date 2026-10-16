@@ -6,26 +6,34 @@ Behaves like a production host should:
   * unknown URLs return the branded 404 page with a real HTTP 404 status
   * /room/<anything>/ resolves to the room app shell (200) with noindex headers
   * directories get a trailing-slash 301, and security headers are sent on every response
+  * /api/... is the online-play server (rooms, matchmaking): see server/api.py
 """
 
+import json
 import mimetypes
 import os
 import re
 import sys
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from urllib.parse import unquote, urlsplit
+from urllib.parse import parse_qs, unquote, urlsplit
 
 from build import ROOM_HEADERS, SECURITY_HEADERS
 from lib import BASE_PATH
+from server import api
 
 # SERVE_PREFIX lets you test that the site works from any sub-folder, whatever site.json says.
 PREFIX = os.environ.get("SERVE_PREFIX", BASE_PATH).rstrip("/")
 
-PUBLIC = (Path(__file__).resolve().parent / "public").resolve()
+PUBLIC = Path(os.environ.get("QUORIDOR_PUBLIC") or (Path(__file__).resolve().parent / "public")).resolve()
 mimetypes.add_type("image/svg+xml", ".svg")
 mimetypes.add_type("application/manifest+json", ".webmanifest")
 ROOM_RE = re.compile(r"^/room/[A-Za-z0-9_-]{1,64}/?$")
+
+
+class Server(ThreadingHTTPServer):
+    daemon_threads = True      # long-poll requests must not keep the process alive on Ctrl+C
+    request_queue_size = 128   # the default backlog of 5 drops connections when a page loads many files at once
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -54,6 +62,52 @@ class Handler(BaseHTTPRequestHandler):
         body = page.read_bytes() if page.exists() else b"404 Not Found"
         self._send(404, body, "text/html; charset=utf-8", {"X-Robots-Tag": "noindex"})
 
+    def _api(self, path):
+        """Online-play endpoints. Bodies are tiny JSON; everything is uncached and unindexed."""
+        url = urlsplit(self.path)
+        body = b""
+        if self.command in ("POST", "PUT", "PATCH"):
+            try:
+                length = int(self.headers.get("Content-Length") or 0)
+            except ValueError:
+                length = -1
+            if length < 0 or length > 8192:
+                status, payload = 413, {"error": "too-large", "message": "Request too large."}
+                return self._json(status, payload)
+            body = self.rfile.read(length) if length else b""
+        status, payload = api.dispatch(self.command, path[len("/api"):], parse_qs(url.query), body, self)
+        self._json(status, payload)
+
+    def _json(self, status, payload):
+        data = json.dumps(payload, separators=(",", ":")).encode("utf-8")
+        self._send(status, data, "application/json; charset=utf-8",
+                   {"Cache-Control": "no-store", "X-Robots-Tag": "noindex, nofollow"})
+
+    def _strip_prefix(self, path):
+        """Apply SERVE_PREFIX. Returns the path inside the site, or None if the request was answered."""
+        if not PREFIX:
+            return path
+        if path in ("/", PREFIX):
+            self.send_response(301)
+            self.send_header("Location", PREFIX + "/")
+            self.send_header("Content-Length", "0")
+            self.end_headers()
+            return None
+        if not path.startswith(PREFIX + "/"):
+            self._not_found()
+            return None
+        return path[len(PREFIX):]
+
+    def do_POST(self):
+        path = self._strip_prefix(unquote(urlsplit(self.path).path))
+        if path is None:
+            return
+        if path.startswith("/api/"):
+            return self._api(path)
+        self._json(405, {"error": "method-not-allowed", "message": "Method not allowed."})
+
+    do_DELETE = do_POST
+
     def do_HEAD(self):
         self.do_GET()
 
@@ -61,16 +115,11 @@ class Handler(BaseHTTPRequestHandler):
         url = urlsplit(self.path)
         path = unquote(url.path)
 
-        if PREFIX:  # serve under a sub-folder, the way a project host would
-            if path in ("/", PREFIX):
-                self.send_response(301)
-                self.send_header("Location", PREFIX + "/")
-                self.send_header("Content-Length", "0")
-                self.end_headers()
-                return
-            if not path.startswith(PREFIX + "/"):
-                return self._not_found()
-            path = path[len(PREFIX):]
+        path = self._strip_prefix(path)  # serve under a sub-folder, the way a project host would
+        if path is None:
+            return
+        if path.startswith("/api/"):
+            return self._api(path)
 
         if re.match(r"^/room/[A-Za-z0-9_-]{1,64}$", path):  # relative URLs need the trailing slash
             self.send_response(301)
@@ -106,14 +155,17 @@ class Handler(BaseHTTPRequestHandler):
         return self._not_found()
 
     def log_message(self, fmt, *args):
-        sys.stderr.write("%s %s\n" % (self.address_string(), fmt % args))
+        # Room ids and matchmaking tickets act as passwords, so never write them to the log.
+        line = re.sub(r"(/(?:api/rooms|api/queue|room)/)[A-Za-z0-9_-]{8,64}", r"\1<id>", fmt % args)
+        sys.stderr.write("%s %s\n" % (self.address_string(), line))
 
 
 def main():
     port = int(sys.argv[1]) if len(sys.argv) > 1 else 8000
     if not PUBLIC.exists():
         sys.exit("public/ not found. Run: python build.py")
-    httpd = ThreadingHTTPServer(("127.0.0.1", port), Handler)
+    httpd = Server((os.environ.get("QUORIDOR_HOST", "127.0.0.1"), port), Handler)
+    api.hub.start_sweeper()
     print(f"Serving {PUBLIC} at http://localhost:{port}{PREFIX}/  (Ctrl+C to stop)")
     try:
         httpd.serve_forever()

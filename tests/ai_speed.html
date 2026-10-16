@@ -1,0 +1,25 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>AI speed</title>
+<pre id="result">running</pre>
+<script src="../static/assets/js/engine.js"></script>
+<script src="../static/assets/js/ai.js"></script>
+<script>
+(function () {
+  var Q = window.Quoridor, AI = window.QuoridorAI, out = [];
+  // A few seeded middle-game positions (random legal play, favouring walls).
+  function seeded(seed) { return function () { seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; }; }
+  [0, 6, 14, 24].forEach(function (plies, k) {
+    var g = new Q.Game(), rng = seeded(7 + k);
+    for (var i = 0; i < plies && g.winner === null; i++) {
+      var m = AI.chooseMove(g, { level: 'hard', rng: rng });
+      g.apply(m);
+    }
+    var stats = {}, t0 = performance.now();
+    AI.chooseMove(g, { level: 'expert', timeMs: 1000, rng: rng, stats: stats });
+    var ms = performance.now() - t0;
+    out.push({ plies: plies, ms: Math.round(ms), nodes: stats.nodes, depth: stats.depth, nodesPerSec: Math.round(stats.nodes / ms * 1000) });
+  });
+  document.getElementById('result').textContent = JSON.stringify(out);
+})();
+</script>

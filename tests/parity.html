@@ -1,0 +1,70 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>engine parity</title>
+<pre id="result">running</pre>
+<script src="../static/assets/js/engine.js"></script>
+<script src="_gen/fixtures.js"></script>
+<script>
+(function () {
+  var Q = window.Quoridor, errors = [], checks = 0;
+  function fail(msg) { if (errors.length < 20) errors.push(msg); }
+
+  function wallString(g) {
+    var s = '';
+    ['h', 'v'].forEach(function (o) {
+      for (var r = 0; r < 8; r++) for (var c = 0; c < 8; c++) {
+        var e = g.wallError(o, r, c);
+        s += e === null ? '.' : e === 'overlap' ? 'o' : e === 'cross' ? 'x' : e === 'blocks-path' ? 'p' : e === 'no-walls' ? 'n' : '?';
+      }
+    });
+    return s;
+  }
+  function sortMoves(list) { return list.map(function (m) { return m.join(','); }).sort().join(';'); }
+  function firstDiff(a, b) { for (var i = 0; i < Math.max(a.length, b.length); i++) if (a.charAt(i) !== b.charAt(i)) return i; return -1; }
+
+  function compare(tag, g, exp) {
+    checks++;
+    var snap = g.toJSON();
+    if (JSON.stringify(snap.pawns) !== JSON.stringify(exp.pawns)) fail(tag + ' pawns ' + JSON.stringify(snap.pawns) + ' vs ' + JSON.stringify(exp.pawns));
+    if (snap.turn !== exp.turn || snap.winner !== exp.winner) fail(tag + ' turn/winner');
+    if (JSON.stringify(snap.wallsLeft) !== JSON.stringify(exp.wallsLeft)) fail(tag + ' wallsLeft');
+    var pm = sortMoves(g.pawnMoves());
+    if (pm !== exp.pm) fail(tag + ' pawnMoves ' + pm + ' vs ' + exp.pm);
+    var ws = wallString(g), fd = firstDiff(ws, exp.we);
+    if (fd !== -1) fail(tag + ' walls differ at ' + fd + ' (js ' + ws.charAt(fd) + ' py ' + exp.we.charAt(fd) + ')');
+    if (g.distance(0) !== exp.d[0] || g.distance(1) !== exp.d[1]) fail(tag + ' distance ' + g.distance(0) + ',' + g.distance(1) + ' vs ' + exp.d);
+    var path = [], dd = g.distance(0, path);
+    if (dd >= 0 && path.length !== dd + 1) fail(tag + ' path length');
+  }
+
+  window.FIXTURES.games.forEach(function (game, gi) {
+    var g = new Q.Game();
+    var fresh = JSON.stringify(g.toJSON());
+    compare('g' + gi + ' start', g, game.start);
+    game.steps.forEach(function (step, si) {
+      var tag = 'g' + gi + ' step ' + si;
+      step.bad.forEach(function (b) {
+        var before = JSON.stringify(g.toJSON());
+        var err = g.apply(b.move);
+        checks++;
+        if (err !== b.err) fail(tag + ' bad move ' + JSON.stringify(b.move) + ' expected ' + b.err + ' got ' + err);
+        if (JSON.stringify(g.toJSON()) !== before) fail(tag + ' bad move changed state');
+      });
+      var err = g.apply(step.move);
+      if (err) { fail(tag + ' rejected ' + JSON.stringify(step.move) + ': ' + err); return; }
+      compare(tag, g, step.after);
+    });
+    // Rebuilding from a snapshot gives the same game; undoing everything gives back the start.
+    var copy = Q.Game.fromJSON(g.toJSON());
+    checks++;
+    if (JSON.stringify(copy.toJSON()) !== JSON.stringify(g.toJSON())) fail('g' + gi + ' fromJSON round trip');
+    while (g.moves.length) {
+      var depth = g.moves.length;
+      g.undo();
+      if (depth - 1 > 0 && depth % 7 === 0) compare('g' + gi + ' undo to ' + (depth - 1), g, game.steps[depth - 2].after);
+    }
+    if (JSON.stringify(g.toJSON()) !== fresh) fail('g' + gi + ' undo did not restore the start');
+  });
+  document.getElementById('result').textContent = JSON.stringify({ games: window.FIXTURES.games.length, checks: checks, errors: errors });
+})();
+</script>

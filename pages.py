@@ -8,6 +8,18 @@ from lib import (
 ANY_MODE_LIVE = any(FEATURES[k] for k in ("online", "computer", "local"))
 
 
+def live_ways():
+    """Only the ways to play that actually work, as a readable list."""
+    ways = []
+    if FEATURES["online"]:
+        ways.append("online against another person")
+    if FEATURES["computer"]:
+        ways.append("against the computer")
+    if FEATURES["local"]:
+        ways.append("with a friend on the same device")
+    return ways[0] if len(ways) == 1 else ", ".join(ways[:-1]) + " or " + ways[-1] if ways else ""
+
+
 # ---------------------------------------------------------------- shared fragments
 def badge(feature: str) -> str:
     return "" if FEATURES[feature] else '<span class="badge">Coming soon</span>'
@@ -123,7 +135,7 @@ def figure(svg, caption):
 # ---------------------------------------------------------------- homepage
 def home():
     live_note = (
-        "Play against another person, the computer, or a friend on the same device."
+        f"Play {live_ways()}." + ("" if FEATURES["online"] else " Online play is coming soon.")
         if ANY_MODE_LIVE
         else "Learn the rules and strategy now; online, computer and same-device play are being added."
     )
@@ -131,7 +143,7 @@ def home():
         ("responsive", True, "layout", "Responsive design", "The site is built mobile-first and works from small phones to wide desktop monitors."),
         ("noaccount", True, "userx", "No account required", "Nothing on the site asks you to register. Modes that need a name just ask for a display name."),
         ("browser", ANY_MODE_LIVE, "smartphone", "Browser-based play", "Play in your browser with nothing to install."),
-        ("modes", sum(FEATURES[k] for k in ("online", "computer", "local")) >= 2, "globe", "Different playing modes", "Play online, against the computer, or on one shared device."),
+        ("modes", sum(FEATURES[k] for k in ("online", "computer", "local")) >= 2, "globe", "Different playing modes", f"Play {live_ways()}."),
     ]
     live_items = "".join(
         f'<li>{icon(ic)}<div><strong>{t}</strong><span class="text-muted">{d}</span></div></li>'
@@ -151,7 +163,8 @@ def home():
         ("Can I block my opponent completely?",
          'No. A wall is only legal if both players still have at least one open route to their goal side. See the <a href="/quoridor-rules/">Quoridor rules</a> for the details.'),
         ("Which ways to play are there?",
-         ("You can play online, against a computer opponent at four difficulty levels, or with a friend on the same device." if ANY_MODE_LIVE
+         (f"You can play {live_ways()}." + ("" if FEATURES["online"] else " Online play against other people, with private rooms for friends, is coming soon.")
+          if ANY_MODE_LIVE
           else "Three are planned: online against another person (with private rooms for friends), against a computer opponent at four difficulty levels, and with a friend on the same device. They are not live yet.")),
         ("Do I need an account?",
          "No. Nothing on the site requires an account. Where a mode needs a name, you pick a display name; it is not proof of identity."),
@@ -163,7 +176,7 @@ def home():
     )
 
     desc = (
-        "Play Quoridor online against a friend, a computer opponent, or on one device. A free browser strategy game with no registration."
+        (f"Play Quoridor in your browser {live_ways()}. A free strategy game with no registration.")
         if ANY_MODE_LIVE
         else "Quoridor online: learn the Quoridor game, study the rules and strategy, and choose online, computer or same-device play as each mode launches. No account needed."
     )
@@ -313,6 +326,15 @@ def unavailable(title, text):
 </div>"""
 
 
+def server_error():
+    """Shown when the game server refuses or can't be reached (live online forms only)."""
+    return f"""
+<div class="notice notice--error" data-error hidden role="alert">
+  {icon('alert')}
+  <div><h2>That didn't work</h2><p data-error-text></p><button class="btn btn--secondary" type="button" data-retry>Try again</button></div>
+</div>"""
+
+
 def username_field(note="2 to 20 characters. This is a display name, not an account."):
     return f"""
 <div class="field">
@@ -323,49 +345,67 @@ def username_field(note="2 to 20 characters. This is a display name, not an acco
 </div>"""
 
 
-def stage(form_kind, panel_html, board_label, walls=(), pawns=()):
+GAME_SCRIPTS = ["/assets/js/engine.js", "/assets/js/board.js", "/assets/js/game.js"]
+
+
+def stage(form_kind, panel_html, board_label, walls=(), pawns=(), live=False):
     return f"""
-<div class="container stage">
+<div class="container stage" data-stage>
   <div class="stage-panel">
-    <form data-play-form="{form_kind}" novalidate>{panel_html}</form>
+    <form data-play-form="{form_kind}" data-live="{'true' if live else 'false'}" novalidate>{panel_html}</form>
   </div>
   <div class="stage-board">{board_svg(walls, pawns, board_label)}</div>
-</div>"""
+</div>
+<div class="container game-wrap" data-game-wrap hidden><div data-game-host></div></div>"""
 
 
 MODE_WALLS = [("h", 3, 3), ("v", 5, 5), ("h", 6, 1)]
 MODE_PAWNS = [(8, 4, "p1"), (0, 4, "p2")]
 
 
-def mode_page(path, title, desc, h1, lead, crumb, form_kind, panel, label, indexable=None):
+def mode_page(path, title, desc, h1, lead, crumb, form_kind, panel, label, indexable=None, scripts=(), live=False):
     idx = INDEX_MODE_PAGES if indexable is None else indexable
     parent = [("Play", "/play/")] if path.startswith("/play/") else []
     body = (
         '<div class="page-head"><div class="container">'
         + crumbs(parent + [(crumb, None)])
         + f"<h1>{h1}</h1><p class=\"lead\">{lead}</p></div></div>"
-        + stage(form_kind, panel, label, MODE_WALLS, MODE_PAWNS)
+        + stage(form_kind, panel, label, MODE_WALLS, MODE_PAWNS, live)
     )
     return Page(
         path=path, title=title, description=desc, body=body,
         indexable=idx, robots=None if idx else "noindex, follow",
-        breadcrumbs=parent + [(crumb, path)], scripts=["/assets/js/play.js"], nav_key="play",
+        breadcrumbs=parent + [(crumb, path)], scripts=list(scripts) + ["/assets/js/online.js", "/assets/js/play.js"], nav_key="play",
     )
 
 
 def play_online():
+    live = FEATURES["online"]
+    searching = f"""
+<div class="search-state" data-searching hidden>
+  <div class="search-line" role="status" aria-live="polite">
+    <span class="spinner" aria-hidden="true"></span><span data-search-text>Looking for an opponent&hellip;</span><span class="search-elapsed" data-search-elapsed></span>
+  </div>
+  <div class="btn-row"><button class="btn btn--secondary" type="button" data-cancel-search>Cancel search</button></div>
+  <div data-slow hidden>
+    <p class="small text-muted mt-4">Still looking. There may be nobody else searching right now. Keep waiting, or:</p>
+    <div class="btn-row"><a class="btn btn--secondary" href="/play/computer/">Play the robot</a><a class="btn btn--secondary" href="/play/create-room/">Create a private room</a></div>
+  </div>
+</div>"""
     panel = (
-        '<div class="status-line"><span class="status-dot" aria-hidden="true"></span><span>Matchmaking status: not connected</span></div>'
+        '<div class="status-line"><span class="status-dot' + (' status-dot--ok' if live else '') + '" aria-hidden="true"></span><span>'
+        + ("Matchmaking status: ready" if live else "Matchmaking status: not connected") + '</span></div>'
         + username_field()
         + '<button class="btn btn--primary btn--lg btn--block" type="submit">Find an opponent</button>'
-        + unavailable("Online matchmaking isn't live yet", "There is no matchmaking server yet, so nobody can be paired with you. Nothing was sent anywhere.")
+        + (searching + server_error() if live else
+           unavailable("Online matchmaking isn't live yet", "There is no matchmaking server on this site yet, so nobody can be paired with you. Nothing was sent anywhere."))
         + '<p class="small text-muted mt-4">Want to play one specific person? Try a private room: <a href="/play/create-room/">create a room</a> or <a href="/play/join-room/">join a room</a>.</p>'
     )
     return mode_page(
         "/play/online/", "Play Quoridor Online Against Another Player",
         "Play Quoridor online against another person. Pick a username, enter matchmaking and start a synchronized game.",
         "Play Quoridor online", "Pick a username, find an opponent, and play a live game against another person.",
-        "Play online", "online", panel, "Quoridor board preview for online play.",
+        "Play online", "online", panel, "Quoridor board preview for online play.", live=live,
     )
 
 
@@ -379,63 +419,80 @@ def difficulty_choice(value, title, desc, checked=False):
   </label></div>"""
 
 
+# How each level plays is defined by static/assets/js/ai.js and measured with tests/ai_bench.py
+# (docs/game-engine.md has the results). Keep these descriptions in step with the latest measurements.
+DIFFICULTY_LEVELS = [
+    ("easy", "Easy", "Good for learning the rules. Makes mistakes on purpose: it wanders and places walls without much of a plan.", False),
+    ("medium", "Medium", "A relaxed game for players who know the basics. Takes sensible steps and blocks you when a wall clearly pays off, but doesn't plan ahead.", True),
+    ("hard", "Hard", "Looks two moves ahead (its move and your reply) and places walls deliberately. Expect a real challenge.", False),
+    ("expert", "Expert", "The strongest level we offer. Searches several moves deeper, taking up to about a second per move, so it can feel slower to answer.", False),
+]
+
+
 def play_computer():
-    levels = [
-        ("easy", "Easy", "Good for learning the rules. Makes simple moves and is easy to out-plan.", False),
-        ("medium", "Medium", "A relaxed game for players who know the basics.", True),
-        ("hard", "Hard", "Plans further ahead and uses walls deliberately. Expect a real challenge.", False),
-        ("expert", "Expert", "The strongest level we offer, best for experienced players.", False),
-    ]
-    choices = "".join(difficulty_choice(v, t, d, c) for v, t, d, c in levels)
+    choices = "".join(difficulty_choice(v, t, d, c) for v, t, d, c in DIFFICULTY_LEVELS)
     panel = (
         f'<fieldset class="fieldset"><legend>Difficulty</legend><div class="choice-group">{choices}</div></fieldset>'
-        + '<p class="small text-muted">Level names describe the intended challenge. We will describe how each one actually plays once the computer opponent has been built and tested.</p>'
+        + '<p class="small text-muted">You move first, as the cyan filled pawn, from the bottom edge. The robot plays on your device; nothing is sent anywhere. In our own test games (20 per pairing, robots against robots) each level beat the one below it at least 16 times out of 20.</p>'
         + '<button class="btn btn--primary btn--lg btn--block" type="submit">Start game</button>'
-        + unavailable("The computer opponent isn't ready yet", "There is no game engine yet, so a game can't start. Your difficulty choice was not saved or sent anywhere.")
     )
     return mode_page(
         "/play/computer/", "Play Quoridor Against the Computer",
         "Play Quoridor against a computer opponent. Choose Easy, Medium, Hard or Expert and start without registering.",
         "Play Quoridor against the computer", "Choose a difficulty and start a game. No registration needed.",
         "Play against robot", "computer", panel, "Quoridor board preview for a game against the computer.",
+        scripts=["/assets/js/engine.js", "/assets/js/ai.js", "/assets/js/board.js", "/assets/js/game.js"],
     )
+
+
+def name_field(n):
+    return f"""
+<div class="field">
+  <label for="name{n}">Player {n} name (optional)</label>
+  <input class="input" id="name{n}" name="name{n}" type="text" maxlength="20" autocomplete="off" spellcheck="false" aria-describedby="name{n}-error">
+  <div class="field-error" id="name{n}-error" role="alert" hidden></div>
+</div>"""
 
 
 def play_local():
     panel = (
         '<div class="card"><h2 class="h-sm">Two players, one device</h2>'
-        '<p class="text-muted">You share the screen and take turns on the same board. The active player will always be named on screen, with a clear cue when the turn changes.</p>'
-        '<ul class="text-muted"><li>Player 1 uses the filled cyan pawn.</li><li>Player 2 uses the white ring pawn.</li><li>Pass the device after each move.</li></ul></div>'
+        '<p class="text-muted">You share the screen and take turns on the same board. The active player is always named on screen, with a clear cue when the turn changes.</p>'
+        '<ul class="text-muted"><li>Player 1 uses the filled cyan pawn and moves first, from the bottom edge.</li><li>Player 2 uses the white ring pawn, from the top edge.</li><li>Pass the device after each move.</li></ul></div>'
         '<div class="spacer"></div>'
-        '<button class="btn btn--primary btn--lg btn--block" type="submit">Start game</button>'
-        + unavailable("The shared-device game isn't ready yet", "There is no game engine yet, so a game can't start.")
+        + name_field(1) + name_field(2)
+        + '<button class="btn btn--primary btn--lg btn--block" type="submit">Start game</button>'
     )
     return mode_page(
         "/play/local/", "Play Quoridor With a Friend on One Device",
         "Play a two-player Quoridor game on the same device. Share the screen and take turns.",
         "Play Quoridor with a friend", "Share one screen and take turns on the same board.",
         "Play with a friend", "local", panel, "Quoridor board preview for a two-player game on one device.",
+        scripts=GAME_SCRIPTS,
     )
 
 
 def create_room():
+    live = FEATURES["rooms"]
     panel = (
         username_field("2 to 20 characters. Your friend will see this name.")
         + '<button class="btn btn--primary btn--lg btn--block" type="submit">Create room</button>'
-        + unavailable("Private rooms aren't live yet", "There is no room server yet, so no room was created and no link or code was generated.")
+        + (server_error() if live else
+           unavailable("Private rooms aren't live yet", "There is no room server on this site yet, so no room was created and no link or code was generated."))
         + """<h2 class="h-sm mt-6">What happens next</h2>
-<ol class="text-muted"><li>You get an invitation link and a short pairing code.</li><li>Copy either one and send it to your friend.</li><li>The match starts when both of you are in.</li></ol>
-<p class="small"><a href="/room/EXAMPLE-ROOM-ID/?preview=waiting">Preview the waiting-room screen</a> (sample data)</p>"""
+<ol class="text-muted"><li>You get an invitation link and a short pairing code.</li><li>Copy either one and send it to your friend.</li><li>The match starts as soon as your friend joins.</li></ol>"""
+        + ('' if live else '<p class="small"><a href="/room/EXAMPLE-ROOM-ID/?preview=waiting">Preview the waiting-room screen</a> (sample data)</p>')
     )
     return mode_page(
         "/play/create-room/", "Create a Private Quoridor Room",
         "Create a private Quoridor room and share the invitation link or pairing code with a friend.",
         "Create a private room", "Make a room, then share the invitation link or pairing code with your friend.",
-        "Create a room", "create-room", panel, "Quoridor board preview for a private room.", indexable=False,
+        "Create a room", "create-room", panel, "Quoridor board preview for a private room.", indexable=False, live=live,
     )
 
 
 def join_room():
+    live = FEATURES["rooms"]
     panel = (
         username_field("2 to 20 characters. Your opponent will see this name.")
         + """<div class="field">
@@ -445,18 +502,21 @@ def join_room():
   <div class="field-error" id="code-error" role="alert" hidden></div>
 </div>"""
         + '<button class="btn btn--primary btn--lg btn--block" type="submit">Join room</button>'
-        + unavailable("Private rooms aren't live yet", "There is no room server yet, so the code can't be checked.")
-        + '<p class="small mt-4">Preview other screens (sample data): <a href="/room/EXAMPLE-ROOM-ID/?preview=invalid">invalid code</a>, <a href="/room/EXAMPLE-ROOM-ID/?preview=full">room full</a>, <a href="/room/EXAMPLE-ROOM-ID/?preview=expired">expired invitation</a>.</p>'
+        + (server_error() if live else
+           unavailable("Private rooms aren't live yet", "There is no room server on this site yet, so the code can't be checked."))
+        + ('' if live else '<p class="small mt-4">Preview other screens (sample data): <a href="/room/EXAMPLE-ROOM-ID/?preview=invalid">invalid code</a>, <a href="/room/EXAMPLE-ROOM-ID/?preview=full">room full</a>, <a href="/room/EXAMPLE-ROOM-ID/?preview=expired">expired invitation</a>.</p>')
     )
     return mode_page(
         "/play/join-room/", "Join a Private Quoridor Room",
         "Join a private Quoridor room with a pairing code or an invitation link.",
         "Join a private room", "Enter the pairing code your friend sent you, or open their invitation link.",
-        "Join a room", "join-room", panel, "Quoridor board preview for joining a private room.", indexable=False,
+        "Join a room", "join-room", panel, "Quoridor board preview for joining a private room.", indexable=False, live=live,
     )
 
 
 def room():
+    live = FEATURES["rooms"]
+
     def state(name, inner):
         return f'<section data-state="{name}" hidden>{inner}</section>'
 
@@ -481,22 +541,21 @@ def room():
 
     join = state("join", f"""
 <h1 tabindex="-1">Join this room</h1>
-<p class="text-muted">You were invited to play Quoridor. Choose a username to join.</p>
-<form data-play-form="room-guest" novalidate>
+<p class="text-muted"><strong id="host-name">Your friend</strong> invited you to play Quoridor. Choose a username to join.</p>
+<form novalidate>
 {username_field('2 to 20 characters. Your opponent will see this name.')}
 <button class="btn btn--primary btn--lg btn--block" type="submit">Join room</button>
-{unavailable("Private rooms aren't live yet", "There is no room server yet, so you can't be added to this room.")}
 </form>""")
 
     starting = state("starting", """
 <h1 tabindex="-1">Both players are in</h1>
-<div class="status-line" role="status"><span class="status-dot status-dot--ok" aria-hidden="true"></span><span>Alex and Sam are connected. The game is about to start.</span></div>
-<p class="text-muted">Sample screen. Who moves first will be shown here before play begins.</p>""")
+<div class="status-line" role="status"><span class="status-dot status-dot--ok" aria-hidden="true"></span><span id="starting-text">Alex and Sam are connected. The game is about to start.</span></div>
+<p class="text-muted">The board appears in a moment.</p>""")
 
     reconnecting = state("reconnecting", """
 <h1 tabindex="-1">Reconnecting&hellip;</h1>
 <div class="status-line" role="status"><span class="status-dot status-dot--wait" aria-hidden="true"></span><span>Connection lost. Trying to rejoin your seat automatically.</span></div>
-<p class="text-muted">Your opponent can see that you're reconnecting. If you can't return within the grace period, the game ends as a forfeit.</p>
+<p class="text-muted">Your opponent can see that you're reconnecting. If you can't return within a minute, the game ends as a forfeit.</p>
 <div class="btn-row"><button class="btn btn--secondary" type="button" data-leave>Leave room</button></div>""")
 
     left = state("left", """
@@ -504,16 +563,25 @@ def room():
 <p class="text-muted">Your seat has been released.</p>
 <div class="btn-row"><a class="btn btn--primary" href="/play/">Back to Play</a><a class="btn btn--secondary" href="/">Home</a></div>""")
 
+    game = state("game", f"""
+<div class="notice notice--error" data-connection hidden role="status">{icon('alert')}<div><p>Connection lost. Trying to reconnect&hellip;</p></div></div>
+<div data-game-host></div>""")
+
+    unavailable_text = (
+        "This room may have been cancelled, finished or expired, or the link may be wrong. Nothing about this link was stored or checked."
+        if live else
+        "Private rooms aren't live yet, so this link can't be opened. Nothing about this link was stored or checked."
+    )
     inner = (
-        waiting + join + starting + reconnecting
+        waiting + join + starting + reconnecting + game
         + msg("invalid", "That code doesn't match a room", "Check the code and try again, or ask your friend to send the invitation link again.")
         + msg("full", "This room is full", "Two players are already in this room. You can create your own room instead.")
         + msg("expired", "This invitation has expired", "Invitations only last for a limited time. Ask your friend for a new one, or create your own room.")
-        + msg("unavailable", "This room isn't available", "Private rooms aren't live yet, so this link can't be opened. Nothing about this link was stored or checked.", "info", "notice")
+        + msg("unavailable", "This room isn't available", unavailable_text, "info", "notice")
         + left
     )
     body = f"""
-<div class="container pad-room">
+<div class="container pad-room" data-room-shell{' data-live' if live else ''}>
   <div class="stage-panel narrow">
     {inner}
     <p class="notice preview-note small" data-preview-note hidden role="note">{icon('info')}<span>Design preview with sample data. No room, link or opponent is real.</span></p>
@@ -523,7 +591,7 @@ def room():
         path="/room/_/", title="Private room | Quoridor Online",
         description="Private Quoridor room.",
         body=body, indexable=False, robots="noindex, nofollow, noarchive",
-        canonical=False, scripts=["/assets/js/play.js", "/assets/js/room.js"],
+        canonical=False, scripts=GAME_SCRIPTS + ["/assets/js/online.js", "/assets/js/room.js"],
         out_file="room/index.html", generic_social=True, nav_key="play",
     )
 
@@ -629,7 +697,7 @@ def rules():
 <tr><td>Wall rule</td><td>No overlap, no crossing, never block every route</td></tr>
 <tr><td>Win</td><td>Reach any square of the opposite edge first</td></tr>
 </tbody></table></div>
-<p class="small text-muted">Published rule sets and house rules can differ in small details. When the game modes launch, this page will state exactly which rules the site uses.</p>"""),
+<p class="small text-muted">Published rule sets and house rules can differ in small details. The game on this site uses exactly the rules on this page. In same-device and computer games Player 1 (the filled cyan pawn, starting at the bottom) always moves first. In online games the server decides who moves first, and a rematch swaps it. The check that every player keeps a route open ignores pawns and counts only walls.</p>"""),
     ]
     return article_page(
         "/quoridor-rules/", "Quoridor Rules: Setup, Movement & Wall Placement",
@@ -772,9 +840,22 @@ def contact():
                        "Contact us", "Feedback, technical support and business inquiries.", content, "Contact us")
 
 
+ONLINE_FACTS = """
+<li><strong>Online games and private rooms</strong> use a game server. It keeps in memory (not on disk) the display name you type, a random seat token, and when you last contacted it, for as long as the room exists. Rooms are deleted shortly after a game ends or both players leave, and an unjoined room expires after 30 minutes.</li>
+<li>Your browser keeps the seat token in its local storage so that a reload can rejoin your seat. It is removed when you leave the room.</li>
+<li>Network addresses are held in memory for about a minute to limit abuse.</li>
+<li>The site sets no cookies and loads no analytics or third-party scripts.</li>"""
+
+
 def privacy():
-    content = """
+    online_facts = ONLINE_FACTS if FEATURES["online"] else "<li>Online play is not available on this site, so no names or network addresses are collected.</li>"
+    content = f"""
 <div class="callout callout--draft"><p><strong>Draft placeholder.</strong> This is not the final privacy policy. The final text must be written from how the live service actually works and reviewed for the laws that apply.</p></div>
+<h2>How the software works today</h2>
+<p>These are facts about the current software, written down so that the final policy can be checked against them.</p>
+<ul>
+<li><strong>Same-device and computer games</strong> run entirely in your browser. Nothing about those games is sent anywhere or stored.</li>
+{online_facts}</ul>
 <h2>What the final policy must cover</h2>
 <ul>
 <li>What data the service collects (for example usernames, connection data and logs) and why.</li>
@@ -788,10 +869,21 @@ def privacy():
                        "Privacy policy", "How Quoridor Online handles information. Draft placeholder.", content, "Privacy policy")
 
 
+ONLINE_TERMS_FACTS = """
+<h2>How online games work today</h2>
+<p>These are facts about the current software, written down so that the final terms can be checked against them.</p>
+<ul>
+<li>If a player's connection is lost for more than a minute during an online game, that player forfeits and the opponent wins.</li>
+<li>Leaving or resigning mid-game counts as a forfeit. Either player may ask for a rematch after a game; the first move then passes to the other player.</li>
+<li>An invitation (link and pairing code) expires after 30 minutes if nobody joins. Rooms and their state are not kept after play ends.</li>
+<li>Usernames are display names, not accounts. Two players may choose the same name.</li>
+</ul>"""
+
+
 def terms():
     content = """
 <div class="callout callout--draft"><p><strong>Draft placeholder.</strong> These are not the final terms. The final wording must reflect the real service and applicable requirements.</p></div>
-<h2>What the final terms must cover</h2>
+""" + (ONLINE_TERMS_FACTS if FEATURES["online"] else "") + """<h2>What the final terms must cover</h2>
 <ul>
 <li>Who may use the service and how.</li>
 <li>User responsibilities, including acceptable usernames and conduct toward other players.</li>

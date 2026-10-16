@@ -1,0 +1,16 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>AI position</title>
+<pre id="result">running</pre>
+<script src="../static/assets/js/engine.js"></script>
+<script src="../static/assets/js/ai.js"></script>
+<script>
+(function () {
+  var Q = window.Quoridor, AI = window.QuoridorAI;
+  var cfg = JSON.parse(decodeURIComponent(location.hash.slice(1)));
+  var g = Q.Game.fromJSON({ moves: cfg.moves.slice(0, cfg.upTo) });
+  var scores = [], stats = {};
+  var m = AI.chooseMove(g, { level: 'expert', timeMs: 4000, scores: scores, stats: stats });
+  document.getElementById('result').textContent = JSON.stringify({ chose: Q.moveName(m), turn: g.turn, pawns: g.pawns, wallsLeft: g.wallsLeft, dist: [g.distance(0), g.distance(1)], stats: stats, scores: scores });
+})();
+</script>
