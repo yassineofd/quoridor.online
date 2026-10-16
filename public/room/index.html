@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Private room | Quoridor Online</title>
+<meta name="description" content="Private Quoridor room.">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="theme-color" content="#0B1220">
+<meta name="color-scheme" content="dark">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" href="../../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="../../site.webmanifest">
+<meta property="og:site_name" content="Quoridor Online">
+<meta property="og:type" content="website">
+<link rel="stylesheet" href="../../assets/css/styles.css">
+<script src="../../assets/js/head.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<header class="site-header">
+  <div class="container header-bar">
+    <a class="brand" href="../../" aria-label="Quoridor Online home">
+      <img src="../../assets/img/logo-mark.svg" alt="" width="32" height="32">
+      <span class="brand-name">Quoridor <span class="tld">Online</span></span>
+    </a>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      <ul><li><a href="../../">Home</a></li><li><a href="../../play/" aria-current="page">Play</a></li><li><a href="../../how-to-play-quoridor/">How to Play</a></li><li><a href="../../quoridor-rules/">Rules</a></li><li><a href="../../quoridor-strategy/">Strategy</a></li><li><a href="../../about/">About Us</a></li></ul>
+    </nav>
+    <div class="header-actions">
+      <a class="btn btn--primary" href="../../play/">Play Now</a>
+      <button class="btn btn--secondary menu-toggle" id="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h16"/></svg> Menu</button>
+    </div>
+  </div>
+</header>
+<main id="main" tabindex="-1">
+
+<div class="container pad-room">
+  <div class="stage-panel narrow">
+    <section data-state="waiting" hidden>
+<h1 tabindex="-1">Waiting for your opponent</h1>
+<div class="status-line" role="status"><span class="status-dot status-dot--wait" aria-hidden="true"></span><span>Waiting for a second player to join. Connected as host.</span></div>
+<h2 class="h-sm">Invitation link</h2>
+<div class="code-box"><div class="value" id="invite-link"></div><button class="btn btn--secondary" type="button" data-copy="invite-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy link</button></div>
+<h2 class="h-sm">Pairing code</h2>
+<div class="code-box"><div class="value value--big" id="invite-code"></div><button class="btn btn--secondary" type="button" data-copy="invite-code"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy code</button></div>
+<p class="small text-muted" id="copy-status" role="status" aria-live="polite"></p>
+<div class="btn-row room-actions"><button class="btn btn--secondary" type="button" data-leave>Cancel room</button></div></section><section data-state="join" hidden>
+<h1 tabindex="-1">Join this room</h1>
+<p class="text-muted">You were invited to play Quoridor. Choose a username to join.</p>
+<form data-play-form="room-guest" novalidate>
+
+<div class="field">
+  <label for="username">Username</label>
+  <input class="input" id="username" name="username" type="text" autocomplete="nickname" maxlength="20" required aria-describedby="username-hint username-error" spellcheck="false">
+  <span class="hint" id="username-hint">2 to 20 characters. Your opponent will see this name.</span>
+  <div class="field-error" id="username-error" role="alert" hidden></div>
+</div>
+<button class="btn btn--primary btn--lg btn--block" type="submit">Join room</button>
+
+<div class="notice" data-unavailable hidden role="status">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+  <div><h2>Private rooms aren't live yet</h2><p>There is no room server yet, so you can't be added to this room.</p>
+  <p><a href="../../how-to-play-quoridor/">Learn how to play</a> while you wait, or head back to the <a href="../../play/">mode list</a>.</p></div>
+</div>
+</form></section><section data-state="starting" hidden>
+<h1 tabindex="-1">Both players are in</h1>
+<div class="status-line" role="status"><span class="status-dot status-dot--ok" aria-hidden="true"></span><span>Alex and Sam are connected. The game is about to start.</span></div>
+<p class="text-muted">Sample screen. Who moves first will be shown here before play begins.</p></section><section data-state="reconnecting" hidden>
+<h1 tabindex="-1">Reconnecting&hellip;</h1>
+<div class="status-line" role="status"><span class="status-dot status-dot--wait" aria-hidden="true"></span><span>Connection lost. Trying to rejoin your seat automatically.</span></div>
+<p class="text-muted">Your opponent can see that you're reconnecting. If you can't return within the grace period, the game ends as a forfeit.</p>
+<div class="btn-row"><button class="btn btn--secondary" type="button" data-leave>Leave room</button></div></section><section data-state="invalid" hidden>
+<div class="notice notice--error"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg><div><h1 tabindex="-1">That code doesn't match a room</h1><p>Check the code and try again, or ask your friend to send the invitation link again.</p></div></div>
+<div class="btn-row">
+  <a class="btn btn--primary" href="../../play/create-room/">Create a Room</a>
+  <a class="btn btn--secondary" href="../../play/join-room/">Join with a code</a>
+  <a class="btn btn--secondary" href="../../play/">Back to Play</a>
+</div></section><section data-state="full" hidden>
+<div class="notice notice--error"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg><div><h1 tabindex="-1">This room is full</h1><p>Two players are already in this room. You can create your own room instead.</p></div></div>
+<div class="btn-row">
+  <a class="btn btn--primary" href="../../play/create-room/">Create a Room</a>
+  <a class="btn btn--secondary" href="../../play/join-room/">Join with a code</a>
+  <a class="btn btn--secondary" href="../../play/">Back to Play</a>
+</div></section><section data-state="expired" hidden>
+<div class="notice notice--error"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg><div><h1 tabindex="-1">This invitation has expired</h1><p>Invitations only last for a limited time. Ask your friend for a new one, or create your own room.</p></div></div>
+<div class="btn-row">
+  <a class="btn btn--primary" href="../../play/create-room/">Create a Room</a>
+  <a class="btn btn--secondary" href="../../play/join-room/">Join with a code</a>
+  <a class="btn btn--secondary" href="../../play/">Back to Play</a>
+</div></section><section data-state="unavailable" hidden>
+<div class="notice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg><div><h1 tabindex="-1">This room isn't available</h1><p>Private rooms aren't live yet, so this link can't be opened. Nothing about this link was stored or checked.</p></div></div>
+<div class="btn-row">
+  <a class="btn btn--primary" href="../../play/create-room/">Create a Room</a>
+  <a class="btn btn--secondary" href="../../play/join-room/">Join with a code</a>
+  <a class="btn btn--secondary" href="../../play/">Back to Play</a>
+</div></section><section data-state="left" hidden>
+<h1 tabindex="-1">You left the room</h1>
+<p class="text-muted">Your seat has been released.</p>
+<div class="btn-row"><a class="btn btn--primary" href="../../play/">Back to Play</a><a class="btn btn--secondary" href="../../">Home</a></div></section>
+    <p class="notice preview-note small" data-preview-note hidden role="note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg><span>Design preview with sample data. No room, link or opponent is real.</span></p>
+  </div>
+</div>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="brand" href="../../" aria-label="Quoridor Online home"><img src="../../assets/img/logo-mark.svg" alt="" width="32" height="32"><span>Quoridor <span class="tld">Online</span></span></a>
+        <p>A simple place to play and learn the Quoridor strategy game in your browser.</p>
+      </div>
+      <div><h2>Learn</h2><ul><li><a href="../../how-to-play-quoridor/">How to Play</a></li><li><a href="../../quoridor-rules/">Quoridor Rules</a></li><li><a href="../../quoridor-strategy/">Quoridor Strategy</a></li><li><a href="../../quoridor-board-game/">Quoridor Board Game</a></li></ul></div>
+      <div><h2>Site</h2><ul><li><a href="../../about/">About Us</a></li><li><a href="../../contact/">Contact Us</a></li></ul></div>
+      <div><h2>Legal</h2><ul><li><a href="../../privacy-policy/">Privacy Policy</a></li><li><a href="../../terms/">Terms of Use</a></li></ul></div>
+    </div>
+    <div class="footer-legal">
+      <p>&copy; 2026 Quoridor Online. Independent site, not affiliated with or endorsed by the publisher or designer of the Quoridor board game.</p>
+    </div>
+  </div>
+</footer>
+<script src="../../assets/js/site.js" defer></script><script src="../../assets/js/play.js" defer></script><script src="../../assets/js/room.js" defer></script>
+</body>
+</html>

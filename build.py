@@ -221,6 +221,20 @@ def main():
     hdr = ["/*"] + [f"  {k}: {v}" for k, v in SECURITY_HEADERS.items()] + ["", "/room/*"] + [f"  {k}: {v}" for k, v in ROOM_HEADERS.items()]
     (OUT / "_headers").write_text("\n".join(hdr) + "\n", encoding="utf-8")
 
+    # Vercel reads vercel.json from the repo root: serve ./public as-is (no build step needed on the host).
+    vercel = {
+        "framework": None,
+        "buildCommand": None,
+        "outputDirectory": "public",
+        "trailingSlash": True,
+        "rewrites": [{"source": "/room/:id/", "destination": "/room/index.html"}],
+        "headers": [
+            {"source": "/(.*)", "headers": [{"key": k, "value": v} for k, v in SECURITY_HEADERS.items()]},
+            {"source": "/room/(.*)", "headers": [{"key": k, "value": v} for k, v in ROOM_HEADERS.items()]},
+        ],
+    }
+    (ROOT / "vercel.json").write_text(json.dumps(vercel, indent=2) + "\n", encoding="utf-8")
+
     where = f"{BASE_URL}{BASE_PATH}" or "(no site_url set yet)"
     print(f"Built {len(pages)} pages -> {OUT}\nSite address: {where}")
 

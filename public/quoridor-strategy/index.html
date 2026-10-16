@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quoridor Strategy: Pathfinding, Walls &amp; Timing</title>
+<meta name="description" content="Improve at Quoridor with strategy for shortest paths, offensive and defensive walls, wall management, timing, and common mistakes.">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#0B1220">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="../site.webmanifest">
+<meta property="og:site_name" content="Quoridor Online">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Quoridor Strategy: Pathfinding, Walls &amp; Timing">
+<meta property="og:description" content="Improve at Quoridor with strategy for shortest paths, offensive and defensive walls, wall management, timing, and common mistakes.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="../assets/css/styles.css">
+<script src="../assets/js/head.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<header class="site-header">
+  <div class="container header-bar">
+    <a class="brand" href="../" aria-label="Quoridor Online home">
+      <img src="../assets/img/logo-mark.svg" alt="" width="32" height="32">
+      <span class="brand-name">Quoridor <span class="tld">Online</span></span>
+    </a>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      <ul><li><a href="../">Home</a></li><li><a href="../play/">Play</a></li><li><a href="../how-to-play-quoridor/">How to Play</a></li><li><a href="../quoridor-rules/">Rules</a></li><li><a href="../quoridor-strategy/" aria-current="page">Strategy</a></li><li><a href="../about/">About Us</a></li></ul>
+    </nav>
+    <div class="header-actions">
+      <a class="btn btn--primary" href="../play/">Play Now</a>
+      <button class="btn btn--secondary menu-toggle" id="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h16"/></svg> Menu</button>
+    </div>
+  </div>
+</header>
+<main id="main" tabindex="-1">
+<div class="page-head"><div class="container"><nav class="breadcrumbs" aria-label="Breadcrumb"><ol><li><a href="../">Home</a></li><li><span aria-current="page">Quoridor strategy</span></li></ol></nav><h1>Quoridor strategy</h1><p class="lead">How to think about the race, when walls are worth it, and which mistakes to avoid.</p></div></div>
+<div class="container article-layout">
+  <details class="toc" open>
+    <summary>On this page</summary>
+    <nav aria-label="On this page"><ol><li><a href="#pathfinding">Efficient pathfinding</a></li><li><a href="#walls">Offensive and defensive wall placement</a></li><li><a href="#management">Wall management</a></li><li><a href="#timing">Timing decisions</a></li><li><a href="#mistakes">Common mistakes</a></li><li><a href="#levels">Beginner and advanced considerations</a></li></ol></nav>
+  </details>
+  <article class="article">
+    <section id="pathfinding" aria-labelledby="pathfinding-h"><h2 id="pathfinding-h">Efficient pathfinding</h2>
+<p>Every decision in Quoridor comes down to one comparison: <strong>how many moves do I need to win, and how many does my opponent need?</strong> Count the shortest route for each pawn, taking walls and possible jumps into account.</p>
+<p>If you're ahead on that count, moving usually keeps you ahead. If you're behind, you need a wall that changes the count in your favor.</p></section><section id="walls" aria-labelledby="walls-h"><h2 id="walls-h">Offensive and defensive wall placement</h2>
+<p>A wall is an <strong>offensive</strong> tool when it lengthens your opponent's route. It's <strong>defensive</strong> when it protects your own path, for example by occupying a groove your opponent could use to cut across your route.</p>
+<ul>
+<li>The best walls add <em>several</em> steps, not one. Look for spots where a pawn must backtrack along a corridor.</li>
+<li>Walls work best <em>together</em>. Extending an existing wall or using the board edge can turn a small barrier into a long detour.</li>
+<li>Remember that your opponent can walk around, so aim for walls that force the longest walk-around.</li>
+</ul></section><section id="management" aria-labelledby="management-h"><h2 id="management-h">Wall management</h2>
+<p>You start with 10 walls and they're gone for good once placed. Treat them as a budget:</p>
+<ul>
+<li>Don't spend walls early just because you can.</li>
+<li>Running out of walls leaves you unable to respond if your opponent starts to pull ahead.</li>
+<li>Walls your opponent hasn't used are a threat: you must always consider what they could do next turn.</li>
+</ul></section><section id="timing" aria-labelledby="timing-h"><h2 id="timing-h">Timing decisions</h2>
+<p>A wall is more valuable when it comes at the right moment. Placing it <em>after</em> your opponent has committed to a route often costs them more than placing it before. On the other hand, waiting too long can mean a good wall spot disappears or the game is already lost.</p>
+<p>A useful habit: before placing any wall, ask whether you could place the same wall <em>next</em> turn at no extra cost. If you can, take the step now instead.</p></section><section id="mistakes" aria-labelledby="mistakes-h"><h2 id="mistakes-h">Common mistakes</h2>
+<ul>
+<li><strong>Walling for one step.</strong> A wall that adds a single step usually costs you a turn and a wall for no net gain.</li>
+<li><strong>Ignoring your own path.</strong> Strong walls can be turned against you by a later wall.</li>
+<li><strong>Using walls too early.</strong> Few walls left means few options late in the game.</li>
+<li><strong>Forgetting jumps.</strong> The opponent's pawn can change where your path runs, so recount often.</li>
+<li><strong>Never moving.</strong> Walls slow your opponent but only moving wins the game.</li>
+</ul></section><section id="levels" aria-labelledby="levels-h"><h2 id="levels-h">Beginner and advanced considerations</h2>
+<h3>If you're a beginner</h3>
+<ul><li>Learn to count both routes before every move.</li><li>Prefer moving when you're ahead.</li><li>Practice spotting walls that add three or more steps.</li></ul>
+<h3>As you improve</h3>
+<ul><li>Plan sequences of walls that combine into long corridors.</li><li>Think about where the opponent's pawn will be, not only where it is.</li><li>Use pawn positions to create jump or block opportunities.</li></ul>
+<p class="small text-muted">These are general rules of thumb rather than proven optimal play. Test them against real opponents.</p></section>
+    
+    
+<div class="card cta-panel">
+  <h2>Ready to put it into practice?</h2>
+  <p>Choose a way to play Quoridor online, against the computer, or with a friend on one device.</p>
+  <a class="btn btn--primary" href="../play/">Play Now <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+</div>
+    <aside class="related" aria-labelledby="related-h">
+      <h2 id="related-h">Keep learning</h2>
+      <ul><li><a href="../quoridor-rules/"><strong>Quoridor rules</strong></a>: check the exact wall restrictions.</li><li><a href="../how-to-play-quoridor/"><strong>How to play Quoridor</strong></a>: start here if you're brand new.</li><li><a href="../quoridor-board-game/"><strong>The Quoridor board game</strong></a>: more about the game itself.</li></ul>
+    </aside>
+  </article>
+</div>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="brand" href="../" aria-label="Quoridor Online home"><img src="../assets/img/logo-mark.svg" alt="" width="32" height="32"><span>Quoridor <span class="tld">Online</span></span></a>
+        <p>A simple place to play and learn the Quoridor strategy game in your browser.</p>
+      </div>
+      <div><h2>Learn</h2><ul><li><a href="../how-to-play-quoridor/">How to Play</a></li><li><a href="../quoridor-rules/">Quoridor Rules</a></li><li><a href="../quoridor-strategy/">Quoridor Strategy</a></li><li><a href="../quoridor-board-game/">Quoridor Board Game</a></li></ul></div>
+      <div><h2>Site</h2><ul><li><a href="../about/">About Us</a></li><li><a href="../contact/">Contact Us</a></li></ul></div>
+      <div><h2>Legal</h2><ul><li><a href="../privacy-policy/">Privacy Policy</a></li><li><a href="../terms/">Terms of Use</a></li></ul></div>
+    </div>
+    <div class="footer-legal">
+      <p>&copy; 2026 Quoridor Online. Independent site, not affiliated with or endorsed by the publisher or designer of the Quoridor board game.</p>
+    </div>
+  </div>
+</footer>
+<script src="../assets/js/site.js" defer></script>
+</body>
+</html>

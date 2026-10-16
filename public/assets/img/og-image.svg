@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <title>Quoridor Online: play the Quoridor strategy game in your browser</title>
+  <rect width="1200" height="630" fill="#0B1220"/>
+  <g transform="translate(96 150) scale(10)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="2" y="2" width="28" height="28" rx="6" stroke="#91A4BF" stroke-width="2"/>
+    <path d="M9 26V9h14" stroke="#FFFFFF" stroke-width="2.5"/>
+    <path d="M12 17h12" stroke="#42D9F5" stroke-width="4"/>
+  </g>
+  <text x="480" y="290" font-family="Segoe UI, Arial, sans-serif" font-size="84" font-weight="700" fill="#FFFFFF">Quoridor <tspan fill="#42D9F5">Online</tspan></text>
+  <text x="480" y="365" font-family="Segoe UI, Arial, sans-serif" font-size="38" fill="#91A4BF">Reach the other side. Block with walls.</text>
+</svg>

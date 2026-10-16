@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quoridor Rules: Setup, Movement &amp; Wall Placement</title>
+<meta name="description" content="Clear Quoridor rules: board setup, starting positions, legal moves and jumps, wall placement restrictions, and winning conditions.">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#0B1220">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="../site.webmanifest">
+<meta property="og:site_name" content="Quoridor Online">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Quoridor Rules: Setup, Movement &amp; Wall Placement">
+<meta property="og:description" content="Clear Quoridor rules: board setup, starting positions, legal moves and jumps, wall placement restrictions, and winning conditions.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="../assets/css/styles.css">
+<script src="../assets/js/head.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<header class="site-header">
+  <div class="container header-bar">
+    <a class="brand" href="../" aria-label="Quoridor Online home">
+      <img src="../assets/img/logo-mark.svg" alt="" width="32" height="32">
+      <span class="brand-name">Quoridor <span class="tld">Online</span></span>
+    </a>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      <ul><li><a href="../">Home</a></li><li><a href="../play/">Play</a></li><li><a href="../how-to-play-quoridor/">How to Play</a></li><li><a href="../quoridor-rules/" aria-current="page">Rules</a></li><li><a href="../quoridor-strategy/">Strategy</a></li><li><a href="../about/">About Us</a></li></ul>
+    </nav>
+    <div class="header-actions">
+      <a class="btn btn--primary" href="../play/">Play Now</a>
+      <button class="btn btn--secondary menu-toggle" id="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h16"/></svg> Menu</button>
+    </div>
+  </div>
+</header>
+<main id="main" tabindex="-1">
+<div class="page-head"><div class="container"><nav class="breadcrumbs" aria-label="Breadcrumb"><ol><li><a href="../">Home</a></li><li><span aria-current="page">Quoridor rules</span></li></ol></nav><h1>Quoridor rules</h1><p class="lead">A structured reference to the rules of Quoridor, from board setup to the wall restrictions that keep every path open.</p></div></div>
+<div class="container article-layout">
+  <details class="toc" open>
+    <summary>On this page</summary>
+    <nav aria-label="On this page"><ol><li><a href="#setup">Board setup</a></li><li><a href="#starting">Starting positions</a></li><li><a href="#turns">Turn order</a></li><li><a href="#movement">Legal movement</a></li><li><a href="#walls">Wall placement restrictions</a></li><li><a href="#paths">Keeping paths open</a></li><li><a href="#winning">Winning conditions</a></li><li><a href="#reference">Quick reference</a></li></ol></nav>
+  </details>
+  <article class="article">
+    <section id="setup" aria-labelledby="setup-h"><h2 id="setup-h">Board setup</h2>
+<p>The board is a <strong>9×9 grid</strong> of 81 squares. Walls fit in the grooves between squares. In a two-player game each player has <strong>one pawn and 10 walls</strong>.</p>
+<figure><svg class="board-art" viewBox="0 0 900 900" width="900" height="900" role="img" aria-label="A Quoridor board at the start of a game: a cyan pawn in the middle of the bottom edge and a white ring pawn in the middle of the top edge, with no walls placed." xmlns="http://www.w3.org/2000/svg"><rect width="900" height="900" rx="40" fill="#0B1220"/><rect x="50" y="50" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="50" y="50" width="80" height="80" rx="10" fill="#42D9F5" fill-opacity="0.13"/><rect x="140" y="50" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="140" y="50" width="80" height="80" rx="10" fill="#42D9F5" fill-opacity="0.13"/><rect x="230" y="50" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="230" y="50" width="80" height="80" rx="10" fill="#42D9F5" fill-opacity="0.13"/><rect x="320" y="50" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="320" y="50" width="80" height="80" rx="10" fill="#42D9F5" fill-opacity="0.13"/><rect x="410" y="50" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="410" y="50" width="80" height="80" rx="10" fill="#42D9F5" fill-opacity="0.13"/><rect x="500" y="50" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="500" y="50" width="80" height="80" rx="10" fill="#42D9F5" fill-opacity="0.13"/><rect x="590" y="50" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="590" y="50" width="80" height="80" rx="10" fill="#42D9F5" fill-opacity="0.13"/><rect x="680" y="50" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="680" y="50" width="80" height="80" rx="10" fill="#42D9F5" fill-opacity="0.13"/><rect x="770" y="50" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="770" y="50" width="80" height="80" rx="10" fill="#42D9F5" fill-opacity="0.13"/><rect x="50" y="140" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="140" y="140" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="230" y="140" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="320" y="140" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="410" y="140" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="500" y="140" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="590" y="140" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="680" y="140" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="770" y="140" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="50" y="230" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="140" y="230" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="230" y="230" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="320" y="230" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="410" y="230" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="500" y="230" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="590" y="230" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="680" y="230" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="770" y="230" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="50" y="320" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="140" y="320" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="230" y="320" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="320" y="320" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="410" y="320" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="500" y="320" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="590" y="320" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="680" y="320" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="770" y="320" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="50" y="410" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="140" y="410" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="230" y="410" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="320" y="410" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="410" y="410" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="500" y="410" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="590" y="410" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="680" y="410" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="770" y="410" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="50" y="500" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="140" y="500" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="230" y="500" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="320" y="500" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="410" y="500" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="500" y="500" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="590" y="500" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="680" y="500" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="770" y="500" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="50" y="590" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="140" y="590" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="230" y="590" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="320" y="590" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="410" y="590" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="500" y="590" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="590" y="590" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="680" y="590" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="770" y="590" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="50" y="680" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="140" y="680" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="230" y="680" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="320" y="680" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="410" y="680" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="500" y="680" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="590" y="680" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="680" y="680" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="770" y="680" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="50" y="770" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="50" y="770" width="80" height="80" rx="10" fill="#FFFFFF" fill-opacity="0.08"/><rect x="140" y="770" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="140" y="770" width="80" height="80" rx="10" fill="#FFFFFF" fill-opacity="0.08"/><rect x="230" y="770" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="230" y="770" width="80" height="80" rx="10" fill="#FFFFFF" fill-opacity="0.08"/><rect x="320" y="770" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="320" y="770" width="80" height="80" rx="10" fill="#FFFFFF" fill-opacity="0.08"/><rect x="410" y="770" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="410" y="770" width="80" height="80" rx="10" fill="#FFFFFF" fill-opacity="0.08"/><rect x="500" y="770" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="500" y="770" width="80" height="80" rx="10" fill="#FFFFFF" fill-opacity="0.08"/><rect x="590" y="770" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="590" y="770" width="80" height="80" rx="10" fill="#FFFFFF" fill-opacity="0.08"/><rect x="680" y="770" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="680" y="770" width="80" height="80" rx="10" fill="#FFFFFF" fill-opacity="0.08"/><rect x="770" y="770" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="770" y="770" width="80" height="80" rx="10" fill="#FFFFFF" fill-opacity="0.08"/><circle cx="450.0" cy="810.0" r="27" fill="#42D9F5"/><circle cx="450.0" cy="90.0" r="24" fill="#0B1220" stroke="#FFFFFF" stroke-width="9"/></svg><figcaption>Board setup with pawns on their starting squares and no walls placed.</figcaption></figure></section><section id="starting" aria-labelledby="starting-h"><h2 id="starting-h">Starting positions</h2>
+<p>Each pawn starts on the <strong>middle square of its own edge</strong>. The two pawns face each other across the board. A player's goal is any square on the edge where the opponent started.</p></section><section id="turns" aria-labelledby="turns-h"><h2 id="turns-h">Turn order</h2>
+<p>Players alternate turns. On your turn you must do exactly one of the following:</p>
+<ul><li>move your pawn, or</li><li>place one of your walls.</li></ul>
+<p>Passing isn't allowed. Who goes first is agreed or decided by chance before the game begins. This site will always show who moves first.</p></section><section id="movement" aria-labelledby="movement-h"><h2 id="movement-h">Legal movement</h2>
+<ul>
+<li>A pawn moves <strong>one square</strong> up, down, left or right.</li>
+<li>A pawn can't move diagonally, except for the special jump case below.</li>
+<li>A pawn can't pass through a wall or leave the board.</li>
+</ul>
+<h3>Jumping</h3>
+<ul>
+<li>If your opponent's pawn is on an adjacent square, you may <strong>jump straight over it</strong> to the square directly behind, provided no wall lies between you and them or between them and that square.</li>
+<li>If a wall or the board edge blocks that straight jump, you may move to a square <strong>beside the opponent's pawn</strong> (diagonal from your starting square), provided no wall blocks that move.</li>
+</ul></section><section id="walls" aria-labelledby="walls-h"><h2 id="walls-h">Wall placement restrictions</h2>
+<ul>
+<li>A wall covers the width of <strong>two squares</strong>.</li>
+<li>It must lie entirely on the board, in the grooves between squares.</li>
+<li>It can't <strong>overlap</strong> another wall, even partly.</li>
+<li>It can't <strong>cross</strong> another wall at the middle (a horizontal wall can't cross a vertical wall at the same point).</li>
+<li>Once placed, a wall stays for the rest of the game.</li>
+<li>When you've placed all your walls you can only move.</li>
+</ul></section><section id="paths" aria-labelledby="paths-h"><h2 id="paths-h">Keeping paths open</h2>
+<p>You may <strong>never</strong> place a wall that leaves either player without any route to their goal edge. Before placing a wall, check both pawns: each must still be able to reach at least one goal square. For this check, only walls count as obstacles.</p>
+<p>A wall that makes a route much longer is perfectly legal; a wall that closes it entirely is not.</p></section><section id="winning" aria-labelledby="winning-h"><h2 id="winning-h">Winning conditions</h2>
+<p>The first player to move their pawn onto <strong>any square of the opposite edge</strong> wins at once.</p></section><section id="reference" aria-labelledby="reference-h"><h2 id="reference-h">Quick reference</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">Item</th><th scope="col">Two-player game</th></tr></thead>
+<tbody>
+<tr><td>Board</td><td>9×9 squares</td></tr>
+<tr><td>Walls per player</td><td>10</td></tr>
+<tr><td>Starting square</td><td>Middle of your own edge</td></tr>
+<tr><td>Each turn</td><td>Move one square <em>or</em> place one wall</td></tr>
+<tr><td>Wall size</td><td>2 squares wide</td></tr>
+<tr><td>Wall rule</td><td>No overlap, no crossing, never block every route</td></tr>
+<tr><td>Win</td><td>Reach any square of the opposite edge first</td></tr>
+</tbody></table></div>
+<p class="small text-muted">Published rule sets and house rules can differ in small details. When the game modes launch, this page will state exactly which rules the site uses.</p></section>
+    
+    
+<div class="card cta-panel">
+  <h2>Ready to put it into practice?</h2>
+  <p>Choose a way to play Quoridor online, against the computer, or with a friend on one device.</p>
+  <a class="btn btn--primary" href="../play/">Play Now <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+</div>
+    <aside class="related" aria-labelledby="related-h">
+      <h2 id="related-h">Keep learning</h2>
+      <ul><li><a href="../how-to-play-quoridor/"><strong>How to play Quoridor</strong></a>: a gentler, step-by-step introduction.</li><li><a href="../quoridor-strategy/"><strong>Quoridor strategy</strong></a>: what to do with these rules once you know them.</li><li><a href="../quoridor-board-game/"><strong>The Quoridor board game</strong></a>: components, history and how play modes differ.</li></ul>
+    </aside>
+  </article>
+</div>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="brand" href="../" aria-label="Quoridor Online home"><img src="../assets/img/logo-mark.svg" alt="" width="32" height="32"><span>Quoridor <span class="tld">Online</span></span></a>
+        <p>A simple place to play and learn the Quoridor strategy game in your browser.</p>
+      </div>
+      <div><h2>Learn</h2><ul><li><a href="../how-to-play-quoridor/">How to Play</a></li><li><a href="../quoridor-rules/">Quoridor Rules</a></li><li><a href="../quoridor-strategy/">Quoridor Strategy</a></li><li><a href="../quoridor-board-game/">Quoridor Board Game</a></li></ul></div>
+      <div><h2>Site</h2><ul><li><a href="../about/">About Us</a></li><li><a href="../contact/">Contact Us</a></li></ul></div>
+      <div><h2>Legal</h2><ul><li><a href="../privacy-policy/">Privacy Policy</a></li><li><a href="../terms/">Terms of Use</a></li></ul></div>
+    </div>
+    <div class="footer-legal">
+      <p>&copy; 2026 Quoridor Online. Independent site, not affiliated with or endorsed by the publisher or designer of the Quoridor board game.</p>
+    </div>
+  </div>
+</footer>
+<script src="../assets/js/site.js" defer></script>
+</body>
+</html>
