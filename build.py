@@ -13,7 +13,7 @@ from html import escape
 from pathlib import Path
 
 import i18n
-from lib import BASE_PATH, BASE_URL, SITE_NAME, icon, icons_js
+from lib import BASE_PATH, BASE_URL, SITE_NAME, clean_path, icon, icons_js
 from pages import all_pages
 
 ROOT = Path(__file__).resolve().parent
@@ -193,7 +193,7 @@ def render(page, units=None):
         schema.append({
             "@context": "https://schema.org", "@type": "BreadcrumbList",
             "itemListElement": [
-                {"@type": "ListItem", "position": i + 1, "name": n, "item": BASE_URL + BASE_PATH + p}
+                {"@type": "ListItem", "position": i + 1, "name": n, "item": BASE_URL + BASE_PATH + clean_path(p)}
                 for i, (n, p) in enumerate(crumbs)
             ],
         })
@@ -220,16 +220,23 @@ def localize_urls(html, page):
     """Make internal URLs independent of the domain and of any sub-folder.
 
     Pages are written with root-relative URLs ("/play/"). Each page rewrites them relative to its
-    own location ("../play/"), so the same files work on any host, domain or sub-folder with no
-    configuration. The 404 page is the exception: a host serves it at whatever URL was missing,
-    so it has no stable depth and uses site.json's base_path instead.
+    own location ("play"), so the same files work on any host, domain or sub-folder with no
+    configuration. Page URLs have no trailing slash ("/play/online" is served from the folder
+    "/play/"), so a page at depth n resolves relative URLs against n-1 folders. The 404 page is the
+    exception: a host serves it at whatever URL was missing, so it has no stable depth and uses
+    site.json's base_path instead.
     """
     if page.http_status == 404:
         prefix = BASE_PATH + "/"
     else:
         depth = len([s for s in page.path.split("/") if s])
-        prefix = "../" * depth if depth else "./"
-    return re.sub(r'\b(href|src|action)="/(?!/)', lambda m: f'{m.group(1)}="{prefix}', html)
+        prefix = "../" * (depth - 1) if depth > 1 else "./"
+
+    def rewrite(m):
+        path, tail = re.match(r"([^?#]*)(.*)", m.group(2)).groups()
+        return f'{m.group(1)}="{prefix}{path.rstrip("/")}{tail}"'
+
+    return re.sub(r'\b(href|src|action)="/(?!/)([^"]*)"', rewrite, html)
 
 
 def out_path(page):
@@ -288,8 +295,8 @@ def main():
         "framework": None,
         "buildCommand": None,
         "outputDirectory": "public",
-        "trailingSlash": True,
-        "rewrites": [{"source": "/room/:id/", "destination": "/room/index.html"}],
+        "trailingSlash": False,
+        "rewrites": [{"source": "/room/:id", "destination": "/room/index.html"}],
         "headers": [
             {"source": "/(.*)", "headers": [{"key": k, "value": v} for k, v in SECURITY_HEADERS.items()]},
             {"source": "/room/(.*)", "headers": [{"key": k, "value": v} for k, v in ROOM_HEADERS.items()]},

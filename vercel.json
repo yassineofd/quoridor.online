@@ -2,10 +2,10 @@
   "framework": null,
   "buildCommand": null,
   "outputDirectory": "public",
-  "trailingSlash": true,
+  "trailingSlash": false,
   "rewrites": [
     {
-      "source": "/room/:id/",
+      "source": "/room/:id",
       "destination": "/room/index.html"
     }
   ],

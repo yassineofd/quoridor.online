@@ -42,6 +42,11 @@ class NoRedirect(urllib.request.HTTPRedirectHandler):
 opener = urllib.request.build_opener(NoRedirect)
 
 
+def norm(path):
+    """Pages have no trailing slash: "/play/" -> "/play" (the home page stays "/")."""
+    return path.rstrip("/") or "/"
+
+
 def get(path):
     if PREFIX and not path.startswith(PREFIX + "/"):
         path = PREFIX + path
@@ -164,17 +169,17 @@ def check_home(body):
 
     links = [(t, path_of(h)) for t, h in o.links if not h.startswith(("#", "http", "mailto:"))]
     for label, target in HOME_CTAS:
-        if not any(t.startswith(label) and p == target for t, p in links):
+        if not any(t.startswith(label) and p == norm(target) for t, p in links):
             fail(f"home: missing CTA {label!r} -> {target}")
     for target in ("/play/", "/how-to-play-quoridor/", "/quoridor-rules/", "/quoridor-strategy/", "/quoridor-board-game/"):
-        if not any(p == target for _, p in links):
+        if not any(p == norm(target) for _, p in links):
             fail(f"home: no internal link to {target}")
 
     # Only modes that really work may be advertised.
     modes = {"online": ("Play Online", "/play/online/"), "computer": ("Play Against the Computer", "/play/computer/"),
              "local": ("Play Locally", "/play/local/")}
     for feat, (title, target) in modes.items():
-        listed = title in o.text["h3"] and any(p == target for _, p in links)
+        listed = title in o.text["h3"] and any(p == norm(target) for _, p in links)
         if FEATURES[feat] != listed:
             fail(f"home: mode {title!r} {'is missing' if FEATURES[feat] else 'is advertised but not live'}")
     if "Coming soon" in body:
@@ -194,16 +199,16 @@ def main():
     titles, descs, url_status = {}, {}, {}
 
     print("Status codes and headers")
-    for path, want in [("/", 200), ("/play/", 200), ("/nope/", 404), ("/play/nope/", 404), ("/room/", 404),
-                       ("/room/AbC123xyz/", 200), ("/about", 301), ("/404.html", 404), ("/_headers", 404),
+    for path, want in [("/", 200), ("/play", 200), ("/play/", 301), ("/nope", 404), ("/play/nope", 404), ("/room", 404), ("/room/", 404),
+                       ("/room/AbC123xyz", 200), ("/room/AbC123xyz/", 301), ("/about", 200), ("/about/", 301), ("/404.html", 404), ("/_headers", 404),
                        ("/../build.py", 404), ("/%2e%2e/build.py", 404)]:
         status, hdr, body = get(path)
         if status != want:
             fail(f"{path}: expected {want}, got {status}")
-    status, hdr, body = get("/room/AbC123xyz/")
+    status, hdr, body = get("/room/AbC123xyz")
     if "noindex" not in hdr.get("X-Robots-Tag", ""):
         fail("room responses must send X-Robots-Tag: noindex")
-    status, hdr, body = get("/nope/")
+    status, hdr, body = get("/nope")
     if "This Page Couldn" not in body:
         fail("404 must show the branded not-found page")
     if "default-src" not in hdr.get("Content-Security-Policy", ""):
@@ -212,11 +217,11 @@ def main():
     print("Per-page checks")
     for p in pages:
         if p.path == "/room/_/":
-            url, label = "/room/AbC123xyz/", "room"
+            url, label = "/room/AbC123xyz", "room"
         elif p.path == "/404/":
-            url, label = "/nope/", "404"
+            url, label = "/nope", "404"
         else:
-            url, label = p.path, p.path
+            url, label = norm(p.path), p.path
         status, hdr, body = get(url)
         url = PREFIX + url
         want = p.http_status
@@ -337,7 +342,7 @@ def main():
             fail(f"/assets/i18n/{lang}.json missing or not a catalog (status {status})")
     for p in pages:
         if p.http_status == 200 and p.path != "/room/_/":
-            body = get(p.path)[2]
+            body = get(norm(p.path))[2]
             for needle in ('id="lang-toggle"', "assets/js/i18n.js", "assets/js/i18n-en.js", 'data-i18n="'):
                 if needle not in body:
                     fail(f"{p.path}: translation hook {needle!r} missing")

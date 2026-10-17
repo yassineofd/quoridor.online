@@ -4,8 +4,8 @@ Usage:  python serve.py [port]       (default port 8000)
 
 Behaves like a production host should:
   * unknown URLs return the branded 404 page with a real HTTP 404 status
-  * /room/<anything>/ resolves to the room app shell (200) with noindex headers
-  * directories get a trailing-slash 301, and security headers are sent on every response
+  * /room/<anything> resolves to the room app shell (200) with noindex headers
+  * page URLs have no trailing slash (/play/ gets a 301 to /play), and security headers are sent on every response
   * /api/... is the online-play server (rooms, matchmaking): see server/api.py
 """
 
@@ -28,7 +28,7 @@ PREFIX = os.environ.get("SERVE_PREFIX", BASE_PATH).rstrip("/")
 PUBLIC = Path(os.environ.get("QUORIDOR_PUBLIC") or (Path(__file__).resolve().parent / "public")).resolve()
 mimetypes.add_type("image/svg+xml", ".svg")
 mimetypes.add_type("application/manifest+json", ".webmanifest")
-ROOM_RE = re.compile(r"^/room/[A-Za-z0-9_-]{1,64}/?$")
+ROOM_RE = re.compile(r"^/room/[A-Za-z0-9_-]{1,64}/?$")  # also matches the trailing-slash form, which redirects
 
 
 class Server(ThreadingHTTPServer):
@@ -83,6 +83,12 @@ class Handler(BaseHTTPRequestHandler):
         self._send(status, data, "application/json; charset=utf-8",
                    {"Cache-Control": "no-store", "X-Robots-Tag": "noindex, nofollow"})
 
+    def _redirect(self, path, query=""):
+        self.send_response(301)
+        self.send_header("Location", PREFIX + path + (f"?{query}" if query else ""))
+        self.send_header("Content-Length", "0")
+        self.end_headers()
+
     def _strip_prefix(self, path):
         """Apply SERVE_PREFIX. Returns the path inside the site, or None if the request was answered."""
         if not PREFIX:
@@ -121,29 +127,21 @@ class Handler(BaseHTTPRequestHandler):
         if path.startswith("/api/"):
             return self._api(path)
 
-        if re.match(r"^/room/[A-Za-z0-9_-]{1,64}$", path):  # relative URLs need the trailing slash
-            self.send_response(301)
-            self.send_header("Location", PREFIX + path + "/")
-            self.send_header("Content-Length", "0")
-            self.end_headers()
-            return
         if ROOM_RE.match(path):
+            if path.endswith("/"):
+                return self._redirect(path.rstrip("/"), url.query)  # one address per page: /room/<id>, never /room/<id>/
             return self._file(PUBLIC / "room" / "index.html", 200, ROOM_HEADERS)
 
-        if path.startswith("/room/"):
-            return self._not_found()  # the room shell is only reachable via /room/<id>/
+        if path == "/room" or path.startswith("/room/"):
+            return self._not_found()  # the room shell is only reachable via /room/<id>
 
         target = (PUBLIC / path.lstrip("/")).resolve()
         if PUBLIC != target and PUBLIC not in target.parents:
             return self._not_found()
 
         if target.is_dir():
-            if not path.endswith("/"):
-                self.send_response(301)
-                self.send_header("Location", PREFIX + path + "/" + (f"?{url.query}" if url.query else ""))
-                self.send_header("Content-Length", "0")
-                self.end_headers()
-                return
+            if path != "/" and path.endswith("/"):
+                return self._redirect(path.rstrip("/"), url.query)  # one address per page: /play, never /play/
             index = target / "index.html"
             if index.is_file():
                 return self._file(index)

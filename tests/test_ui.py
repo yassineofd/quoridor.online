@@ -465,7 +465,7 @@ class UI(unittest.TestCase):
         # the other ways to play stay hidden at first and list the computer before a friend
         self.assertTrue(a.js("document.querySelector('[data-slow]').hidden"))
         alts = a.js("Array.from(document.querySelectorAll('[data-alt]')).map(function(l){return l.getAttribute('href')}).join()").split(",")
-        self.assertEqual([h.split("play/")[1] for h in alts], ["computer/", "create-room/"])
+        self.assertEqual([h.split("play/")[1] for h in alts], ["computer", "create-room"])
         self.shot(a, "online-searching.png")
         # cancelling returns to the form with the name kept
         a.click("[data-cancel-search]")
@@ -588,8 +588,8 @@ class UI(unittest.TestCase):
         self.assertNotIn("Play the Quoridor", p.js("document.title"))
         # links and icons survive the swap, and links still point at the right pages
         self.assertTrue(p.js("!!document.querySelector('.hero .btn--primary svg')"))
-        self.assertRegex(p.js("document.querySelector('.hero .btn--primary').getAttribute('href')"), r"play/$")
-        self.assertRegex(p.js("document.querySelector('.faq a[href*=\"play/computer\"]').getAttribute('href')"), r"^\./play/computer/$")
+        self.assertRegex(p.js("document.querySelector('.hero .btn--primary').getAttribute('href')"), r"play$")
+        self.assertRegex(p.js("document.querySelector('.faq a[href*=\"play/computer\"]').getAttribute('href')"), r"^\./play/computer$")
         # the choice follows the visitor to other pages
         p.goto(self.static_base + "/play/computer/")
         p.wait_for("document.documentElement.lang === 'es' && document.querySelector('h1').textContent === 'Juega a Quoridor contra el ordenador'")

@@ -68,7 +68,7 @@
   // ---- showing / hiding the game --------------------------------------------------------
   var controller = null;
   function openGame(cfg) {
-    cfg.leaveHref = QuoridorOnline.root + 'play/';
+    cfg.leaveHref = QuoridorOnline.root + 'play';
     cfg.onExit = function (how) {
       controller.destroy();
       controller = null;

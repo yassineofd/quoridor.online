@@ -50,7 +50,7 @@
   }
   function forgetSeat(roomId) { try { localStorage.removeItem(key(roomId)); } catch (e) { /* ignore */ } }
 
-  function roomUrl(roomId) { return ROOT + 'room/' + encodeURIComponent(roomId) + '/'; }
+  function roomUrl(roomId) { return ROOT + 'room/' + encodeURIComponent(roomId); }
 
   // ---- matchmaking ----------------------------------------------------------------------
   // The ticket of a search that is still running is kept for this tab only (sessionStorage), so the

@@ -69,9 +69,11 @@
     return h && /\/$/.test(h) ? h : './';
   })();
 
-  // Translated text is written with root-relative links ("/play/"); pages use links relative to their own folder.
+  // Translated text is written with root-relative links ("/play/"); pages use links relative to their own folder, without the trailing slash.
   function localizeLinks(markup) {
-    return markup.replace(/\b(href|src|action)="\/(?!\/)/g, '$1="' + homePrefix);
+    return markup.replace(/\b(href|src|action)="\/(?!\/)([^"?#]*?)\/*([?#][^"]*)?"/g, function (m, attr, path, tail) {
+      return attr + '="' + homePrefix + path + (tail || '') + '"';
+    });
   }
 
   var PLACEHOLDER_SELECTOR = 'svg,input,img';

@@ -39,6 +39,11 @@ FEATURES = {
 INDEX_MODE_PAGES = False
 
 
+def clean_path(path):
+    """Public URL path without the trailing slash: "/play/" -> "/play". The home page "/" becomes "" (the bare domain)."""
+    return path.rstrip("/")
+
+
 @dataclass
 class Page:
     path: str  # URL path, e.g. "/quoridor-rules/"
@@ -59,8 +64,8 @@ class Page:
 
     @property
     def url(self):
-        """Absolute canonical URL, or None while no site_url is configured."""
-        return BASE_URL + BASE_PATH + self.path if BASE_URL else None
+        """Absolute canonical URL (no trailing slash: "https://host/play", home is "https://host"), or None while no site_url is configured."""
+        return BASE_URL + BASE_PATH + clean_path(self.path) if BASE_URL else None
 
 
 # Icons are Lucide (https://lucide.dev, ISC license), copied unchanged from lucide-static 1.59.0.
