@@ -251,7 +251,7 @@ def home():
         <a class="btn btn--secondary" href="/quoridor-rules/">Read the Quoridor rules</a>
       </div>
     </div>
-    <div class="card"><h3>Why the walls matter</h3><p class="text-muted">A good wall costs you one turn but costs your opponent several. Judging that trade, again and again, is the whole game.</p>{board_svg([("h",3,2),("h",3,4),("v",4,3)], [(5,3,"p1"),(3,3,"p2")], "A small cluster of indigo barriers forcing a white ring pawn to take a detour around the walls.")}</div>
+    <div class="card"><h3>Why the walls matter</h3><p class="text-muted">A good wall costs you one turn but costs your opponent several. Judging that trade, again and again, is the whole game.</p>{board_svg([("h",3,2),("h",3,4),("v",4,3)], [(5,3,"p1"),(3,3,"p2")], "Quoridor wall strategy. A small cluster of indigo barriers forcing a white ring pawn to take a detour around the walls.")}</div>
   </div>
 </section>
 
@@ -464,7 +464,7 @@ def play_online():
         "/play/online/", "Play Quoridor Online Against Another Player",
         "Play Quoridor online against another person. Pick a username, enter matchmaking and start a synchronized game.",
         "Play Quoridor online", "Pick a username, find an opponent, and play a live game against another person.",
-        "Play online", "online", panel, "Quoridor board preview for online play.", live=live,
+        "Play online", "online", panel, "Play Quoridor online: board game preview with two pawns and walls.", live=live,
     )
 
 
@@ -499,7 +499,7 @@ def play_computer():
         "/play/computer/", "Play Quoridor Against the Computer",
         "Play Quoridor against a computer opponent. Choose Easy, Medium, Hard or Expert and start without registering.",
         "Play Quoridor against the computer", "Choose a difficulty and start a game. No registration needed.",
-        "Play against robot", "computer", panel, "Quoridor board preview for a game against the computer.",
+        "Play against robot", "computer", panel, "Play Quoridor against the computer: board game preview with two pawns and walls.",
         scripts=["/assets/js/engine.js", "/assets/js/ai.js"] + GAME_SCRIPTS[1:],
     )
 
@@ -526,7 +526,7 @@ def play_local():
         "/play/local/", "Play Quoridor With a Friend on One Device",
         "Play a two-player Quoridor game on the same device. Share the screen and take turns.",
         "Play Quoridor with a friend", "Share one screen and take turns on the same board.",
-        "Play with a friend", "local", panel, "Quoridor board preview for a two-player game on one device.",
+        "Play with a friend", "local", panel, "Play Quoridor with a friend on one device: board game preview with two pawns and walls.",
         scripts=GAME_SCRIPTS,
     )
 
@@ -546,7 +546,7 @@ def create_room():
         "/play/create-room/", "Create a Private Quoridor Room",
         "Create a private Quoridor room and share the invitation link or pairing code with a friend.",
         "Create a private room", "Make a room, then share the invitation link or pairing code with your friend.",
-        "Create a room", "create-room", panel, "Quoridor board preview for a private room.", indexable=False, live=live,
+        "Create a room", "create-room", panel, "Create a private Quoridor room: board game preview with two pawns and walls.", indexable=False, live=live,
     )
 
 
@@ -569,7 +569,7 @@ def join_room():
         "/play/join-room/", "Join a Private Quoridor Room",
         "Join a private Quoridor room with a pairing code or an invitation link.",
         "Join a private room", "Enter the pairing code your friend sent you, or open their invitation link.",
-        "Join a room", "join-room", panel, "Quoridor board preview for joining a private room.", indexable=False, live=live,
+        "Join a room", "join-room", panel, "Join a private Quoridor room: board game preview with two pawns and walls.", indexable=False, live=live,
     )
 
 
@@ -657,36 +657,36 @@ def room():
 
 # ---------------------------------------------------------------- informational pages
 SETUP_BOARD = board_svg([], [(8, 4, "p1"), (0, 4, "p2")],
-    "A Quoridor board at the start of a game: a cyan pawn in the middle of the bottom edge and a white ring pawn in the middle of the top edge, with no walls placed.")
+    "Quoridor starting position. A Quoridor board at the start of a game: a cyan pawn in the middle of the bottom edge and a white ring pawn in the middle of the top edge, with no walls placed.")
 MID_BOARD = board_svg([("h", 3, 3), ("v", 4, 4), ("h", 5, 1), ("h", 2, 5)], [(5, 4, "p1"), (3, 4, "p2")],
-    "A Quoridor game in progress: a cyan pawn and a white ring pawn face each other, with several indigo walls placed between squares.")
+    "Quoridor board game position. A Quoridor game in progress: a cyan pawn and a white ring pawn face each other, with several indigo walls placed between squares.")
 MOVE_BOARD = board_svg([("h", 4, 4)], [(5, 4, "p1"), (1, 4, "p2")],
-    "A cyan pawn with dashed squares marked with arrows to the left, right and below it. The square above is not marked because an indigo wall blocks it.",
+    "Quoridor rules diagram. A cyan pawn with dashed squares marked with arrows to the left, right and below it. The square above is not marked because an indigo wall blocks it.",
     marks=[(5, 3, "←"), (5, 5, "→"), (6, 4, "↓")])
 JUMP_BOARD = board_svg([], [(5, 4, "p1"), (4, 4, "p2")],
-    "A cyan pawn directly below a white ring pawn. The square directly above the white pawn is dashed and marked A: the cyan pawn can jump there.",
+    "Quoridor rules diagram. A cyan pawn directly below a white ring pawn. The square directly above the white pawn is dashed and marked A: the cyan pawn can jump there.",
     marks=[(3, 4, "A")])
 SIDESTEP_BOARD = board_svg([("h", 3, 4)], [(5, 4, "p1"), (4, 4, "p2")],
-    "A cyan pawn directly below a white ring pawn with an indigo wall behind the white pawn. The squares to the left and right of the white pawn are dashed and marked A and B: the cyan pawn can move to either.",
+    "Quoridor rules diagram. A cyan pawn directly below a white ring pawn with an indigo wall behind the white pawn. The squares to the left and right of the white pawn are dashed and marked A and B: the cyan pawn can move to either.",
     marks=[(4, 3, "A"), (4, 5, "B")])
 WALL_BOARD = board_svg([("h", 2, 3), ("h", 2, 5)], [(6, 4, "p1"), (2, 4, "p2")],
-    "Two indigo walls placed side by side in front of a white ring pawn. Together they cover four squares of the row below it, so the pawn must walk sideways around them.")
+    "Quoridor rules diagram. Two indigo walls placed side by side in front of a white ring pawn. Together they cover four squares of the row below it, so the pawn must walk sideways around them.")
 SEALED_BOARD = board_svg([("h", 0, 0)], [(8, 4, "p1"), (0, 0, "p2")],
-    "A white ring pawn in the top-left corner under an indigo wall. A dashed red wall marked with a cross would close the only way out of that corner, so it is not allowed.",
+    "Quoridor rules diagram. A white ring pawn in the top-left corner under an indigo wall. A dashed red wall marked with a cross would close the only way out of that corner, so it is not allowed.",
     bad_walls=[("v", 0, 1)])
 GOAL_BOARD = board_svg([], [(1, 4, "p1"), (7, 4, "p2")],
-    "A cyan pawn one step from the top edge. Every square of the top row is dashed and ticked: reaching any of them wins.",
+    "Quoridor rules diagram. A cyan pawn one step from the top edge. Every square of the top row is dashed and ticked: reaching any of them wins.",
     marks=[(0, c, "✓") for c in range(9)])
 
 
 OVERLAP_BOARD = board_svg([("h", 4, 3)], [(7, 4, "p1"), (1, 4, "p2")],
-    "An indigo wall lies below the fifth row across the fourth and fifth columns. A dashed red wall marked with a cross would share the fifth column with it, so it is not allowed.",
+    "Quoridor rules diagram. An indigo wall lies below the fifth row across the fourth and fifth columns. A dashed red wall marked with a cross would share the fifth column with it, so it is not allowed.",
     bad_walls=[("h", 4, 4)])
 CROSS_BOARD = board_svg([("h", 4, 3)], [(7, 4, "p1"), (1, 4, "p2")],
-    "An indigo wall lies across the board. A dashed red vertical wall marked with a cross would cross it at its middle point, so it is not allowed.",
+    "Quoridor rules diagram. An indigo wall lies across the board. A dashed red vertical wall marked with a cross would cross it at its middle point, so it is not allowed.",
     bad_walls=[("v", 4, 3)])
 WALL_JUMP_BOARD = board_svg([("h", 4, 3)], [(5, 4, "p1"), (4, 4, "p2")],
-    "A cyan pawn directly below a white ring pawn with an indigo wall between them. The three dashed squares left, right and below the cyan pawn are its only moves: it cannot jump the white pawn through the wall.",
+    "Quoridor rules diagram. A cyan pawn directly below a white ring pawn with an indigo wall between them. The three dashed squares left, right and below the cyan pawn are its only moves: it cannot jump the white pawn through the wall.",
     marks=[(5, 3, "←"), (5, 5, "→"), (6, 4, "↓")])
 
 
@@ -994,51 +994,51 @@ _GAP_LINE = [("h", 4, 1), ("h", 4, 5)]  # a row of walls with gaps at the left e
 
 ST_ROUTE_BOARD = board_svg(
     [("h", 3, 2), ("h", 3, 4)], [(6, 4, "p1"), (1, 2, "p2")],
-    "Two indigo walls side by side cover four columns in front of a cyan pawn near the bottom. A white ring pawn stands near the top left. "
+    "Quoridor strategy diagram. Two indigo walls side by side cover four columns in front of a cyan pawn near the bottom. A white ring pawn stands near the top left. "
     "Dashed squares numbered 1 to 8 trace the cyan pawn's shortest route: up two squares, two squares right, then straight up past the right end of the walls.",
     marks=[(5, 4, "1"), (4, 4, "2"), (4, 5, "3"), (4, 6, "4"), (3, 6, "5"), (2, 6, "6"), (1, 6, "7"), (0, 6, "8")])
 ST_WEAK_BOARD = board_svg(
     _GAP_LINE, [(5, 0, "p1"), (4, 3, "p2")],
-    "A row of indigo walls with three gaps: at the left edge, in the middle and at the right edge. A white ring pawn stands just above the middle gap and a cyan pawn "
+    "Quoridor strategy diagram. A row of indigo walls with three gaps: at the left edge, in the middle and at the right edge. A white ring pawn stands just above the middle gap and a cyan pawn "
     "stands just below the left-edge gap. One extra wall, outlined in white, lies a row below the line under the middle columns, so the white pawn can simply step aside.",
     new_walls=[("h", 5, 3)])
 ST_STRONG_BOARD = board_svg(
     _GAP_LINE, [(5, 0, "p1"), (4, 3, "p2")],
-    "The same position, but the new wall, outlined in white, closes the middle gap. The row of walls is now open only at the left edge and the right edge, "
+    "Quoridor strategy diagram. The same position, but the new wall, outlined in white, closes the middle gap. The row of walls is now open only at the left edge and the right edge, "
     "and the white pawn has to walk three squares to the left to get through.",
     new_walls=[("h", 4, 3)])
 ST_SHARED_BEFORE_BOARD = board_svg(
     _GAP_LINE, [(5, 4, "p1"), (3, 3, "p2")],
-    "A row of indigo walls with gaps at the left edge, in the middle and at the right edge. A cyan pawn stands just below the middle gap and a white ring pawn stands above it, "
+    "Quoridor strategy diagram. A row of indigo walls with gaps at the left edge, in the middle and at the right edge. A cyan pawn stands just below the middle gap and a white ring pawn stands above it, "
     "one column to the left. Both pawns need to pass through the middle gap.")
 ST_SHARED_AFTER_BOARD = board_svg(
     _GAP_LINE, [(5, 4, "p1"), (3, 3, "p2")],
-    "The same position after a wall, outlined in white, closes the middle gap. Both pawns now have to walk to the left edge or the right edge to get through.",
+    "Quoridor strategy diagram. The same position after a wall, outlined in white, closes the middle gap. Both pawns now have to walk to the left edge or the right edge to get through.",
     new_walls=[("h", 4, 3)])
 ST_LONE_GAP_BOARD = board_svg(
     _GAP_LINE + [("h", 4, 3)], [(6, 7, "p1"), (4, 3, "p2")],
-    "A row of indigo walls closed everywhere except the far left edge. The two right-hand gaps are shut, the last one by a wall outlined in white. "
+    "Quoridor strategy diagram. A row of indigo walls closed everywhere except the far left edge. The two right-hand gaps are shut, the last one by a wall outlined in white. "
     "A cyan pawn stands below the row near the right edge, a long way from the opening. A white ring pawn stands above the row only three squares from it.",
     new_walls=[("h", 4, 7)])
 ST_RACE_BOARD = board_svg(
     [("h", 1, 0), ("v", 5, 1)], [(4, 4, "p1"), (3, 6, "p2")],
-    "A cyan pawn in the middle of the board and a white ring pawn to its right and one row higher. Two walls far off at the left do not touch either pawn's route.")
+    "Quoridor strategy diagram. A cyan pawn in the middle of the board and a white ring pawn to its right and one row higher. Two walls far off at the left do not touch either pawn's route.")
 ST_FOUR_WALLS_BOARD = board_svg(
     [("h", 2, 0), ("h", 2, 2), ("h", 2, 4), ("h", 2, 6)], [(7, 4, "p1"), (2, 4, "p2")],
-    "Four horizontal walls placed end to end across the board, leaving only the far right column open. A white ring pawn stands just above the row of walls "
+    "Quoridor strategy diagram. Four horizontal walls placed end to end across the board, leaving only the far right column open. A white ring pawn stands just above the row of walls "
     "and a cyan pawn stands well below it. Both must get past the row.")
 ST_LEDGER_BOARD = board_svg(
     _GAP_LINE + [("h", 4, 3)], [(5, 0, "p1"), (4, 3, "p2")],
-    "A row of indigo walls closed in the middle, with a second wall across the two left columns just above the left-edge gap. A cyan pawn stands at the left edge below the row "
+    "Quoridor strategy diagram. A row of indigo walls closed in the middle, with a second wall across the two left columns just above the left-edge gap. A cyan pawn stands at the left edge below the row "
     "and a white ring pawn stands above it. Dashed squares numbered 1 to 7 trace cyan's shortest route: through the left gap, two squares right, then straight up.",
     marks=[(4, 0, "1"), (4, 1, "2"), (4, 2, "3"), (3, 2, "4"), (2, 2, "5"), (1, 2, "6"), (0, 2, "7")])
 ST_THREAT_BOARD = board_svg(
     _GAP_LINE + [("h", 4, 3), ("h", 3, 0)], [(5, 0, "p1"), (4, 3, "p2")],
-    "The same position with a vertical wall, outlined in white, beside the left-edge gap. It shuts cyan into a one-square-wide channel along the left edge.",
+    "Quoridor strategy diagram. The same position with a vertical wall, outlined in white, beside the left-edge gap. It shuts cyan into a one-square-wide channel along the left edge.",
     new_walls=[("v", 4, 0)])
 ST_SLOT_BOARD = board_svg(
     _GAP_LINE + [("v", 4, 3)], [(6, 4, "p1"), (2, 7, "p2")],
-    "A row of indigo walls with a gap in the middle, and a vertical wall outlined in white standing in the middle of that gap. "
+    "Quoridor strategy diagram. A row of indigo walls with a gap in the middle, and a vertical wall outlined in white standing in the middle of that gap. "
     "A dashed red wall with a cross marks the only horizontal wall that could have closed the gap. A cyan pawn stands below the gap and a white ring pawn is at the upper right.",
     new_walls=[("v", 4, 3)], bad_walls=[("h", 4, 3)])
 
@@ -1668,7 +1668,7 @@ def not_found():
         for label, href, blurb in links)
     body = f"""
 <div class="container notfound">
-  {board_svg([("h",5,3),("h",5,5),("v",6,3),("v",6,4)], [(7,4,"p1")], "A cyan pawn enclosed by indigo barriers, unable to move forward.", goal_tint=False)}
+  {board_svg([("h",5,3),("h",5,5),("v",6,3),("v",6,4)], [(7,4,"p1")], "Quoridor pawn blocked by walls. A cyan pawn enclosed by indigo barriers, unable to move forward.", goal_tint=False)}
   <h1>This Page Couldn't Be Found</h1>
   <p class="lead">It may have moved, or the link might have a typo. No harm done: even the best pawn gets blocked sometimes. Pick a way back below.</p>
   <div class="btn-row">

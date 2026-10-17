@@ -17,7 +17,6 @@ ae62c7|<svg/> Menu
 f9b169|Quoridor est un jeu de plateau de stratégie dans lequel deux joueurs font la course pour amener leur pion de l'autre côté d'un plateau de 9×9 tout en posant des murs pour se ralentir mutuellement. Vous pouvez jouer contre l'ordinateur ou avec un ami sur le même appareil.
 39d746|Jouer à Quoridor maintenant <svg/>
 b8a328|Apprendre à jouer
-40b875|Illustration d'un plateau de Quoridor : une grille de 9 sur 9 avec un pion cyan près du bas, un pion blanc en forme d'anneau près du haut et plusieurs barrières indigo placées entre les cases.
 97fa7b|Choisissez comment jouer
 abe900|Chaque façon de jouer est gratuite et fonctionne dans votre navigateur, sans compte.
 d970d3|Jouer contre l'ordinateur
@@ -35,7 +34,6 @@ d88fd8|Comment jouer à Quoridor
 663080|Lire les règles de Quoridor
 24e459|Pourquoi les murs comptent
 1bfbed|Un bon mur vous coûte un tour, mais en coûte plusieurs à votre adversaire. Évaluer cet échange encore et encore, c'est tout le jeu.
-a4d571|Un petit groupe de barrières indigo oblige un pion blanc en forme d'anneau à faire un détour autour des murs.
 7807dc|Un jeu de stratégie fait de déplacements et de tactique
 050eec|Pas de dés, pas de cartes, pas d'information cachée. Chaque partie se joue sur ce que vous planifiez et ce que vous remarquez.
 ebd0b1|Planifier l'itinéraire
@@ -127,7 +125,6 @@ df84e2|Nom d'utilisateur
 8fa2ec|Il n'y a pas encore de serveur de mise en relation sur ce site, personne ne peut donc être mis en relation avec vous. Rien n'a été envoyé ailleurs.
 a344f1|<a href="/how-to-play-quoridor/">Apprenez à jouer</a> en attendant, ou revenez à la <a href="/play/">liste des modes</a>.
 93a9cc|Envie de jouer avec une personne précise ? Essayez une salle privée : <a href="/play/create-room/">créez une salle</a> ou <a href="/play/join-room/">rejoignez une salle</a>.
-30e688|Aperçu du plateau de Quoridor pour le jeu en ligne.
 f31ef6|Jouer à Quoridor contre l'ordinateur
 8e964b|Jouez à Quoridor contre un adversaire informatique. Choisissez Facile, Moyen, Difficile ou Expert et commencez sans vous inscrire.
 58f506|Jouer contre le robot
@@ -145,7 +142,6 @@ e82bc1|Difficulté
 3dec52|Le niveau le plus fort que nous proposons. Il cherche plusieurs coups plus loin et peut prendre jusqu'à environ une seconde par coup, ce qui peut sembler plus lent.
 d64ac7|Vous jouez en premier, avec le pion cyan plein, depuis le bord du bas. Le robot joue sur votre appareil ; rien n'est envoyé ailleurs. Dans nos propres parties de test (20 par duel, robots contre robots), chaque niveau a battu le niveau inférieur au moins 16 fois sur 20.
 66f183|<svg/> Commencer la partie
-1df74d|Aperçu du plateau de Quoridor pour une partie contre l'ordinateur.
 86ff00|Jouer à Quoridor avec un ami sur un seul appareil
 4f0985|Jouez une partie de Quoridor à deux joueurs sur le même appareil. Partagez l'écran et jouez chacun votre tour.
 935b0a|Jouer avec un ami
@@ -158,7 +154,6 @@ dddce3|Le joueur 1 utilise le pion cyan plein et commence, depuis le bord du bas
 64d690|Passez l'appareil après chaque coup.
 3fe725|Nom du joueur 1 (facultatif)
 2467f7|Nom du joueur 2 (facultatif)
-d6f9e0|Aperçu du plateau de Quoridor pour une partie à deux joueurs sur un appareil.
 311dec|Créer une salle privée de Quoridor
 732df9|Créez une salle privée de Quoridor et partagez le lien d'invitation ou le code d'association avec un ami.
 17319d|Créer une salle
@@ -173,7 +168,6 @@ f51d4d|Vous recevez un lien d'invitation et un code d'association court.
 388bb6|Copiez l'un ou l'autre et envoyez-le à votre ami.
 2857e6|La partie commence dès que votre ami la rejoint.
 57eb00|<a href="/room/EXAMPLE-ROOM-ID/?preview=waiting">Voir l'écran de la salle d'attente</a> (données d'exemple)
-94143a|Aperçu du plateau de Quoridor pour une salle privée.
 c82edf|Rejoindre une salle privée de Quoridor
 0ff17f|Rejoignez une salle privée de Quoridor avec un code d'association ou un lien d'invitation.
 8a69e4|Rejoindre une salle
@@ -185,7 +179,6 @@ bf8aef|6 caractères. Vous avez un lien d'invitation ? Ouvrez-le simplement.
 859667|<svg/> Rejoindre la salle
 3d19c8|Il n'y a pas encore de serveur de salles sur ce site : le code ne peut pas être vérifié.
 0b2828|Voir d'autres écrans (données d'exemple) : <a href="/room/EXAMPLE-ROOM-ID/?preview=invalid">code invalide</a>, <a href="/room/EXAMPLE-ROOM-ID/?preview=full">salle pleine</a>, <a href="/room/EXAMPLE-ROOM-ID/?preview=expired">invitation expirée</a>.
-4089e3|Aperçu du plateau de Quoridor pour rejoindre une salle privée.
 57ee3d|Salle privée | Quoridor Online
 bdd81a|Salle privée de Quoridor.
 0fc9a6|En attente de votre adversaire
@@ -240,12 +233,10 @@ c018dd|Jouez votre première partie
 7dff41|<strong>Le plateau.</strong> Une grille de 9×9 cases (81 au total) séparées par de fines rainures.
 0faf4b|<strong>Pions.</strong> Chaque joueur a un pion. Le joueur 1 est le disque cyan plein et le joueur 2 l'anneau blanc : ils se distinguent donc par la forme autant que par la couleur. Votre propre nom est marqué <em>(vous)</em>.
 3f0452|<strong>Murs.</strong> Chaque mur mesure deux cases de long, se place dans les rainures entre les cases et bloque le déplacement à travers lui. Les cartes des joueurs indiquent combien de murs il reste à chacun.
-12e907|Une partie de Quoridor en cours : un pion cyan et un pion blanc en anneau se font face, avec plusieurs murs indigo placés entre les cases.
 b7b993|Une partie en cours. Les pièces cyan et blanche sont les pions ; les barres indigo sont des murs placés dans les rainures entre les cases.
 eacc83|<strong>Ouvrez une partie.</strong>Choisissez un mode sur la page <a href="/play/">Jouer</a>. Aucun compte n'est nécessaire.
 095c12|<strong>Vérifiez votre camp.</strong>Votre pion part du milieu de la rangée du bas et votre objectif est la rangée du haut. Chaque joueur a 10 murs.
 56352e|<strong>Jouez à tour de rôle.</strong>Le joueur 1 commence, et la barre de tour indique à qui c'est le tour.
-26b154|Un plateau de Quoridor au début d'une partie : un pion cyan au milieu du bord du bas et un pion blanc en anneau au milieu du bord du haut, sans aucun mur posé.
 11aad1|La position de départ telle que vous la voyez. Votre objectif est n'importe quelle case du bord où part votre adversaire : ici, le cyan vise la rangée du haut et le blanc celle du bas.
 e64544|À votre tour, vous faites <strong>une</strong> seule chose : déplacer votre pion <em>ou</em> poser un mur. Cette section traite du déplacement.
 a891a4|Avancer d'une case
@@ -253,15 +244,12 @@ a891a4|Avancer d'une case
 2e2f5d|<strong>Restez en mode Déplacer le pion.</strong>Les cases que vous pouvez atteindre légalement sont mises en évidence.
 0966be|<strong>Cliquez ou touchez une case en surbrillance.</strong>Votre pion avance d'une case et le tour passe.
 403a59|Un pion se déplace vers le haut, le bas, la gauche ou la droite, d'une case à la fois. Il ne peut pas se déplacer en diagonale (sauf dans le cas particulier ci-dessous), à travers un mur, ni sortir du plateau.
-b73c1b|Un pion cyan avec des cases en pointillés marquées de flèches à sa gauche, à sa droite et en dessous. La case du dessus n'est pas marquée car un mur indigo la bloque.
 f92d5c|Cases où le pion cyan peut aller. Le mur au-dessus de lui bloque le déplacement vers le haut.
 503c17|Sauter par-dessus l'autre pion
 b6d342|Si le pion de l'adversaire se trouve sur la case juste à côté de la vôtre, vous ne pouvez pas partager la case : vous <strong>sautez donc tout droit par-dessus lui</strong> et atterrissez sur la case juste derrière. Le jeu met cette case en évidence, et le saut compte comme tout votre déplacement.
-474a97|Un pion cyan juste en dessous d'un pion blanc en anneau. La case juste au-dessus du pion blanc est en pointillés et marquée A : le pion cyan peut y sauter.
 51fed8|Le pion cyan saute par-dessus le pion blanc jusqu'à la case A.
 d69fee|Avancer en diagonale quand le saut est bloqué
 4f82f7|Si un mur ou le bord du plateau se trouve juste derrière l'autre pion, vous ne pouvez pas sauter. Vous pouvez alors vous placer sur une case <strong>à côté</strong> du pion de l'adversaire, tant qu'aucun mur ne bloque ce pas.
-2a319a|Un pion cyan juste en dessous d'un pion blanc en anneau, avec un mur indigo derrière le pion blanc. Les cases à gauche et à droite du pion blanc sont en pointillés et marquées A et B : le pion cyan peut aller sur l'une ou l'autre.
 0180a1|Le mur derrière le pion blanc empêche le saut, le pion cyan peut donc aller en A ou en B.
 8737b8|Au lieu de vous déplacer, vous pouvez poser un mur. Un mur allonge le trajet de votre adversaire, ce qui vaut autant que de vous rapprocher de l'objectif.
 9164b8|<strong>Appuyez sur Poser un mur.</strong>Le plateau passe en mode mur. Appuyez sur Déplacer le pion pour revenir.
@@ -269,14 +257,11 @@ a27725|<strong>Choisissez une rainure.</strong>Pointez le plateau et la rainure 
 a977dd|<strong>Vérifiez que c'est autorisé.</strong>Un mur ne peut ni chevaucher ni croiser un autre mur, et il ne peut jamais retirer à un joueur son dernier chemin vers son objectif. Si l'aperçu n'est pas légal, un message sous les boutons en donne la raison et le mur ne peut pas être posé.
 fdb4bf|<strong>Posez-le.</strong>Avec une souris, cliquez sur la rainure. Sur un écran tactile, touchez-la pour la sélectionner, puis appuyez sur Poser le mur sélectionné. Votre compteur de murs diminue de un.
 1c006e|Les murs sont définitifs. On ne peut ni les déplacer ni les reprendre, et une partie en ligne n'a pas d'annulation : regardez donc bien l'aperçu d'abord.
-46196f|Deux murs indigo placés côte à côte devant un pion blanc en anneau. Ensemble, ils couvrent quatre cases de la rangée du dessous, si bien que le pion doit les contourner en se déplaçant latéralement.
 4c9013|Deux murs côte à côte. Le pion blanc avait besoin de 6 pas pour atteindre la rangée du bas ; il lui en faut maintenant 8, en ne comptant que les murs.
 ea7cda|Un mur illégal
 3f2e20|Le mur en pointillés ci-dessous n'est pas autorisé. Le pion blanc dans le coin n'aurait plus aucune issue, et un mur ne peut jamais retirer à un joueur son dernier chemin.
-de7b18|Un pion blanc en anneau dans le coin en haut à gauche, sous un mur indigo. Un mur rouge en pointillés marqué d'une croix fermerait la seule issue de ce coin : il n'est donc pas autorisé.
 5fd3f9|Non autorisé : ce mur enfermerait le pion blanc dans le coin.
 332d21|Le premier joueur dont le pion atteint <strong>n'importe quelle case</strong> du bord opposé gagne immédiatement. Vous n'avez pas besoin d'atterrir sur une case précise.
-13a9eb|Un pion cyan à une case du bord du haut. Chaque case de la rangée du haut est en pointillés et cochée : atteindre n'importe laquelle d'entre elles fait gagner.
 823046|Le pion cyan est à une case de la victoire : n'importe quelle case de la rangée du haut convient.
 6b64ec|Une partie peut aussi se terminer si un joueur abandonne, ce qui donne la victoire à l'autre camp.
 e240af|<strong>Comptez les deux itinéraires.</strong>Avant chaque tour, calculez combien de cases il vous faut et combien il en faut à votre adversaire. Celui qui est en tête devrait généralement continuer d'avancer.
@@ -399,13 +384,10 @@ db6e74|Faire un pas de côté quand le saut droit est possible
 0125df|Déplacer ou reprendre un mur posé
 00932a|Les murs sont permanents.
 851b4c|Murs qui se chevauchent
-8ac3d4|Un mur indigo se trouve sous la cinquième rangée, sur les quatrième et cinquième colonnes. Un mur rouge en pointillés marqué d'une croix partagerait la cinquième colonne avec lui : il n'est donc pas autorisé.
 f62035|Non autorisé : le mur en pointillés chevaucherait le mur existant sur une case.
 14acc8|Murs qui se croisent
-119683|Un mur indigo traverse le plateau. Un mur rouge vertical en pointillés marqué d'une croix le croiserait en son point central : il n'est donc pas autorisé.
 845484|Non autorisé : le mur vertical en pointillés croiserait le mur horizontal en son point central.
 5f88fb|Sauter à travers un mur
-6d8123|Un pion cyan juste en dessous d'un pion blanc en anneau, avec un mur indigo entre eux. Les trois cases en pointillés à gauche, à droite et en dessous du pion cyan sont ses seuls déplacements : il ne peut pas sauter par-dessus le pion blanc à travers le mur.
 200e15|Avec un mur entre les pions, aucun saut n'est possible. Le pion cyan ne peut aller qu'à gauche, à droite ou vers le bas.
 c8ba65|Deux joueurs, un plateau de 9×9, un pion chacun sur la case centrale de bords opposés, 10 murs chacun.
 b52313|Gagne celui qui atteint le premier <strong>n'importe quelle case</strong> du bord opposé.
@@ -439,7 +421,6 @@ d6c580|Entraînez-vous contre différents adversaires
 9e1d13|Chaque décision à Quoridor commence par un décompte : <strong>de combien de coups chaque pion a-t-il encore besoin pour atteindre son bord objectif ?</strong> Calculez l'itinéraire légal le plus court pour vous et pour votre adversaire, en contournant chaque mur du plateau. Le reste de ce guide s'appuie sur ce décompte.
 6e5753|<strong>Comment les exemples comptent.</strong> Un pas correspond à une case vers le haut, le bas, la gauche ou la droite. Les décomptes suivent l'itinéraire le plus court autour des murs et ignorent les sauts et la position des pions, comme le fait la règle du chemin légal de la <a href="/quoridor-rules/">page des règles</a>. Le cyan est le pion plein et monte ; le blanc est le pion en anneau et descend.
 ee023a|La ligne droite n'est pas toujours la plus courte
-5e7e70|Deux murs indigo côte à côte couvrent quatre colonnes devant un pion cyan près du bas. Un pion blanc en anneau se trouve près du haut, à gauche. Des cases en pointillés numérotées de 1 à 8 tracent l'itinéraire le plus court du pion cyan : deux cases vers le haut, deux cases vers la droite, puis tout droit vers le haut en dépassant l'extrémité droite des murs.
 9f33be|Le cyan a besoin de 8 pas : les cases numérotées contournent l'extrémité droite des murs. Le blanc en a aussi besoin de 8, un pas à gauche puis tout droit vers le bas.
 70c2bc|Deux murs côte à côte couvrent quatre colonnes : la route directe du cyan par le milieu est donc bloquée. Contourner l'extrémité droite demande deux pas latéraux et 8 pas au total. Contourner l'extrémité gauche en demande trois et 9 au total. Le blanc a le même problème de l'autre côté : un pas à gauche, puis tout droit vers le bas, soit aussi 8.
 6822d4|C'est une égalité de 8 à 8 avec le cyan au trait. Quand les décomptes sont égaux, le joueur qui joue en premier arrive en premier : le cyan a donc un tempo d'avance.
@@ -452,9 +433,7 @@ a5b8b4|<strong>Restez flexible quand deux ouvertures coûtent à peu près autan
 b2ce74|Vous avez 10 murs, et un mur posé ne peut jamais être déplacé. De plus, chacun vous coûte le déplacement que vous auriez fait à la place. Cela donne un moyen simple de chiffrer un mur :
 b24339|<strong>Valeur d'un mur = cases qu'il ajoute à l'itinéraire de votre adversaire, moins cases qu'il ajoute au vôtre, moins 1.</strong> Le 1 est le pas que vous n'avez pas fait. Un mur qui n'ajoute qu'une case à votre adversaire ne fait que s'équilibrer, et il consomme tout de même l'un de vos 10 murs.
 0c80d9|Dans la position ci-dessous, une rangée de murs présente trois ouvertures : une au bord gauche, une de deux cases de large au milieu et une au bord droit. Le blanc se trouve à l'ouverture centrale et a besoin de 4 pas. Le cyan en a besoin de 5 et il est au trait : il a donc un pas de retard.
-134cb7|Une rangée de murs indigo avec trois ouvertures : au bord gauche, au milieu et au bord droit. Un pion blanc en anneau se trouve juste au-dessus de l'ouverture centrale et un pion cyan juste en dessous de l'ouverture du bord gauche. Un mur supplémentaire, entouré de blanc, se trouve une rangée sous la ligne, sous les colonnes centrales : le pion blanc n'a donc qu'à faire un pas de côté.
 6b1c41|Le mur A (entouré) ajoute 1 pas : le blanc fait un pas de côté. Blanc de 4 à 5, le cyan reste à 5. Valeur : 1 - 0 - 1 = 0.
-ae91a5|La même position, mais le nouveau mur, entouré de blanc, ferme l'ouverture centrale. La rangée de murs n'est plus ouverte qu'au bord gauche et au bord droit, et le pion blanc doit parcourir trois cases vers la gauche pour passer.
 5512cf|Le mur B (entouré) ajoute 3 pas : le blanc doit aller jusqu'au bord gauche. Blanc de 4 à 7, le cyan reste à 5. Valeur : 3 - 0 - 1 = 2.
 d19ca9|Le mur A est posé juste devant le chemin du blanc en terrain dégagé : le blanc n'a donc qu'à faire un pas de côté. Le mur B complète la rangée de murs déjà en place et ferme l'ouverture la plus proche, si bien que la suivante est à trois cases. Après le mur B, le cyan a besoin de 5 pas et le blanc de 7. Même budget de murs, résultat très différent.
 c05b35|D'où viennent les murs efficaces
@@ -464,9 +443,7 @@ c44ccb|<strong>Patience.</strong> Les murs qui n'ajoutent qu'une case valent rar
 ee2f27|Chaque mur change le plateau pour les deux pions. Avant d'en poser un, comptez les deux itinéraires <em>après</em> le mur, pas seulement celui de votre adversaire.
 14d378|Un mur qui pénalise les deux joueurs avantage celui qui joue ensuite
 4162db|Ici, les deux pions doivent passer par la même ouverture de deux cases de large. Chacun a besoin de 5 pas et le cyan est au trait : le cyan gagne donc déjà la course pure. Fermer l'ouverture paraît agressif :
-7a97d6|Une rangée de murs indigo avec des ouvertures au bord gauche, au milieu et au bord droit. Un pion cyan se trouve juste en dessous de l'ouverture centrale et un pion blanc en anneau au-dessus, une colonne à gauche. Les deux pions doivent passer par l'ouverture centrale.
 c3236f|Avant : cyan 5, blanc 5, cyan au trait.
-13f648|La même position après qu'un mur, entouré de blanc, a fermé l'ouverture centrale. Les deux pions doivent maintenant aller jusqu'au bord gauche ou au bord droit pour passer.
 a18e39|Après que le cyan a fermé l'ouverture : les deux ont besoin de 8, et le blanc est au trait.
 2ef308|Les deux pions ont maintenant un détour de trois cases : le décompte est donc de 8 à 8. Mais le mur a consommé le tour du cyan, si bien que le blanc est au trait à égalité de distance et arrive en premier. Le cyan a transformé une course gagnante en course perdante, et a dépensé un mur pour cela.
 9016c5|Ce que défendre signifie vraiment
@@ -477,7 +454,6 @@ d5b86d|À Quoridor, défendre consiste surtout à garder votre propre itinérair
 cadcfd|Attaque et défense relèvent de la même arithmétique. Un mur qui ajoute plus de cases à votre adversaire qu'à vous attaque et défend à la fois. Un mur qui en ajoute autant aux deux n'est qu'un cadeau du trait.
 2173fb|Avant de poser un mur, jouez mentalement la meilleure réponse de votre adversaire, pas seulement sa réponse à la position que vous avez en tête. Un mur change aussi ce que <em>lui</em> peut faire ensuite.
 d95ea1|Reprenez la rangée de murs de la section précédente, avec le cyan loin sur le côté droit. Le cyan a besoin de 6 pas et le blanc de 4, avec le cyan au trait. Le cyan est en retard : fermer l'ouverture centrale paraît donc séduisant, car cela ajoute 3 pas à l'itinéraire du blanc (de 4 à 7) et aucun à celui du cyan (toujours 6). Sur le papier, le cyan passe de deux pas de retard à un pas d'avance.
-513037|Une rangée de murs indigo fermée partout sauf à l'extrême bord gauche. Les deux ouvertures de droite sont fermées, la dernière par un mur entouré de blanc. Un pion cyan se trouve sous la rangée près du bord droit, très loin de l'ouverture. Un pion blanc en anneau se trouve au-dessus de la rangée, à seulement trois cases de celle-ci.
 cf0127|Le blanc répond en fermant l'ouverture de droite (entourée). Le cyan a maintenant besoin de 13 pas, le blanc toujours de 7.
 6f6cd8|Regardez maintenant le plateau du côté du blanc. Le mur du cyan n'a laissé ouverts que les ouvertures de droite et le bord gauche. La réponse du blanc ferme l'ouverture de droite, ce qui laisse une seule ouverture à l'extrême gauche. Le blanc en est à trois cases. Le cyan en est à sept colonnes : son itinéraire passe donc de 6 à 13 alors que celui du blanc reste à 7.
 860a4c|La leçon n'est pas « ne fermez jamais d'ouvertures ». C'est que <strong>un mur retire des options au joueur qui est le plus éloigné</strong> : vérifiez donc ce qui reste après votre mur autant que ce qu'il enlève.
@@ -486,7 +462,6 @@ bdfc95|<strong>Trouvez le meilleur mur de votre adversaire contre vous.</strong>
 309fee|<strong>Comparez les totaux.</strong>Ne posez le mur que si vous restez en tête après sa meilleure réponse.
 a7a4b8|<strong>Faites de même pour lui.</strong>Demandez-vous lesquels de ses murs deviennent plus forts une fois le vôtre posé.
 3885c6|Un mur paraît actif, mais un déplacement de pion est gratuit : il ne coûte aucun mur et fait toujours progresser. Si vous gagnez la course, le bon coup est souvent simplement de vous déplacer.
-64673c|Un pion cyan au centre du plateau et un pion blanc en anneau à sa droite et une rangée plus haut. Deux murs très éloignés sur la gauche ne touchent l'itinéraire d'aucun des pions.
 6e9bcc|Le cyan a besoin de 4 pas, le blanc de 5, et le cyan est au trait.
 f5f3a9|Ici, le cyan a besoin de 4 pas et le blanc de 5, avec le cyan au trait. Comptez ce que chaque camp peut faire :
 cd5aa9|Si le cyan avance simplement, le décompte est de 3 à 5 avec le blanc au trait. Pour que le blanc renverse la course, un mur devrait ajouter 3 pas à l'itinéraire du cyan. Le meilleur mur isolé de ce plateau en ajoute 1.
@@ -506,7 +481,6 @@ fa985d|<strong>Ignorer l'itinéraire de l'adversaire.</strong> Ne compter que vo
 c0fbdf|<strong>Gaspiller des murs sur des détours d'une case.</strong> Un mur qui ajoute 1 case vaut 0 (voir « Utilisez vos murs efficacement ») et consomme définitivement l'un de vos 10.
 10c8cc|<strong>Garder les 10 murs en réserve.</strong> Un mur jamais utilisé ne vaut rien une fois la partie terminée. Gardez-en un ou deux en réserve, mais dépensez-les pour des murs valant 2 ou plus.
 c4380e|<strong>Oublier que les murs sont permanents.</strong> Un mur qui vous aide maintenant peut vous coûter plus tard si la partie amène votre pion dans cette zone.
-487c96|Quatre murs horizontaux posés bout à bout sur toute la largeur du plateau, ne laissant ouverte que la colonne tout à droite. Un pion blanc en anneau se trouve juste au-dessus de la rangée de murs et un pion cyan bien en dessous. Tous deux doivent franchir la rangée.
 4e61c5|Avant les quatre murs, le cyan a besoin de 7 et le blanc de 6. Après eux, le cyan a besoin de 11 et le blanc de 10.
 d33c8e|Le plateau ci-dessus illustre la première erreur. Quatre murs ont été posés bout à bout sur toute la largeur du plateau, ne laissant ouverte que la colonne tout à droite. Cela ajoute 4 pas à l'itinéraire du blanc (de 6 à 10), ce qui paraît beaucoup. Mais la rangée barre aussi le chemin du cyan : son itinéraire s'allonge donc lui aussi de 4 (de 7 à 11). Le cyan a dépensé quatre tours et 40 % de ses murs, et la course est exactement aussi serrée qu'avant.
 579c29|Tenez un registre du tempo
@@ -523,14 +497,11 @@ b57d22|Blanc
 2654e4|Le cyan a commencé avec un pas de retard et est passé en tête grâce au mur qui ferme l'ouverture. À ce moment-là, aucun mur isolé n'ajoute plus de 2 pas à l'itinéraire du cyan : la réponse du blanc, qui en ajoute exactement 2, était donc la plus forte au décompte. Les décomptes sont maintenant égaux avec le cyan au trait, ce qui, à lui seul, favoriserait le cyan.
 b185d0|Testez ensuite la solidité de votre itinéraire
 9a2b6b|Un décompte égal n'est que la moitié du tableau. Demandez-vous ce que le meilleur mur de votre adversaire ajouterait <em>dès maintenant</em> :
-622857|Une rangée de murs indigo fermée au milieu, avec un second mur sur les deux colonnes de gauche juste au-dessus de l'ouverture du bord gauche. Un pion cyan se trouve au bord gauche sous la rangée et un pion blanc en anneau au-dessus. Des cases en pointillés numérotées de 1 à 7 tracent l'itinéraire le plus court du cyan : par l'ouverture de gauche, deux cases vers la droite, puis tout droit vers le haut.
 8bf6b5|Le cyan a besoin de 7 pas (cases numérotées), le blanc de 7, et le cyan est au trait.
-eb15c3|La même position avec un mur vertical, entouré de blanc, à côté de l'ouverture du bord gauche. Il enferme le cyan dans un couloir d'une case de large le long du bord gauche.
 875074|Le blanc menace de jouer le mur entouré : cyan de 7 à 14, blanc de 7 à 8.
 561420|L'itinéraire du cyan passe par un couloir d'une case de large le long du bord du plateau, et un couloir n'offre aucune alternative. Un mur vertical à côté de l'ouverture ajouterait 7 pas à l'itinéraire du cyan et seulement 1 à celui du blanc. Le même mur vaut encore plus une fois que le cyan s'est engagé dans le couloir (9 pas au lieu de 7). L'égalité des décomptes ne met donc pas le cyan à l'abri, et la vraie question du cyan à ce tour est de savoir comment répondre à cette menace. Les itinéraires le long du bord ou entre des murs, les vôtres ou les siens, sont ceux où un seul mur coûte le plus cher : vérifiez-les en premier.
 70fc79|Retirez à l'adversaire son meilleur mur
 a186cc|Si un mur vous ferait beaucoup de mal, vous pouvez parfois le rendre illégal plutôt que de vous en éloigner. Un mur qui croise ou chevauche son unique emplacement légal supprime définitivement la menace.
-45c004|Une rangée de murs indigo avec une ouverture au milieu, et un mur vertical entouré de blanc au beau milieu de cette ouverture. Un mur rouge en pointillés marqué d'une croix indique le seul mur horizontal qui aurait pu fermer l'ouverture. Un pion cyan se trouve sous l'ouverture et un pion blanc en anneau en haut à droite.
 590b64|Le mur vertical (entouré) croise l'ouverture centrale. Le seul mur qui pourrait fermer l'ouverture, en pointillés et barré, n'est plus légal.
 40637e|Dans cette position, le cyan dépend de l'ouverture centrale, et le blanc n'en a pas besoin. Un mur horizontal à cet endroit ajouterait 3 pas à l'itinéraire du cyan. L'ouverture fait deux colonnes de large entre deux murs : le seul mur qui puisse la fermer est donc celui de la position en pointillés. Chevaucher l'un ou l'autre des voisins n'est pas autorisé, et un mur vertical passant par son point central le croise. En posant ce mur vertical, le cyan a rendu l'ouverture permanente. Cela coûte un tour et un mur : ne le faites donc que lorsque l'ouverture est votre bouée de sauvetage et que la menace est grande.
 83bf3b|Gardez deux ou trois murs pour la fin
@@ -805,7 +776,6 @@ e66cbc|9. Modifications des conditions
 ab0297|<time datetime="2026-10-17">17 octobre 2026</time> : première version complète de ces Conditions d'utilisation. Elle remplace l'ancien brouillon provisoire.
 7cfeb6|Page introuvable | Quoridor Online
 a6571d|Cette page est introuvable. Jouez à Quoridor ou consultez les guides des règles, de la stratégie et du déroulement du jeu.
-f1a504|Un pion cyan encerclé par des barrières indigo, incapable d'avancer.
 b16224|Cette page est introuvable
 0540f3|Elle a peut-être été déplacée, ou le lien comporte peut-être une faute de frappe. Pas de mal : même le meilleur pion se retrouve parfois bloqué. Choisissez ci-dessous un chemin de retour.
 761dec|<svg/> Jouer à Quoridor
@@ -1028,3 +998,34 @@ watch.joining|Connexion…
 watch.gone|Cette partie n'est plus disponible. La recherche continue.
 contact.needMessage|Veuillez écrire un message avant de continuer.
 contact.opened|Votre application de messagerie devrait s'ouvrir avec le message prêt à envoyer. Si rien ne se passe, écrivez directement à {email}.
+334588|Logo de Quoridor Online
+b91ce3|Jouez à Quoridor en ligne. Illustration d'un plateau de Quoridor : une grille de 9 sur 9 avec un pion cyan près du bas, un pion blanc en forme d'anneau près du haut et plusieurs barrières indigo placées entre les cases.
+de8e0a|Stratégie des murs au Quoridor. Un petit groupe de barrières indigo oblige un pion blanc en forme d'anneau à faire un détour autour des murs.
+e3bb95|Jouez à Quoridor en ligne: aperçu du plateau avec deux pions et des murs.
+48ea62|Jouez à Quoridor contre l'ordinateur: aperçu du plateau avec deux pions et des murs.
+9b1975|Jouez à Quoridor avec un ami sur un appareil: aperçu du plateau avec deux pions et des murs.
+4ee0ad|Créez une salle privée de Quoridor: aperçu du plateau avec deux pions et des murs.
+7370ae|Rejoignez une salle privée de Quoridor: aperçu du plateau avec deux pions et des murs.
+4e2e8e|Position du jeu de société Quoridor. Une partie de Quoridor en cours : un pion cyan et un pion blanc en anneau se font face, avec plusieurs murs indigo placés entre les cases.
+b0acaf|Position de départ de Quoridor. Un plateau de Quoridor au début d'une partie : un pion cyan au milieu du bord du bas et un pion blanc en anneau au milieu du bord du haut, sans aucun mur posé.
+515c03|Schéma des règles de Quoridor. Un pion cyan avec des cases en pointillés marquées de flèches à sa gauche, à sa droite et en dessous. La case du dessus n'est pas marquée car un mur indigo la bloque.
+d5d1ed|Schéma des règles de Quoridor. Un pion cyan juste en dessous d'un pion blanc en anneau. La case juste au-dessus du pion blanc est en pointillés et marquée A : le pion cyan peut y sauter.
+82f509|Schéma des règles de Quoridor. Un pion cyan juste en dessous d'un pion blanc en anneau, avec un mur indigo derrière le pion blanc. Les cases à gauche et à droite du pion blanc sont en pointillés et marquées A et B : le pion cyan peut aller sur l'une ou l'autre.
+0d1a78|Schéma des règles de Quoridor. Deux murs indigo placés côte à côte devant un pion blanc en anneau. Ensemble, ils couvrent quatre cases de la rangée du dessous, si bien que le pion doit les contourner en se déplaçant latéralement.
+52b12f|Schéma des règles de Quoridor. Un pion blanc en anneau dans le coin en haut à gauche, sous un mur indigo. Un mur rouge en pointillés marqué d'une croix fermerait la seule issue de ce coin : il n'est donc pas autorisé.
+e44a15|Schéma des règles de Quoridor. Un pion cyan à une case du bord du haut. Chaque case de la rangée du haut est en pointillés et cochée : atteindre n'importe laquelle d'entre elles fait gagner.
+8cf07b|Schéma des règles de Quoridor. Un mur indigo se trouve sous la cinquième rangée, sur les quatrième et cinquième colonnes. Un mur rouge en pointillés marqué d'une croix partagerait la cinquième colonne avec lui : il n'est donc pas autorisé.
+ac11a8|Schéma des règles de Quoridor. Un mur indigo traverse le plateau. Un mur rouge vertical en pointillés marqué d'une croix le croiserait en son point central : il n'est donc pas autorisé.
+d33abd|Schéma des règles de Quoridor. Un pion cyan juste en dessous d'un pion blanc en anneau, avec un mur indigo entre eux. Les trois cases en pointillés à gauche, à droite et en dessous du pion cyan sont ses seuls déplacements : il ne peut pas sauter par-dessus le pion blanc à travers le mur.
+23d1c4|Schéma de stratégie de Quoridor. Deux murs indigo côte à côte couvrent quatre colonnes devant un pion cyan près du bas. Un pion blanc en anneau se trouve près du haut, à gauche. Des cases en pointillés numérotées de 1 à 8 tracent l'itinéraire le plus court du pion cyan : deux cases vers le haut, deux cases vers la droite, puis tout droit vers le haut en dépassant l'extrémité droite des murs.
+ba4821|Schéma de stratégie de Quoridor. Une rangée de murs indigo avec trois ouvertures : au bord gauche, au milieu et au bord droit. Un pion blanc en anneau se trouve juste au-dessus de l'ouverture centrale et un pion cyan juste en dessous de l'ouverture du bord gauche. Un mur supplémentaire, entouré de blanc, se trouve une rangée sous la ligne, sous les colonnes centrales : le pion blanc n'a donc qu'à faire un pas de côté.
+da96c6|Schéma de stratégie de Quoridor. La même position, mais le nouveau mur, entouré de blanc, ferme l'ouverture centrale. La rangée de murs n'est plus ouverte qu'au bord gauche et au bord droit, et le pion blanc doit parcourir trois cases vers la gauche pour passer.
+6249ba|Schéma de stratégie de Quoridor. Une rangée de murs indigo avec des ouvertures au bord gauche, au milieu et au bord droit. Un pion cyan se trouve juste en dessous de l'ouverture centrale et un pion blanc en anneau au-dessus, une colonne à gauche. Les deux pions doivent passer par l'ouverture centrale.
+6de390|Schéma de stratégie de Quoridor. La même position après qu'un mur, entouré de blanc, a fermé l'ouverture centrale. Les deux pions doivent maintenant aller jusqu'au bord gauche ou au bord droit pour passer.
+3a9df1|Schéma de stratégie de Quoridor. Une rangée de murs indigo fermée partout sauf à l'extrême bord gauche. Les deux ouvertures de droite sont fermées, la dernière par un mur entouré de blanc. Un pion cyan se trouve sous la rangée près du bord droit, très loin de l'ouverture. Un pion blanc en anneau se trouve au-dessus de la rangée, à seulement trois cases de celle-ci.
+77ce67|Schéma de stratégie de Quoridor. Un pion cyan au centre du plateau et un pion blanc en anneau à sa droite et une rangée plus haut. Deux murs très éloignés sur la gauche ne touchent l'itinéraire d'aucun des pions.
+7c7cc0|Schéma de stratégie de Quoridor. Quatre murs horizontaux posés bout à bout sur toute la largeur du plateau, ne laissant ouverte que la colonne tout à droite. Un pion blanc en anneau se trouve juste au-dessus de la rangée de murs et un pion cyan bien en dessous. Tous deux doivent franchir la rangée.
+d5325f|Schéma de stratégie de Quoridor. Une rangée de murs indigo fermée au milieu, avec un second mur sur les deux colonnes de gauche juste au-dessus de l'ouverture du bord gauche. Un pion cyan se trouve au bord gauche sous la rangée et un pion blanc en anneau au-dessus. Des cases en pointillés numérotées de 1 à 7 tracent l'itinéraire le plus court du cyan : par l'ouverture de gauche, deux cases vers la droite, puis tout droit vers le haut.
+15846d|Schéma de stratégie de Quoridor. La même position avec un mur vertical, entouré de blanc, à côté de l'ouverture du bord gauche. Il enferme le cyan dans un couloir d'une case de large le long du bord gauche.
+60f904|Schéma de stratégie de Quoridor. Une rangée de murs indigo avec une ouverture au milieu, et un mur vertical entouré de blanc au beau milieu de cette ouverture. Un mur rouge en pointillés marqué d'une croix indique le seul mur horizontal qui aurait pu fermer l'ouverture. Un pion cyan se trouve sous l'ouverture et un pion blanc en anneau en haut à droite.
+26bd49|Pion de Quoridor bloqué par des murs. Un pion cyan encerclé par des barrières indigo, incapable d'avancer.

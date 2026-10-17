@@ -96,7 +96,7 @@ def header_html(page):
 <header class="site-header">
   <div class="container header-bar">
     <a class="brand" href="/" aria-label="Quoridor Online home">
-      <img src="/assets/img/logo-mark.png" alt="" width="32" height="32">
+      <img src="/assets/img/logo-mark.png" alt="Quoridor Online logo" width="32" height="32">
       <span class="brand-name" data-i18n-skip>Quoridor <span class="tld">Online</span></span>
     </a>
     <nav class="site-nav" id="site-nav" aria-label="Main">
@@ -121,7 +121,7 @@ def footer_html():
   <div class="container">
     <div class="footer-grid">
       <div class="footer-brand">
-        <a class="brand" href="/" aria-label="Quoridor Online home"><img src="/assets/img/logo-mark.png" alt="" width="32" height="32"><span data-i18n-skip>Quoridor <span class="tld">Online</span></span></a>
+        <a class="brand" href="/" aria-label="Quoridor Online home"><img src="/assets/img/logo-mark.png" alt="Quoridor Online logo" width="32" height="32"><span data-i18n-skip>Quoridor <span class="tld">Online</span></span></a>
         <p>A simple place to play and learn the Quoridor strategy game in your browser.</p>
       </div>
       {col('Play', FOOTER_PLAY)}

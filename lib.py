@@ -186,6 +186,6 @@ def board_svg(walls=(), pawns=(), label: str = "", goal_tint: bool = True, marks
 HERO_WALLS = [("h", 2, 3), ("v", 4, 5), ("h", 5, 1), ("v", 6, 2), ("h", 6, 4), ("v", 2, 6)]
 HERO_PAWNS = [(7, 4, "p1"), (1, 4, "p2")]
 HERO_ALT = (
-    "Illustration of a Quoridor game board: a 9 by 9 grid with a cyan pawn near the bottom, "
+    "Play Quoridor online. Illustration of a Quoridor game board: a 9 by 9 grid with a cyan pawn near the bottom, "
     "a white ring pawn near the top, and several indigo barriers placed between squares."
 )

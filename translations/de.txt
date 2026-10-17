@@ -17,7 +17,6 @@ ae62c7|<svg/> Menü
 f9b169|Quoridor ist ein strategisches Brettspiel, bei dem zwei Spieler ihre Figuren um die Wette auf die gegenüberliegende Seite eines 9×9-Spielbretts bringen und dabei Mauern setzen, um sich gegenseitig auszubremsen. Du kannst gegen den Computer oder mit einem Freund am selben Gerät spielen.
 39d746|Jetzt Quoridor spielen <svg/>
 b8a328|Spielen lernen
-40b875|Illustration eines Quoridor-Spielbretts: ein Raster aus 9 mal 9 Feldern mit einer cyanfarbenen Figur unten, einer weißen Ringfigur oben und mehreren indigofarbenen Barrieren zwischen den Feldern.
 97fa7b|Wähle, wie du spielen möchtest
 abe900|Jede Spielart ist kostenlos und läuft in deinem Browser, ganz ohne Konto.
 d970d3|Gegen den Computer spielen
@@ -35,7 +34,6 @@ d88fd8|So spielst du Quoridor
 663080|Die Quoridor-Regeln lesen
 24e459|Warum die Mauern wichtig sind
 1bfbed|Eine gute Mauer kostet dich einen Zug, deinen Gegner aber mehrere. Diesen Tausch immer wieder abzuwägen, ist das ganze Spiel.
-a4d571|Eine kleine Gruppe indigofarbener Barrieren zwingt eine weiße Ringfigur zu einem Umweg um die Mauern.
 7807dc|Ein Strategiespiel aus Bewegung und Taktik
 050eec|Es gibt keine Würfel, keine Karten und keine verdeckten Informationen. Jede Partie wird durch das entschieden, was du planst und was du bemerkst.
 ebd0b1|Den Weg planen
@@ -127,7 +125,6 @@ df84e2|Benutzername
 8fa2ec|Auf dieser Website gibt es noch keinen Matchmaking-Server, daher kann dir niemand zugeteilt werden. Es wurde nichts irgendwohin gesendet.
 a344f1|<a href="/how-to-play-quoridor/">Lerne das Spielen</a>, während du wartest, oder geh zurück zur <a href="/play/">Modusliste</a>.
 93a9cc|Du willst gegen eine bestimmte Person spielen? Probiere einen privaten Raum: <a href="/play/create-room/">Raum erstellen</a> oder <a href="/play/join-room/">Raum beitreten</a>.
-30e688|Vorschau des Quoridor-Spielbretts für das Online-Spiel.
 f31ef6|Quoridor gegen den Computer spielen
 8e964b|Spiele Quoridor gegen einen Computergegner. Wähle Leicht, Mittel, Schwer oder Experte und leg ohne Registrierung los.
 58f506|Gegen den Roboter spielen
@@ -145,7 +142,6 @@ e82bc1|Schwierigkeit
 3dec52|Die stärkste Stufe, die wir anbieten. Er sucht mehrere Züge tiefer und braucht bis zu etwa einer Sekunde pro Zug, wirkt also langsamer in der Antwort.
 d64ac7|Du ziehst zuerst, mit der ausgefüllten cyanfarbenen Figur, von der unteren Kante aus. Der Roboter spielt auf deinem Gerät; es wird nichts irgendwohin gesendet. In unseren eigenen Testpartien (20 pro Paarung, Roboter gegen Roboter) schlug jede Stufe die darunterliegende mindestens 16 von 20 Mal.
 66f183|<svg/> Spiel starten
-1df74d|Vorschau des Quoridor-Spielbretts für eine Partie gegen den Computer.
 86ff00|Quoridor mit einem Freund an einem Gerät spielen
 4f0985|Spiele eine Zwei-Spieler-Partie Quoridor am selben Gerät. Teilt euch den Bildschirm und wechselt euch ab.
 935b0a|Mit einem Freund spielen
@@ -158,7 +154,6 @@ dddce3|Spieler 1 benutzt die ausgefüllte cyanfarbene Figur und zieht zuerst, vo
 64d690|Reicht das Gerät nach jedem Zug weiter.
 3fe725|Name von Spieler 1 (optional)
 2467f7|Name von Spieler 2 (optional)
-d6f9e0|Vorschau des Quoridor-Spielbretts für eine Zwei-Spieler-Partie an einem Gerät.
 311dec|Einen privaten Quoridor-Raum erstellen
 732df9|Erstelle einen privaten Quoridor-Raum und teile den Einladungslink oder den Kopplungscode mit einem Freund.
 17319d|Raum erstellen
@@ -173,7 +168,6 @@ f51d4d|Du erhältst einen Einladungslink und einen kurzen Kopplungscode.
 388bb6|Kopiere einen von beiden und schick ihn deinem Freund.
 2857e6|Die Partie beginnt, sobald dein Freund beitritt.
 57eb00|<a href="/room/EXAMPLE-ROOM-ID/?preview=waiting">Vorschau des Warteraum-Bildschirms</a> (Beispieldaten)
-94143a|Vorschau des Quoridor-Spielbretts für einen privaten Raum.
 c82edf|Einem privaten Quoridor-Raum beitreten
 0ff17f|Tritt einem privaten Quoridor-Raum mit einem Kopplungscode oder einem Einladungslink bei.
 8a69e4|Raum beitreten
@@ -185,7 +179,6 @@ bf8aef|6 Zeichen. Hast du stattdessen einen Einladungslink? Öffne ihn einfach.
 859667|<svg/> Raum beitreten
 3d19c8|Auf dieser Website gibt es noch keinen Raum-Server, daher kann der Code nicht geprüft werden.
 0b2828|Weitere Bildschirme ansehen (Beispieldaten): <a href="/room/EXAMPLE-ROOM-ID/?preview=invalid">ungültiger Code</a>, <a href="/room/EXAMPLE-ROOM-ID/?preview=full">Raum voll</a>, <a href="/room/EXAMPLE-ROOM-ID/?preview=expired">abgelaufene Einladung</a>.
-4089e3|Vorschau des Quoridor-Spielbretts für den Beitritt zu einem privaten Raum.
 57ee3d|Privater Raum | Quoridor Online
 bdd81a|Privater Quoridor-Raum.
 0fc9a6|Warten auf deinen Gegner
@@ -240,12 +233,10 @@ c018dd|Spiel deine erste Partie
 7dff41|<strong>Das Spielbrett.</strong> Ein Raster aus 9×9 Feldern (insgesamt 81) mit dünnen Rillen dazwischen.
 0faf4b|<strong>Figuren.</strong> Jeder Spieler hat eine Figur. Spieler 1 ist der ausgefüllte cyanfarbene Kreis und Spieler 2 der weiße Ring, sie unterscheiden sich also nicht nur durch die Farbe, sondern auch durch die Form. Dein eigener Name ist mit <em>(du)</em> markiert.
 3f0452|<strong>Mauern.</strong> Jede Mauer ist zwei Felder lang, liegt in den Rillen zwischen den Feldern und blockiert die Bewegung über sie hinweg. Die Spielerkarten zeigen, wie viele Mauern jedem von euch noch bleiben.
-12e907|Eine laufende Quoridor-Partie: Eine cyanfarbene Figur und eine weiße Ringfigur stehen sich gegenüber, mit mehreren indigofarbenen Mauern zwischen den Feldern.
 b7b993|Eine laufende Partie. Die cyanfarbene und die weiße Figur sind die Spielfiguren; die indigofarbenen Balken sind Mauern in den Rillen zwischen den Feldern.
 eacc83|<strong>Öffne eine Partie.</strong>Wähle auf der Seite <a href="/play/">Spielen</a> einen Modus. Ein Konto ist nicht nötig.
 095c12|<strong>Prüfe deine Seite.</strong>Deine Figur startet in der Mitte der untersten Reihe und dein Ziel ist die oberste Reihe. Jeder Spieler hat 10 Mauern.
 56352e|<strong>Wechselt euch ab.</strong>Spieler 1 zieht zuerst, und die Zuganzeige zeigt, wer an der Reihe ist.
-26b154|Ein Quoridor-Spielbrett zu Beginn einer Partie: eine cyanfarbene Figur in der Mitte der unteren Kante und eine weiße Ringfigur in der Mitte der oberen Kante, ohne gesetzte Mauern.
 11aad1|Die Ausgangsstellung, wie du sie siehst. Dein Ziel ist ein beliebiges Feld der Kante, auf der dein Gegner startet: Hier strebt Cyan zur oberen Reihe und Weiß zur unteren.
 e64544|In deinem Zug tust du <strong>eine</strong> Sache: Figur ziehen <em>oder</em> Mauer setzen. Dieser Abschnitt behandelt das Ziehen.
 a891a4|Ein Feld weiterziehen
@@ -253,15 +244,12 @@ a891a4|Ein Feld weiterziehen
 2e2f5d|<strong>Bleib im Modus Figur ziehen.</strong>Die Felder, die du erlaubterweise erreichen kannst, sind hervorgehoben.
 0966be|<strong>Klicke oder tippe auf ein hervorgehobenes Feld.</strong>Deine Figur zieht ein Feld weiter und der Zug geht weiter.
 403a59|Eine Figur bewegt sich nach oben, unten, links oder rechts, jeweils ein Feld. Sie darf nicht diagonal ziehen (außer im besonderen Fall weiter unten), nicht durch eine Mauer und nicht vom Spielbrett herunter.
-b73c1b|Eine cyanfarbene Figur mit gestrichelten Feldern, die mit Pfeilen markiert sind, links, rechts und unterhalb von ihr. Das Feld darüber ist nicht markiert, weil eine indigofarbene Mauer es blockiert.
 f92d5c|Felder, auf die die cyanfarbene Figur ziehen kann. Die Mauer darüber blockiert den Zug nach oben.
 503c17|Über die andere Figur springen
 b6d342|Steht die Figur des Gegners auf dem Feld direkt neben deiner, könnt ihr euch kein Feld teilen. Du <strong>springst also geradeaus darüber</strong> und landest auf dem Feld direkt dahinter. Das Spiel hebt dieses Feld für dich hervor, und der Sprung zählt als dein ganzer Zug.
-474a97|Eine cyanfarbene Figur direkt unter einer weißen Ringfigur. Das Feld direkt über der weißen Figur ist gestrichelt und mit A markiert: Die cyanfarbene Figur kann dorthin springen.
 51fed8|Die cyanfarbene Figur springt über die weiße Figur auf Feld A.
 d69fee|Diagonal ziehen, wenn der Sprung blockiert ist
 4f82f7|Liegt direkt hinter der anderen Figur eine Mauer oder der Rand des Spielbretts, kannst du nicht springen. Stattdessen darfst du auf ein Feld <strong>neben</strong> der Figur des Gegners ziehen, sofern keine Mauer diesen Schritt blockiert.
-2a319a|Eine cyanfarbene Figur direkt unter einer weißen Ringfigur, hinter der weißen Figur liegt eine indigofarbene Mauer. Die Felder links und rechts der weißen Figur sind gestrichelt und mit A und B markiert: Die cyanfarbene Figur kann auf eines von beiden ziehen.
 0180a1|Die Mauer hinter der weißen Figur verhindert den Sprung, daher darf die cyanfarbene Figur stattdessen auf A oder B ziehen.
 8737b8|Statt zu ziehen, kannst du eine Mauer setzen. Eine Mauer verlängert den Weg deines Gegners, was genauso gut ist, wie dich dem Ziel zu nähern.
 9164b8|<strong>Drücke Mauer setzen.</strong>Das Spielbrett wechselt in den Mauermodus. Drücke Figur ziehen, um zurückzukehren.
@@ -269,14 +257,11 @@ a27725|<strong>Wähle eine Rille.</strong>Zeige mit dem Zeiger auf das Spielbret
 a977dd|<strong>Prüfe, ob es erlaubt ist.</strong>Eine Mauer darf eine andere weder überlappen noch kreuzen und darf einem Spieler nie den letzten Weg zu seinem Ziel nehmen. Ist die Vorschau nicht erlaubt, erklärt eine Meldung unter den Schaltflächen, warum, und die Mauer kann nicht gesetzt werden.
 fdb4bf|<strong>Setze sie.</strong>Mit der Maus klickst du auf die Rille. Auf einem Touchscreen tippst du sie an, um sie auszuwählen, und drückst dann Ausgewählte Mauer setzen. Dein Mauerzähler sinkt um eins.
 1c006e|Mauern sind endgültig. Sie lassen sich weder verschieben noch wieder aufnehmen, und eine Online-Partie hat kein Rückgängig, wirf also vorher noch einen zweiten Blick auf die Vorschau.
-46196f|Zwei indigofarbene Mauern nebeneinander vor einer weißen Ringfigur. Zusammen decken sie vier Felder der Reihe darunter ab, die Figur muss also seitlich um sie herumgehen.
 4c9013|Zwei Mauern nebeneinander. Die weiße Figur brauchte 6 Schritte bis zur untersten Reihe, jetzt braucht sie 8, wobei nur die Mauern gezählt werden.
 ea7cda|Eine unerlaubte Mauer
 3f2e20|Die gestrichelte Mauer unten ist nicht erlaubt. Die weiße Figur in der Ecke hätte keinen Ausweg mehr, und eine Mauer darf einem Spieler nie den letzten Weg nehmen.
-de7b18|Eine weiße Ringfigur in der oberen linken Ecke unter einer indigofarbenen Mauer. Eine gestrichelte rote Mauer mit einem Kreuz würde den einzigen Ausweg aus dieser Ecke verschließen und ist deshalb nicht erlaubt.
 5fd3f9|Nicht erlaubt: Diese Mauer würde die weiße Figur in der Ecke einsperren.
 332d21|Der erste Spieler, dessen Figur <strong>irgendein Feld</strong> der gegenüberliegenden Kante erreicht, gewinnt sofort. Du musst nicht auf einem bestimmten Feld landen.
-13a9eb|Eine cyanfarbene Figur, einen Schritt vom oberen Rand entfernt. Jedes Feld der obersten Reihe ist gestrichelt und mit einem Häkchen versehen: Jedes davon zu erreichen, gewinnt.
 823046|Die cyanfarbene Figur ist einen Schritt vom Sieg entfernt: Jedes Feld der obersten Reihe genügt.
 6b64ec|Eine Partie kann auch enden, wenn ein Spieler aufgibt; dann gewinnt die andere Seite.
 e240af|<strong>Zähle beide Wege.</strong>Rechne vor jedem Zug aus, wie viele Schritte du brauchst und wie viele dein Gegner braucht. Wer vorne liegt, sollte meist einfach weiterziehen.
@@ -399,13 +384,10 @@ db6e74|Seitschritt, obwohl der gerade Sprung möglich ist
 0125df|Eine gesetzte Mauer verschieben oder zurücknehmen
 00932a|Mauern sind dauerhaft.
 851b4c|Überlappende Mauern
-8ac3d4|Eine indigofarbene Mauer liegt unter der fünften Reihe über der vierten und fünften Spalte. Eine gestrichelte rote Mauer mit einem Kreuz würde die fünfte Spalte mit ihr teilen und ist deshalb nicht erlaubt.
 f62035|Nicht erlaubt: Die gestrichelte Mauer würde die vorhandene Mauer um ein Feld überlappen.
 14acc8|Sich kreuzende Mauern
-119683|Eine indigofarbene Mauer liegt quer über dem Spielbrett. Eine gestrichelte senkrechte rote Mauer mit einem Kreuz würde sie in ihrem Mittelpunkt kreuzen und ist deshalb nicht erlaubt.
 845484|Nicht erlaubt: Die gestrichelte senkrechte Mauer würde die waagerechte Mauer in ihrem Mittelpunkt kreuzen.
 5f88fb|Durch eine Mauer springen
-6d8123|Eine cyanfarbene Figur direkt unter einer weißen Ringfigur, dazwischen eine indigofarbene Mauer. Die drei gestrichelten Felder links, rechts und unterhalb der cyanfarbenen Figur sind ihre einzigen Züge: Sie kann nicht durch die Mauer über die weiße Figur springen.
 200e15|Mit einer Mauer zwischen den Figuren ist kein Sprung möglich. Die cyanfarbene Figur kann nur nach links, rechts oder unten ziehen.
 c8ba65|Zwei Spieler, ein 9×9-Spielbrett, je eine Figur auf dem mittleren Feld gegenüberliegender Kanten, je 10 Mauern.
 b52313|Gewonnen hat, wer als Erster <strong>irgendein Feld</strong> der gegenüberliegenden Kante erreicht.
@@ -439,7 +421,6 @@ d6c580|Übe gegen verschiedene Gegner
 9e1d13|Jede Entscheidung in Quoridor beginnt mit einer Zählung: <strong>Wie viele Züge braucht jede Figur noch bis zu ihrer Zielkante?</strong> Ermittle den kürzesten erlaubten Weg für dich und für deinen Gegner, um jede Mauer auf dem Spielbrett herum. Der Rest dieses Leitfadens baut auf dieser Zählung auf.
 6e5753|<strong>So zählen die Beispiele.</strong> Ein Schritt ist ein Feld nach oben, unten, links oder rechts. Die Zählungen folgen dem kürzesten Weg um die Mauern herum und ignorieren Sprünge und Figurenpositionen, genau wie die Regel vom erlaubten Weg auf der <a href="/quoridor-rules/">Regelseite</a>. Cyan ist die ausgefüllte Figur und zieht nach oben; Weiß ist die Ringfigur und zieht nach unten.
 ee023a|Die gerade Linie ist nicht immer die kürzeste
-5e7e70|Zwei indigofarbene Mauern nebeneinander decken vier Spalten vor einer cyanfarbenen Figur nahe der Unterkante ab. Eine weiße Ringfigur steht oben links. Gestrichelte, von 1 bis 8 nummerierte Felder zeichnen den kürzesten Weg der cyanfarbenen Figur nach: zwei Felder nach oben, zwei Felder nach rechts, dann geradeaus nach oben am rechten Ende der Mauern vorbei.
 9f33be|Cyan braucht 8 Schritte: Die nummerierten Felder führen um das rechte Ende der Mauern herum. Weiß braucht ebenfalls 8, einen Schritt nach links und dann geradeaus nach unten.
 70c2bc|Zwei Mauern nebeneinander decken vier Spalten ab, daher ist der gerade Weg von Cyan durch die Mitte versperrt. Um das rechte Ende herumzugehen, braucht es zwei Seitschritte und insgesamt 8 Schritte. Um das linke Ende herumzugehen, braucht es drei Seitschritte und insgesamt 9. Weiß hat dasselbe Problem von der anderen Seite: ein Schritt nach links, dann geradeaus nach unten, ebenfalls 8.
 6822d4|Das ist ein Gleichstand von 8 zu 8, und Cyan ist am Zug. Bei gleichem Stand kommt der Spieler, der zuerst zieht, zuerst an, Cyan hat also ein Tempo Vorsprung.
@@ -452,9 +433,7 @@ a5b8b4|<strong>Bleibe flexibel, wenn zwei Lücken etwa gleich viel kosten.</stro
 b2ce74|Du hast 10 Mauern, und eine gesetzte Mauer lässt sich nie verschieben. Außerdem kostet jede den Zug, den du sonst gemacht hättest. Daraus ergibt sich eine einfache Möglichkeit, eine Mauer zu bewerten:
 b24339|<strong>Wert einer Mauer = Schritte, die sie dem Weg deines Gegners hinzufügt, minus Schritte, die sie deinem hinzufügt, minus 1.</strong> Die 1 ist der Schritt, den du nicht gemacht hast. Eine Mauer, die deinem Gegner nur einen Schritt hinzufügt, gleicht sich gerade aus und verbraucht trotzdem eine deiner 10 Mauern.
 0c80d9|In der Stellung unten hat eine Mauerreihe drei Lücken: eine am linken Rand, eine zwei Felder breite in der Mitte und eine am rechten Rand. Weiß steht an der mittleren Lücke und braucht 4 Schritte. Cyan braucht 5 und ist am Zug, liegt also einen Schritt zurück.
-134cb7|Eine Reihe indigofarbener Mauern mit drei Lücken: am linken Rand, in der Mitte und am rechten Rand. Eine weiße Ringfigur steht direkt über der mittleren Lücke und eine cyanfarbene Figur direkt unter der Lücke am linken Rand. Eine zusätzliche, weiß umrandete Mauer liegt eine Reihe unterhalb der Linie unter den mittleren Spalten, sodass die weiße Figur einfach ausweichen kann.
 6b1c41|Mauer A (umrandet) fügt 1 Schritt hinzu: Weiß weicht aus. Weiß von 4 auf 5, Cyan bleibt bei 5. Wert: 1 - 0 - 1 = 0.
-ae91a5|Dieselbe Stellung, aber die neue, weiß umrandete Mauer schließt die mittlere Lücke. Die Mauerreihe ist jetzt nur noch am linken und am rechten Rand offen, und die weiße Figur muss drei Felder nach links gehen, um hindurchzukommen.
 5512cf|Mauer B (umrandet) fügt 3 Schritte hinzu: Weiß muss bis zum linken Rand gehen. Weiß von 4 auf 7, Cyan bleibt bei 5. Wert: 3 - 0 - 1 = 2.
 d19ca9|Mauer A wird auf offenem Gelände direkt vor den Weg von Weiß gesetzt, also weicht Weiß einfach aus. Mauer B vervollständigt die bereits vorhandene Mauerreihe und schließt die nächstgelegene Lücke, sodass die nächste drei Felder entfernt ist. Nach Mauer B braucht Cyan 5 Schritte und Weiß 7. Gleiches Mauerbudget, sehr unterschiedliches Ergebnis.
 c05b35|Woher effiziente Mauern kommen
@@ -464,9 +443,7 @@ c44ccb|<strong>Geduld.</strong> Mauern, die nur einen Schritt hinzufügen, sind 
 ee2f27|Jede Mauer verändert das Spielbrett für beide Figuren. Bevor du eine setzt, zähle beide Wege <em>nach</em> der Mauer, nicht nur den deines Gegners.
 14d378|Eine Mauer, die beiden Spielern schadet, hilft dem, der als Nächstes zieht
 4162db|Hier müssen beide Figuren durch dieselbe zwei Felder breite Lücke. Jede braucht 5 Schritte und Cyan ist am Zug, also gewinnt Cyan das reine Wettrennen bereits. Die Lücke zu schließen wirkt aggressiv:
-7a97d6|Eine Reihe indigofarbener Mauern mit Lücken am linken Rand, in der Mitte und am rechten Rand. Eine cyanfarbene Figur steht direkt unter der mittleren Lücke und eine weiße Ringfigur darüber, eine Spalte weiter links. Beide Figuren müssen durch die mittlere Lücke.
 c3236f|Vorher: Cyan 5, Weiß 5, Cyan am Zug.
-13f648|Dieselbe Stellung, nachdem eine weiß umrandete Mauer die mittlere Lücke schließt. Beide Figuren müssen jetzt zum linken oder zum rechten Rand gehen, um hindurchzukommen.
 a18e39|Nachdem Cyan die Lücke geschlossen hat: Beide brauchen 8, und Weiß ist am Zug.
 2ef308|Beide Figuren haben jetzt einen Umweg von drei Feldern, der Stand ist also 8 zu 8. Doch die Mauer hat Cyans Zug verbraucht, also ist Weiß bei gleicher Entfernung am Zug und kommt zuerst an. Cyan hat ein gewonnenes Wettrennen in ein verlorenes verwandelt und dafür auch noch eine Mauer ausgegeben.
 9016c5|Was Verteidigung wirklich bedeutet
@@ -477,7 +454,6 @@ d5b86d|In Quoridor bedeutet Verteidigung vor allem, den eigenen Weg schwer angre
 cadcfd|Angriff und Verteidigung sind dieselbe Arithmetik. Eine Mauer, die deinem Gegner mehr Schritte hinzufügt als dir, greift an und verteidigt zugleich. Eine Mauer, die beiden gleich viele hinzufügt, ist bloß ein Geschenk des Zugrechts.
 2173fb|Bevor du eine Mauer setzt, spiele die beste Antwort deines Gegners durch, nicht nur seine Antwort auf die Stellung, die dir vorschwebt. Eine Mauer verändert auch, was <em>er</em> als Nächstes tun kann.
 d95ea1|Nimm die Mauerreihe aus dem vorigen Abschnitt, wobei Cyan weit rechts steht. Cyan braucht 6 Schritte, Weiß 4, und Cyan ist am Zug. Cyan liegt zurück, daher wirkt es attraktiv, die mittlere Lücke zu schließen: Das fügt dem Weg von Weiß 3 Schritte hinzu (von 4 auf 7) und dem von Cyan keinen (weiter 6). Auf dem Papier geht Cyan von zwei Schritten Rückstand zu einem Schritt Vorsprung.
-513037|Eine Reihe indigofarbener Mauern, überall geschlossen außer am äußersten linken Rand. Die beiden rechten Lücken sind geschlossen, die letzte durch eine weiß umrandete Mauer. Eine cyanfarbene Figur steht unter der Reihe nahe dem rechten Rand, weit von der Öffnung entfernt. Eine weiße Ringfigur steht über der Reihe, nur drei Felder davon entfernt.
 cf0127|Weiß antwortet, indem es die rechte Lücke schließt (umrandet). Cyan braucht jetzt 13 Schritte, Weiß weiterhin 7.
 6f6cd8|Betrachte das Spielbrett nun von der Seite von Weiß. Cyans Mauer ließ nur die rechten Lücken und den linken Rand offen. Die Antwort von Weiß schließt die rechte Lücke, wodurch nur noch eine einzige Öffnung ganz links bleibt. Weiß ist drei Felder davon entfernt. Cyan ist sieben Spalten entfernt, Cyans Weg wächst also von 6 auf 13, während der von Weiß bei 7 bleibt.
 860a4c|Die Lehre lautet nicht „Schließe nie Lücken“. Sie lautet, dass <strong>eine Mauer dem Spieler Möglichkeiten nimmt, der weiter entfernt ist</strong>. Prüfe also, was nach deiner Mauer übrig bleibt, ebenso wie das, was sie wegnimmt.
@@ -486,7 +462,6 @@ bdfc95|<strong>Finde die beste Mauer deines Gegners gegen dich.</strong>Zähle e
 309fee|<strong>Vergleiche die Summen.</strong>Setze die Mauer nur, wenn du nach seiner besten Antwort noch vorne liegst.
 a7a4b8|<strong>Mach dasselbe für ihn.</strong>Frage dich, welche seiner Mauern stärker werden, sobald deine liegt.
 3885c6|Eine Mauer fühlt sich aktiv an, aber ein Figurenschritt ist umsonst: Er kostet keine Mauer und bringt immer Fortschritt. Wenn du das Wettrennen gewinnst, ist der richtige Zug oft einfach zu ziehen.
-64673c|Eine cyanfarbene Figur in der Mitte des Spielbretts und eine weiße Ringfigur rechts davon, eine Reihe höher. Zwei weit entfernte Mauern links berühren den Weg keiner der beiden Figuren.
 6e9bcc|Cyan braucht 4 Schritte, Weiß braucht 5, und Cyan ist am Zug.
 f5f3a9|Hier braucht Cyan 4 Schritte und Weiß 5, und Cyan ist am Zug. Zähle, was jede Seite tun kann:
 cd5aa9|Wenn Cyan einfach vorrückt, steht es 3 zu 5 mit Weiß am Zug. Damit Weiß das Wettrennen dreht, müsste eine Mauer dem Weg von Cyan 3 Schritte hinzufügen. Die beste einzelne Mauer auf diesem Spielbrett fügt 1 hinzu.
@@ -506,7 +481,6 @@ fa985d|<strong>Den Weg des Gegners ignorieren.</strong> Nur die eigenen Schritte
 c0fbdf|<strong>Mauern für Ein-Schritt-Umwege verschwenden.</strong> Eine Mauer, die 1 Schritt hinzufügt, ist 0 wert (siehe „Setze Mauern effizient ein“) und verbraucht dauerhaft eine deiner 10.
 10c8cc|<strong>Alle 10 Mauern horten.</strong> Eine nie benutzte Mauer ist nichts wert, sobald die Partie vorbei ist. Behalte ein paar in Reserve, gib sie aber für Mauern im Wert von 2 oder mehr aus.
 c4380e|<strong>Vergessen, dass Mauern dauerhaft sind.</strong> Eine Mauer, die dir jetzt hilft, kann dich später etwas kosten, wenn die Partie deine Figur durch diesen Bereich führt.
-487c96|Vier waagerechte Mauern, Ende an Ende quer über das Spielbrett gesetzt, sodass nur die Spalte ganz rechts offen bleibt. Eine weiße Ringfigur steht direkt über der Mauerreihe und eine cyanfarbene Figur weit darunter. Beide müssen an der Reihe vorbei.
 4e61c5|Vor den vier Mauern braucht Cyan 7 und Weiß 6. Danach braucht Cyan 11 und Weiß 10.
 d33c8e|Das Spielbrett oben zeigt den ersten Fehler. Vier Mauern wurden Ende an Ende quer über das Spielbrett gesetzt, sodass nur die Spalte ganz rechts offen bleibt. Das fügt dem Weg von Weiß 4 Schritte hinzu (von 6 auf 10), was nach viel klingt. Aber die Reihe liegt auch quer über Cyans Weg, also wächst auch Cyans Weg um 4 (von 7 auf 11). Cyan hat vier Züge und 40 % seiner Mauern ausgegeben, und das Wettrennen ist genau so knapp wie zuvor.
 579c29|Führe ein Tempo-Protokoll
@@ -523,14 +497,11 @@ b57d22|Weiß
 2654e4|Cyan begann einen Schritt zurück und ging mit der Mauer, die die Lücke schließt, in Führung. In diesem Moment fügt keine einzelne Mauer dem Weg von Cyan mehr als 2 Schritte hinzu, also war die Antwort von Weiß, die genau 2 hinzufügt, nach Zählung die stärkste. Der Stand ist nun ausgeglichen, mit Cyan am Zug, was für sich genommen Cyan begünstigen würde.
 b185d0|Teste dann die Belastbarkeit deines Weges
 9a2b6b|Ein ausgeglichener Stand ist nur die halbe Wahrheit. Frage dich, was die beste Mauer deines Gegners <em>jetzt gleich</em> hinzufügen würde:
-622857|Eine Reihe indigofarbener Mauern, in der Mitte geschlossen, mit einer zweiten Mauer über den beiden linken Spalten direkt oberhalb der Lücke am linken Rand. Eine cyanfarbene Figur steht am linken Rand unter der Reihe und eine weiße Ringfigur darüber. Gestrichelte, von 1 bis 7 nummerierte Felder zeichnen den kürzesten Weg von Cyan nach: durch die linke Lücke, zwei Felder nach rechts, dann geradeaus nach oben.
 8bf6b5|Cyan braucht 7 Schritte (nummerierte Felder), Weiß braucht 7, und Cyan ist am Zug.
-eb15c3|Dieselbe Stellung mit einer senkrechten, weiß umrandeten Mauer neben der Lücke am linken Rand. Sie sperrt Cyan in einen ein Feld breiten Gang am linken Rand ein.
 875074|Weiß droht mit der umrandeten Mauer: Cyan von 7 auf 14, Weiß von 7 auf 8.
 561420|Cyans Weg führt durch einen ein Feld breiten Gang am Spielbrettrand, und ein Gang hat keine Alternative. Eine senkrechte Mauer neben der Lücke würde Cyans Weg 7 Schritte hinzufügen und dem von Weiß nur 1. Dieselbe Mauer ist noch mehr wert, sobald Cyan in den Gang getreten ist (9 Schritte statt 7). Der ausgeglichene Stand macht Cyan also nicht sicher, und Cyans eigentliche Frage in diesem Zug ist, wie es mit dieser Drohung umgeht. Wege am Rand oder zwischen Mauern, deinen oder denen des Gegners, sind dort, wo eine einzelne Mauer am meisten kostet, prüfe sie also zuerst.
 70fc79|Nimm dem Gegner seine beste Mauer weg
 a186cc|Wenn eine Mauer dir stark schaden würde, kannst du sie manchmal unerlaubt machen, statt ihr auszuweichen. Eine Mauer, die ihren einzigen erlaubten Platz kreuzt oder überlappt, beseitigt die Bedrohung für immer.
-45c004|Eine Reihe indigofarbener Mauern mit einer Lücke in der Mitte und einer senkrechten, weiß umrandeten Mauer mitten in dieser Lücke. Eine gestrichelte rote Mauer mit Kreuz markiert die einzige waagerechte Mauer, die die Lücke hätte schließen können. Eine cyanfarbene Figur steht unter der Lücke und eine weiße Ringfigur oben rechts.
 590b64|Die senkrechte Mauer (umrandet) kreuzt die mittlere Lücke. Die einzige Mauer, die die Lücke schließen könnte, gestrichelt und durchgestrichen, ist nicht mehr erlaubt.
 40637e|In dieser Stellung ist Cyan auf die mittlere Lücke angewiesen, und Weiß braucht sie nicht. Eine waagerechte Mauer dort würde Cyans Weg 3 Schritte hinzufügen. Die Lücke ist zwei Spalten breit zwischen zwei Mauern, die einzige Mauer, die sie schließen kann, ist also die in der gestrichelten Position. Eine der beiden Nachbarmauern zu überlappen ist nicht erlaubt, und eine senkrechte Mauer durch ihren Mittelpunkt kreuzt sie. Indem Cyan diese senkrechte Mauer setzt, hat es die Lücke dauerhaft gemacht. Das kostet einen Zug und eine Mauer, tu es also nur, wenn die Lücke dein Rettungsanker ist und die Bedrohung groß.
 83bf3b|Spare dir zwei oder drei Mauern für das Ende auf
@@ -805,7 +776,6 @@ e66cbc|9. Änderungen der Bedingungen
 ab0297|<time datetime="2026-10-17">17. Oktober 2026</time>: erste vollständige Fassung dieser Nutzungsbedingungen. Sie ersetzt den früheren vorläufigen Entwurf.
 7cfeb6|Seite nicht gefunden | Quoridor Online
 a6571d|Diese Seite wurde nicht gefunden. Spiel Quoridor oder stöbere in den Leitfäden zu Regeln, Strategie und Spielanleitung.
-f1a504|Eine cyanfarbene Figur, von indigofarbenen Barrieren eingeschlossen, die nicht vorwärtskommt.
 b16224|Diese Seite wurde nicht gefunden
 0540f3|Sie wurde vielleicht verschoben, oder der Link enthält einen Tippfehler. Kein Schaden: Selbst die beste Figur wird manchmal blockiert. Such dir unten einen Weg zurück aus.
 761dec|<svg/> Quoridor spielen
@@ -1028,3 +998,34 @@ watch.joining|Beitritt…
 watch.gone|Diese Partie ist nicht mehr verfügbar. Die Suche läuft weiter.
 contact.needMessage|Bitte schreibe eine Nachricht, bevor du fortfährst.
 contact.opened|Deine E-Mail-App sollte sich mit der versandfertigen Nachricht öffnen. Passiert nichts, schreibe direkt an {email}.
+334588|Quoridor-Online-Logo
+b91ce3|Quoridor online spielen. Illustration eines Quoridor-Spielbretts: ein Raster aus 9 mal 9 Feldern mit einer cyanfarbenen Figur unten, einer weißen Ringfigur oben und mehreren indigofarbenen Barrieren zwischen den Feldern.
+de8e0a|Mauerstrategie bei Quoridor. Eine kleine Gruppe indigofarbener Barrieren zwingt eine weiße Ringfigur zu einem Umweg um die Mauern.
+e3bb95|Quoridor online spielen: Vorschau des Spielbretts mit zwei Figuren und Mauern.
+48ea62|Quoridor gegen den Computer spielen: Vorschau des Spielbretts mit zwei Figuren und Mauern.
+9b1975|Quoridor mit einem Freund an einem Gerät spielen: Vorschau des Spielbretts mit zwei Figuren und Mauern.
+4ee0ad|Einen privaten Quoridor-Raum erstellen: Vorschau des Spielbretts mit zwei Figuren und Mauern.
+7370ae|Einem privaten Quoridor-Raum beitreten: Vorschau des Spielbretts mit zwei Figuren und Mauern.
+4e2e8e|Stellung im Brettspiel Quoridor. Eine laufende Quoridor-Partie: Eine cyanfarbene Figur und eine weiße Ringfigur stehen sich gegenüber, mit mehreren indigofarbenen Mauern zwischen den Feldern.
+b0acaf|Startstellung bei Quoridor. Ein Quoridor-Spielbrett zu Beginn einer Partie: eine cyanfarbene Figur in der Mitte der unteren Kante und eine weiße Ringfigur in der Mitte der oberen Kante, ohne gesetzte Mauern.
+515c03|Diagramm der Quoridor-Regeln. Eine cyanfarbene Figur mit gestrichelten Feldern, die mit Pfeilen markiert sind, links, rechts und unterhalb von ihr. Das Feld darüber ist nicht markiert, weil eine indigofarbene Mauer es blockiert.
+d5d1ed|Diagramm der Quoridor-Regeln. Eine cyanfarbene Figur direkt unter einer weißen Ringfigur. Das Feld direkt über der weißen Figur ist gestrichelt und mit A markiert: Die cyanfarbene Figur kann dorthin springen.
+82f509|Diagramm der Quoridor-Regeln. Eine cyanfarbene Figur direkt unter einer weißen Ringfigur, hinter der weißen Figur liegt eine indigofarbene Mauer. Die Felder links und rechts der weißen Figur sind gestrichelt und mit A und B markiert: Die cyanfarbene Figur kann auf eines von beiden ziehen.
+0d1a78|Diagramm der Quoridor-Regeln. Zwei indigofarbene Mauern nebeneinander vor einer weißen Ringfigur. Zusammen decken sie vier Felder der Reihe darunter ab, die Figur muss also seitlich um sie herumgehen.
+52b12f|Diagramm der Quoridor-Regeln. Eine weiße Ringfigur in der oberen linken Ecke unter einer indigofarbenen Mauer. Eine gestrichelte rote Mauer mit einem Kreuz würde den einzigen Ausweg aus dieser Ecke verschließen und ist deshalb nicht erlaubt.
+e44a15|Diagramm der Quoridor-Regeln. Eine cyanfarbene Figur, einen Schritt vom oberen Rand entfernt. Jedes Feld der obersten Reihe ist gestrichelt und mit einem Häkchen versehen: Jedes davon zu erreichen, gewinnt.
+8cf07b|Diagramm der Quoridor-Regeln. Eine indigofarbene Mauer liegt unter der fünften Reihe über der vierten und fünften Spalte. Eine gestrichelte rote Mauer mit einem Kreuz würde die fünfte Spalte mit ihr teilen und ist deshalb nicht erlaubt.
+ac11a8|Diagramm der Quoridor-Regeln. Eine indigofarbene Mauer liegt quer über dem Spielbrett. Eine gestrichelte senkrechte rote Mauer mit einem Kreuz würde sie in ihrem Mittelpunkt kreuzen und ist deshalb nicht erlaubt.
+d33abd|Diagramm der Quoridor-Regeln. Eine cyanfarbene Figur direkt unter einer weißen Ringfigur, dazwischen eine indigofarbene Mauer. Die drei gestrichelten Felder links, rechts und unterhalb der cyanfarbenen Figur sind ihre einzigen Züge: Sie kann nicht durch die Mauer über die weiße Figur springen.
+23d1c4|Quoridor-Strategiediagramm. Zwei indigofarbene Mauern nebeneinander decken vier Spalten vor einer cyanfarbenen Figur nahe der Unterkante ab. Eine weiße Ringfigur steht oben links. Gestrichelte, von 1 bis 8 nummerierte Felder zeichnen den kürzesten Weg der cyanfarbenen Figur nach: zwei Felder nach oben, zwei Felder nach rechts, dann geradeaus nach oben am rechten Ende der Mauern vorbei.
+ba4821|Quoridor-Strategiediagramm. Eine Reihe indigofarbener Mauern mit drei Lücken: am linken Rand, in der Mitte und am rechten Rand. Eine weiße Ringfigur steht direkt über der mittleren Lücke und eine cyanfarbene Figur direkt unter der Lücke am linken Rand. Eine zusätzliche, weiß umrandete Mauer liegt eine Reihe unterhalb der Linie unter den mittleren Spalten, sodass die weiße Figur einfach ausweichen kann.
+da96c6|Quoridor-Strategiediagramm. Dieselbe Stellung, aber die neue, weiß umrandete Mauer schließt die mittlere Lücke. Die Mauerreihe ist jetzt nur noch am linken und am rechten Rand offen, und die weiße Figur muss drei Felder nach links gehen, um hindurchzukommen.
+6249ba|Quoridor-Strategiediagramm. Eine Reihe indigofarbener Mauern mit Lücken am linken Rand, in der Mitte und am rechten Rand. Eine cyanfarbene Figur steht direkt unter der mittleren Lücke und eine weiße Ringfigur darüber, eine Spalte weiter links. Beide Figuren müssen durch die mittlere Lücke.
+6de390|Quoridor-Strategiediagramm. Dieselbe Stellung, nachdem eine weiß umrandete Mauer die mittlere Lücke schließt. Beide Figuren müssen jetzt zum linken oder zum rechten Rand gehen, um hindurchzukommen.
+3a9df1|Quoridor-Strategiediagramm. Eine Reihe indigofarbener Mauern, überall geschlossen außer am äußersten linken Rand. Die beiden rechten Lücken sind geschlossen, die letzte durch eine weiß umrandete Mauer. Eine cyanfarbene Figur steht unter der Reihe nahe dem rechten Rand, weit von der Öffnung entfernt. Eine weiße Ringfigur steht über der Reihe, nur drei Felder davon entfernt.
+77ce67|Quoridor-Strategiediagramm. Eine cyanfarbene Figur in der Mitte des Spielbretts und eine weiße Ringfigur rechts davon, eine Reihe höher. Zwei weit entfernte Mauern links berühren den Weg keiner der beiden Figuren.
+7c7cc0|Quoridor-Strategiediagramm. Vier waagerechte Mauern, Ende an Ende quer über das Spielbrett gesetzt, sodass nur die Spalte ganz rechts offen bleibt. Eine weiße Ringfigur steht direkt über der Mauerreihe und eine cyanfarbene Figur weit darunter. Beide müssen an der Reihe vorbei.
+d5325f|Quoridor-Strategiediagramm. Eine Reihe indigofarbener Mauern, in der Mitte geschlossen, mit einer zweiten Mauer über den beiden linken Spalten direkt oberhalb der Lücke am linken Rand. Eine cyanfarbene Figur steht am linken Rand unter der Reihe und eine weiße Ringfigur darüber. Gestrichelte, von 1 bis 7 nummerierte Felder zeichnen den kürzesten Weg von Cyan nach: durch die linke Lücke, zwei Felder nach rechts, dann geradeaus nach oben.
+15846d|Quoridor-Strategiediagramm. Dieselbe Stellung mit einer senkrechten, weiß umrandeten Mauer neben der Lücke am linken Rand. Sie sperrt Cyan in einen ein Feld breiten Gang am linken Rand ein.
+60f904|Quoridor-Strategiediagramm. Eine Reihe indigofarbener Mauern mit einer Lücke in der Mitte und einer senkrechten, weiß umrandeten Mauer mitten in dieser Lücke. Eine gestrichelte rote Mauer mit Kreuz markiert die einzige waagerechte Mauer, die die Lücke hätte schließen können. Eine cyanfarbene Figur steht unter der Lücke und eine weiße Ringfigur oben rechts.
+26bd49|Quoridor-Figur von Mauern blockiert. Eine cyanfarbene Figur, von indigofarbenen Barrieren eingeschlossen, die nicht vorwärtskommt.

@@ -17,7 +17,6 @@ ae62c7|<svg/> Menú
 f9b169|Quoridor es un juego de mesa de estrategia en el que dos jugadores compiten por llevar su peón al lado opuesto de un tablero de 9×9 mientras colocan muros para frenarse mutuamente. Puedes jugar contra el ordenador o con un amigo en el mismo dispositivo.
 39d746|Jugar a Quoridor ahora <svg/>
 b8a328|Aprende a jugar
-40b875|Ilustración de un tablero de Quoridor: una cuadrícula de 9 por 9 con un peón cian cerca de la parte inferior, un peón blanco en forma de anillo cerca de la parte superior y varias barreras índigo colocadas entre las casillas.
 97fa7b|Elige cómo quieres jugar
 abe900|Todas las formas de jugar son gratuitas y funcionan en tu navegador, sin cuenta.
 d970d3|Juega contra el ordenador
@@ -35,7 +34,6 @@ d88fd8|Cómo jugar a Quoridor
 663080|Lee las reglas de Quoridor
 24e459|Por qué importan los muros
 1bfbed|Un buen muro te cuesta un turno, pero a tu oponente le cuesta varios. Valorar ese intercambio una y otra vez es todo el juego.
-a4d571|Un pequeño grupo de barreras índigo obliga a un peón blanco en forma de anillo a dar un rodeo alrededor de los muros.
 7807dc|Un juego de estrategia de movimiento y táctica
 050eec|No hay dados, cartas ni información oculta. Cada partida se decide por lo que planeas y por lo que adviertes.
 ebd0b1|Planificar la ruta
@@ -127,7 +125,6 @@ df84e2|Nombre de usuario
 8fa2ec|Todavía no hay un servidor de emparejamiento en este sitio, así que nadie puede ser emparejado contigo. No se envió nada a ninguna parte.
 a344f1|<a href="/how-to-play-quoridor/">Aprende a jugar</a> mientras esperas, o vuelve a la <a href="/play/">lista de modos</a>.
 93a9cc|¿Quieres jugar con una persona concreta? Prueba una sala privada: <a href="/play/create-room/">crea una sala</a> o <a href="/play/join-room/">únete a una sala</a>.
-30e688|Vista previa del tablero de Quoridor para el juego en línea.
 f31ef6|Juega a Quoridor contra el ordenador
 8e964b|Juega a Quoridor contra un oponente informático. Elige Fácil, Medio, Difícil o Experto y empieza sin registrarte.
 58f506|Jugar contra el robot
@@ -145,7 +142,6 @@ e82bc1|Dificultad
 3dec52|El nivel más fuerte que ofrecemos. Busca varias jugadas más allá y tarda hasta aproximadamente un segundo por movimiento, por lo que puede parecer más lento al responder.
 d64ac7|Tú mueves primero, con el peón cian relleno, desde el borde inferior. El robot juega en tu dispositivo; no se envía nada a ninguna parte. En nuestras propias partidas de prueba (20 por emparejamiento, robots contra robots), cada nivel venció al inferior al menos 16 veces de 20.
 66f183|<svg/> Empezar partida
-1df74d|Vista previa del tablero de Quoridor para una partida contra el ordenador.
 86ff00|Juega a Quoridor con un amigo en un solo dispositivo
 4f0985|Juega una partida de Quoridor de dos jugadores en el mismo dispositivo. Compartan la pantalla y túrnense.
 935b0a|Jugar con un amigo
@@ -158,7 +154,6 @@ dddce3|El jugador 1 usa el peón cian relleno y mueve primero, desde el borde in
 64d690|Pasen el dispositivo después de cada movimiento.
 3fe725|Nombre del jugador 1 (opcional)
 2467f7|Nombre del jugador 2 (opcional)
-d6f9e0|Vista previa del tablero de Quoridor para una partida de dos jugadores en un dispositivo.
 311dec|Crear una sala privada de Quoridor
 732df9|Crea una sala privada de Quoridor y comparte el enlace de invitación o el código de emparejamiento con un amigo.
 17319d|Crear una sala
@@ -173,7 +168,6 @@ f51d4d|Recibes un enlace de invitación y un código de emparejamiento corto.
 388bb6|Copia cualquiera de los dos y envíaselo a tu amigo.
 2857e6|La partida empieza en cuanto tu amigo se une.
 57eb00|<a href="/room/EXAMPLE-ROOM-ID/?preview=waiting">Ver la pantalla de la sala de espera</a> (datos de ejemplo)
-94143a|Vista previa del tablero de Quoridor para una sala privada.
 c82edf|Unirse a una sala privada de Quoridor
 0ff17f|Únete a una sala privada de Quoridor con un código de emparejamiento o un enlace de invitación.
 8a69e4|Unirse a una sala
@@ -185,7 +179,6 @@ bf8aef|6 caracteres. ¿Tienes un enlace de invitación? Simplemente ábrelo.
 859667|<svg/> Unirse a la sala
 3d19c8|Todavía no hay un servidor de salas en este sitio, así que no se puede comprobar el código.
 0b2828|Ver otras pantallas (datos de ejemplo): <a href="/room/EXAMPLE-ROOM-ID/?preview=invalid">código no válido</a>, <a href="/room/EXAMPLE-ROOM-ID/?preview=full">sala llena</a>, <a href="/room/EXAMPLE-ROOM-ID/?preview=expired">invitación caducada</a>.
-4089e3|Vista previa del tablero de Quoridor para unirse a una sala privada.
 57ee3d|Sala privada | Quoridor Online
 bdd81a|Sala privada de Quoridor.
 0fc9a6|Esperando a tu oponente
@@ -240,12 +233,10 @@ c018dd|Juega tu primera partida
 7dff41|<strong>El tablero.</strong> Una cuadrícula de 9×9 casillas (81 en total) con finas ranuras entre ellas.
 0faf4b|<strong>Peones.</strong> Cada jugador tiene un peón. El jugador 1 es el círculo cian relleno y el jugador 2 es el anillo blanco, por lo que se distinguen por la forma además del color. Tu propio nombre aparece marcado con <em>(tú)</em>.
 3f0452|<strong>Muros.</strong> Cada muro mide dos casillas de largo, se coloca en las ranuras entre casillas y bloquea el movimiento a través de él. Las tarjetas de los jugadores muestran cuántos muros le quedan a cada uno.
-12e907|Una partida de Quoridor en curso: un peón cian y un peón blanco en forma de anillo se enfrentan, con varios muros índigo colocados entre las casillas.
 b7b993|Una partida en curso. Las piezas cian y blanca son los peones; las barras índigo son muros colocados en las ranuras entre casillas.
 eacc83|<strong>Abre una partida.</strong>Elige un modo en la página de <a href="/play/">Jugar</a>. No hace falta cuenta.
 095c12|<strong>Comprueba tu lado.</strong>Tu peón empieza en el centro de la fila inferior y tu meta es la fila superior. Cada jugador tiene 10 muros.
 56352e|<strong>Túrnense.</strong>El jugador 1 mueve primero, y la barra de turno indica a quién le toca.
-26b154|Un tablero de Quoridor al inicio de una partida: un peón cian en el centro del borde inferior y un peón blanco en forma de anillo en el centro del borde superior, sin ningún muro colocado.
 11aad1|La posición inicial tal como la ves. Tu meta es cualquier casilla del borde donde empieza tu oponente: aquí, el cian apunta a la fila superior y el blanco a la inferior.
 e64544|En tu turno haces <strong>una</strong> sola cosa: mover tu peón <em>o</em> colocar un muro. Esta sección trata del movimiento.
 a891a4|Avanzar una casilla
@@ -253,15 +244,12 @@ a891a4|Avanzar una casilla
 2e2f5d|<strong>Quédate en el modo Mover peón.</strong>Las casillas a las que puedes llegar legalmente aparecen resaltadas.
 0966be|<strong>Haz clic o toca una casilla resaltada.</strong>Tu peón avanza una casilla y el turno pasa.
 403a59|Un peón se mueve hacia arriba, abajo, izquierda o derecha, una casilla cada vez. No puede moverse en diagonal (salvo en el caso especial que se explica abajo), ni atravesar un muro, ni salir del tablero.
-b73c1b|Un peón cian con casillas punteadas marcadas con flechas a su izquierda, derecha y debajo. La casilla de arriba no está marcada porque un muro índigo la bloquea.
 f92d5c|Casillas a las que puede ir el peón cian. El muro que tiene encima bloquea el movimiento hacia arriba.
 503c17|Saltar sobre el otro peón
 b6d342|Si el peón del oponente está en la casilla contigua a la tuya, no puedes compartir casilla, así que <strong>saltas directamente sobre él</strong> y aterrizas en la casilla justo detrás. El juego te resalta esa casilla, y el salto cuenta como todo tu movimiento.
-474a97|Un peón cian justo debajo de un peón blanco en forma de anillo. La casilla justo encima del peón blanco está punteada y marcada con A: el peón cian puede saltar allí.
 51fed8|El peón cian salta sobre el peón blanco hasta la casilla A.
 d69fee|Avanzar en diagonal cuando el salto está bloqueado
 4f82f7|Si un muro o el borde del tablero está justo detrás del otro peón, no puedes saltar. En su lugar puedes moverte a una casilla <strong>junto</strong> al peón del oponente, siempre que ningún muro bloquee ese paso.
-2a319a|Un peón cian justo debajo de un peón blanco en forma de anillo con un muro índigo detrás del peón blanco. Las casillas a la izquierda y a la derecha del peón blanco están punteadas y marcadas con A y B: el peón cian puede moverse a cualquiera de ellas.
 0180a1|El muro detrás del peón blanco impide el salto, así que el peón cian puede ir a A o a B.
 8737b8|En lugar de mover, puedes colocar un muro. Un muro alarga el camino de tu oponente, lo cual es tan bueno como acercarte a la meta.
 9164b8|<strong>Pulsa Colocar muro.</strong>El tablero cambia al modo de muros. Pulsa Mover peón para volver.
@@ -269,14 +257,11 @@ a27725|<strong>Elige una ranura.</strong>Apunta al tablero y la ranura más cerc
 a977dd|<strong>Comprueba que esté permitido.</strong>Un muro no puede solaparse ni cruzarse con otro muro, y nunca puede quitar a un jugador su último camino hacia la meta. Si la vista previa no es legal, un mensaje bajo los botones explica por qué y el muro no se puede colocar.
 fdb4bf|<strong>Colócalo.</strong>Con el ratón, haz clic en la ranura. En una pantalla táctil, tócala para seleccionarla y luego pulsa Colocar el muro seleccionado. Tu contador de muros baja en uno.
 1c006e|Los muros son definitivos. No se pueden mover ni recoger de nuevo, y una partida en línea no tiene deshacer, así que mira bien la vista previa antes.
-46196f|Dos muros índigo colocados uno junto al otro delante de un peón blanco en forma de anillo. Juntos cubren cuatro casillas de la fila inferior, así que el peón debe rodearlos caminando de lado.
 4c9013|Dos muros uno junto al otro. El peón blanco necesitaba 6 pasos para llegar a la fila inferior; ahora necesita 8, contando solo los muros.
 ea7cda|Un muro ilegal
 3f2e20|El muro punteado de abajo no está permitido. El peón blanco de la esquina se quedaría sin salida, y un muro nunca puede quitar a un jugador su último camino.
-de7b18|Un peón blanco en forma de anillo en la esquina superior izquierda bajo un muro índigo. Un muro rojo punteado marcado con una cruz cerraría la única salida de esa esquina, por lo que no está permitido.
 5fd3f9|No permitido: este muro encerraría al peón blanco en la esquina.
 332d21|El primer jugador cuyo peón llegue a <strong>cualquier casilla</strong> del borde opuesto gana de inmediato. No necesitas caer en una casilla concreta.
-13a9eb|Un peón cian a un paso del borde superior. Cada casilla de la fila superior está punteada y marcada con una marca de verificación: llegar a cualquiera de ellas gana.
 823046|El peón cian está a un paso de ganar: cualquier casilla de la fila superior sirve.
 6b64ec|Una partida también puede terminar si un jugador se rinde, lo que da la victoria al otro bando.
 e240af|<strong>Cuenta ambas rutas.</strong>Antes de cada turno, calcula cuántos pasos necesitas tú y cuántos necesita tu oponente. Quien va por delante normalmente debería seguir avanzando.
@@ -399,13 +384,10 @@ db6e74|Dar un paso lateral cuando es posible el salto recto
 0125df|Mover o retirar un muro ya colocado
 00932a|Los muros son permanentes.
 851b4c|Muros que se solapan
-8ac3d4|Un muro índigo está debajo de la quinta fila, a lo largo de la cuarta y la quinta columnas. Un muro rojo punteado marcado con una cruz compartiría la quinta columna con él, por lo que no está permitido.
 f62035|No permitido: el muro punteado se solaparía con el muro existente a lo largo de una casilla.
 14acc8|Muros que se cruzan
-119683|Un muro índigo atraviesa el tablero. Un muro rojo vertical punteado marcado con una cruz lo cruzaría por su punto medio, por lo que no está permitido.
 845484|No permitido: el muro vertical punteado cruzaría el muro horizontal por su punto medio.
 5f88fb|Saltar a través de un muro
-6d8123|Un peón cian justo debajo de un peón blanco en forma de anillo, con un muro índigo entre ellos. Las tres casillas punteadas a la izquierda, a la derecha y debajo del peón cian son sus únicos movimientos: no puede saltar sobre el peón blanco a través del muro.
 200e15|Con un muro entre los peones no es posible ningún salto. El peón cian solo puede avanzar a la izquierda, a la derecha o hacia abajo.
 c8ba65|Dos jugadores, un tablero de 9×9, un peón cada uno en la casilla central de bordes opuestos, 10 muros cada uno.
 b52313|Gana quien llegue primero a <strong>cualquier casilla</strong> del borde opuesto.
@@ -439,7 +421,6 @@ d6c580|Practica contra distintos oponentes
 9e1d13|Toda decisión en Quoridor empieza con una cuenta: <strong>¿cuántos movimientos necesita aún cada peón para llegar a su borde meta?</strong> Calcula la ruta legal más corta para ti y para tu oponente, rodeando cada muro del tablero. El resto de esta guía se apoya en esa cuenta.
 6e5753|<strong>Cómo cuentan los ejemplos.</strong> Un paso es una casilla arriba, abajo, izquierda o derecha. Las cuentas siguen la ruta más corta alrededor de los muros e ignoran los saltos y la posición de los peones, igual que la regla del camino legal de la <a href="/quoridor-rules/">página de reglas</a>. El cian es el peón relleno y sube; el blanco es el peón en forma de anillo y baja.
 ee023a|La línea recta no siempre es la más corta
-5e7e70|Dos muros índigo uno junto al otro cubren cuatro columnas delante de un peón cian cerca de la parte inferior. Un peón blanco en forma de anillo está cerca de la parte superior izquierda. Casillas punteadas numeradas del 1 al 8 trazan la ruta más corta del peón cian: dos casillas hacia arriba, dos a la derecha y luego recto hacia arriba pasando el extremo derecho de los muros.
 9f33be|El cian necesita 8 pasos: las casillas numeradas rodean el extremo derecho de los muros. El blanco también necesita 8, un paso a la izquierda y luego recto hacia abajo.
 70c2bc|Dos muros uno junto al otro cubren cuatro columnas, así que la ruta recta del cian por el centro queda bloqueada. Rodear el extremo derecho requiere dos pasos laterales y 8 pasos en total. Rodear el extremo izquierdo requiere tres pasos laterales y 9 en total. El blanco tiene el mismo problema desde el otro lado: un paso a la izquierda y luego recto hacia abajo, también 8.
 6822d4|Es un empate de 8 a 8 con el cian a mover. Cuando las cuentas son iguales, el jugador que mueve primero llega primero, así que el cian lleva un tempo de ventaja.
@@ -452,9 +433,7 @@ a5b8b4|<strong>Mantén la flexibilidad cuando dos huecos cuestan casi lo mismo.<
 b2ce74|Tienes 10 muros, y un muro colocado nunca se puede mover. Además, cada uno te cuesta el movimiento que habrías hecho en su lugar. Eso da una forma sencilla de valorar un muro:
 b24339|<strong>Valor de un muro = pasos que añade a la ruta de tu oponente, menos pasos que añade a la tuya, menos 1.</strong> El 1 es el paso que no diste. Un muro que añade solo un paso a tu oponente apenas queda en tablas, y aun así gasta uno de tus 10 muros.
 0c80d9|En la posición de abajo, una fila de muros tiene tres huecos: uno en el borde izquierdo, uno de dos casillas de ancho en el centro y otro en el borde derecho. El blanco está en el hueco central y necesita 4 pasos. El cian necesita 5 y mueve, así que va un paso por detrás.
-134cb7|Una fila de muros índigo con tres huecos: en el borde izquierdo, en el centro y en el borde derecho. Un peón blanco en forma de anillo está justo encima del hueco central y un peón cian está justo debajo del hueco del borde izquierdo. Un muro extra, con contorno blanco, queda una fila por debajo de la línea bajo las columnas centrales, de modo que el peón blanco puede simplemente apartarse.
 6b1c41|El muro A (con contorno) añade 1 paso: el blanco se aparta. Blanco de 4 a 5, el cian se queda en 5. Valor: 1 - 0 - 1 = 0.
-ae91a5|La misma posición, pero el muro nuevo, con contorno blanco, cierra el hueco central. La fila de muros ahora solo está abierta en el borde izquierdo y en el borde derecho, y el peón blanco tiene que caminar tres casillas a la izquierda para pasar.
 5512cf|El muro B (con contorno) añade 3 pasos: el blanco debe caminar hasta el borde izquierdo. Blanco de 4 a 7, el cian se queda en 5. Valor: 3 - 0 - 1 = 2.
 d19ca9|El muro A se coloca justo delante del camino del blanco en terreno abierto, así que el blanco simplemente se aparta. El muro B completa la fila de muros que ya había y cierra el hueco más cercano, de modo que el siguiente queda a tres casillas. Tras el muro B el cian necesita 5 pasos y el blanco 7. El mismo presupuesto de muros, un resultado muy distinto.
 c05b35|De dónde salen los muros eficientes
@@ -464,9 +443,7 @@ c44ccb|<strong>Paciencia.</strong> Los muros que añaden un paso rara vez valen 
 ee2f27|Cada muro cambia el tablero para ambos peones. Antes de colocar uno, cuenta ambas rutas <em>después</em> del muro, no solo la de tu oponente.
 14d378|Un muro que perjudica a ambos jugadores ayuda a quien mueve a continuación
 4162db|Aquí ambos peones necesitan pasar por el mismo hueco de dos casillas de ancho. Cada uno necesita 5 pasos y el cian mueve, así que el cian ya está ganando la carrera pura. Cerrar el hueco parece agresivo:
-7a97d6|Una fila de muros índigo con huecos en el borde izquierdo, en el centro y en el borde derecho. Un peón cian está justo debajo del hueco central y un peón blanco en forma de anillo está encima, una columna a la izquierda. Ambos peones necesitan pasar por el hueco central.
 c3236f|Antes: cian 5, blanco 5, mueve el cian.
-13f648|La misma posición después de que un muro, con contorno blanco, cierra el hueco central. Ahora ambos peones tienen que caminar hasta el borde izquierdo o el derecho para pasar.
 a18e39|Tras cerrar el cian el hueco: ambos necesitan 8, y mueve el blanco.
 2ef308|Ahora ambos peones tienen un rodeo de tres casillas, así que la cuenta es 8 a 8. Pero el muro consumió el turno del cian, así que mueve el blanco a igual distancia y llega primero. El cian convirtió una carrera ganadora en una perdedora y gastó un muro para lograrlo.
 9016c5|Qué significa realmente defender
@@ -477,7 +454,6 @@ d5b86d|En Quoridor, defender consiste sobre todo en mantener tu propia ruta dif�
 cadcfd|Ataque y defensa son la misma aritmética. Un muro que añade más pasos a tu oponente que a ti ataca y defiende a la vez. Un muro que añade el mismo número a ambos es solo un regalo del turno.
 2173fb|Antes de colocar un muro, juega mentalmente la mejor respuesta de tu oponente, no solo su respuesta a la posición que tienes en mente. Un muro también cambia lo que <em>ellos</em> pueden hacer a continuación.
 d95ea1|Toma la fila de muros de la sección anterior, con el cian muy a la derecha. El cian necesita 6 pasos y el blanco 4, y mueve el cian. El cian va por detrás, así que cerrar el hueco central resulta atractivo: añade 3 pasos a la ruta del blanco (de 4 a 7) y ninguno a la del cian (sigue en 6). Sobre el papel, el cian pasa de ir dos pasos por detrás a ir uno por delante.
-513037|Una fila de muros índigo cerrada en todas partes salvo en el extremo borde izquierdo. Los dos huecos de la derecha están cerrados, el último con un muro con contorno blanco. Un peón cian está debajo de la fila cerca del borde derecho, muy lejos de la abertura. Un peón blanco en forma de anillo está encima de la fila a solo tres casillas de ella.
 cf0127|El blanco responde cerrando el hueco de la derecha (con contorno). Ahora el cian necesita 13 pasos y el blanco sigue necesitando 7.
 6f6cd8|Ahora mira el tablero desde el lado del blanco. El muro del cian dejó abiertos solo los huecos de la derecha y el borde izquierdo. La respuesta del blanco cierra el hueco de la derecha, lo que deja una única abertura en el extremo izquierdo. El blanco está a tres casillas de ella. El cian está a siete columnas, así que su ruta crece de 6 a 13 mientras la del blanco sigue en 7.
 860a4c|La lección no es «nunca cierres huecos». Es que <strong>un muro quita opciones al jugador que está más lejos</strong>, así que comprueba qué queda tras tu muro además de lo que quita.
@@ -486,7 +462,6 @@ bdfc95|<strong>Encuentra el mejor muro de tu oponente contra ti.</strong>Vuelve 
 309fee|<strong>Compara los totales.</strong>Coloca el muro solo si sigues por delante tras su mejor respuesta.
 a7a4b8|<strong>Haz lo mismo con él.</strong>Pregúntate cuáles de sus muros se vuelven más fuertes una vez colocado el tuyo.
 3885c6|Un muro parece activo, pero un paso de peón es gratis: no cuesta ningún muro y siempre avanza. Si vas ganando la carrera, a menudo lo correcto es simplemente mover.
-64673c|Un peón cian en el centro del tablero y un peón blanco en forma de anillo a su derecha y una fila más arriba. Dos muros muy alejados a la izquierda no tocan la ruta de ninguno de los peones.
 6e9bcc|El cian necesita 4 pasos, el blanco necesita 5, y mueve el cian.
 f5f3a9|Aquí el cian necesita 4 pasos y el blanco 5, y mueve el cian. Cuenta lo que puede hacer cada bando:
 cd5aa9|Si el cian simplemente avanza, la cuenta es 3 a 5 con el blanco a mover. Para que el blanco dé la vuelta a la carrera, un muro tendría que añadir 3 pasos a la ruta del cian. El mejor muro suelto de este tablero añade 1.
@@ -506,7 +481,6 @@ fa985d|<strong>Ignorar la ruta del oponente.</strong> Contar solo tus propios pa
 c0fbdf|<strong>Gastar muros en rodeos de un paso.</strong> Un muro que añade 1 paso vale 0 (véase «Usa los muros con eficiencia») y gasta para siempre uno de tus 10.
 10c8cc|<strong>Acaparar los 10 muros.</strong> Un muro que nunca se usa no vale nada cuando termina la partida. Guarda un par en reserva, pero gástalos en muros que valgan 2 o más.
 c4380e|<strong>Olvidar que los muros son permanentes.</strong> Un muro que te ayuda ahora puede costarte más tarde si la partida lleva tu peón por esa zona.
-487c96|Cuatro muros horizontales colocados extremo con extremo por todo el tablero, dejando abierta solo la columna del extremo derecho. Un peón blanco en forma de anillo está justo encima de la fila de muros y un peón cian está bien por debajo. Ambos deben pasar la fila.
 4e61c5|Antes de los cuatro muros el cian necesita 7 y el blanco 6. Después, el cian necesita 11 y el blanco 10.
 d33c8e|El tablero de arriba muestra el primer error. Se colocaron cuatro muros extremo con extremo por todo el tablero, dejando abierta solo la columna del extremo derecho. Eso añade 4 pasos a la ruta del blanco (de 6 a 10), lo que suena a mucho. Pero la fila también atraviesa el camino del cian, así que su ruta también crece en 4 (de 7 a 11). El cian gastó cuatro turnos y el 40 % de sus muros, y la carrera está exactamente tan igualada como antes.
 579c29|Lleva un registro de tempo
@@ -523,14 +497,11 @@ b57d22|Blanco
 2654e4|El cian empezó un paso por detrás y pasó a ir por delante con el muro que cierra el hueco. En ese momento ningún muro suelto añade más de 2 pasos a la ruta del cian, así que la respuesta del blanco, que añade exactamente 2, fue la más fuerte según la cuenta. Ahora las cuentas están igualadas con el cian a mover, lo que por sí solo favorecería al cian.
 b185d0|Después, pon a prueba tu ruta
 9a2b6b|Una cuenta igualada es solo la mitad del cuadro. Pregúntate qué añadiría <em>ahora mismo</em> el mejor muro de tu oponente:
-622857|Una fila de muros índigo cerrada en el centro, con un segundo muro sobre las dos columnas de la izquierda justo encima del hueco del borde izquierdo. Un peón cian está en el borde izquierdo debajo de la fila y un peón blanco en forma de anillo está encima. Casillas punteadas numeradas del 1 al 7 trazan la ruta más corta del cian: por el hueco izquierdo, dos casillas a la derecha y luego recto hacia arriba.
 8bf6b5|El cian necesita 7 pasos (casillas numeradas), el blanco necesita 7, y mueve el cian.
-eb15c3|La misma posición con un muro vertical, con contorno blanco, junto al hueco del borde izquierdo. Encierra al cian en un pasillo de una casilla de ancho a lo largo del borde izquierdo.
 875074|El blanco amenaza con el muro con contorno: cian de 7 a 14, blanco de 7 a 8.
 561420|La ruta del cian pasa por un pasillo de una casilla de ancho junto al borde del tablero, y un pasillo no tiene alternativa. Un muro vertical junto al hueco añadiría 7 pasos a la ruta del cian y solo 1 a la del blanco. El mismo muro vale aún más cuando el cian ya ha entrado en el pasillo (9 pasos en lugar de 7). Así que la cuenta igualada no pone al cian a salvo, y la verdadera pregunta del cian en este turno es cómo afrontar esa amenaza. Las rutas junto al borde o entre muros, tuyos o del oponente, son donde un solo muro cuesta más, así que revísalas primero.
 70fc79|Quita al oponente su mejor muro
 a186cc|Si un muro te perjudicaría mucho, a veces puedes hacerlo ilegal en lugar de huir de él. Un muro que cruza o solapa su único emplazamiento legal elimina la amenaza para siempre.
-45c004|Una fila de muros índigo con un hueco en el centro, y un muro vertical con contorno blanco en medio de ese hueco. Un muro rojo punteado con una cruz marca el único muro horizontal que habría podido cerrar el hueco. Un peón cian está debajo del hueco y un peón blanco en forma de anillo está arriba a la derecha.
 590b64|El muro vertical (con contorno) cruza el hueco central. El único muro que podría cerrar el hueco, punteado y tachado, ya no es legal.
 40637e|En esta posición el cian depende del hueco central, y el blanco no lo necesita. Un muro horizontal allí añadiría 3 pasos a la ruta del cian. El hueco tiene dos columnas de ancho entre dos muros, así que el único muro que puede cerrarlo es el de la posición punteada. Solapar cualquiera de los vecinos no está permitido, y un muro vertical por su punto medio lo cruza. Al colocar ese muro vertical, el cian ha hecho permanente el hueco. Cuesta un turno y un muro, así que hazlo solo cuando el hueco sea tu salvavidas y la amenaza sea grande.
 83bf3b|Guarda dos o tres muros para el final
@@ -805,7 +776,6 @@ e66cbc|9. Cambios en las condiciones
 ab0297|<time datetime="2026-10-17">17 de octubre de 2026</time>: primera versión completa de estas Condiciones de uso. Sustituye al borrador provisional anterior.
 7cfeb6|Página no encontrada | Quoridor Online
 a6571d|No se pudo encontrar esta página. Juega a Quoridor o consulta las guías de reglas, estrategia y cómo jugar.
-f1a504|Un peón cian rodeado de barreras índigo, incapaz de avanzar.
 b16224|No se pudo encontrar esta página
 0540f3|Puede que se haya movido, o que el enlace tenga un error tipográfico. No pasa nada: hasta el mejor peón se queda bloqueado a veces. Elige abajo un camino de vuelta.
 761dec|<svg/> Jugar a Quoridor
@@ -1028,3 +998,34 @@ watch.joining|Uniéndote…
 watch.gone|Esa partida ya no está disponible. Sigues buscando.
 contact.needMessage|Escribe un mensaje antes de continuar.
 contact.opened|Tu aplicación de correo debería abrirse con el mensaje listo para enviar. Si no ocurre nada, escribe directamente a {email}.
+334588|Logotipo de Quoridor Online
+b91ce3|Juega a Quoridor en línea. Ilustración de un tablero de Quoridor: una cuadrícula de 9 por 9 con un peón cian cerca de la parte inferior, un peón blanco en forma de anillo cerca de la parte superior y varias barreras índigo colocadas entre las casillas.
+de8e0a|Estrategia de muros en Quoridor. Un pequeño grupo de barreras índigo obliga a un peón blanco en forma de anillo a dar un rodeo alrededor de los muros.
+e3bb95|Juega a Quoridor en línea: vista previa del tablero con dos peones y muros.
+48ea62|Juega a Quoridor contra el ordenador: vista previa del tablero con dos peones y muros.
+9b1975|Juega a Quoridor con un amigo en un dispositivo: vista previa del tablero con dos peones y muros.
+4ee0ad|Crea una sala privada de Quoridor: vista previa del tablero con dos peones y muros.
+7370ae|Únete a una sala privada de Quoridor: vista previa del tablero con dos peones y muros.
+4e2e8e|Posición del juego de mesa Quoridor. Una partida de Quoridor en curso: un peón cian y un peón blanco en forma de anillo se enfrentan, con varios muros índigo colocados entre las casillas.
+b0acaf|Posición inicial de Quoridor. Un tablero de Quoridor al inicio de una partida: un peón cian en el centro del borde inferior y un peón blanco en forma de anillo en el centro del borde superior, sin ningún muro colocado.
+515c03|Diagrama de las reglas de Quoridor. Un peón cian con casillas punteadas marcadas con flechas a su izquierda, derecha y debajo. La casilla de arriba no está marcada porque un muro índigo la bloquea.
+d5d1ed|Diagrama de las reglas de Quoridor. Un peón cian justo debajo de un peón blanco en forma de anillo. La casilla justo encima del peón blanco está punteada y marcada con A: el peón cian puede saltar allí.
+82f509|Diagrama de las reglas de Quoridor. Un peón cian justo debajo de un peón blanco en forma de anillo con un muro índigo detrás del peón blanco. Las casillas a la izquierda y a la derecha del peón blanco están punteadas y marcadas con A y B: el peón cian puede moverse a cualquiera de ellas.
+0d1a78|Diagrama de las reglas de Quoridor. Dos muros índigo colocados uno junto al otro delante de un peón blanco en forma de anillo. Juntos cubren cuatro casillas de la fila inferior, así que el peón debe rodearlos caminando de lado.
+52b12f|Diagrama de las reglas de Quoridor. Un peón blanco en forma de anillo en la esquina superior izquierda bajo un muro índigo. Un muro rojo punteado marcado con una cruz cerraría la única salida de esa esquina, por lo que no está permitido.
+e44a15|Diagrama de las reglas de Quoridor. Un peón cian a un paso del borde superior. Cada casilla de la fila superior está punteada y marcada con una marca de verificación: llegar a cualquiera de ellas gana.
+8cf07b|Diagrama de las reglas de Quoridor. Un muro índigo está debajo de la quinta fila, a lo largo de la cuarta y la quinta columnas. Un muro rojo punteado marcado con una cruz compartiría la quinta columna con él, por lo que no está permitido.
+ac11a8|Diagrama de las reglas de Quoridor. Un muro índigo atraviesa el tablero. Un muro rojo vertical punteado marcado con una cruz lo cruzaría por su punto medio, por lo que no está permitido.
+d33abd|Diagrama de las reglas de Quoridor. Un peón cian justo debajo de un peón blanco en forma de anillo, con un muro índigo entre ellos. Las tres casillas punteadas a la izquierda, a la derecha y debajo del peón cian son sus únicos movimientos: no puede saltar sobre el peón blanco a través del muro.
+23d1c4|Diagrama de estrategia de Quoridor. Dos muros índigo uno junto al otro cubren cuatro columnas delante de un peón cian cerca de la parte inferior. Un peón blanco en forma de anillo está cerca de la parte superior izquierda. Casillas punteadas numeradas del 1 al 8 trazan la ruta más corta del peón cian: dos casillas hacia arriba, dos a la derecha y luego recto hacia arriba pasando el extremo derecho de los muros.
+ba4821|Diagrama de estrategia de Quoridor. Una fila de muros índigo con tres huecos: en el borde izquierdo, en el centro y en el borde derecho. Un peón blanco en forma de anillo está justo encima del hueco central y un peón cian está justo debajo del hueco del borde izquierdo. Un muro extra, con contorno blanco, queda una fila por debajo de la línea bajo las columnas centrales, de modo que el peón blanco puede simplemente apartarse.
+da96c6|Diagrama de estrategia de Quoridor. La misma posición, pero el muro nuevo, con contorno blanco, cierra el hueco central. La fila de muros ahora solo está abierta en el borde izquierdo y en el borde derecho, y el peón blanco tiene que caminar tres casillas a la izquierda para pasar.
+6249ba|Diagrama de estrategia de Quoridor. Una fila de muros índigo con huecos en el borde izquierdo, en el centro y en el borde derecho. Un peón cian está justo debajo del hueco central y un peón blanco en forma de anillo está encima, una columna a la izquierda. Ambos peones necesitan pasar por el hueco central.
+6de390|Diagrama de estrategia de Quoridor. La misma posición después de que un muro, con contorno blanco, cierra el hueco central. Ahora ambos peones tienen que caminar hasta el borde izquierdo o el derecho para pasar.
+3a9df1|Diagrama de estrategia de Quoridor. Una fila de muros índigo cerrada en todas partes salvo en el extremo borde izquierdo. Los dos huecos de la derecha están cerrados, el último con un muro con contorno blanco. Un peón cian está debajo de la fila cerca del borde derecho, muy lejos de la abertura. Un peón blanco en forma de anillo está encima de la fila a solo tres casillas de ella.
+77ce67|Diagrama de estrategia de Quoridor. Un peón cian en el centro del tablero y un peón blanco en forma de anillo a su derecha y una fila más arriba. Dos muros muy alejados a la izquierda no tocan la ruta de ninguno de los peones.
+7c7cc0|Diagrama de estrategia de Quoridor. Cuatro muros horizontales colocados extremo con extremo por todo el tablero, dejando abierta solo la columna del extremo derecho. Un peón blanco en forma de anillo está justo encima de la fila de muros y un peón cian está bien por debajo. Ambos deben pasar la fila.
+d5325f|Diagrama de estrategia de Quoridor. Una fila de muros índigo cerrada en el centro, con un segundo muro sobre las dos columnas de la izquierda justo encima del hueco del borde izquierdo. Un peón cian está en el borde izquierdo debajo de la fila y un peón blanco en forma de anillo está encima. Casillas punteadas numeradas del 1 al 7 trazan la ruta más corta del cian: por el hueco izquierdo, dos casillas a la derecha y luego recto hacia arriba.
+15846d|Diagrama de estrategia de Quoridor. La misma posición con un muro vertical, con contorno blanco, junto al hueco del borde izquierdo. Encierra al cian en un pasillo de una casilla de ancho a lo largo del borde izquierdo.
+60f904|Diagrama de estrategia de Quoridor. Una fila de muros índigo con un hueco en el centro, y un muro vertical con contorno blanco en medio de ese hueco. Un muro rojo punteado con una cruz marca el único muro horizontal que habría podido cerrar el hueco. Un peón cian está debajo del hueco y un peón blanco en forma de anillo está arriba a la derecha.
+26bd49|Peón de Quoridor bloqueado por muros. Un peón cian rodeado de barreras índigo, incapaz de avanzar.
