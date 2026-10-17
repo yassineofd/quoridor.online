@@ -12,7 +12,7 @@ import shutil
 from html import escape
 from pathlib import Path
 
-from lib import BASE_PATH, BASE_URL, SITE_NAME, icon
+from lib import BASE_PATH, BASE_URL, SITE_NAME, icon, icons_js
 from pages import all_pages
 
 ROOT = Path(__file__).resolve().parent
@@ -197,6 +197,7 @@ def main():
         assert CUSTOM_OUT or OUT.resolve().parent == ROOT, "refusing to delete unexpected directory"
         shutil.rmtree(OUT)
     shutil.copytree(STATIC, OUT)
+    (OUT / "assets" / "js" / "icons.js").write_text(icons_js(), encoding="utf-8")
 
     pages = all_pages()
     for page in pages:

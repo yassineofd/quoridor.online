@@ -80,13 +80,20 @@ def mode_cards(heading_tag="h3"):
 def private_strip(tag="h2"):
     return f"""
 <div class="private-strip">
-  <div>
+  <span class="icon-badge private-strip__icon">{icon('users')}</span>
+  <div class="private-strip__body">
+    <p class="eyebrow">Private match</p>
     <{tag}>Play privately with a friend</{tag}>
-    <p>Private matches are part of online play. Share a direct invitation link or a short pairing code so your friend can join your room.{' ' if FEATURES['rooms'] else ' Private rooms are coming soon.'}</p>
+    <p class="private-strip__text">Private matches are part of online play. Share a direct invitation link or a short pairing code so your friend can join your room.{' ' if FEATURES['rooms'] else ' Private rooms are coming soon.'}</p>
+    <ul class="chip-list" aria-label="Ways to invite a friend">
+      <li>{icon('link')} Invitation link</li>
+      <li>{icon('key')} Pairing code</li>
+      <li>{icon('check')} No account needed</li>
+    </ul>
   </div>
-  <div class="btn-row">
-    <a class="btn btn--secondary" href="/play/create-room/">Create a Room</a>
-    <a class="btn btn--secondary" href="/play/join-room/">Join a Room</a>
+  <div class="btn-row private-strip__actions">
+    <a class="btn btn--primary btn--lg" href="/play/create-room/">{icon('plus')} Create a Room</a>
+    <a class="btn btn--secondary btn--lg" href="/play/join-room/">{icon('login')} Join a Room</a>
   </div>
 </div>"""
 
@@ -345,7 +352,7 @@ def username_field(note="2 to 20 characters. This is a display name, not an acco
 </div>"""
 
 
-GAME_SCRIPTS = ["/assets/js/engine.js", "/assets/js/board.js", "/assets/js/game.js"]
+GAME_SCRIPTS = ["/assets/js/engine.js", "/assets/js/icons.js", "/assets/js/board.js", "/assets/js/game.js"]
 
 
 def stage(form_kind, panel_html, board_label, walls=(), pawns=(), live=False):
@@ -434,14 +441,14 @@ def play_computer():
     panel = (
         f'<fieldset class="fieldset"><legend>Difficulty</legend><div class="choice-group">{choices}</div></fieldset>'
         + '<p class="small text-muted">You move first, as the cyan filled pawn, from the bottom edge. The robot plays on your device; nothing is sent anywhere. In our own test games (20 per pairing, robots against robots) each level beat the one below it at least 16 times out of 20.</p>'
-        + '<button class="btn btn--primary btn--lg btn--block" type="submit">Start game</button>'
+        + f'<button class="btn btn--primary btn--lg btn--block" type="submit">{icon("play")} Start game</button>'
     )
     return mode_page(
         "/play/computer/", "Play Quoridor Against the Computer",
         "Play Quoridor against a computer opponent. Choose Easy, Medium, Hard or Expert and start without registering.",
         "Play Quoridor against the computer", "Choose a difficulty and start a game. No registration needed.",
         "Play against robot", "computer", panel, "Quoridor board preview for a game against the computer.",
-        scripts=["/assets/js/engine.js", "/assets/js/ai.js", "/assets/js/board.js", "/assets/js/game.js"],
+        scripts=["/assets/js/engine.js", "/assets/js/ai.js"] + GAME_SCRIPTS[1:],
     )
 
 
@@ -461,7 +468,7 @@ def play_local():
         '<ul class="text-muted"><li>Player 1 uses the filled cyan pawn and moves first, from the bottom edge.</li><li>Player 2 uses the white ring pawn, from the top edge.</li><li>Pass the device after each move.</li></ul></div>'
         '<div class="spacer"></div>'
         + name_field(1) + name_field(2)
-        + '<button class="btn btn--primary btn--lg btn--block" type="submit">Start game</button>'
+        + f'<button class="btn btn--primary btn--lg btn--block" type="submit">{icon("play")} Start game</button>'
     )
     return mode_page(
         "/play/local/", "Play Quoridor With a Friend on One Device",
@@ -476,7 +483,7 @@ def create_room():
     live = FEATURES["rooms"]
     panel = (
         username_field("2 to 20 characters. Your friend will see this name.")
-        + '<button class="btn btn--primary btn--lg btn--block" type="submit">Create room</button>'
+        + f'<button class="btn btn--primary btn--lg btn--block" type="submit">{icon("plus")} Create room</button>'
         + (server_error() if live else
            unavailable("Private rooms aren't live yet", "There is no room server on this site yet, so no room was created and no link or code was generated."))
         + """<h2 class="h-sm mt-6">What happens next</h2>
@@ -501,7 +508,7 @@ def join_room():
   <span class="hint" id="code-hint">6 characters. Got an invitation link instead? Just open it.</span>
   <div class="field-error" id="code-error" role="alert" hidden></div>
 </div>"""
-        + '<button class="btn btn--primary btn--lg btn--block" type="submit">Join room</button>'
+        + f'<button class="btn btn--primary btn--lg btn--block" type="submit">{icon("login")} Join room</button>'
         + (server_error() if live else
            unavailable("Private rooms aren't live yet", "There is no room server on this site yet, so the code can't be checked."))
         + ('' if live else '<p class="small mt-4">Preview other screens (sample data): <a href="/room/EXAMPLE-ROOM-ID/?preview=invalid">invalid code</a>, <a href="/room/EXAMPLE-ROOM-ID/?preview=full">room full</a>, <a href="/room/EXAMPLE-ROOM-ID/?preview=expired">expired invitation</a>.</p>')
@@ -537,14 +544,14 @@ def room():
 <h2 class="h-sm">Pairing code</h2>
 <div class="code-box"><div class="value value--big" id="invite-code"></div><button class="btn btn--secondary" type="button" data-copy="invite-code">{icon('copy')} Copy code</button></div>
 <p class="small text-muted" id="copy-status" role="status" aria-live="polite"></p>
-<div class="btn-row room-actions"><button class="btn btn--secondary" type="button" data-leave>Cancel room</button></div>""")
+<div class="btn-row room-actions"><button class="btn btn--secondary" type="button" data-leave>{icon("x")} Cancel room</button></div>""")
 
     join = state("join", f"""
 <h1 tabindex="-1">Join this room</h1>
 <p class="text-muted"><strong id="host-name">Your friend</strong> invited you to play Quoridor. Choose a username to join.</p>
 <form novalidate>
 {username_field('2 to 20 characters. Your opponent will see this name.')}
-<button class="btn btn--primary btn--lg btn--block" type="submit">Join room</button>
+<button class="btn btn--primary btn--lg btn--block" type="submit">{icon('login')} Join room</button>
 </form>""")
 
     starting = state("starting", """
@@ -552,11 +559,11 @@ def room():
 <div class="status-line" role="status"><span class="status-dot status-dot--ok" aria-hidden="true"></span><span id="starting-text">Alex and Sam are connected. The game is about to start.</span></div>
 <p class="text-muted">The board appears in a moment.</p>""")
 
-    reconnecting = state("reconnecting", """
+    reconnecting = state("reconnecting", f"""
 <h1 tabindex="-1">Reconnecting&hellip;</h1>
 <div class="status-line" role="status"><span class="status-dot status-dot--wait" aria-hidden="true"></span><span>Connection lost. Trying to rejoin your seat automatically.</span></div>
 <p class="text-muted">Your opponent can see that you're reconnecting. If you can't return within a minute, the game ends as a forfeit.</p>
-<div class="btn-row"><button class="btn btn--secondary" type="button" data-leave>Leave room</button></div>""")
+<div class="btn-row"><button class="btn btn--secondary" type="button" data-leave>{icon("logout")} Leave room</button></div>""")
 
     left = state("left", """
 <h1 tabindex="-1">You left the room</h1>

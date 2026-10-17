@@ -23,8 +23,11 @@
     (kids || []).forEach(function (c) { if (c) n.appendChild(typeof c === 'string' ? document.createTextNode(c) : c); });
     return n;
   }
-  function button(text, cls, onClick) {
-    var b = h('button', { type: 'button', 'class': 'btn ' + (cls || 'btn--secondary'), text: text });
+  // icon is a Lucide icon name from icons.js; it sits before the label and is hidden from screen readers.
+  function button(text, cls, onClick, icon) {
+    var b = h('button', { type: 'button', 'class': 'btn ' + (cls || 'btn--secondary') });
+    if (icon && root.QuoridorIcons) b.innerHTML = root.QuoridorIcons.svg(icon);
+    b.appendChild(document.createTextNode(text));
     b.addEventListener('click', onClick);
     return b;
   }
@@ -101,21 +104,21 @@
     var players = h('ul', { 'class': 'players', 'aria-label': 'Players' }, cards.map(function (c) { return c.card; }));
 
     var modeBtns = {
-      move: button('Move pawn', 'btn--secondary btn--toggle', function () { board.setMode('move'); }),
-      wall: button('Place wall', 'btn--secondary btn--toggle', function () { board.setMode('wall'); })
+      move: button('Move pawn', 'btn--secondary btn--toggle', function () { board.setMode('move'); }, 'move'),
+      wall: button('Place wall', 'btn--secondary btn--toggle', function () { board.setMode('wall'); }, 'wall')
     };
-    var rotateBtn = button('Rotate wall', 'btn--secondary', function () { board.rotate(); });
-    var confirmBtn = button('Place selected wall', 'btn--primary', function () { board.confirm(); });
-    var cancelBtn = button('Cancel', 'btn--secondary', function () { board.cancel(); });
+    var rotateBtn = button('Rotate wall', 'btn--secondary', function () { board.rotate(); }, 'rotate');
+    var confirmBtn = button('Place selected wall', 'btn--primary', function () { board.confirm(); }, 'check');
+    var cancelBtn = button('Cancel', 'btn--secondary', function () { board.cancel(); }, 'x');
     var actionRow = h('div', { 'class': 'btn-row', role: 'group', 'aria-label': 'Choose an action' }, [modeBtns.move, modeBtns.wall]);
     var wallRow = h('div', { 'class': 'btn-row wall-row', hidden: '' }, [rotateBtn, confirmBtn, cancelBtn]);
     var hint = h('p', { 'class': 'game-hint small text-muted' });
     var keys = h('p', { 'class': 'small text-muted game-keys', text: 'Keyboard: focus the board, arrows to choose, Enter to confirm, W for walls, R to rotate, M for pawn, Esc to cancel.' });
 
-    var undoBtn = mode !== 'online' ? button('Undo', 'btn--secondary', onUndo) : null;
-    var resignBtn = mode !== 'local' ? button('Resign', 'btn--secondary', onResign) : null;
-    var restartBtn = mode !== 'online' ? button('Restart', 'btn--secondary', onRestart) : null;
-    var leaveBtn = button(mode === 'online' ? 'Leave game' : 'Leave', 'btn--secondary', onLeave);
+    var undoBtn = mode !== 'online' ? button('Undo', 'btn--secondary', onUndo, 'undo') : null;
+    var resignBtn = mode !== 'local' ? button('Resign', 'btn--secondary', onResign, 'flag') : null;
+    var restartBtn = mode !== 'online' ? button('Restart', 'btn--secondary', onRestart, 'restart') : null;
+    var leaveBtn = button(mode === 'online' ? 'Leave game' : 'Leave', 'btn--secondary', onLeave, 'logout');
     var controls = h('div', { 'class': 'btn-row game-controls' }, [undoBtn, resignBtn, restartBtn, leaveBtn]);
 
     var resultTitle = h('h2', { 'class': 'h-sm', tabindex: '-1' });
@@ -291,14 +294,14 @@
       if (mode === 'online') {
         var wanted = seat !== null && meta.rematch[seat];
         var oppWants = seat !== null && meta.rematch[1 - seat];
-        var rb = button(wanted ? 'Rematch requested' : (oppWants ? 'Accept rematch' : 'Request rematch'), 'btn--primary', function () { cfg.remote.rematch(); });
+        var rb = button(wanted ? 'Rematch requested' : (oppWants ? 'Accept rematch' : 'Request rematch'), 'btn--primary', function () { cfg.remote.rematch(); }, 'restart');
         rb.disabled = wanted;
         resultActions.appendChild(rb);
         if (oppWants && !wanted) resultText.textContent += ' Your opponent wants a rematch.';
       } else {
-        resultActions.appendChild(button('Play again', 'btn--primary', function () { exit('again'); }));
+        resultActions.appendChild(button('Play again', 'btn--primary', function () { exit('again'); }, 'restart'));
       }
-      resultActions.appendChild(button('Leave', 'btn--secondary', function () { exit('leave'); }));
+      resultActions.appendChild(button('Leave', 'btn--secondary', function () { exit('leave'); }, 'logout'));
       if (!result.dataset.announced || result.dataset.announced !== String(game.winner) + game.moves.length) {
         result.dataset.announced = String(game.winner) + game.moves.length;
         announce(resultTitle.textContent + '. ' + resultText.textContent);
