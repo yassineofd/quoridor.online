@@ -5,12 +5,12 @@
 (function (root) {
   'use strict';
 
-  // The site can live in any sub-folder, so find its root from the stylesheet link instead of
-  // assuming "/". (/assets/css/styles.css is always at <root>/assets/css/styles.css.)
+  // The site can live in any sub-folder, so find its root from the manifest link instead of
+  // assuming "/". (/site.webmanifest is always at <root>/site.webmanifest.)
   function siteRoot() {
-    var link = document.querySelector('link[rel="stylesheet"][href*="assets/css/styles.css"]');
+    var link = document.querySelector('link[rel="manifest"]');
     var href = link ? link.href : location.href;
-    return href.replace(/assets\/css\/styles\.css.*$/, '');
+    return href.replace(/site\.webmanifest.*$/, '');
   }
   var ROOT = siteRoot();
 

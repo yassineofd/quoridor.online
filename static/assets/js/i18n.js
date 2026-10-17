@@ -21,10 +21,10 @@
   var catalogs = {};
   var listeners = [];
 
-  // The site can live in any sub-folder, so find its root from the stylesheet link (as online.js does).
+  // The site can live in any sub-folder, so find its root from the manifest link (as online.js does).
   function siteRoot() {
-    var link = doc.querySelector('link[rel="stylesheet"][href*="assets/css/styles.css"]');
-    return (link ? link.href : root.location.href).replace(/assets\/css\/styles\.css.*$/, '');
+    var link = doc.querySelector('link[rel="manifest"]');
+    return (link ? link.href : root.location.href).replace(/site\.webmanifest.*$/, '');
   }
   var ROOT = siteRoot();
 

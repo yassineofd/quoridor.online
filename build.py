@@ -4,7 +4,9 @@ Usage:  python build.py        (writes the finished site to ./public)
 Then:   python serve.py        (serves ./public on http://localhost:8000)
 """
 
+import base64
 import datetime
+import hashlib
 import json
 import os
 import re
@@ -54,8 +56,35 @@ FOOTER_SITE = [
 GA_ID = "G-70NW0H4444"  # Google tag; the matching config call is in static/assets/js/gtag-init.js
 BING_VERIFICATION = "68EAA51FF9D2F5EB36A699740C95E884"  # Bing Webmaster Tools meta tag; keep it so the site stays verified
 GA_HOSTS = "https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com"
+
+
+def _inline_css():
+    """The stylesheet, comments and indentation removed, to be placed in each page's <head>."""
+    css = (STATIC / "assets" / "css" / "styles.css").read_text(encoding="utf-8")
+    css = re.sub(r"/\*.*?\*/", "", css, flags=re.S)
+    return "\n".join(line.strip() for line in css.splitlines() if line.strip())
+
+
+def _inline_head_js():
+    """head.js (language and direction), run inline so it needs no request before the first paint."""
+    js = (STATIC / "assets" / "js" / "head.js").read_text(encoding="utf-8")
+    js = re.sub(r"/\*.*?\*/", "", js, flags=re.S)
+    return "\n".join(line.strip() for line in js.splitlines() if line.strip())
+
+
+def _csp_hash(text):
+    return "'sha256-" + base64.b64encode(hashlib.sha256(text.encode("utf-8")).digest()).decode() + "'"
+
+
+# Render-blocking resources are inlined so the first paint waits for no extra request. The CSP allows
+# exactly these two blocks by hash, so no other inline code or style can run.
+INLINE_CSS = _inline_css()
+INLINE_HEAD_JS = _inline_head_js()
+assert "</style" not in INLINE_CSS and "</script" not in INLINE_HEAD_JS
+
 CSP = (
-    "default-src 'self'; script-src 'self' https://www.googletagmanager.com; style-src 'self'; "
+    f"default-src 'self'; script-src 'self' {_csp_hash(INLINE_HEAD_JS)} https://www.googletagmanager.com; "
+    f"style-src 'self' {_csp_hash(INLINE_CSS)}; "
     f"img-src 'self' data: {GA_HOSTS}; connect-src 'self' {GA_HOSTS}; "
     "base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'"
 )
@@ -185,7 +214,7 @@ def render(page, units=None):
                 f'<meta property="og:image" content="{BASE_URL}{BASE_PATH}/assets/img/og-image.svg">',
                 '<meta property="og:image:alt" content="Quoridor Online logo and tagline on a deep navy background">',
             ]
-    head += ['<link rel="stylesheet" href="/assets/css/styles.css">', '<script src="/assets/js/head.js"></script>']
+    head += [f"<style>{INLINE_CSS}</style>", f"<script>{INLINE_HEAD_JS}</script>"]
 
     schema = list(page.schema)
     if BASE_URL and page.indexable and page.breadcrumbs:
