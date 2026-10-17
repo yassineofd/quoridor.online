@@ -127,10 +127,12 @@ _CELL, _GAP, _PAD = 80, 10, 50
 _PITCH = _CELL + _GAP
 
 
-def board_svg(walls=(), pawns=(), label: str = "", goal_tint: bool = True) -> str:
+def board_svg(walls=(), pawns=(), label: str = "", goal_tint: bool = True, marks=(), bad_walls=()) -> str:
     """Minimalist 9x9 board. walls: ("h", r, c) lies below row r across cols c..c+1;
     ("v", r, c) lies right of col c across rows r..r+1. pawns: (row, col, "p1"|"p2").
-    P1 is a filled circle, P2 a ring, so the two are never told apart by color alone."""
+    P1 is a filled circle, P2 a ring, so the two are never told apart by color alone.
+    marks: (row, col, text) squares a pawn can reach, drawn dashed with a letter or number.
+    bad_walls: walls in the same format as walls, drawn dashed with a cross to show an illegal placement."""
     size = _PAD * 2 + 9 * _CELL + 8 * _GAP
     out = [
         f'<svg class="board-art" viewBox="0 0 {size} {size}" width="{size}" height="{size}" '
@@ -146,12 +148,22 @@ def board_svg(walls=(), pawns=(), label: str = "", goal_tint: bool = True) -> st
                 out.append(f'<rect x="{x}" y="{y}" width="{_CELL}" height="{_CELL}" rx="10" fill="#42D9F5" fill-opacity="0.13"/>')
             if goal_tint and r == 8:
                 out.append(f'<rect x="{x}" y="{y}" width="{_CELL}" height="{_CELL}" rx="10" fill="#FFFFFF" fill-opacity="0.08"/>')
-    for kind, r, c in walls:
-        if kind == "h":
-            x, y, w, h = _PAD + c * _PITCH, _PAD + r * _PITCH + _CELL - 2, 2 * _CELL + _GAP, _GAP + 4
-        else:
-            x, y, w, h = _PAD + c * _PITCH + _CELL - 2, _PAD + r * _PITCH, _GAP + 4, 2 * _CELL + _GAP
-        out.append(f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="7" fill="#5267F2" stroke="#9aa8ff" stroke-width="1.5"/>')
+    for r, c, text in marks:
+        x, y = _PAD + c * _PITCH, _PAD + r * _PITCH
+        out.append(f'<rect x="{x}" y="{y}" width="{_CELL}" height="{_CELL}" rx="10" fill="#42D9F5" fill-opacity="0.22" stroke="#42D9F5" stroke-width="4" stroke-dasharray="10 7"/>')
+        out.append(f'<text x="{x + _CELL / 2}" y="{y + _CELL / 2 + 14}" text-anchor="middle" font-family="system-ui,sans-serif" font-size="42" font-weight="700" fill="#E8F9FD">{escape(str(text))}</text>')
+    for group, bad in ((walls, False), (bad_walls, True)):
+        for kind, r, c in group:
+            if kind == "h":
+                x, y, w, h = _PAD + c * _PITCH, _PAD + r * _PITCH + _CELL - 2, 2 * _CELL + _GAP, _GAP + 4
+            else:
+                x, y, w, h = _PAD + c * _PITCH + _CELL - 2, _PAD + r * _PITCH, _GAP + 4, 2 * _CELL + _GAP
+            if bad:
+                out.append(f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="7" fill="#FF8A96" fill-opacity="0.35" stroke="#FF8A96" stroke-width="3" stroke-dasharray="9 6"/>')
+                cx, cy = x + w / 2, y + h / 2
+                out.append(f'<path d="M{cx - 14} {cy - 14}L{cx + 14} {cy + 14}M{cx + 14} {cy - 14}L{cx - 14} {cy + 14}" stroke="#FF8A96" stroke-width="7" stroke-linecap="round"/>')
+            else:
+                out.append(f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="7" fill="#5267F2" stroke="#9aa8ff" stroke-width="1.5"/>')
     for r, c, who in pawns:
         cx, cy = _PAD + c * _PITCH + _CELL / 2, _PAD + r * _PITCH + _CELL / 2
         if who == "p1":

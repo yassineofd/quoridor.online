@@ -112,7 +112,7 @@ def cta_panel(text="Ready to put it into practice?"):
 </div>"""
 
 
-def article_page(path, title, description, h1, lead, sections, related, trail_label, nav_key, extra_after=""):
+def article_page(path, title, description, h1, lead, sections, related, trail_label, nav_key, extra_after="", cta=True, schema=None):
     """sections: [(id, heading, html)]. related: [(label, path, blurb)]."""
     toc = "".join(f'<li><a href="#{i}">{h}</a></li>' for i, h, _ in sections)
     body_sections = "".join(f'<section id="{i}" aria-labelledby="{i}-h"><h2 id="{i}-h">{h}</h2>{html}</section>' for i, h, html in sections)
@@ -128,7 +128,7 @@ def article_page(path, title, description, h1, lead, sections, related, trail_la
   <article class="article">
     {body_sections}
     {extra_after}
-    {cta_panel()}
+    {cta_panel() if cta else ""}
     <aside class="related" aria-labelledby="related-h">
       <h2 id="related-h">Keep learning</h2>
       <ul>{rel}</ul>
@@ -137,7 +137,7 @@ def article_page(path, title, description, h1, lead, sections, related, trail_la
 </div>"""
     )
     return Page(path=path, title=title, description=description, body=body,
-                breadcrumbs=[(trail_label, path)], nav_key=nav_key)
+                breadcrumbs=[(trail_label, path)], nav_key=nav_key, schema=schema or [])
 
 
 def figure(svg, caption):
@@ -612,51 +612,139 @@ SETUP_BOARD = board_svg([], [(8, 4, "p1"), (0, 4, "p2")],
     "A Quoridor board at the start of a game: a cyan pawn in the middle of the bottom edge and a white ring pawn in the middle of the top edge, with no walls placed.")
 MID_BOARD = board_svg([("h", 3, 3), ("v", 4, 4), ("h", 5, 1), ("h", 2, 5)], [(5, 4, "p1"), (3, 4, "p2")],
     "A Quoridor game in progress: a cyan pawn and a white ring pawn face each other, with several indigo walls placed between squares.")
+MOVE_BOARD = board_svg([("h", 4, 4)], [(5, 4, "p1"), (1, 4, "p2")],
+    "A cyan pawn with dashed squares marked with arrows to the left, right and below it. The square above is not marked because an indigo wall blocks it.",
+    marks=[(5, 3, "←"), (5, 5, "→"), (6, 4, "↓")])
+JUMP_BOARD = board_svg([], [(5, 4, "p1"), (4, 4, "p2")],
+    "A cyan pawn directly below a white ring pawn. The square directly above the white pawn is dashed and marked A: the cyan pawn can jump there.",
+    marks=[(3, 4, "A")])
+SIDESTEP_BOARD = board_svg([("h", 3, 4)], [(5, 4, "p1"), (4, 4, "p2")],
+    "A cyan pawn directly below a white ring pawn with an indigo wall behind the white pawn. The squares to the left and right of the white pawn are dashed and marked A and B: the cyan pawn can move to either.",
+    marks=[(4, 3, "A"), (4, 5, "B")])
+WALL_BOARD = board_svg([("h", 2, 3), ("h", 2, 5)], [(6, 4, "p1"), (2, 4, "p2")],
+    "Two indigo walls placed side by side in front of a white ring pawn. Together they cover four squares of the row below it, so the pawn must walk sideways around them.")
+SEALED_BOARD = board_svg([("h", 0, 0)], [(8, 4, "p1"), (0, 0, "p2")],
+    "A white ring pawn in the top-left corner under an indigo wall. A dashed red wall marked with a cross would close the only way out of that corner, so it is not allowed.",
+    bad_walls=[("v", 0, 1)])
+GOAL_BOARD = board_svg([], [(1, 4, "p1"), (7, 4, "p2")],
+    "A cyan pawn one step from the top edge. Every square of the top row is dashed and ticked: reaching any of them wins.",
+    marks=[(0, c, "✓") for c in range(9)])
+
+
+def how_to_play_faq():
+    """[(question, answer_html)]: beginner questions the sections above do not already answer in full."""
+    faq = [
+        ("Who goes first in Quoridor?",
+         "Players agree or draw lots before the game. On this site, Player 1 (the filled cyan pawn that starts at the bottom) moves first in same-device and computer games, and the screen always shows whose turn it is."),
+        ("Can I move or remove a wall after placing it?",
+         "No. Walls are permanent for the rest of the game, which is why it pays to think before you place one."),
+        ("What happens when I run out of walls?",
+         "You can only move your pawn from then on. Your opponent can keep using any walls they have left, so don't spend all of yours too early."),
+        ("Can a pawn jump over a wall?",
+         "No. Pawns only jump over the other pawn. A wall always stops movement across it."),
+        ("Is Quoridor only for two players?",
+         'The board game also supports four players, with fewer walls each. The game on this site is the two-player version. The <a href="/quoridor-board-game/">Quoridor board game overview</a> explains the differences.'),
+        ("How long does a game take?",
+         "A typical game lasts around 10 to 20 minutes, and quicker if both players mostly race."),
+    ]
+    if FEATURES["computer"]:
+        faq.append(("Can I practice before playing a person?",
+                    'Yes. <a href="/play/computer/">Play against the computer</a> and pick Easy while you are learning the moves.'))
+    return faq
 
 
 def how_to_play():
+    play_links = ['<a class="btn btn--primary btn--lg" href="/play/">Play Quoridor Now ' + icon("arrow") + "</a>"]
+    if FEATURES["computer"]:
+        play_links.append('<a class="btn btn--secondary btn--lg" href="/play/computer/">Practice vs the computer</a>')
+    if FEATURES["local"]:
+        play_links.append('<a class="btn btn--secondary btn--lg" href="/play/local/">Play with a friend</a>')
+    faq = how_to_play_faq()
+    faq_html = '<div class="faq">' + "".join(
+        f'<details><summary>{q}</summary><div class="answer"><p>{a}</p></div></details>' for q, a in faq) + "</div>"
+    faq_schema = {
+        "@context": "https://schema.org", "@type": "FAQPage",
+        "mainEntity": [{"@type": "Question", "name": q,
+                        "acceptedAnswer": {"@type": "Answer", "text": re.sub(r"<[^>]+>", "", a)}} for q, a in faq],
+    }
     sections = [
-        ("objective", "The goal of the game", """
-<p>Quoridor is a game for two players. You win by being the first to get your pawn to <strong>any square on the opposite edge</strong> of the board. Your opponent is trying to do the same thing in the other direction.</p>
-<p>The twist: on your turn you can <em>either</em> move your pawn <em>or</em> place a wall to make your opponent's journey longer. Deciding which to do each turn is the entire game.</p>"""),
-        ("board", "Understanding the board", f"""
-<p>The board is a 9×9 grid of 81 squares. Between squares there are thin grooves where walls can go. Each player has one pawn and, in a two-player game, <strong>10 walls</strong>.</p>
-<p>Pawns start in the middle square of their own edge, facing each other across the board. Your goal row is the edge where your opponent starts.</p>
-{figure(SETUP_BOARD, 'The starting position: each pawn on the middle square of its own edge. The cyan pawn is filled, the white one is a ring, so they differ by shape as well as color.')}"""),
-        ("turns", "Player turns", """
-<p>Players take turns, one action each. On your turn you must do exactly one of these:</p>
-<ol><li><strong>Move your pawn</strong> one square, or</li><li><strong>Place one wall</strong> on the board.</li></ol>
-<p>You can't pass. Players agree beforehand who moves first.</p>"""),
-        ("movement", "Pawn movement", """
-<p>A pawn moves one square at a time, up, down, left or right. No diagonal moves (apart from one special case below), and you can't move through a wall.</p>
-<h3>Jumping your opponent</h3>
-<p>If your opponent's pawn is right next to yours, you can jump straight over it to the square behind. If a wall (or the board edge) blocks that jump, you may instead step to a square beside the opponent's pawn, as long as no wall is in the way. The <a href="/quoridor-rules/#movement">Quoridor rules</a> spell this out precisely."""
-        + "</p>"),
-        ("barriers", "Using barriers", f"""
-<p>A wall is two squares long and sits in the groove between squares, blocking movement across it. Walls are permanent: once placed, they can't be moved or removed.</p>
-<p>You can't place a wall on top of another wall, and you can never place a wall that completely cuts a player off from their goal. Walls make routes <em>longer</em>, not impossible.</p>
-{figure(MID_BOARD, 'Walls make paths longer: each pawn now has to walk around the barriers in front of it.')}"""),
-        ("winning", "Winning the game", """
-<p>The first player whose pawn reaches <strong>any square on the opposite edge</strong> wins immediately. There is no need to reach a particular square.</p>"""),
-        ("tips", "Beginner guidance", """
+        ("what-is-quoridor", "What Is Quoridor?", """
+<p>Quoridor is a strategy game for two players on a 9×9 board. There are no dice, cards or hidden information: you win by thinking ahead.</p>
+<div class="callout"><p><strong>The objective:</strong> be the first player to move your pawn to <em>any square</em> on the opposite edge of the board.</p></div>
+<p>The twist is what you can do on your turn. You can walk toward your goal, or you can place a wall to make your opponent's walk longer. Choosing between the two, turn after turn, is the whole game. This page teaches the basics step by step; the <a href="/quoridor-rules/">Quoridor rules</a> page is the full reference.</p>"""),
+        ("board-and-pieces", "The Quoridor Board and Pieces", f"""
+<p>You need only three things.</p>
 <ul>
-<li><strong>Count both routes.</strong> Before each move, ask: how many steps do I need, and how many does my opponent need?</li>
-<li><strong>Don't spend walls too early.</strong> You only have 10, and a wall that costs your opponent one step is rarely worth a turn.</li>
-<li><strong>Use walls that add several steps.</strong> The best walls force long detours.</li>
-<li><strong>Keep moving.</strong> A game of only walls leaves you with no progress at all.</li>
+<li><strong>The board.</strong> A grid of 9×9 squares (81 in total). Thin grooves run between the squares.</li>
+<li><strong>Pawns.</strong> Each player has one pawn. Here, Player 1 is the filled cyan circle and Player 2 is the white ring, so they differ by shape as well as color.</li>
+<li><strong>Walls.</strong> Flat pieces, each two squares long, that slot into the grooves and block movement across them.</li>
 </ul>
+{figure(MID_BOARD, 'A game in progress. The cyan and white pieces are the pawns; the indigo bars are walls sitting in the grooves between squares.')}"""),
+        ("set-up", "How to Set Up a Game", f"""
+<ol class="steps">
+<li><strong>Start with an empty board.</strong>No walls are on it yet.</li>
+<li><strong>Put each pawn on the middle square of its own edge.</strong>The pawns face each other: the fifth square of the bottom row for one player, the fifth square of the top row for the other.</li>
+<li><strong>Give each player 10 walls.</strong>This is the two-player game. Keep them beside the board as your wall supply.</li>
+<li><strong>Decide who goes first.</strong>On this site, the screen shows whose turn it is.</li>
+</ol>
+{figure(SETUP_BOARD, 'The starting position. Your goal is any square on the edge where your opponent starts: cyan aims for the top row and white for the bottom row.')}"""),
+        ("move-your-pawn", "How to Move Your Pawn", f"""
+<p>On your turn you do <strong>one</strong> thing: move your pawn <em>or</em> place a wall. This section covers moving.</p>
+<h3>Step one square</h3>
+<ol class="steps">
+<li><strong>Pick a direction.</strong>Up, down, left or right. No diagonal moves apart from the special case below.</li>
+<li><strong>Check for a wall.</strong>You can't move through a wall or off the board.</li>
+<li><strong>Move one square.</strong>Then it is your opponent's turn.</li>
+</ol>
+{figure(MOVE_BOARD, 'Squares the cyan pawn can step to. The wall above it blocks the move up.')}
+<h3>Jump over the other pawn</h3>
+<p>If the opponent's pawn is on the square right next to yours, you can't share the square, so you <strong>jump straight over it</strong> and land on the square directly behind. That counts as your whole move.</p>
+{figure(JUMP_BOARD, 'The cyan pawn jumps over the white pawn to square A.')}
+<h3>Step diagonally when a jump is blocked</h3>
+<p>If a wall or the edge of the board sits right behind the other pawn, you can't jump. Instead you may move to a square <strong>beside</strong> the opponent's pawn, as long as no wall blocks that step.</p>
+{figure(SIDESTEP_BOARD, 'The wall behind the white pawn stops the jump, so the cyan pawn may go to A or B instead.')}"""),
+        ("place-walls", "How to Place Walls", f"""
+<p>Instead of moving, you can place one wall. A wall makes your opponent's route longer, which is just as good as getting you closer to the goal.</p>
+<ol class="steps">
+<li><strong>Choose a groove.</strong>A wall is two squares long and lies in the grooves between squares, either across or up and down.</li>
+<li><strong>Make sure it fits.</strong>It must sit entirely on the board and can't overlap or cross another wall.</li>
+<li><strong>Keep every path open.</strong>After the wall is down, <em>both</em> pawns must still have at least one route to their goal edge. You may lengthen a route as much as you like, but never close it.</li>
+<li><strong>Leave it there.</strong>Walls can't be moved or picked up again, and every wall you place leaves you with one fewer.</li>
+</ol>
+{figure(WALL_BOARD, 'Two walls side by side. The white pawn needed 6 steps to reach the bottom row; now it needs 8, counting only the walls.')}
+<h3>An illegal wall</h3>
+<p>The dashed wall below isn't allowed. The white pawn in the corner would have no way out, and a wall may never take away a player's last route.</p>
+{figure(SEALED_BOARD, 'Not allowed: this wall would seal the white pawn into the corner.')}"""),
+        ("how-to-win", "How to Win Quoridor", f"""
+<p>The first player whose pawn reaches <strong>any square</strong> on the opposite edge wins immediately. You don't need to land on a particular square.</p>
+{figure(GOAL_BOARD, 'The cyan pawn is one step from winning: any square in the top row will do.')}"""),
+        ("beginner-tips", "Beginner Tips", """
+<ol class="steps">
+<li><strong>Count both routes.</strong>Before each turn, work out how many steps you need and how many your opponent needs. Whoever is ahead should usually keep moving.</li>
+<li><strong>Plan one step further.</strong>Ask what your opponent can do in reply before you commit to a move or a wall.</li>
+<li><strong>Spend walls where they hurt most.</strong>A wall that adds one step costs you a turn and a wall. Look for walls that force several steps of detour.</li>
+<li><strong>Balance moving and blocking.</strong>Only moving lets a good blocker catch you out, and only walling leaves you no closer to the goal.</li>
+<li><strong>Save some walls.</strong>You have just 10, and a few in reserve let you answer a late run.</li>
+</ol>
 <p>When you're ready for more, read the <a href="/quoridor-strategy/">Quoridor strategy guide</a>.</p>"""),
+        ("play-your-first-game", "Play Your First Game", f"""
+<div class="card cta-panel">
+  <p class="h-sm"><strong>You know enough to start.</strong></p>
+  <p>The board highlights your legal moves, so you can learn as you play. Your first game will teach you more than more reading.</p>
+  <div class="btn-row">{"".join(play_links)}</div>
+</div>"""),
+        ("faq", "Frequently Asked Questions", faq_html),
     ]
     return article_page(
-        "/how-to-play-quoridor/", "How to Play Quoridor: A Beginner's Guide",
-        "Learn how to play Quoridor: the goal, the board, how pawns move and jump, how to place walls, and how to win.",
-        "How to play Quoridor",
-        "A friendly walkthrough for beginners: what you're trying to do, what you can do on your turn, and how a game is won.",
+        "/how-to-play-quoridor/", "How to Play Quoridor – Beginner's Guide",
+        "Learn how to play Quoridor with a beginner-friendly guide to the board, pawn movement, wall placement, winning the game, and basic tactics.",
+        "How to Play Quoridor: A Beginner's Guide",
+        "A step-by-step introduction with diagrams: what you are trying to do, what you can do on your turn, and how a game is won.",
         sections,
         [("Quoridor rules", "/quoridor-rules/", "the precise rules, including every wall restriction."),
          ("Quoridor strategy", "/quoridor-strategy/", "tactics for getting ahead."),
          ("The Quoridor board game", "/quoridor-board-game/", "what the game is and where it comes from.")],
-        "How to play Quoridor", "how",
+        "How to play Quoridor", "how", cta=False, schema=[faq_schema],
     )
 
 

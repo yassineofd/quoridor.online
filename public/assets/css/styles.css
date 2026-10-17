@@ -592,3 +592,5 @@ a:hover { color: #8fe9fa; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
 }
+
+.article .cta-panel { margin-top: var(--space-5); }
