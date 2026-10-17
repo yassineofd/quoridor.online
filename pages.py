@@ -1,5 +1,7 @@
 """Page content for Quoridor Online. Each function returns a lib.Page; build.py renders the shared layout."""
 
+import re
+
 from lib import (
     FEATURES, INDEX_MODE_PAGES, SITE_NAME, Page, icon, board_svg,
     HERO_WALLS, HERO_PAWNS, HERO_ALT,
@@ -43,37 +45,40 @@ def page_head(h1, lead, trail):
     )
 
 
-def mode_cards(heading_tag="h3"):
+def mode_cards(heading_tag="h3", home=False):
+    """home=True: the home page's wording, listing only the modes that actually work."""
     h = heading_tag
+    modes = [
+        ("online", "online", "globe", "Play Online", "Play Online",
+         "Play Quoridor online against another person. Choose a username, no registration, and enter matchmaking. Want to play a specific friend? Use a private room.",
+         "Play Quoridor online against another person. Choose a username, no registration, and enter matchmaking. Want to play a specific friend? Use a private room.",
+         "/play/online/", "Play Online"),
+        ("computer", "robot", "bot", "Play Against Robot", "Play Against the Computer",
+         "Practice against the computer. Pick Easy, Medium, Hard or Expert, from gentle for beginners to a tougher test. No registration needed.",
+         "Practice against the computer. Pick Easy, Medium, Hard or Expert, from gentle for beginners to a tougher test. No registration needed.",
+         "/play/computer/", "Play vs Robot"),
+        ("local", "local", "users", "Play With a Friend", "Play Locally",
+         "Two players, one device. You share the screen and take turns on the same board. Great for playing side by side.",
+         "Play with a friend on the same device. You share the screen and take turns on the same board. No registration needed.",
+         "/play/local/", "Play Together"),
+    ]
+    cards = []
+    for feat, cls, ic, hub_title, home_title, hub_text, home_text, href, label in modes:
+        if home and not FEATURES[feat]:
+            continue  # only advertise modes that actually work
+        title, text = (home_title, home_text) if home else (hub_title, hub_text)
+        cards.append(f"""
+  <article class="card mode-card mode-card--{cls}">
+    <span class="icon-badge">{icon(ic)}</span>
+    <div class="mode-body">
+      <{h}>{title}</{h}>
+      {'' if home else badge(feat)}
+      <p>{text}</p>
+    </div>
+    <a class="btn btn--primary" href="{href}">{label.replace("Robot", "Computer") if home else label} {icon('arrow')}</a>
+  </article>""")
     return f"""
-<div class="grid grid--3 grid--modes">
-  <article class="card mode-card mode-card--online">
-    <span class="icon-badge">{icon('globe')}</span>
-    <div class="mode-body">
-      <{h}>Play Online</{h}>
-      {badge('online')}
-      <p>Play Quoridor online against another person. Choose a username, no registration, and enter matchmaking. Want to play a specific friend? Use a private room.</p>
-    </div>
-    <a class="btn btn--primary" href="/play/online/">Play Online {icon('arrow')}</a>
-  </article>
-  <article class="card mode-card mode-card--robot">
-    <span class="icon-badge">{icon('bot')}</span>
-    <div class="mode-body">
-      <{h}>Play Against Robot</{h}>
-      {badge('computer')}
-      <p>Practice against the computer. Pick Easy, Medium, Hard or Expert, from gentle for beginners to a tougher test. No registration needed.</p>
-    </div>
-    <a class="btn btn--primary" href="/play/computer/">Play vs Robot {icon('arrow')}</a>
-  </article>
-  <article class="card mode-card mode-card--local">
-    <span class="icon-badge">{icon('users')}</span>
-    <div class="mode-body">
-      <{h}>Play With a Friend</{h}>
-      {badge('local')}
-      <p>Two players, one device. You share the screen and take turns on the same board. Great for playing side by side.</p>
-    </div>
-    <a class="btn btn--primary" href="/play/local/">Play Together {icon('arrow')}</a>
-  </article>
+<div class="grid grid--3 grid--modes">{"".join(cards)}
 </div>"""
 
 
@@ -140,63 +145,79 @@ def figure(svg, caption):
 
 
 # ---------------------------------------------------------------- homepage
-def home():
-    live_note = (
-        f"Play {live_ways()}." + ("" if FEATURES["online"] else " Online play is coming soon.")
-        if ANY_MODE_LIVE
-        else "Learn the rules and strategy now; online, computer and same-device play are being added."
-    )
-    features = [
-        ("responsive", True, "layout", "Responsive design", "The site is built mobile-first and works from small phones to wide desktop monitors."),
-        ("noaccount", True, "userx", "No account required", "Nothing on the site asks you to register. Modes that need a name just ask for a display name."),
-        ("browser", ANY_MODE_LIVE, "smartphone", "Browser-based play", "Play in your browser with nothing to install."),
-        ("modes", sum(FEATURES[k] for k in ("online", "computer", "local")) >= 2, "globe", "Different playing modes", f"Play {live_ways()}."),
-    ]
-    live_items = "".join(
-        f'<li>{icon(ic)}<div><strong>{t}</strong><span class="text-muted">{d}</span></div></li>'
-        for _, ok, ic, t, d in features if ok
-    )
-    planned_items = "".join(f"<li>{t}</li>" for _, ok, _, t, _ in features if not ok)
-    planned = (
-        f'<div class="card planned"><h3>On the way</h3><p class="text-muted">These are planned but not available yet:</p><ul>{planned_items}</ul></div>'
-        if planned_items else ""
-    )
+# The home page is a fixed structure (check.py enforces it): H1 + CTAs, then these H2s in order.
+HOME_H1 = "Play Quoridor Online"
+HOME_CTAS = (("Play Quoridor Now", "/play/"), ("Learn How to Play", "/how-to-play-quoridor/"))
+HOME_H2S = (
+    "Choose How You Want to Play",
+    "How to Play Quoridor",
+    "A Strategy Board Game of Movement and Tactics",
+    "Frequently Asked Questions About Quoridor",
+)
+HOME_FAQ_QUESTIONS = (
+    "Can I play Quoridor online for free?",
+    "Can I play Quoridor against a computer?",
+    "Can two people play on the same device?",
+    "Do I need an account?",
+    "How many walls does each player get?",
+)
 
-    faq = [
-        ("What is the goal of Quoridor?",
-         "Move your pawn to any square on the opposite side of the board before your opponent reaches yours. Each turn you either move your pawn or place a wall to slow your opponent down."),
-        ("How many players are there?",
-         "The standard game is for two players. The physical game also has a four-player version, but every mode planned for this site is a two-player game."),
-        ("Can I block my opponent completely?",
-         'No. A wall is only legal if both players still have at least one open route to their goal side. See the <a href="/quoridor-rules/">Quoridor rules</a> for the details.'),
-        ("Which ways to play are there?",
-         (f"You can play {live_ways()}." + ("" if FEATURES["online"] else " Online play against other people, with private rooms for friends, is coming soon.")
-          if ANY_MODE_LIVE
-          else "Three are planned: online against another person (with private rooms for friends), against a computer opponent at four difficulty levels, and with a friend on the same device. They are not live yet.")),
-        ("Do I need an account?",
-         "No. Nothing on the site requires an account. Where a mode needs a name, you pick a display name; it is not proof of identity."),
-        ("How many walls does each player get?",
-         "In a two-player game each player starts with 10 walls. Once they are used up, you can only move your pawn."),
+
+def home_faq():
+    """[(question, answer_html)] built from what the site actually does."""
+    ways = live_ways()
+    return [
+        (HOME_FAQ_QUESTIONS[0],
+         "Yes. Playing is free and you don't need to register. "
+         + (f"You can play {ways}. " if ANY_MODE_LIVE else "")
+         + ("Online games pair you with another player through matchmaking, or you can invite a friend to a private room."
+            if FEATURES["online"] else "Online play against other people is coming soon.")),
+        (HOME_FAQ_QUESTIONS[1],
+         'Yes. Choose <a href="/play/computer/">play against the computer</a>, then pick Easy, Medium, Hard or Expert. The computer opponent runs in your browser, so nothing is sent anywhere.'
+         if FEATURES["computer"] else "Playing against the computer is coming soon."),
+        (HOME_FAQ_QUESTIONS[2],
+         'Yes. In <a href="/play/local/">local play</a> two players share one screen and take turns on the same board. Player 1 moves first.'
+         if FEATURES["local"] else "Same-device play is coming soon."),
+        (HOME_FAQ_QUESTIONS[3],
+         "No. Nothing on the site requires an account. "
+         + ("When you play online you just choose a display name, which is not proof of identity."
+            if FEATURES["online"] else "Where a mode asks for a name, it is only a display name.")),
+        (HOME_FAQ_QUESTIONS[4],
+         'In a two-player game each player starts with 10 walls. Once they are used up you can only move your pawn. The <a href="/quoridor-rules/">Quoridor rules</a> cover wall placement in full.'),
     ]
-    faq_html = "".join(
-        f'<details><summary>{q}</summary><div class="answer"><p>{a}</p></div></details>' for q, a in faq
-    )
+
+
+def home():
+    ways = live_ways()
+    live_note = f" You can play {ways}." if ANY_MODE_LIVE else ""
+    faq = home_faq()
+    faq_html = "".join(f'<details><summary>{q}</summary><div class="answer"><p>{a}</p></div></details>' for q, a in faq)
+    faq_schema = {
+        "@context": "https://schema.org", "@type": "FAQPage",
+        "mainEntity": [
+            {"@type": "Question", "name": q,
+             "acceptedAnswer": {"@type": "Answer", "text": re.sub(r"<[^>]+>", "", a)}}
+            for q, a in faq
+        ],
+    }
 
     desc = (
-        (f"Play Quoridor in your browser {live_ways()}. A free strategy game with no registration.")
+        f"Play Quoridor in your browser {ways}. A free strategy game with no registration."
         if ANY_MODE_LIVE
         else "Quoridor online: learn the Quoridor game, study the rules and strategy, and choose online, computer or same-device play as each mode launches. No account needed."
     )
+    (cta1, href1), (cta2, href2) = HOME_CTAS
+    h2_modes, h2_how, h2_strategy, h2_faq = HOME_H2S
     body = f"""
 <section class="hero" aria-labelledby="hero-h">
   <div class="container hero-grid">
     <div>
       <p class="eyebrow">Strategy board game</p>
-      <h1 id="hero-h">Play the Quoridor game online</h1>
-      <p class="lead">Race your pawn across a 9×9 board while placing walls to slow your opponent down. The goal is simple; outsmarting your opponent is the challenge. {live_note}</p>
+      <h1 id="hero-h">{HOME_H1}</h1>
+      <p class="lead">Quoridor is a strategy board game where two players race their pawns to the opposite side of a 9×9 board while placing walls to slow each other down.{live_note}</p>
       <div class="btn-row">
-        <a class="btn btn--primary btn--lg" href="/play/">Play Now {icon('arrow')}</a>
-        <a class="btn btn--secondary btn--lg" href="/how-to-play-quoridor/">How to Play</a>
+        <a class="btn btn--primary btn--lg" href="{href1}">{cta1} {icon('arrow')}</a>
+        <a class="btn btn--secondary btn--lg" href="{href2}">{cta2}</a>
       </div>
     </div>
     <div class="hero-board">{board_svg(HERO_WALLS, HERO_PAWNS, HERO_ALT)}</div>
@@ -206,71 +227,53 @@ def home():
 <section class="section--tight" aria-labelledby="modes-h">
   <div class="container">
     <div class="section-head">
-      <h2 id="modes-h">Choose how to play</h2>
-      <p class="text-muted">Three ways to play Quoridor online and offline. No account needed for any of them.</p>
+      <h2 id="modes-h">{h2_modes}</h2>
+      <p class="text-muted">Every way to play is free and works in your browser, with no account.</p>
     </div>
-    {mode_cards('h3')}
+    {mode_cards('h3', home=True)}
   </div>
-</section>
-
-<section class="section--tight" aria-labelledby="private-h">
-  <div class="container">{private_strip('h2').replace('<h2>', '<h2 id="private-h">', 1)}</div>
 </section>
 
 <section class="section" aria-labelledby="how-h">
   <div class="container grid grid--2">
     <div>
-      <h2 id="how-h">How the game works</h2>
-      <p class="text-muted">Quoridor is easy to learn and surprisingly deep. You win by reaching the opposite side of the board, and walls are your tool for making your opponent's trip longer than yours.</p>
+      <h2 id="how-h">{h2_how}</h2>
+      <p class="text-muted">The objective is simple: move your pawn to the opposite side of the board before your opponent does. Walls are your tool for making their trip longer than yours.</p>
       <ol class="steps">
-        <li><strong>Race to the other side</strong>Your pawn starts at the middle of your edge and must reach any square on the far edge.</li>
-        <li><strong>Move or block</strong>On each turn you either step your pawn one square or place a wall.</li>
-        <li><strong>Never seal the path</strong>Walls can lengthen a route but never close it completely.</li>
+        <li><strong>Race to the other side</strong>Your pawn starts in the middle of your edge and must reach any square on the far edge.</li>
+        <li><strong>Move or place a wall</strong>On each turn you either step your pawn or place one wall.</li>
+        <li><strong>Never seal the path</strong>A wall is only legal if both players still have a legal path to their goal.</li>
       </ol>
       <div class="btn-row">
         <a class="btn btn--secondary" href="/how-to-play-quoridor/">How to play Quoridor</a>
-        <a class="btn btn--secondary" href="/quoridor-rules/">Read the rules</a>
+        <a class="btn btn--secondary" href="/quoridor-rules/">Read the Quoridor rules</a>
       </div>
     </div>
     <div class="card"><h3>Why the walls matter</h3><p class="text-muted">A good wall costs you one turn but costs your opponent several. Judging that trade, again and again, is the whole game.</p>{board_svg([("h",3,2),("h",3,4),("v",4,3)], [(5,3,"p1"),(3,3,"p2")], "A small cluster of indigo barriers forcing a white ring pawn to take a detour around the walls.")}</div>
   </div>
 </section>
 
-<section class="section" aria-labelledby="features-h">
-  <div class="container">
-    <div class="section-head"><h2 id="features-h">What this site offers</h2></div>
-    <ul class="feature-list">{live_items}</ul>
-    {planned}
-  </div>
-</section>
-
-<section class="section" aria-labelledby="learn-h">
+<section class="section" aria-labelledby="strategy-h">
   <div class="container">
     <div class="section-head">
-      <h2 id="learn-h">Learn Quoridor</h2>
-      <p class="text-muted">Read first or learn as you play. Both guides are written for beginners.</p>
+      <h2 id="strategy-h">{h2_strategy}</h2>
+      <p class="text-muted">There are no dice, cards or hidden information. Every game is decided by what you plan and what you notice.</p>
     </div>
-    <div class="grid grid--2">
-      <article class="card">
-        <span class="icon-badge">{icon('book')}</span>
-        <h3>Quoridor rules</h3>
-        <p class="text-muted">Board setup, starting positions, legal moves and jumps, wall restrictions, and exactly what counts as a win.</p>
-        <a href="/quoridor-rules/">Read the Quoridor rules</a>
-      </article>
-      <article class="card">
-        <span class="icon-badge">{icon('target')}</span>
-        <h3>Quoridor strategy</h3>
-        <p class="text-muted">How to count paths, when to place walls, how to budget them, and the mistakes that cost beginners games.</p>
-        <a href="/quoridor-strategy/">Explore Quoridor strategy</a>
-      </article>
-    </div>
+    <ul class="feature-list">
+      <li>{icon('move')}<div><strong>Route planning</strong><span class="text-muted">Count the shortest path for both pawns before every move.</span></div></li>
+      <li>{icon('wall')}<div><strong>Blocking</strong><span class="text-muted">Place walls that force long detours, not walls that add a single step.</span></div></li>
+      <li>{icon('clock')}<div><strong>Timing</strong><span class="text-muted">You only have 10 walls, so choose the moment each one pays off most.</span></div></li>
+      <li>{icon('target')}<div><strong>Anticipating your opponent</strong><span class="text-muted">Think about where their pawn is heading and which walls they could play next.</span></div></li>
+    </ul>
+    <p class="mt-4 text-muted">It runs in your browser with nothing to install, and no account is needed. Read the <a href="/quoridor-strategy/">Quoridor strategy guide</a> to improve, or learn more about the <a href="/quoridor-board-game/">Quoridor board game</a>.</p>
   </div>
 </section>
 
 <section class="section" aria-labelledby="faq-h">
   <div class="container">
-    <div class="section-head"><h2 id="faq-h">Frequently asked questions</h2></div>
+    <div class="section-head"><h2 id="faq-h">{h2_faq}</h2></div>
     <div class="faq prose">{faq_html}</div>
+    <p class="mt-4"><a class="btn btn--primary" href="/play/">{cta1} {icon('arrow')}</a></p>
   </div>
 </section>
 """
@@ -280,7 +283,7 @@ def home():
         description=desc,
         body=body,
         nav_key="home",
-        schema=[{"@context": "https://schema.org", "@type": "WebSite", "name": SITE_NAME}],
+        schema=[{"@context": "https://schema.org", "@type": "WebSite", "name": SITE_NAME}, faq_schema],
     )
 
 

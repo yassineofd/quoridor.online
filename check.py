@@ -105,8 +105,85 @@ class Doc(HTMLParser):
             self.title += data
 
 
+class Outline(HTMLParser):
+    """Collects the text of h1/h2/h3/summary elements and every link as (text, href)."""
+
+    def __init__(self):
+        super().__init__()
+        self.text = {"h1": [], "h2": [], "h3": [], "summary": []}
+        self.links = []
+        self._tag = None
+        self._buf = []
+        self._href = None
+        self._abuf = []
+
+    def handle_starttag(self, tag, attrs):
+        if tag in self.text:
+            self._tag, self._buf = tag, []
+        elif tag == "a":
+            self._href, self._abuf = dict(attrs).get("href"), []
+
+    def handle_endtag(self, tag):
+        if tag == self._tag:
+            self.text[tag].append(" ".join("".join(self._buf).split()))
+            self._tag = None
+        elif tag == "a" and self._href is not None:
+            self.links.append((" ".join("".join(self._abuf).split()), self._href))
+            self._href = None
+
+    def handle_data(self, data):
+        if self._tag:
+            self._buf.append(data)
+        if self._href is not None:
+            self._abuf.append(data)
+
+
+def check_home(body):
+    """The home page content is a contract: fixed H1, CTAs, H2 sections, FAQ and internal links."""
+    from lib import FEATURES
+    from pages import HOME_CTAS, HOME_FAQ_QUESTIONS, HOME_H1, HOME_H2S
+
+    main = re.search(r"<main\b.*?</main>", body, re.S)
+    if not main:
+        fail("home: no <main> element")
+        return
+    body = main.group(0)
+    o = Outline()
+    o.feed(body)
+    if o.text["h1"] != [HOME_H1]:
+        fail(f"home: H1 must be exactly {HOME_H1!r}, found {o.text['h1']}")
+    if o.text["h2"] != list(HOME_H2S):
+        fail(f"home: H2 sections must be {list(HOME_H2S)} in order, found {o.text['h2']}")
+    if o.text["summary"] != list(HOME_FAQ_QUESTIONS):
+        fail(f"home: FAQ questions must be {list(HOME_FAQ_QUESTIONS)}, found {o.text['summary']}")
+
+    def path_of(href):
+        p = urlsplit(urljoin(PREFIX + "/", href)).path
+        return p[len(PREFIX):] if PREFIX and p.startswith(PREFIX) else p
+
+    links = [(t, path_of(h)) for t, h in o.links if not h.startswith(("#", "http", "mailto:"))]
+    for label, target in HOME_CTAS:
+        if not any(t.startswith(label) and p == target for t, p in links):
+            fail(f"home: missing CTA {label!r} -> {target}")
+    for target in ("/play/", "/how-to-play-quoridor/", "/quoridor-rules/", "/quoridor-strategy/", "/quoridor-board-game/"):
+        if not any(p == target for _, p in links):
+            fail(f"home: no internal link to {target}")
+
+    # Only modes that really work may be advertised.
+    modes = {"online": ("Play Online", "/play/online/"), "computer": ("Play Against the Computer", "/play/computer/"),
+             "local": ("Play Locally", "/play/local/")}
+    for feat, (title, target) in modes.items():
+        listed = title in o.text["h3"] and any(p == target for _, p in links)
+        if FEATURES[feat] != listed:
+            fail(f"home: mode {title!r} {'is missing' if FEATURES[feat] else 'is advertised but not live'}")
+    if "Coming soon" in body:
+        fail("home: must not show 'Coming soon' badges")
+    if len(re.findall(r'<svg class="board-art"', body)) < 1:
+        fail("home: missing board preview")
+
+
 def main():
-    httpd = ThreadingHTTPServer(("127.0.0.1", PORT), serve.Handler)
+    httpd =ThreadingHTTPServer(("127.0.0.1", PORT), serve.Handler)
     threading.Thread(target=httpd.serve_forever, daemon=True).start()
     serve.Handler.log_message = lambda *a, **k: None
 
@@ -210,6 +287,9 @@ def main():
                     fail(f"{label}: broken link {href} ({code})")
             if frag and target.path == url and frag not in d.ids:
                 fail(f"{label}: fragment #{frag} has no target")
+
+    print("Home page contract")
+    check_home(get("/")[2])
 
     for name, store in (("title", titles), ("description", descs)):
         for k, v in store.items():
