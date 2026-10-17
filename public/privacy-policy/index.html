@@ -43,7 +43,11 @@
 <p>These are facts about the current software, written down so that the final policy can be checked against them.</p>
 <ul>
 <li><strong>Same-device and computer games</strong> run entirely in your browser. Nothing about those games is sent anywhere or stored.</li>
-<li>Online play is not available on this site, so no names or network addresses are collected.</li></ul>
+
+<li><strong>Online games and private rooms</strong> use a game server. It keeps in memory (not on disk) the display name you type, a random seat token, and when you last contacted it, for as long as the room exists. Rooms are deleted shortly after a game ends or both players leave, and an unjoined room expires after 30 minutes.</li>
+<li>Your browser keeps the seat token in its local storage so that a reload can rejoin your seat. It is removed when you leave the room.</li>
+<li>Network addresses are held in memory for about a minute to limit abuse.</li>
+<li>The site sets no cookies and loads no analytics or third-party scripts.</li></ul>
 <h2>What the final policy must cover</h2>
 <ul>
 <li>What data the service collects (for example usernames, connection data and logs) and why.</li>

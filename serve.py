@@ -161,10 +161,12 @@ class Handler(BaseHTTPRequestHandler):
 
 
 def main():
-    port = int(sys.argv[1]) if len(sys.argv) > 1 else 8000
+    # Hosting platforms (Render, Railway, ...) pass the port in PORT and need the server reachable from outside.
+    port = int(sys.argv[1]) if len(sys.argv) > 1 else int(os.environ.get("PORT", 8000))
     if not PUBLIC.exists():
         sys.exit("public/ not found. Run: python build.py")
-    httpd = Server((os.environ.get("QUORIDOR_HOST", "127.0.0.1"), port), Handler)
+    host = os.environ.get("QUORIDOR_HOST") or ("0.0.0.0" if "PORT" in os.environ else "127.0.0.1")
+    httpd = Server((host, port), Handler)
     api.hub.start_sweeper()
     print(f"Serving {PUBLIC} at http://localhost:{port}{PREFIX}/  (Ctrl+C to stop)")
     try:
