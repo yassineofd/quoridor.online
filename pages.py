@@ -116,7 +116,11 @@ def article_page(path, title, description, h1, lead, sections, related, trail_la
     """sections: [(id, heading, html)]. related: [(label, path, blurb)]."""
     toc = "".join(f'<li><a href="#{i}">{h}</a></li>' for i, h, _ in sections)
     body_sections = "".join(f'<section id="{i}" aria-labelledby="{i}-h"><h2 id="{i}-h">{h}</h2>{html}</section>' for i, h, html in sections)
-    rel = "".join(f'<li><a href="{p}"><strong>{l}</strong></a>: {b}</li>' for l, p, b in related)
+    rel = "".join(f'<li><a href="{p}"><strong>{l}</strong></a>: {b}</li>' for l, p, b in related or ())
+    related_html = f"""<aside class="related" aria-labelledby="related-h">
+      <h2 id="related-h">Keep learning</h2>
+      <ul>{rel}</ul>
+    </aside>""" if related else ""
     body = (
         page_head(h1, lead, [(trail_label, None)])
         + f"""
@@ -129,10 +133,7 @@ def article_page(path, title, description, h1, lead, sections, related, trail_la
     {body_sections}
     {extra_after}
     {cta_panel() if cta else ""}
-    <aside class="related" aria-labelledby="related-h">
-      <h2 id="related-h">Keep learning</h2>
-      <ul>{rel}</ul>
-    </aside>
+    {related_html}
   </article>
 </div>"""
     )
@@ -937,48 +938,213 @@ def rules():
     )
 
 
+# ---- Strategy page boards. Every step count quoted on the strategy page was checked by searching for the
+# shortest route around the walls shown (pawns ignored, as in the legal-route rule). If you change a
+# position or a caption, re-check the numbers.
+_GAP_LINE = [("h", 4, 1), ("h", 4, 5)]  # a row of walls with gaps at the left edge, in the middle and at the right edge
+
+ST_ROUTE_BOARD = board_svg(
+    [("h", 3, 2), ("h", 3, 4)], [(6, 4, "p1"), (1, 2, "p2")],
+    "Two indigo walls side by side cover four columns in front of a cyan pawn near the bottom. A white ring pawn stands near the top left. "
+    "Dashed squares numbered 1 to 8 trace the cyan pawn's shortest route: up two squares, two squares right, then straight up past the right end of the walls.",
+    marks=[(5, 4, "1"), (4, 4, "2"), (4, 5, "3"), (4, 6, "4"), (3, 6, "5"), (2, 6, "6"), (1, 6, "7"), (0, 6, "8")])
+ST_WEAK_BOARD = board_svg(
+    _GAP_LINE, [(5, 0, "p1"), (4, 3, "p2")],
+    "A row of indigo walls with three gaps: at the left edge, in the middle and at the right edge. A white ring pawn stands just above the middle gap and a cyan pawn "
+    "stands just below the left-edge gap. One extra wall, outlined in white, lies a row below the line under the middle columns, so the white pawn can simply step aside.",
+    new_walls=[("h", 5, 3)])
+ST_STRONG_BOARD = board_svg(
+    _GAP_LINE, [(5, 0, "p1"), (4, 3, "p2")],
+    "The same position, but the new wall, outlined in white, closes the middle gap. The row of walls is now open only at the left edge and the right edge, "
+    "and the white pawn has to walk three squares to the left to get through.",
+    new_walls=[("h", 4, 3)])
+ST_SHARED_BEFORE_BOARD = board_svg(
+    _GAP_LINE, [(5, 4, "p1"), (3, 3, "p2")],
+    "A row of indigo walls with gaps at the left edge, in the middle and at the right edge. A cyan pawn stands just below the middle gap and a white ring pawn stands above it, "
+    "one column to the left. Both pawns need to pass through the middle gap.")
+ST_SHARED_AFTER_BOARD = board_svg(
+    _GAP_LINE, [(5, 4, "p1"), (3, 3, "p2")],
+    "The same position after a wall, outlined in white, closes the middle gap. Both pawns now have to walk to the left edge or the right edge to get through.",
+    new_walls=[("h", 4, 3)])
+ST_LONE_GAP_BOARD = board_svg(
+    _GAP_LINE + [("h", 4, 3)], [(6, 7, "p1"), (4, 3, "p2")],
+    "A row of indigo walls closed everywhere except the far left edge. The two right-hand gaps are shut, the last one by a wall outlined in white. "
+    "A cyan pawn stands below the row near the right edge, a long way from the opening. A white ring pawn stands above the row only three squares from it.",
+    new_walls=[("h", 4, 7)])
+ST_RACE_BOARD = board_svg(
+    [("h", 1, 0), ("v", 5, 1)], [(4, 4, "p1"), (3, 6, "p2")],
+    "A cyan pawn in the middle of the board and a white ring pawn to its right and one row higher. Two walls far off at the left do not touch either pawn's route.")
+ST_FOUR_WALLS_BOARD = board_svg(
+    [("h", 2, 0), ("h", 2, 2), ("h", 2, 4), ("h", 2, 6)], [(7, 4, "p1"), (2, 4, "p2")],
+    "Four horizontal walls placed end to end across the board, leaving only the far right column open. A white ring pawn stands just above the row of walls "
+    "and a cyan pawn stands well below it. Both must get past the row.")
+ST_LEDGER_BOARD = board_svg(
+    _GAP_LINE + [("h", 4, 3)], [(5, 0, "p1"), (4, 3, "p2")],
+    "A row of indigo walls closed in the middle, with a second wall across the two left columns just above the left-edge gap. A cyan pawn stands at the left edge below the row "
+    "and a white ring pawn stands above it. Dashed squares numbered 1 to 7 trace cyan's shortest route: through the left gap, two squares right, then straight up.",
+    marks=[(4, 0, "1"), (4, 1, "2"), (4, 2, "3"), (3, 2, "4"), (2, 2, "5"), (1, 2, "6"), (0, 2, "7")])
+ST_THREAT_BOARD = board_svg(
+    _GAP_LINE + [("h", 4, 3), ("h", 3, 0)], [(5, 0, "p1"), (4, 3, "p2")],
+    "The same position with a vertical wall, outlined in white, beside the left-edge gap. It shuts cyan into a one-square-wide channel along the left edge.",
+    new_walls=[("v", 4, 0)])
+ST_SLOT_BOARD = board_svg(
+    _GAP_LINE + [("v", 4, 3)], [(6, 4, "p1"), (2, 7, "p2")],
+    "A row of indigo walls with a gap in the middle, and a vertical wall outlined in white standing in the middle of that gap. "
+    "A dashed red wall with a cross marks the only horizontal wall that could have closed the gap. A cyan pawn stands below the gap and a white ring pawn is at the upper right.",
+    new_walls=[("v", 4, 3)], bad_walls=[("h", 4, 3)])
+
+
+def figure_pair(*figs):
+    return '<div class="figure-pair">' + "".join(figs) + "</div>"
+
+
 def strategy():
+    computer = FEATURES["computer"]
+    extra = []
+    if FEATURES["local"]:
+        extra.append('Playing a friend on the <a href="/play/local/">same device</a> is a good way to talk through counts out loud.')
+    if FEATURES["online"]:
+        extra.append('Online opponents will also show you styles the computer does not: some wall early, some race.')
+    extra_practice = f'<p>{" ".join(extra)}</p>' if extra else ""
+    practice_link = '<a href="/play/computer/">play against the computer</a>' if computer else "play against the computer once that mode is available"
     sections = [
-        ("pathfinding", "Efficient pathfinding", """
-<p>Every decision in Quoridor comes down to one comparison: <strong>how many moves do I need to win, and how many does my opponent need?</strong> Count the shortest route for each pawn, taking walls and possible jumps into account.</p>
-<p>If you're ahead on that count, moving usually keeps you ahead. If you're behind, you need a wall that changes the count in your favor.</p>"""),
-        ("walls", "Offensive and defensive wall placement", """
-<p>A wall is an <strong>offensive</strong> tool when it lengthens your opponent's route. It's <strong>defensive</strong> when it protects your own path, for example by occupying a groove your opponent could use to cut across your route.</p>
+        ("plan-your-route", "Plan Your Route Before Placing Walls", f"""
+<p>Every decision in Quoridor starts with a count: <strong>how many moves does each pawn still need to reach its goal edge?</strong> Work out the shortest legal route for yourself and for your opponent, going around every wall on the board. The rest of this guide builds on that count.</p>
+<div class="callout"><p><strong>How the examples count.</strong> A step is one square up, down, left or right. Counts follow the shortest route around the walls and ignore jumps and pawn positions, the same way the legal-route rule on the <a href="/quoridor-rules/">rules page</a> does. Cyan is the filled pawn and moves up; white is the ring pawn and moves down.</p></div>
+<h3>The straight line is not always the shortest</h3>
+{figure(ST_ROUTE_BOARD, 'Cyan needs 8 steps: the numbered squares go around the right end of the walls. White also needs 8, one step left and then straight down.')}
+<p>Two walls side by side cover four columns, so cyan's straight route up the middle is blocked. Going around the right end takes two sideways steps and 8 steps in total. Going around the left end takes three sideways steps and 9 in total. White has the same trouble from the other side: one step left, then straight down, also 8.</p>
+<p>That is an 8 to 8 tie with cyan on the move. When the counts are equal, the player who moves first arrives first, so cyan is a tempo ahead.</p>
+<h3>Balance direct progress against detours</h3>
+<p>A sideways step can feel like a wasted move, but when a wall is in the way it is part of the shortest route. The useful question is not "am I moving forward?" but "did that move make my count smaller?"</p>
 <ul>
-<li>The best walls add <em>several</em> steps, not one. Look for spots where a pawn must backtrack along a corridor.</li>
-<li>Walls work best <em>together</em>. Extending an existing wall or using the board edge can turn a small barrier into a long detour.</li>
-<li>Remember that your opponent can walk around, so aim for walls that force the longest walk-around.</li>
-</ul>"""),
-        ("management", "Wall management", """
-<p>You start with 10 walls and they're gone for good once placed. Treat them as a budget:</p>
+<li><strong>Take the detour that shortens the count.</strong> A forward step into a dead end is worse than a sideways step toward the nearest gap.</li>
+<li><strong>Stay flexible when two gaps cost about the same.</strong> A pawn that can use either of two distant gaps is harder to punish than one that has already committed, because one wall rarely closes both.</li>
+<li><strong>Recount after every wall.</strong> A new wall can lengthen your route and also change which gap is nearest.</li>
+</ul>
+<p>Only once you know both counts does it make sense to ask whether a wall would help.</p>"""),
+        ("use-walls-efficiently", "Use Walls Efficiently", f"""
+<p>You have 10 walls, and a placed wall can never be moved. Each one also costs the move you would otherwise have made. That gives a simple way to price a wall:</p>
+<div class="callout"><p><strong>Value of a wall = steps it adds to your opponent's route, minus steps it adds to yours, minus 1.</strong> The 1 is the step you did not take. A wall that adds only one step to your opponent just breaks even, and it still uses up one of your 10 walls.</p></div>
+<p>In the position below, a row of walls has three gaps: one at the left edge, a two-wide one in the middle and one at the right edge. White stands at the middle gap and needs 4 steps. Cyan needs 5 and is on the move, so cyan is a step behind.</p>
+{figure_pair(
+    figure(ST_WEAK_BOARD, 'Wall A (outlined) adds 1 step: white sidesteps. White 4 to 5, cyan stays at 5. Value: 1 - 0 - 1 = 0.'),
+    figure(ST_STRONG_BOARD, 'Wall B (outlined) adds 3 steps: white must walk to the left edge. White 4 to 7, cyan stays at 5. Value: 3 - 0 - 1 = 2.'),
+)}
+<p>Wall A is placed right in front of white's path on open ground, so white simply steps aside. Wall B finishes the row of walls that was already there and shuts the nearest gap, so the next one is three squares away. After wall B cyan needs 5 steps and white needs 7. Same wall budget, very different result.</p>
+<h3>Where efficient walls come from</h3>
 <ul>
-<li>Don't spend walls early just because you can.</li>
-<li>Running out of walls leaves you unable to respond if your opponent starts to pull ahead.</li>
-<li>Walls your opponent hasn't used are a threat: you must always consider what they could do next turn.</li>
+<li><strong>Existing walls.</strong> A wall that closes a gap in a line, or joins two walls, can add several steps. On a nearly empty board, the best single wall adds only about one.</li>
+<li><strong>Distance to the next opening.</strong> Closing a gap is worth the number of extra squares the pawn must walk to the next gap, so look for gaps whose neighbors are far away.</li>
+<li><strong>Patience.</strong> Walls that add one step are rarely worth a slot. Save your walls for moments like wall B.</li>
 </ul>"""),
-        ("timing", "Timing decisions", """
-<p>A wall is more valuable when it comes at the right moment. Placing it <em>after</em> your opponent has committed to a route often costs them more than placing it before. On the other hand, waiting too long can mean a good wall spot disappears or the game is already lost.</p>
-<p>A useful habit: before placing any wall, ask whether you could place the same wall <em>next</em> turn at no extra cost. If you can, take the step now instead.</p>"""),
-        ("mistakes", "Common mistakes", """
+        ("balance-offense-defense", "Balance Offense and Defense", f"""
+<p>Every wall changes the board for both pawns. Before you place one, count both routes <em>after</em> the wall, not just your opponent's.</p>
+<h3>A wall that hurts both players helps the one who moves next</h3>
+<p>Here both pawns need to pass through the same two-wide gap. Each needs 5 steps and cyan is on the move, so cyan is already winning the pure race. Closing the gap looks aggressive:</p>
+{figure_pair(
+    figure(ST_SHARED_BEFORE_BOARD, 'Before: cyan 5, white 5, cyan to move.'),
+    figure(ST_SHARED_AFTER_BOARD, 'After cyan closes the gap: both need 8, and white is on the move.'),
+)}
+<p>Both pawns now have a detour of three squares, so the count is 8 to 8. But the wall used up cyan's turn, so white is on the move at equal distance and arrives first. Cyan turned a winning race into a losing one and spent a wall to do it.</p>
+<h3>What defense actually means</h3>
+<p>In Quoridor, defense is mostly about keeping your own route hard to punish. Before each move, look at your route and ask: <strong>which single wall would add the most steps to me?</strong> If the answer is 3 or more, deal with it now:</p>
 <ul>
-<li><strong>Walling for one step.</strong> A wall that adds a single step usually costs you a turn and a wall for no net gain.</li>
-<li><strong>Ignoring your own path.</strong> Strong walls can be turned against you by a later wall.</li>
-<li><strong>Using walls too early.</strong> Few walls left means few options late in the game.</li>
-<li><strong>Forgetting jumps.</strong> The opponent's pawn can change where your path runs, so recount often.</li>
-<li><strong>Never moving.</strong> Walls slow your opponent but only moving wins the game.</li>
-</ul>"""),
-        ("levels", "Beginner and advanced considerations", """
-<h3>If you're a beginner</h3>
-<ul><li>Learn to count both routes before every move.</li><li>Prefer moving when you're ahead.</li><li>Practice spotting walls that add three or more steps.</li></ul>
-<h3>As you improve</h3>
-<ul><li>Plan sequences of walls that combine into long corridors.</li><li>Think about where the opponent's pawn will be, not only where it is.</li><li>Use pawn positions to create jump or block opportunities.</li></ul>
-<p class="small text-muted">These are general rules of thumb rather than proven optimal play. Test them against real opponents.</p>"""),
+<li>Step past the choke point before your opponent can close it (see "Recognize When to Move Instead").</li>
+<li>Choose a route where no single wall hurts that much, for example one with two gaps of similar cost.</li>
+<li>Take away the wall's slot, as shown in the advanced tactics below.</li>
+</ul>
+<p>Offense and defense are the same arithmetic. A wall that adds more steps to your opponent than to you is attacking and defending at once. A wall that adds the same number to both is just a gift of the move.</p>"""),
+        ("think-ahead", "Think Several Moves Ahead", f"""
+<p>Before you place a wall, play out your opponent's best reply, not just their reply to the position you have in mind. A wall also changes what <em>they</em> can do next.</p>
+<p>Take the row of walls from the previous section, with cyan far over on the right side. Cyan needs 6 steps and white needs 4, with cyan on the move. Cyan is behind, so closing the middle gap looks attractive: it adds 3 steps to white's route (4 to 7) and nothing to cyan's (still 6). On paper cyan has gone from two steps behind to one step ahead.</p>
+{figure(ST_LONE_GAP_BOARD, 'White replies by closing the right-hand gap (outlined). Cyan now needs 13 steps, white still needs 7.')}
+<p>Now look at the board from white's side. Cyan's wall left only the right-hand gaps and the left edge open. White's reply shuts the right-hand gap, which leaves a single opening at the far left. White is three squares from it. Cyan is seven columns away, so cyan's route grows from 6 to 13 while white's stays at 7.</p>
+<p>The lesson is not "never close gaps". It is that <strong>a wall removes options for the player who is farther away</strong>, so check what is left after your wall as well as what it takes away.</p>
+<ol class="steps">
+<li><strong>Imagine the wall and recount both routes.</strong>This is the number you hope to gain.</li>
+<li><strong>Find the opponent's best wall against you.</strong>Recount again with that wall on the board. Does the wall you just imagined make it stronger?</li>
+<li><strong>Compare the totals.</strong>Only place the wall if you are still ahead after their best reply.</li>
+<li><strong>Do the same for them.</strong>Ask which of their walls become stronger once your wall is down.</li>
+</ol>"""),
+        ("move-instead", "Recognize When to Move Instead", f"""
+<p>A wall feels active, but a pawn step is free: it costs no wall and always makes progress. If you are winning the race, the right move is often just to move.</p>
+{figure(ST_RACE_BOARD, 'Cyan needs 4 steps, white needs 5, and cyan is on the move.')}
+<p>Here cyan needs 4 steps and white needs 5, with cyan to move. Count what each side can do:</p>
+<ul>
+<li>If cyan just steps forward, the count is 3 to 5 with white on the move. For white to turn the race around, a wall would have to add 3 steps to cyan's route. The best single wall on this board adds 1.</li>
+<li>If cyan places a wall that adds 1 step to white, the count is 4 to 6. Cyan was already winning, so that wall changed nothing and cost cyan one of its 10 walls.</li>
+</ul>
+<h3>A quick race check</h3>
+<p>Use the counts on your own turn, ignoring jumps and assuming no more walls:</p>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">Your count compared with theirs</th><th scope="col">What it means</th></tr></thead>
+<tbody>
+<tr><td>Equal or lower, on your move</td><td>You win the pure race. To catch up, your opponent needs a wall that adds at least <strong>your lead plus 2</strong> steps, because you will have stepped first. Keep moving unless a wall of yours clearly beats that.</td></tr>
+<tr><td>Behind by <em>k</em> steps, on your move</td><td>Walking will not be enough. You need a wall that adds at least <strong><em>k</em> + 1</strong> steps to your opponent, because the wall costs you your move.</td></tr>
+</tbody></table></div>
+<p>The second row explains the previous section: cyan was one step behind (5 against 4) and needed a wall worth at least 2, so wall B (adds 3) was worth placing and wall A (adds 1) was not. In the race above, cyan leads by one step (4 against 5), so white would need a wall that adds 3 or more.</p>
+<p>Moving can also be your defense. If your opponent has a wall that would add 3 steps to your route right in front of you, stepping past that spot removes the threat for free. Use the check above to decide whether a wall of your own is actually needed.</p>"""),
+        ("beginner-mistakes", "Common Beginner Mistakes", f"""
+<ul>
+<li><strong>Playing too defensively.</strong> Building a barrier across the middle feels safe, but a long row of walls also lies across your own path.</li>
+<li><strong>Ignoring the opponent's route.</strong> Counting only your own steps hides the other half of the race. If you do not recount after each of their walls, you will not notice when you fall behind.</li>
+<li><strong>Wasting walls on one-step detours.</strong> A wall that adds 1 step is worth 0 (see "Use Walls Efficiently") and permanently uses one of your 10.</li>
+<li><strong>Hoarding all 10 walls.</strong> A wall never used is worth nothing once the game ends. Keep a couple in reserve, but spend them on walls worth 2 or more.</li>
+<li><strong>Forgetting that walls are permanent.</strong> A wall that helps you now can cost you later if the game moves your pawn through that area.</li>
+</ul>
+{figure(ST_FOUR_WALLS_BOARD, 'Before the four walls cyan needs 7 and white needs 6. After them cyan needs 11 and white needs 10.')}
+<p>The board above shows the first mistake. Four walls were placed end to end across the board, leaving only the far right column open. That adds 4 steps to white's route (6 to 10), which sounds like a lot. But the row lies across cyan's path too, so cyan's route also grows by 4 (7 to 11). Cyan spent four turns and 40% of its walls, and the race is exactly as close as it was before.</p>"""),
+        ("advanced-tactics", "Advanced Quoridor Tactics", f"""
+<h3>Keep a tempo ledger</h3>
+<p>Strong players think in counts: how many steps each side needs and who is on the move. Writing it down for a few turns makes the pattern clear. This is the position from "Use Walls Efficiently" a few moves later:</p>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">After</th><th scope="col">Cyan needs</th><th scope="col">White needs</th><th scope="col">On the move</th></tr></thead>
+<tbody>
+<tr><td>Start</td><td>5</td><td>4</td><td>Cyan</td></tr>
+<tr><td>Cyan closes the middle gap</td><td>5</td><td>7</td><td>White</td></tr>
+<tr><td>White walls the two left columns just above the left gap</td><td>7</td><td>7</td><td>Cyan</td></tr>
+</tbody></table></div>
+<p>Cyan started a step behind and swung ahead with the gap-closing wall. At that moment no single wall adds more than 2 steps to cyan's route, so white's reply, which adds exactly 2, was the strongest one by count. The counts are now level with cyan on the move, which on its own would favor cyan.</p>
+<h3>Then stress-test your route</h3>
+<p>A level count is only half the picture. Ask what your opponent's best wall would add <em>right now</em>:</p>
+{figure_pair(
+    figure(ST_LEDGER_BOARD, 'Cyan needs 7 steps (numbered squares), white needs 7, and cyan is on the move.'),
+    figure(ST_THREAT_BOARD, 'White threatens the outlined wall: cyan 7 to 14, white 7 to 8.'),
+)}
+<p>Cyan's route runs through a one-square-wide channel beside the board edge, and a channel has no alternative. A vertical wall next to the gap would add 7 steps to cyan's route and only 1 to white's. The same wall is worth even more once cyan has stepped into the channel (9 steps instead of 7). So the level count does not make cyan safe, and cyan's real question this turn is how to deal with that threat. Routes along the edge or between walls, yours or theirs, are where one wall costs the most, so check them first.</p>
+<h3>Take away the opponent's best wall</h3>
+<p>If one wall would hurt you badly, you can sometimes make it illegal instead of walking away from it. A wall that crosses or overlaps its only legal slot removes the threat for good.</p>
+{figure(ST_SLOT_BOARD, 'The vertical wall (outlined) crosses the middle gap. The only wall that could shut the gap, dashed and crossed out, is no longer legal.')}
+<p>In this position cyan relies on the middle gap, and white has no need of it. A horizontal wall there would add 3 steps to cyan's route. The gap is two columns wide between two walls, so the only wall that can close it is the one in the dashed position. Overlapping either neighbor is not allowed, and a vertical wall through its middle point crosses it. By placing that vertical wall, cyan has made the gap permanent. It costs a turn and a wall, so do it only when the gap is your lifeline and the threat is large.</p>
+<h3>Hold two or three walls for the finish</h3>
+<p>Tactics like the lone-gap squeeze need a wall in hand to carry out. A player who has used all 10 can only move, and cannot answer a late wall with a wall of their own. Spend early walls only when they are worth 2 or more, and keep a couple in reserve for the moment a gap appears.</p>
+<h3>Remember what the counts leave out</h3>
+<p>The counts above ignore pawns. When the pawns stand face to face, the player on the move can jump over the other pawn and cover two squares in one turn, so give a pawn that is about to jump an extra step of credit. The <a href="/quoridor-rules/">rules page</a> explains jumps and sidesteps in full.</p>
+<p class="small text-muted">These are rules of thumb built from counting positions, not a proof of optimal play. Test them against real opponents.</p>"""),
+        ("practice", "Practice Against Different Opponents", f"""
+<p>Reading about counts is one thing, doing it every turn is another. The fastest way to improve is to play many games and make the count a habit. You can {practice_link} at a level that suits you:</p>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">Level</th><th scope="col">Good for</th></tr></thead>
+<tbody>
+<tr><td><strong>Easy</strong></td><td>Learning to count routes and spotting walls worth 3 or more without pressure. It wanders and walls without much of a plan.</td></tr>
+<tr><td><strong>Medium</strong></td><td>Practicing move-or-wall decisions. It blocks you when a wall clearly pays off, so careless walls of your own are punished.</td></tr>
+<tr><td><strong>Hard</strong></td><td>Practicing the look-ahead check. It looks two moves ahead and places walls deliberately.</td></tr>
+<tr><td><strong>Expert</strong></td><td>Stress-testing your counting. It searches several moves deeper and can take up to about a second to answer.</td></tr>
+</tbody></table></div>
+<p>Three drills make the practice count:</p>
+<ol class="steps">
+<li><strong>Say both counts before every move.</strong>"I need 6, they need 5." If you cannot say it, you cannot decide.</li>
+<li><strong>Predict the value of each wall.</strong>Work out what it adds to each route and subtract 1 before you place it. Aim for 2 or more.</li>
+<li><strong>Find the turning point after each game.</strong>Look for the first turn at which the lead changed hands, and ask what you could have counted differently.</li>
+</ol>
+{extra_practice}"""),
     ]
     return article_page(
-        "/quoridor-strategy/", "Quoridor Strategy: Pathfinding, Walls & Timing",
-        "Improve at Quoridor with strategy for shortest paths, offensive and defensive walls, wall management, timing, and common mistakes.",
-        "Quoridor strategy",
-        "How to think about the race, when walls are worth it, and which mistakes to avoid.",
+        "/quoridor-strategy/", "Quoridor Strategy – Tips, Tactics and Winning Ideas",
+        "Improve your Quoridor strategy with practical tips on efficient routes, wall placement, tempo, opponent prediction, and defensive planning.",
+        "Quoridor Strategy: Tips and Tactics to Improve Your Game",
+        "Learn to count routes, spend walls where they pay off, and decide when to just move, with worked examples on real board positions.",
         sections,
         [("Quoridor rules", "/quoridor-rules/", "check the exact wall restrictions."),
          ("How to play Quoridor", "/how-to-play-quoridor/", "start here if you're brand new."),
@@ -987,82 +1153,218 @@ def strategy():
     )
 
 
+def board_game_faq():
+    """[(question, answer_html)] for the board-game overview page."""
+    ways = live_ways()
+    return [
+        ("How many people can play the Quoridor board game?",
+         "The physical game is for two or four players. In a four-player game each person gets 5 walls instead of 10. This website is for two players, which is the classic duel."),
+        ("How long does a game of Quoridor take?",
+         "A typical two-player game lasts somewhere between 10 and 20 minutes, depending on how long each player thinks."),
+        ("Is Quoridor hard to learn?",
+         "No. The rules fit in a couple of sentences: move one square or place a wall, and reach the opposite edge first. The depth comes later, from learning when a wall is worth more than a step."),
+        ("Is there any luck in Quoridor?",
+         "None. There are no dice, cards or hidden pieces, and both players see the whole board at all times. The better plan wins."),
+        ("Do the pieces have to be wooden?",
+         "No. Many sets, including the classic edition, use wooden walls and pawns, but the rules only care about the pieces' size and number, not the material."),
+        ("Can I play Quoridor online instead of buying a set?",
+         (f"Yes. You can play {ways} in your browser, free and without an account. " if ANY_MODE_LIVE else "")
+         + 'See the <a href="/play/">Play page</a> for what is available. The rules are the standard two-player rules described in the <a href="/quoridor-rules/">Quoridor rules</a>.'),
+    ]
+
+
 def board_game():
+    faq = board_game_faq()
+    faq_html = '<div class="faq">' + "".join(
+        f'<details><summary>{q}</summary><div class="answer"><p>{a}</p></div></details>' for q, a in faq) + "</div>"
+    faq_schema = {
+        "@context": "https://schema.org", "@type": "FAQPage",
+        "mainEntity": [{"@type": "Question", "name": q,
+                        "acceptedAnswer": {"@type": "Answer", "text": re.sub(r"<[^>]+>", "", a)}} for q, a in faq],
+    }
+    ways = live_ways()
+    opponents = (ways[0].upper() + ways[1:] + ".") if ways else "Coming soon."
     sections = [
-        ("what", "What the Quoridor board game is", """
-<p>Quoridor is an abstract strategy board game for two or four players. There are no dice, cards or hidden information: both players see everything, so the result depends on planning. It was designed by Mirko Marchesi and published by Gigamic.</p>
+        ("what-is-quoridor", "What Is the Quoridor Board Game?", """
+<p>Quoridor is an abstract strategy board game for two or four players, designed by Mirko Marchesi and published by Gigamic. Each player has a single pawn and a stock of walls. There are no dice, cards or hidden information, so every game is decided by planning rather than luck.</p>
+<p>Its appeal is how little it asks of you. You can explain it in a minute, yet each turn poses a real question: do I step closer to my goal, or do I spend a wall to slow my opponent down?</p>
 <p class="small text-muted">Quoridor Online is an independent website. It is not affiliated with or endorsed by the game's designer or publisher.</p>"""),
-        ("components", "Board layout and components", """
-<p>A standard set contains a 9×9 board with grooves between the squares, four pawns and twenty walls. In a two-player game each player uses one pawn and ten walls. Pawns start at the middle of opposite edges.</p>
-<p>For the exact step-by-step rules, see the <a href="/quoridor-rules/">Quoridor rules</a>.</p>"""),
-        ("challenge", "The central strategic challenge", """
-<p>The game is a race with a twist. Moving gets you closer to winning, but walls change how far away the finish is for <em>both</em> players. Every turn is a trade-off between making progress and making your opponent's progress harder, and you only have a limited number of walls to spend.</p>"""),
-        ("barriers", "How barriers shape movement", """
-<p>Walls don't capture or remove anything. They only change the shape of the board, turning open squares into corridors and detours. Because a wall can never fully seal a path, a good barrier is one that makes the opponent's <em>shortest</em> route much longer than yours.</p>"""),
-        ("modes", "Local, computer and online play", """
+        ("objective", "Objective and Basic Gameplay", f"""
+<div class="callout"><p><strong>The objective:</strong> be the first player to move your pawn onto <em>any square</em> of the opposite edge of the board.</p></div>
+<p>Players take turns, and on each turn you do <strong>one</strong> of two things:</p>
+<ul>
+<li><strong>Move your pawn</strong> one square up, down, left or right. If your opponent's pawn is directly in front of you, you can jump over it.</li>
+<li><strong>Place a wall</strong> in the grooves between squares to block movement. A wall can never be moved afterwards, and you may never seal off a player's last route to their goal.</li>
+</ul>
+<p>That is the whole game. The step-by-step version is in <a href="/how-to-play-quoridor/">How to play Quoridor</a>, and every edge case is covered by the <a href="/quoridor-rules/">Quoridor rules</a>.</p>
+{figure(SETUP_BOARD, 'The starting position of a two-player game: each pawn begins in the middle of its own edge and aims for the opposite one.')}"""),
+        ("components", "What Comes in a Physical Game Set?", """
+<p>A standard Quoridor set is compact. The classic edition is made of wood and contains:</p>
+<ul>
+<li><strong>A 9×9 board</strong> of 81 squares, with narrow grooves running between them for the walls.</li>
+<li><strong>Four pawns</strong>, one per player in a four-player game. In a two-player game you use two of them, which start in the middle of opposite edges.</li>
+<li><strong>Twenty wooden walls</strong>, each long enough to span two squares. They are shared out equally: 10 each in a two-player game, 5 each with four players.</li>
+</ul>
+<p>Many boards have storage for the unused walls, so the walls you have left are always easy to count.</p>"""),
+        ("movement-blocking-planning", "How the Game Combines Movement, Blocking and Planning", f"""
+<p>Moving and blocking are two sides of one race. Your walk to the goal gets shorter as you move, while a well-placed wall makes your <em>opponent's</em> walk longer. The player who needs fewer turns to finish is ahead, and every turn is a choice about how to change that count.</p>
+<ul>
+<li><strong>Movement</strong> is steady but slow: one square per turn.</li>
+<li><strong>Blocking</strong> can add many steps for your opponent at once, but each wall is permanent and you only have so many.</li>
+<li><strong>Planning</strong> ties them together: when to hold your walls back, when to spend one, and what your opponent can do in reply.</li>
+</ul>
+<p>Walls never capture or remove anything. They only reshape the board into corridors and detours, and because a wall may never completely seal a path, the best barrier is one that makes the opponent's <em>shortest</em> route much longer than yours.</p>
+{figure(MID_BOARD, 'A game in progress. The indigo walls have turned open squares into corridors, and both pawns now have to walk around them.')}
+<p>For a deeper look, read the <a href="/quoridor-strategy/">Quoridor strategy guide</a>.</p>"""),
+        ("who-enjoys-quoridor", "Who Might Enjoy Quoridor?", """
+<ul>
+<li><strong>Families and casual players.</strong> The rules are short and the pieces are easy to understand, so a new player can join in during the first game.</li>
+<li><strong>Chess and abstract-strategy fans.</strong> Perfect information and no luck mean that mistakes and good ideas both show up on the board.</li>
+<li><strong>People who like to out-think an opponent.</strong> Because walls turn the board into a shared puzzle, you are always weighing your own plan against what the other player might do.</li>
+<li><strong>Anyone short on time.</strong> A game is usually over in a quarter of an hour or so, and the set is small enough to carry.</li>
+</ul>
+<p>If you prefer games driven by dice, cards or bluffing, Quoridor may feel too open. If you like a tidy puzzle with a human opponent, it is a good fit.</p>"""),
+        ("physical-vs-online", "Physical Board Game Versus Browser-Based Play", f"""
+<p>The rules are the same either way. What changes is how you play.</p>
 <div class="table-wrap"><table>
-<thead><tr><th scope="col">Mode</th><th scope="col">What it's like</th></tr></thead>
+<thead><tr><th scope="col"><span class="sr-only">Aspect</span></th><th scope="col">Physical set</th><th scope="col">In your browser</th></tr></thead>
 <tbody>
-<tr><td><strong>Local (same device)</strong></td><td>Two people share one screen and take turns, much like a physical board.</td></tr>
-<tr><td><strong>Against the computer</strong></td><td>Solo practice at a chosen difficulty, any time.</td></tr>
-<tr><td><strong>Online</strong></td><td>Play another person remotely, via matchmaking or a private room shared with a friend.</td></tr>
+<tr><th scope="row">Setup</th><td>Unpack the board, pawns and walls.</td><td>Open a page. Nothing to install and no account.</td></tr>
+<tr><th scope="row">Rule checking</th><td>Players check each wall themselves.</td><td>The game highlights legal moves and refuses illegal walls.</td></tr>
+<tr><th scope="row">Opponents</th><td>Someone at the same table.</td><td>{opponents}</td></tr>
+<tr><th scope="row">Feel</th><td>Wooden pieces and a table between you.</td><td>Instant start, any time, on a phone or computer.</td></tr>
 </tbody></table></div>
-<p>See which modes are open on the <a href="/play/">Play Quoridor game online</a> page.</p>"""),
+<p>Neither is better. A physical set is a pleasure at a table, while the browser version is the quickest way to learn the game or get a match when nobody is around. See <a href="/play/">all the ways to play Quoridor online</a>.</p>"""),
+        ("faq", "Frequently Asked Questions", faq_html),
+        ("play-and-learn", "Play Quoridor and Keep Learning", f"""
+<div class="card cta-panel">
+  <p class="h-sm"><strong>Ready to try it?</strong></p>
+  <p>Start a game now, or read up first. The board highlights your legal moves, so you can learn as you play.</p>
+  <div class="btn-row">
+    <a class="btn btn--primary btn--lg" href="/play/">Play Quoridor Now {icon('arrow')}</a>
+    <a class="btn btn--secondary btn--lg" href="/how-to-play-quoridor/">How to play</a>
+  </div>
+</div>
+<ul>
+<li><a href="/quoridor-rules/"><strong>Quoridor rules</strong></a>: the full rule reference, including every wall restriction.</li>
+<li><a href="/quoridor-strategy/"><strong>Quoridor strategy</strong></a>: pathfinding, wall timing and common mistakes.</li>
+<li><a href="/how-to-play-quoridor/"><strong>How to play Quoridor</strong></a>: a beginner's walkthrough with diagrams.</li>
+</ul>"""),
     ]
     return article_page(
-        "/quoridor-board-game/", "Quoridor Board Game: Overview & How It Works",
-        "What the Quoridor board game is: its components, the central strategic challenge, how walls shape movement, and how local, computer and online play differ.",
-        "The Quoridor board game",
-        "An overview of the game: what's in the box, why it's interesting, and the ways you can play it here.",
-        sections,
-        [("How to play Quoridor", "/how-to-play-quoridor/", "learn the game step by step."),
-         ("Quoridor rules", "/quoridor-rules/", "the full rule reference."),
-         ("Quoridor strategy", "/quoridor-strategy/", "improve your play.")],
-        "Quoridor board game", "board",
+        "/quoridor-board-game/", "Quoridor Board Game – Overview, Objective and Gameplay",
+        "Discover the Quoridor board game, its goal, pawns, wooden walls, and strategic gameplay. Learn the basics and try the game online.",
+        "Quoridor: The Strategy Board Game",
+        "What the game is, what comes in the box, and why a few pawns and walls make such a good duel of planning.",
+        sections, None,
+        "Quoridor board game", "board", cta=False, schema=[faq_schema],
     )
 
 
 # ---------------------------------------------------------------- static and legal pages
-def simple_page(path, title, desc, h1, lead, content, trail):
+def simple_page(path, title, desc, h1, lead, content, trail, scripts=()):
     body = page_head(h1, lead, [(trail, None)]) + f'<div class="container pad-page"><div class="article prose">{content}</div></div>'
-    return Page(path=path, title=title, description=desc, body=body, breadcrumbs=[(trail, path)], nav_key=("about" if path == "/about/" else None))
+    return Page(path=path, title=title, description=desc, body=body, breadcrumbs=[(trail, path)], scripts=list(scripts), nav_key=("about" if path == "/about/" else None))
 
 
 def about():
-    status = (
-        "You can play Quoridor in the browser."
-        if ANY_MODE_LIVE
-        else "The game modes are still being built. For now you can read the rules, the beginner's guide and the strategy guide."
-    )
+    modes = []
+    if FEATURES["online"]:
+        modes.append('<li><strong><a href="/play/online/">Play online</a>.</strong> Play against another person after choosing a display name. No registration is needed.</li>')
+    if FEATURES["rooms"]:
+        modes.append('<li><strong><a href="/play/create-room/">Private rooms</a>.</strong> Invite a specific friend with a link or a short pairing code.</li>')
+    if FEATURES["computer"]:
+        modes.append('<li><strong><a href="/play/computer/">Play against the computer</a>.</strong> Practice at Easy, Medium, Hard or Expert difficulty.</li>')
+    if FEATURES["local"]:
+        modes.append('<li><strong><a href="/play/local/">Play on one device</a>.</strong> Two players share a screen and take turns on the same board.</li>')
+    modes_html = "\n".join(modes)
     content = f"""
 <h2>Our purpose</h2>
-<p>Quoridor Online is a simple, accessible place to play and learn the Quoridor strategy game in your browser, with no account needed.</p>
-<h2>What we focus on</h2>
+<p>Quoridor.online exists to give people a simple place to play Quoridor and learn how it works. Quoridor is easy to explain and rewarding to think about, but it can be hard to try if you don't own a set or have someone to play with. A browser is all you need here.</p>
+<p>We also want to help new players get started and improve. That is why the site pairs the game with plain-language guides, instead of leaving you to work out the rules alone.</p>
+<h2>What you can do here</h2>
+<p>You can play Quoridor in your browser, and read up on it whenever you like.</p>
+<h3>Ways to play</h3>
 <ul>
-<li>A clear, distraction-free board that works on phones, tablets and desktops.</li>
-<li>Easy ways to start: online, against the computer, or with a friend on one device.</li>
-<li>Honest, useful guides on <a href="/how-to-play-quoridor/">how to play Quoridor</a>, the <a href="/quoridor-rules/">rules</a> and <a href="/quoridor-strategy/">strategy</a>.</li>
+{modes_html}
 </ul>
-<h2>Where things stand</h2>
-<p>{status} We only describe a feature as available once it works.</p>
-<h2>Independence</h2>
-<p>Quoridor Online is an independent project. It isn't affiliated with or endorsed by the designer or publisher of the Quoridor board game.</p>
+<h3>Ways to learn</h3>
+<ul>
+<li><a href="/how-to-play-quoridor/">How to play Quoridor</a>: a beginner's walkthrough with diagrams.</li>
+<li><a href="/quoridor-rules/">Quoridor rules</a>: the full reference, including every wall restriction.</li>
+<li><a href="/quoridor-strategy/">Quoridor strategy</a>: pathfinding, wall timing and common mistakes.</li>
+<li><a href="/quoridor-board-game/">The Quoridor board game</a>: an overview of the physical game and how the browser version compares.</li>
+</ul>
+<h2>Our approach</h2>
+<ul>
+<li><strong>Accessible.</strong> The game runs in your browser with nothing to install and no account, on phones, tablets and computers.</li>
+<li><strong>Clear.</strong> A clean board, plain wording and rules that are explained in full rather than assumed.</li>
+<li><strong>Straightforward.</strong> You choose how to play and start. We only describe a feature as available once it works.</li>
+</ul>
+<h2>An independent project</h2>
+<p>Quoridor.online is an independent website. It is not affiliated with, sponsored by or endorsed by the designer or publisher of the Quoridor board game. Quoridor was designed by Mirko Marchesi and published by Gigamic, and we credit them as the source of the game. The game rules described here are those of the standard two-player game, and the guides and software on this site are our own work.</p>
+<p>If you enjoy the game and would like a physical set, it is available from its publisher and from game retailers.</p>
+<h2>Contact us</h2>
+<p>Have feedback, a technical problem or a business inquiry? Visit the <a href="/contact/">contact page</a>.</p>
 <p><a class="btn btn--primary" href="/play/">Play Now</a></p>"""
-    return simple_page("/about/", "About Quoridor Online", "About Quoridor Online: an independent, browser-based home for the Quoridor strategy game.",
-                       "About us", "An accessible, browser-based place for strategy gaming.", content, "About us")
+    return simple_page("/about/", "About Quoridor.online – Play and Learn Quoridor",
+                       "Learn about Quoridor.online, a browser-based destination for playing Quoridor and exploring its rules, strategies, and gameplay.",
+                       "About Quoridor.online", "A browser-based place to play Quoridor and learn how the game works.", content, "About us")
+
+
+CONTACT_EMAIL = "lahssanyassine1@gmail.com"
+CONTACT_TOPICS = (
+    ("Technical issue", "Technical issue"),
+    ("Feedback", "Feedback or suggestion"),
+    ("Accessibility", "Accessibility"),
+    ("General inquiry", "General inquiry"),
+)
 
 
 def contact():
+    options = "".join(f'<option value="{v}">{label}</option>' for v, label in CONTACT_TOPICS)
     content = f"""
-<div class="callout"><p><strong>No public contact channel has been set up yet.</strong> This page shows how contact will be organized; it can't send messages yet.</p></div>
-<h2 id="feedback">Feedback</h2>
-<p>Ideas, suggestions or things you'd like to see. Helpful to include: the page or mode you mean and what you'd change.</p>
-<h2 id="support">Technical support</h2>
-<p>Something not working? Helpful to include: your device, browser and version, what you did, and what you expected to happen. Please don't send passwords or personal data.</p>
-<h2 id="business">Business inquiries</h2>
-<p>Partnerships, press and other business matters. Helpful to include: who you are, your organization and what you propose.</p>"""
-    return simple_page("/contact/", "Contact Quoridor Online", "How to contact Quoridor Online for feedback, technical support or business inquiries.",
-                       "Contact us", "Feedback, technical support and business inquiries.", content, "Contact us")
+<p>Questions, ideas, or something not working? We read every message. Tell us what you think of the game, report a problem, or suggest what we should add next.</p>
+<p>You can write to us at <a href="mailto:{CONTACT_EMAIL}">{CONTACT_EMAIL}</a>, or use the form below to start a message in your email app.</p>
+<form class="contact-form" id="contact-form" data-to="{CONTACT_EMAIL}" novalidate hidden>
+  <div class="field">
+    <label for="contact-topic">Subject</label>
+    <select class="input" id="contact-topic" name="topic">{options}</select>
+  </div>
+  <div class="field">
+    <label for="contact-name">Your name <span class="text-muted">(optional)</span></label>
+    <input class="input" id="contact-name" name="name" type="text" autocomplete="name" maxlength="80">
+  </div>
+  <div class="field">
+    <label for="contact-email">Your email <span class="text-muted">(optional, so we can reply)</span></label>
+    <input class="input" id="contact-email" name="email" type="email" autocomplete="email" maxlength="120">
+  </div>
+  <div class="field">
+    <label for="contact-message">Message</label>
+    <textarea class="input input--area" id="contact-message" name="message" rows="7" maxlength="3000" required aria-describedby="contact-message-hint contact-message-error"></textarea>
+    <span class="hint" id="contact-message-hint">Please don't include passwords or other sensitive personal data.</span>
+    <div class="field-error" id="contact-message-error" role="alert" hidden></div>
+  </div>
+  <div class="field">
+    <label class="check-line"><input type="checkbox" id="contact-env" name="env"> Include my browser and screen details (useful for technical issues)</label>
+  </div>
+  <button class="btn btn--primary" type="submit">{icon('arrow')} Write email</button>
+  <div class="notice contact-status" id="contact-status" role="status" hidden>{icon('info')}<div></div></div>
+</form>
+<h2 id="report-a-problem">Reporting a problem</h2>
+<p>The more detail you give, the faster we can find the cause. Please include:</p>
+<ul>
+<li>The page or game mode you were using (for example online play, against the computer, or one device).</li>
+<li>Your device, operating system, and browser with its version.</li>
+<li>What you did, what you expected to happen, and what happened instead.</li>
+<li>A screenshot, if it helps. For an online game, the time it happened.</li>
+</ul>
+<h2 id="privacy">Your information</h2>
+<p>We use your message and email address only to answer you. The form doesn't send anything by itself: it opens a draft in your own email app, and nothing is sent until you send it. See the <a href="/privacy-policy/">Privacy Policy</a> for how the site handles information.</p>"""
+    return simple_page("/contact/", "Contact Quoridor.online",
+                       "Contact the Quoridor.online team with questions, feedback, website issues, or suggestions about the online Quoridor game.",
+                       "Contact Us", "Send us your feedback, questions or a problem report.", content, "Contact us",
+                       scripts=["/assets/js/contact.js"])
 
 
 ONLINE_FACTS = """

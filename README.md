@@ -89,7 +89,7 @@ always on; `online` and `rooms` follow `online_server` in `site.json`, so a stat
 
 - `og-image.svg` should be exported to a 1200x630 PNG (most social networks ignore SVG previews) and referenced in `build.py`.
 - Add PNG icons (180, 192, 512) for iOS and the web manifest.
-- Replace the Privacy Policy and Terms drafts with reviewed text; add a real contact channel on `/contact/`.
+- Replace the Privacy Policy and Terms drafts with reviewed text; review the contact form on `/contact/` (it opens a mailto: draft; there is no server-side mail endpoint).
 - Review the "Quoridor" name (and any domain you pick) for trademark issues.
 - Set `site_url` in `site.json` once the final address is known, then rebuild.
 - Rooms: the host must serve `/room/<id>/` from `room/index.html` with a 200 (see `serve.py`; `_redirects` does this on Netlify / Cloudflare Pages) and route `/api/` to the Python server.
