@@ -1417,6 +1417,7 @@ PRIVACY_EFFECTIVE = ("2026-10-17", "17 October 2026")
 PRIVACY_HISTORY = (
     ("2026-10-17", "17 October 2026", "First full version of this Privacy Policy. It replaces the earlier draft placeholder."),
     ("2026-10-17", "17 October 2026", "Explained that an online search can keep running while you play elsewhere on the site, and the session-storage entry that makes this possible."),
+    ("2026-10-17", "17 October 2026", "Added Google Analytics (Google tag) on public pages, with its cookies and data processing. It is not loaded on online-room pages."),
 )
 
 
@@ -1459,8 +1460,8 @@ def privacy():
         rights_extra = ""
     history_html = "".join(f'<li><time datetime="{d}">{t}</time>: {note}</li>' for d, t, note in PRIVACY_HISTORY)
     content = f"""
-<p>This policy explains what information Quoridor.online (&ldquo;we&rdquo;, &ldquo;us&rdquo;) handles when you visit the site, play Quoridor, or contact us. We keep it short because we collect very little: there are no accounts, no advertising and no analytics.</p>
-<p><strong>In short:</strong> games against the computer and on one device stay in your browser; the site sets no cookies; it loads nothing from other companies; and the little that online play needs is kept in memory only, for minutes.</p>
+<p>This policy explains what information Quoridor.online (&ldquo;we&rdquo;, &ldquo;us&rdquo;) handles when you visit the site, play Quoridor, or contact us. We keep it short because we collect very little: there are no accounts and no advertising, and the only analytics is Google Analytics on our public pages.</p>
+<p><strong>In short:</strong> games against the computer and on one device stay in your browser; Google Analytics sets cookies to count visits (never on online-room pages); and the little that online play needs is kept in memory only, for minutes.</p>
 <nav aria-label="On this page"><p><strong>On this page</strong></p>
 <ol>
 {toc_html}
@@ -1479,8 +1480,8 @@ def privacy():
 <h2 id="logs">2. Server logs, analytics and cookies</h2>
 <ul>
 <li><strong>Server logs.</strong> When your browser requests a page, our web server and hosting provider receive technical information such as your IP address, the date and time, the page or file requested, the response status and usually your browser and device type. Our own server logs record the request and IP address but replace room identifiers and matchmaking tickets with a placeholder, so a log cannot be used to enter a room. We use logs to keep the site secure and reliable and to investigate faults and abuse. They are kept only as long as needed for those purposes.</li>
-<li><strong>Analytics.</strong> The site does not use analytics, advertising or tracking tools. If that changes we will update this policy first and, where the law requires it, ask for your consent.</li>
-<li><strong>Cookies.</strong> The site does not set cookies, so there is no cookie banner. Section 3 describes the one other kind of browser storage it uses.</li>
+<li><strong>Analytics.</strong> We use Google Analytics (Google tag) to understand how many people visit the site, which pages they read and how they arrive, so we can improve it. Google receives your IP address, your browser and device details, the page you viewed and where you came from, and reports aggregated statistics to us. We do not use it for advertising and we do not combine it with any other information about you. It is not loaded on online-room pages, so private room links are never sent to Google.</li>
+<li><strong>Cookies.</strong> Google Analytics sets first-party cookies (named <code>_ga</code> and <code>_ga_</code> followed by an identifier) in your browser to tell visits apart. They are used only for these statistics. You can block or delete them in your browser settings, or install Google's <a href="https://tools.google.com/dlpage/gaoptout" rel="noopener noreferrer">browser opt-out add-on</a>; the site works the same without them. The site sets no other cookies. Section 3 describes the one other kind of browser storage it uses.</li>
 </ul>
 
 <h2 id="storage">3. Local storage in your browser</h2>
@@ -1490,7 +1491,8 @@ def privacy():
 
 <h2 id="third-parties">4. Third-party services and embedded content</h2>
 <ul>
-<li><strong>Nothing from other companies is loaded.</strong> Pages load scripts, styles, fonts and images only from Quoridor.online itself, and the site's security headers block anything else. There are no embedded videos, social-media buttons, advertising or analytics scripts, and no third-party cookies.</li>
+<li><strong>Google Analytics.</strong> Public pages load Google's analytics script from Google servers, and Google processes the visit data described in section 2 under its own <a href="https://policies.google.com/privacy" rel="noopener noreferrer">privacy policy</a>. This may involve transferring data outside your country. Online-room pages load nothing from other companies.</li>
+<li><strong>Nothing else from other companies is loaded.</strong> Apart from Google Analytics, pages load scripts, styles, fonts and images only from Quoridor.online itself, and the site's security headers block anything else. There are no embedded videos, social-media buttons or advertising scripts.</li>
 <li><strong>Hosting.</strong> The site and its game server are run by hosting providers who process requests on our behalf, including the technical data in section 2. They act as our service providers and have their own policies for the logs they keep.</li>
 <li><strong>Email.</strong> The form on the <a href="/contact/">contact page</a> does not send anything itself. It prepares a message in your own email app, and nothing is sent until you press send there. Your email provider and ours then handle that message under their own policies.</li>
 <li><strong>Links to other sites.</strong> If you follow a link to another website, that site's own privacy policy applies.</li>
@@ -1508,7 +1510,7 @@ def privacy():
 <p>Because the site has no accounts, we cannot look up data by name. To have information removed sooner, contact us (section 9) and tell us what you want removed, as precisely as you can.</p>
 
 <h2 id="children">7. Children's privacy</h2>
-<p>Quoridor is a family game, and the site needs no account or personal details. We do not knowingly collect personal information from children, and we do not direct advertising or tracking at anyone. Online play asks only for a display name. Children should pick a nickname rather than their real name and ask a parent or guardian before playing online. If you believe a child has given us personal information, contact us and we will delete it.</p>
+<p>Quoridor is a family game, and the site needs no account or personal details. We do not knowingly collect personal information from children, and we do not direct advertising at anyone. Online play asks only for a display name. Children should pick a nickname rather than their real name and ask a parent or guardian before playing online. If you believe a child has given us personal information, contact us and we will delete it.</p>
 
 <h2 id="rights">8. Your rights and applicable law</h2>
 <p>Depending on where you live (for example in the European Economic Area, the United Kingdom or California), you may have the right to:</p>

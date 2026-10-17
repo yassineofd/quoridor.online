@@ -50,8 +50,11 @@ FOOTER_SITE = [
 ]
 
 # Headers applied by serve.py and written to public/_headers for Netlify/Cloudflare-style hosts.
+GA_ID = "G-70NW0H4444"  # Google tag; the matching config call is in static/assets/js/gtag-init.js
+GA_HOSTS = "https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com"
 CSP = (
-    "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; "
+    "default-src 'self'; script-src 'self' https://www.googletagmanager.com; style-src 'self'; "
+    f"img-src 'self' data: {GA_HOSTS}; connect-src 'self' {GA_HOSTS}; "
     "base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'"
 )
 SECURITY_HEADERS = {
@@ -120,7 +123,13 @@ def jsonld(obj):
 
 def render(page):
     robots = page.robots or ("index, follow" if page.indexable else "noindex, follow")
-    head = [
+    head = []
+    if not page.path.startswith("/room/"):  # room URLs are secret invite links: never send them to a third party
+        head += [
+            f'<script async src="https://www.googletagmanager.com/gtag/js?id={GA_ID}"></script>',
+            '<script src="/assets/js/gtag-init.js" defer></script>',
+        ]
+    head += [
         '<meta charset="utf-8">',
         '<meta name="viewport" content="width=device-width, initial-scale=1">',
         f"<title>{escape(page.title)}</title>",
