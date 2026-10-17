@@ -66,7 +66,7 @@ def header_html(page):
 <header class="site-header">
   <div class="container header-bar">
     <a class="brand" href="/" aria-label="Quoridor Online home">
-      <img src="/assets/img/logo-mark.svg" alt="" width="32" height="32">
+      <img src="/assets/img/logo-mark.png" alt="" width="32" height="32">
       <span class="brand-name">Quoridor <span class="tld">Online</span></span>
     </a>
     <nav class="site-nav" id="site-nav" aria-label="Main">
@@ -90,7 +90,7 @@ def footer_html():
   <div class="container">
     <div class="footer-grid">
       <div class="footer-brand">
-        <a class="brand" href="/" aria-label="Quoridor Online home"><img src="/assets/img/logo-mark.svg" alt="" width="32" height="32"><span>Quoridor <span class="tld">Online</span></span></a>
+        <a class="brand" href="/" aria-label="Quoridor Online home"><img src="/assets/img/logo-mark.png" alt="" width="32" height="32"><span>Quoridor <span class="tld">Online</span></span></a>
         <p>A simple place to play and learn the Quoridor strategy game in your browser.</p>
       </div>
       {col('Learn', FOOTER_LEARN)}
@@ -124,7 +124,10 @@ def render(page):
     if page.canonical and page.url:
         head.append(f'<link rel="canonical" href="{page.url}">')
     head += [
-        '<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">',
+        '<link rel="icon" href="/favicon.ico" sizes="48x48">',
+        '<link rel="icon" href="/assets/img/favicon-32.png" type="image/png" sizes="32x32">',
+        '<link rel="icon" href="/assets/img/favicon-48.png" type="image/png" sizes="48x48">',
+        '<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">',
         '<link rel="manifest" href="/site.webmanifest">',
         f'<meta property="og:site_name" content="{SITE_NAME}">',
         '<meta property="og:type" content="website">',
