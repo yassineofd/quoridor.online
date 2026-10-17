@@ -30,14 +30,24 @@ NAV = [
     ("about", "/about/", "About Us"),
 ]
 
+FOOTER_PLAY = [
+    ("/play/", "Play Quoridor"),
+    ("/play/online/", "Play Online"),
+    ("/play/computer/", "Play vs Computer"),
+    ("/play/local/", "Play Locally"),
+]
 FOOTER_LEARN = [
     ("/how-to-play-quoridor/", "How to Play"),
     ("/quoridor-rules/", "Quoridor Rules"),
     ("/quoridor-strategy/", "Quoridor Strategy"),
-    ("/quoridor-board-game/", "Quoridor Board Game"),
+    ("/quoridor-board-game/", "Board Game Guide"),
 ]
-FOOTER_SITE = [("/about/", "About Us"), ("/contact/", "Contact Us")]
-FOOTER_LEGAL = [("/privacy-policy/", "Privacy Policy"), ("/terms/", "Terms of Use")]
+FOOTER_SITE = [
+    ("/about/", "About Us"),
+    ("/contact/", "Contact Us"),
+    ("/privacy-policy/", "Privacy Policy"),
+    ("/terms/", "Terms of Use"),
+]
 
 # Headers applied by serve.py and written to public/_headers for Netlify/Cloudflare-style hosts.
 CSP = (
@@ -93,9 +103,9 @@ def footer_html():
         <a class="brand" href="/" aria-label="Quoridor Online home"><img src="/assets/img/logo-mark.png" alt="" width="32" height="32"><span>Quoridor <span class="tld">Online</span></span></a>
         <p>A simple place to play and learn the Quoridor strategy game in your browser.</p>
       </div>
+      {col('Play', FOOTER_PLAY)}
       {col('Learn', FOOTER_LEARN)}
       {col('Site', FOOTER_SITE)}
-      {col('Legal', FOOTER_LEGAL)}
     </div>
     <div class="footer-legal">
       <p>&copy; {datetime.date.today().year} {SITE_NAME}. Independent site, not affiliated with or endorsed by the publisher or designer of the Quoridor board game.</p>
