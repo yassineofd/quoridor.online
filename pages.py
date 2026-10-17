@@ -441,14 +441,14 @@ def play_online():
   <div class="search-line">
     <span class="spinner" aria-hidden="true"></span><span data-search-text role="status" aria-live="polite">Finding your opponent&hellip;</span><span class="search-elapsed" data-search-elapsed aria-hidden="true"></span>
   </div>
-  <div class="btn-row"><button class="btn btn--secondary" type="button" data-cancel-search>Cancel search</button></div>
   <div data-slow hidden>
-    <div class="btn-row">
-      <a class="btn btn--primary" href="/play/computer/" data-alt>Play against the computer</a>
-      <a class="btn btn--secondary" href="/play/create-room/" data-alt>Invite a friend</a>
+    <div class="search-actions">
+      <a class="btn btn--primary btn--block" href="/play/computer/" data-alt>Play against the computer</a>
+      <a class="btn btn--secondary btn--block" href="/play/create-room/" data-alt>Invite a friend</a>
     </div>
     <p class="small text-muted mt-4">Your search keeps running in the background. If someone is found while you play, we'll ask whether you want to join them.</p>
   </div>
+  <div class="search-cancel"><button class="btn btn--secondary" type="button" data-cancel-search>Cancel search</button></div>
 </div>"""
     panel = (
         '<div class="status-line"><span class="status-dot' + (' status-dot--ok' if live else '') + '" aria-hidden="true"></span><span>'

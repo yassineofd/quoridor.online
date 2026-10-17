@@ -117,9 +117,49 @@
     }
     function canAct() { return state.actor !== null && state.actor === game.turn && game.winner === null; }
 
+    // ---- motion -----------------------------------------------------------------------
+    // draw() rebuilds every element, and it runs on each hover, so an animation cannot just be started
+    // when a piece is created. Instead a change in the game starts a clock (anims) and every redraw
+    // re-plays the animation from wherever that clock says it should be, so a hover mid-slide does not
+    // make the pawn snap.
+    var MOVE_MS = 240, WALL_MS = 280;
+    var prev = null;     // pawn squares and wall keys as of the last draw; null = nothing to animate from
+    var anims = {};      // 'p0' / 'p1' / 'w:<o><r><c>' -> {t0, dx, dy}
+    function motionOk() {
+      try { return !(root.matchMedia && root.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { return true; }
+    }
+    function wallKey(w) { return w.o + w.r + w.c; }
+    function trackChanges() {
+      var now = Date.now(), pawns = [game.pawns[0].slice(), game.pawns[1].slice()], walls = {}, fresh = [], i;
+      for (i = 0; i < game.moves.length; i++) if (game.moves[i].type === 'wall') walls[wallKey(game.moves[i])] = game.moves[i];
+      if (prev) {
+        for (i = 0; i < 2; i++) {
+          if (prev.pawns[i][0] !== pawns[i][0] || prev.pawns[i][1] !== pawns[i][1]) {
+            anims['p' + i] = { t0: now, dx: (prev.pawns[i][1] - pawns[i][1]) * PITCH, dy: (prev.pawns[i][0] - pawns[i][0]) * PITCH };
+          }
+        }
+        for (var k in walls) if (!prev.walls[k]) fresh.push(k);
+        if (fresh.length === 1) anims['w:' + fresh[0]] = { t0: now }; // a whole history landing at once is not animated
+      }
+      prev = { pawns: pawns, walls: walls };
+    }
+    function play(node, key, kind) {
+      var a = anims[key];
+      if (!a || !node.animate) return;
+      var dur = kind === 'wall' ? WALL_MS : MOVE_MS, elapsed = Date.now() - a.t0;
+      if (elapsed >= dur) { delete anims[key]; return; }
+      if (!motionOk()) return;
+      var frames = kind === 'wall'
+        ? [{ opacity: 0, transform: 'scale(1.35)' }, { opacity: 1, transform: 'scale(1)' }]
+        : [{ transform: 'translate(' + a.dx + 'px,' + a.dy + 'px)' }, { transform: 'translate(0,0)' }];
+      if (kind === 'wall') { node.style.transformBox = 'fill-box'; node.style.transformOrigin = 'center'; }
+      node.animate(frames, { duration: dur, delay: -elapsed, easing: 'cubic-bezier(0.22, 0.8, 0.3, 1)' });
+    }
+
     // ---- drawing --------------------------------------------------------------------
     function draw() {
       [gHints, gWalls, gPreview, gPawns, gCursor].forEach(function (g) { while (g.firstChild) g.removeChild(g.firstChild); });
+      trackChanges();
 
       var i, w, j;
       if (canAct() && state.mode === 'move') {
@@ -140,7 +180,7 @@
         w = moves[i];
         if (w.type !== 'wall') continue;
         var isLast = state.last && state.last.type === 'wall' && state.last.o === w.o && state.last.r === w.r && state.last.c === w.c;
-        drawWall(gWalls, w.o, w.r, w.c, { fill: PAWN_COLORS[i % 2], stroke: isLast ? '#ffffff' : WALL_EDGES[i % 2], 'stroke-width': isLast ? 3 : 1.5 });
+        play(drawWall(gWalls, w.o, w.r, w.c, { fill: PAWN_COLORS[i % 2], stroke: isLast ? '#ffffff' : WALL_EDGES[i % 2], 'stroke-width': isLast ? 3 : 1.5 }), 'w:' + wallKey(w), 'wall');
       }
 
       if (state.mode === 'wall' && canAct()) {
@@ -156,9 +196,11 @@
       for (i = 0; i < 2; i++) {
         var pr = game.pawns[i][0], pc = game.pawns[i][1], cx = cellPos(pc) + CELL / 2, cy = cellPos(pr) + CELL / 2;
         var active = game.winner === null && game.turn === i;
-        if (game.winner === i) el('circle', { cx: cx, cy: cy, r: 36, fill: 'none', stroke: '#5eead4', 'stroke-width': 4 }, gPawns);
-        else if (active) el('circle', { cx: cx, cy: cy, r: 35, fill: 'none', stroke: '#ffffff', 'stroke-opacity': 0.45, 'stroke-width': 2 }, gPawns);
-        el('circle', { cx: cx, cy: cy, r: 27, fill: PAWN_COLORS[i] }, gPawns);
+        var pg = el('g', {}, gPawns);
+        if (game.winner === i) el('circle', { cx: cx, cy: cy, r: 36, fill: 'none', stroke: '#5eead4', 'stroke-width': 4 }, pg);
+        else if (active) el('circle', { cx: cx, cy: cy, r: 35, fill: 'none', stroke: '#ffffff', 'stroke-opacity': 0.45, 'stroke-width': 2 }, pg);
+        el('circle', { cx: cx, cy: cy, r: 27, fill: PAWN_COLORS[i] }, pg);
+        play(pg, 'p' + i, 'move');
       }
 
       if (state.keyboard && document.activeElement === svg) {
@@ -285,7 +327,7 @@
 
     var api = {
       svg: svg,
-      setGame: function (g) { game = g; state.sel = null; state.hover = null; draw(); notify(); },
+      setGame: function (g) { game = g; prev = null; anims = {}; state.sel = null; state.hover = null; draw(); notify(); },
       refresh: function () {
         if (state.sel && !wallStatus(state.sel).legal) state.sel = null;
         draw(); notify();
