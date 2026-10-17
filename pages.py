@@ -49,15 +49,15 @@ def mode_cards(heading_tag="h3", home=False):
     """home=True: the home page's wording, listing only the modes that actually work."""
     h = heading_tag
     modes = [
-        ("online", "online", "globe", "Play Online", "Play Online",
+        ("online", "online", "globe", "Play Quoridor Online", "Play Online",
          "Play Quoridor online against another person. Choose a username, no registration, and enter matchmaking. Want to play a specific friend? Use a private room.",
          "Play Quoridor online against another person. Choose a username, no registration, and enter matchmaking. Want to play a specific friend? Use a private room.",
          "/play/online/", "Play Online"),
-        ("computer", "robot", "bot", "Play Against Robot", "Play Against the Computer",
+        ("computer", "robot", "bot", "Play Quoridor Against the Computer", "Play Against the Computer",
          "Practice against the computer. Pick Easy, Medium, Hard or Expert, from gentle for beginners to a tougher test. No registration needed.",
          "Practice against the computer. Pick Easy, Medium, Hard or Expert, from gentle for beginners to a tougher test. No registration needed.",
          "/play/computer/", "Play vs Robot"),
-        ("local", "local", "users", "Play With a Friend", "Play Locally",
+        ("local", "local", "users", "Play Quoridor With a Friend", "Play Locally",
          "Two players, one device. You share the screen and take turns on the same board. Great for playing side by side.",
          "Play with a friend on the same device. You share the screen and take turns on the same board. No registration needed.",
          "/play/local/", "Play Together"),
@@ -82,13 +82,13 @@ def mode_cards(heading_tag="h3", home=False):
 </div>"""
 
 
-def private_strip(tag="h2"):
+def private_strip(tag="h2", heading="Play privately with a friend"):
     return f"""
 <div class="private-strip">
   <span class="icon-badge private-strip__icon">{icon('users')}</span>
   <div class="private-strip__body">
     <p class="eyebrow">Private match</p>
-    <{tag}>Play privately with a friend</{tag}>
+    <{tag}>{heading}</{tag}>
     <p class="private-strip__text">Private matches are part of online play. Share a direct invitation link or a short pairing code so your friend can join your room.{' ' if FEATURES['rooms'] else ' Private rooms are coming soon.'}</p>
     <ul class="chip-list" aria-label="Ways to invite a friend">
       <li>{icon('link')} Invitation link</li>
@@ -290,10 +290,35 @@ def home():
 
 
 # ---------------------------------------------------------------- play hub and modes
-def play_hub():
-    def status(k, label):
-        return f"<tr><td>{label}</td><td>{'Available' if FEATURES[k] else 'Coming soon'}</td></tr>"
+def play_faq():
+    """[(question, answer_html)] for /play/, gated on the modes that actually work."""
+    friend = "You can play locally on the same device"
+    if FEATURES["rooms"]:
+        friend += " or create a private online room and invite your friend."
+    else:
+        friend += ". Private online rooms are coming soon."
+    return [
+        ("Can I play Quoridor online for free?",
+         "Yes. You can play Quoridor online on this website without registration. Choose an available game mode and start playing."),
+        ("Can I play Quoridor against a computer?",
+         "Yes. Select the computer mode and choose Easy, Medium, Hard, or Expert difficulty."),
+        ("Can I play Quoridor with a friend?", friend),
+        ("Do I need an account to play Quoridor?",
+         "No account is required to start playing. Online play uses a username rather than a registration process."
+         if FEATURES["online"] else "No account is required to start playing."),
+        ("What is the objective of Quoridor?",
+         "The goal is to move your pawn to the opposite side of the board before your opponent. You can also place walls to create detours, but you cannot completely block a player's route to the goal."),
+    ]
 
+
+def play_hub():
+    faq = play_faq()
+    faq_html = "".join(f"<h3>{q}</h3><p>{a}</p>" for q, a in faq)
+    faq_schema = {
+        "@context": "https://schema.org", "@type": "FAQPage",
+        "mainEntity": [{"@type": "Question", "name": q,
+                        "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in faq],
+    }
     body = (
         page_head(
             "Play Quoridor Game Online",
@@ -301,31 +326,44 @@ def play_hub():
             [("Play", None)],
         )
         + f"""
-<section class="section--tight"><div class="container">
-  <div class="section-head"><h2>Choose a mode</h2></div>
+<section class="section--tight" aria-labelledby="modes-h"><div class="container">
+  <div class="section-head"><h2 id="modes-h">Choose Your Quoridor Game Mode</h2></div>
   {mode_cards('h3')}
 </div></section>
-<section class="section--tight"><div class="container">{private_strip('h2')}</div></section>
-<section class="section"><div class="container grid grid--2">
-  <div>
-    <h2>Current status</h2>
-    <p class="text-muted">We only list a mode as available once it works, so you can see where each one stands.</p>
-    <div class="table-wrap article"><table><thead><tr><th scope="col">Mode</th><th scope="col">Status</th></tr></thead><tbody>
-      {status('online', 'Play online')}{status('rooms', 'Private rooms')}{status('computer', 'Play against robot')}{status('local', 'Play with a friend (same device)')}
-    </tbody></table></div>
+<section class="section--tight" aria-label="Play Quoridor online with friends"><div class="container">{private_strip('h2', 'Play Quoridor Online With Friends')}</div></section>
+<section class="section" aria-labelledby="how-h"><div class="container prose">
+  <h2 id="how-h">How to Play Quoridor</h2>
+  <p>Quoridor is a strategy board game built around two choices: move your pawn toward the goal or place a wall to slow your opponent down. Every wall uses a limited resource, so the best move is not always the most obvious one.</p>
+  <p>Your objective is to reach the opposite side of the board before your opponent. You can make progress along your own route, create detours for your opponent, and adapt your strategy as the board changes. However, you must always leave each player a legal path to their goal.</p>
+  <p>New to the game? Learn the rules before your first match.</p>
+  <div class="btn-row">
+    <a class="btn btn--secondary" href="/how-to-play-quoridor/">Learn How to Play Quoridor</a>
+    <a class="btn btn--secondary" href="/quoridor-rules/">Read the Quoridor Rules</a>
   </div>
-  <div>
-    <h2>New to Quoridor?</h2>
-    <p class="text-muted">The rules take about two minutes to read. Start with the <a href="/how-to-play-quoridor/">beginner's guide to how to play Quoridor</a>, check the <a href="/quoridor-rules/">full rules</a> for edge cases, and come back to <a href="/quoridor-strategy/">strategy</a> when you want to win more.</p>
-  </div>
+</div></section>
+<section class="section" aria-labelledby="strategy-h"><div class="container prose">
+  <h2 id="strategy-h">Improve Your Quoridor Strategy</h2>
+  <p>Winning takes more than moving forward. Think ahead before placing a wall, compare possible routes, and decide when to advance your pawn instead of using a barrier. Understanding how your decisions affect both players can help you make better moves.</p>
+  <p>Explore practical tactics and learn how to use your walls effectively.</p>
+  <div class="btn-row"><a class="btn btn--secondary" href="/quoridor-strategy/">Explore Quoridor Strategy</a></div>
+</div></section>
+<section class="section" aria-labelledby="faq-h"><div class="container prose article">
+  <h2 id="faq-h">Frequently Asked Questions</h2>
+  {faq_html}
+  <p class="mt-4">Ready to put your tactics to the test?</p>
+  <div class="btn-row"><a class="btn btn--primary btn--lg" href="/play/online/">Play Quoridor Online Now {icon('arrow')}</a></div>
 </div></section>
 """
     )
     return Page(
         path="/play/",
-        title="Play Quoridor Game Online: Choose a Mode",
-        description="Choose how to play Quoridor: online against another person, against the computer at four difficulty levels, or with a friend on the same device.",
-        body=body, breadcrumbs=[("Play", "/play/")], nav_key="play",
+        title="Play Quoridor Game Online – Free Strategy Game",
+        description=(
+            "Play Quoridor game online for free. Challenge the computer, compete against another player, or play with a friend on the same device. No registration required."
+            if FEATURES["online"] else
+            "Play Quoridor game online for free. Challenge the computer or play with a friend on the same device. No registration required."
+        ),
+        body=body, breadcrumbs=[("Play", "/play/")], nav_key="play", schema=[faq_schema],
     )
 
 
