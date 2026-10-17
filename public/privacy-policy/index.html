@@ -84,6 +84,7 @@
 <h2 id="storage">3. Local storage in your browser</h2>
 <p>Local storage is a small area of your browser where a site can keep data on your device. It is not sent to us with page requests.</p>
 <p>When you create or join an online room, your browser stores a small entry under the name <em>quoridor.seat.</em> followed by the room's identifier. It contains your seat token, your seat number and the display name you chose. It lets you reload the page or recover from a dropped connection and keep your seat. The entry is removed when you leave the room. If you close the tab without leaving, it stays until you clear it, but it stops working once the room has expired.</p>
+<p>While you search for an opponent, your browser also keeps the search ticket and your display name in <em>session storage</em> (an entry named <em>quoridor.search</em>) for that tab only. It lets the search carry on while you play the computer or open a private room, and lets the search page pick it up again after a reload. It is removed when the search ends and disappears when you close the tab.</p>
 <p>Local storage is used only to make the game work as you asked, never for tracking. If you block or clear it, the site still works; you just cannot resume an online seat after a reload.</p>
 
 <h2 id="third-parties">4. Third-party services and embedded content</h2>
@@ -99,7 +100,7 @@
 <li><strong>Usernames are display names, not accounts.</strong> They are 2 to 20 characters. Please do not use your real name, your email address or anything else that identifies you. Two players may choose the same name.</li>
 <li><strong>Who sees your name.</strong> Your opponent sees your display name. Anyone who opens a private-room invitation before it is full can also see the host's display name.</li>
 <li><strong>Shared links and codes act like keys.</strong> A private room is reached through a long random link and a short pairing code. Anyone who has the link or code while a seat is open can take that seat, so share it only with the person you want to play. Room pages ask search engines not to index them and are served so that the page address is not passed on to other sites.</li>
-<li><strong>Matchmaking.</strong> If you ask to be matched with a stranger, your display name and a temporary ticket wait in a queue in the server's memory until an opponent is found. The ticket is dropped if your browser stops checking in for about 20 seconds.</li>
+<li><strong>Matchmaking.</strong> If you ask to be matched with a stranger, your display name and a temporary ticket wait in a queue in the server's memory until an opponent is found. The ticket is dropped if your browser stops checking in for about 20 seconds. Your search can keep running while you play the computer or wait in a private room; if an opponent is found then, you are asked whether to join, and nothing starts unless you say yes within about 20 seconds. If you say no, you keep searching but are not offered that player again. If you do not answer, your search ends.</li>
 <li><strong>No chat.</strong> There is no free-text chat between players, so the only text you share with an opponent is your display name.</li>
 <li><strong>Everything is in memory.</strong> Rooms are not written to a database or to disk. If the game server restarts, active rooms are lost.</li>
 </ul>
@@ -136,7 +137,7 @@
 <h2 id="updates">10. Effective date and update history</h2>
 <p>This policy is effective from <time datetime="2026-10-17">17 October 2026</time>. When we change it, we update the date and add an entry below. If a change materially affects how your information is used, we will say so on the site before it takes effect.</p>
 <ul>
-<li><time datetime="2026-10-17">17 October 2026</time>: First full version of this Privacy Policy. It replaces the earlier draft placeholder.</li>
+<li><time datetime="2026-10-17">17 October 2026</time>: First full version of this Privacy Policy. It replaces the earlier draft placeholder.</li><li><time datetime="2026-10-17">17 October 2026</time>: Explained that an online search can keep running while you play elsewhere on the site, and the session-storage entry that makes this possible.</li>
 </ul></div></div>
 </main>
 

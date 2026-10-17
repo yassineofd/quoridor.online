@@ -22,7 +22,8 @@ SITE_NAME = "Quoridor Online"
 # serve.py). A static host such as Vercel or GitHub Pages cannot run it, so it is off by default:
 # set "online_server": true in site.json only when you deploy serve.py (or the server/ package)
 # behind your domain. QUORIDOR_ONLINE=1 forces it on for a local build.
-ONLINE_SERVER = bool(_cfg.get("online_server", False)) or os.environ.get("QUORIDOR_ONLINE") == "1"
+# QUORIDOR_ONLINE=0 forces it off (used to build the "static host" copy that tests check).
+ONLINE_SERVER = (bool(_cfg.get("online_server", False)) or os.environ.get("QUORIDOR_ONLINE") == "1") and os.environ.get("QUORIDOR_ONLINE") != "0"
 
 # Feature flags. Public copy may only describe a feature as available once its flag is True
 # (docs/architecture-spec.md, honesty rule). Local and computer play run entirely in the browser.

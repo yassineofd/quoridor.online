@@ -87,6 +87,9 @@
     snap.receivedAt = Date.now();
     var wasStatus = lastStatus;
     lastStatus = snap.status;
+    // Playing with a friend: the background search for a stranger (matchwatch.js) ends, so no offer
+    // can interrupt this game.
+    if (snap.status === 'playing' && window.QuoridorMatchwatch) window.QuoridorMatchwatch.stop();
     if (snap.status === 'waiting') {
       if (linkEl) linkEl.textContent = Online.roomUrl(roomId);
       if (codeEl) codeEl.textContent = snap.code || '';

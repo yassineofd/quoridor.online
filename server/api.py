@@ -11,7 +11,12 @@
   POST   /api/rooms/<id>/leave           X-Seat-Token          -> {left:true}
   POST   /api/rooms/<id>/rematch         X-Seat-Token          -> snapshot
   POST   /api/queue                      {username}            -> {ticket}
-  GET    /api/queue/<ticket>                                   -> {status:"searching"|"matched", ...} (waits up to 20 s)
+  GET    /api/queue/<ticket>?v=N&away=0|1                      -> {status:"searching"|"offer"|"matched", v, ...} (waits up to 20 s)
+           "offer": a match is waiting for this away player's answer ({offer:{opponent, expires}});
+           "searching" + "pending": this player said yes, the other still has to ({pending:{...}})
+  POST   /api/queue/<ticket>/away                              -> {away:true}  (left the search page; keep searching)
+  POST   /api/queue/<ticket>/accept                            -> {accepted:true}  (409 if the offer is gone)
+  POST   /api/queue/<ticket>/decline                           -> {declined:bool}  (keep searching, not with this player)
   DELETE /api/queue/<ticket>                                   -> {cancelled:true}
 
 Seat tokens travel in a header, never in a URL, so they don't end up in logs or referrers.
@@ -145,7 +150,27 @@ def queue_join(req):
 
 @route("GET", "/queue/" + ID)
 def queue_wait(req, ticket):
-    return hub.queue_wait(ticket)
+    try:
+        since = int(req.query.get("v", [None])[0])
+    except (TypeError, ValueError):
+        since = None
+    away = req.query.get("away", [None])[0]
+    return hub.queue_wait(ticket, since=since, away=None if away is None else away == "1")
+
+
+@route("POST", "/queue/" + ID + "/away")
+def queue_away(req, ticket):
+    return hub.queue_away(ticket)
+
+
+@route("POST", "/queue/" + ID + "/accept")
+def queue_accept(req, ticket):
+    return hub.queue_accept(ticket)
+
+
+@route("POST", "/queue/" + ID + "/decline")
+def queue_decline(req, ticket):
+    return hub.queue_decline(ticket)
 
 
 @route("DELETE", "/queue/" + ID)

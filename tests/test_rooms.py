@@ -337,5 +337,106 @@ class Matchmaking(Setup):
             rooms.QUEUE_STALE = saved
 
 
+class BackgroundSearch(Setup):
+    """A player who left the search page (e.g. to play the computer) is asked before being matched."""
+
+    def away_and_matched_with_newcomer(self):
+        a = self.hub.queue_join("1.1.1.1", "Alex")
+        self.hub.queue_away(a["ticket"])
+        b = self.hub.queue_join("2.2.2.2", "Sam")
+        return a["ticket"], b["ticket"]
+
+    def test_away_player_is_offered_the_match_not_put_in_a_game(self):
+        a, b = self.away_and_matched_with_newcomer()
+        va = self.hub.queue_wait(a, timeout=0.1, since=0)
+        self.assertEqual(va["status"], "offer")
+        self.assertEqual(va["offer"]["opponent"], "Sam")
+        vb = self.hub.queue_wait(b, timeout=0.1, since=0)
+        self.assertEqual(vb["status"], "searching")      # the newcomer waits for the answer
+        self.assertEqual(vb["pending"]["opponent"], "Alex")
+        self.assertEqual(self.hub.rooms, {})
+
+    def test_accepting_creates_the_room_for_both(self):
+        a, b = self.away_and_matched_with_newcomer()
+        self.hub.queue_accept(a)
+        ra, rb = self.hub.queue_wait(a, timeout=1), self.hub.queue_wait(b, timeout=1)
+        self.assertEqual((ra["status"], rb["status"]), ("matched", "matched"))
+        self.assertEqual(ra["roomId"], rb["roomId"])
+        self.assertEqual(self.hub.rooms[ra["roomId"]].status, "playing")
+
+    def test_declining_keeps_both_searching_but_not_with_each_other(self):
+        a, b = self.away_and_matched_with_newcomer()
+        self.hub.queue_decline(a)
+        self.assertEqual(self.hub.queue_wait(a, timeout=0.1, since=0)["status"], "searching")
+        vb = self.hub.queue_wait(b, timeout=0.1, since=0)
+        self.assertEqual(vb["status"], "searching")
+        self.assertNotIn("pending", vb)
+        self.assertEqual(self.hub.rooms, {})
+        # a third player is matched with the one who is still on the search page, instantly
+        c = self.hub.queue_join("3.3.3.3", "Kim")
+        self.assertEqual(self.hub.queue_wait(c["ticket"], timeout=1)["status"], "matched")
+        self.assertEqual(self.hub.queue_wait(b, timeout=1)["status"], "matched")
+
+    def test_unanswered_offer_ends_the_silent_search_and_frees_the_other(self):
+        saved = rooms.OFFER_SECONDS
+        rooms.OFFER_SECONDS = 0.1
+        try:
+            a, b = self.away_and_matched_with_newcomer()
+            time.sleep(0.2)
+            self.hub.sweep()
+            self.assertEqual(code_of(self.hub.queue_wait, a, 0.1), "unavailable")
+            vb = self.hub.queue_wait(b, timeout=0.1, since=0)
+            self.assertEqual(vb["status"], "searching")
+            self.assertNotIn("pending", vb)
+        finally:
+            rooms.OFFER_SECONDS = saved
+
+    def test_returning_to_the_search_page_counts_as_yes(self):
+        a, b = self.away_and_matched_with_newcomer()
+        self.assertEqual(self.hub.queue_wait(a, timeout=1, away=False)["status"], "matched")
+        self.assertEqual(self.hub.queue_wait(b, timeout=1)["status"], "matched")
+
+    def test_cancelling_during_an_offer_frees_the_other_player(self):
+        a, b = self.away_and_matched_with_newcomer()
+        self.hub.queue_cancel(a)
+        vb = self.hub.queue_wait(b, timeout=0.1, since=0)
+        self.assertEqual((vb["status"], "pending" in vb), ("searching", False))
+
+    def test_waiting_players_on_the_search_page_are_preferred(self):
+        away = self.hub.queue_join("1.1.1.1", "Alex")
+        self.hub.queue_away(away["ticket"])
+        here = self.hub.queue_join("2.2.2.2", "Sam")   # pairs with Alex (offer), Sam waits
+        self.hub.queue_decline(away["ticket"])
+        newcomer = self.hub.queue_join("3.3.3.3", "Kim")
+        self.assertEqual(self.hub.queue_wait(newcomer["ticket"], timeout=1)["status"], "matched")
+        self.assertEqual(self.hub.queue_wait(here["ticket"], timeout=1)["status"], "matched")
+
+    def test_a_poll_the_page_left_behind_cannot_accept_or_swallow_the_match(self):
+        a = self.hub.queue_join("1.1.1.1", "Alex")["ticket"]
+        left_behind = {}
+        t = threading.Thread(target=lambda: left_behind.update(self.hub.queue_wait(a, timeout=5, since=1, away=False)))
+        t.start()
+        time.sleep(0.2)
+        self.hub.queue_away(a)                       # the page is gone; the old request is still waiting
+        t.join(2)
+        self.assertEqual(left_behind.get("status"), "superseded")
+        self.hub.queue_join("2.2.2.2", "Sam")
+        self.assertEqual(self.hub.queue_wait(a, timeout=0.1, since=0)["status"], "offer")   # asked, not matched
+
+    def test_a_newer_poll_retires_an_older_one(self):
+        a = self.hub.queue_join("1.1.1.1", "Alex")["ticket"]
+        old = {}
+        t = threading.Thread(target=lambda: old.update(self.hub.queue_wait(a, timeout=5, since=1)))
+        t.start()
+        time.sleep(0.2)
+        self.assertEqual(self.hub.queue_wait(a, timeout=0.1, since=1)["status"], "searching")
+        t.join(2)
+        self.assertEqual(old.get("status"), "superseded")
+
+    def test_accept_without_an_offer_is_refused(self):
+        a = self.hub.queue_join("1.1.1.1", "Alex")
+        self.assertEqual(code_of(self.hub.queue_accept, a["ticket"]), "no-offer")
+
+
 if __name__ == "__main__":
     unittest.main()

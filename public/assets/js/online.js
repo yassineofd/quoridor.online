@@ -53,32 +53,77 @@
   function roomUrl(roomId) { return ROOT + 'room/' + encodeURIComponent(roomId) + '/'; }
 
   // ---- matchmaking ----------------------------------------------------------------------
-  // handlers: onMatched({roomId, token, seat}), onError(failure). Returns {cancel()}.
-  function search(username, handlers) {
-    var ticket = null, stopped = false, controller = null;
-    call('POST', '/queue', { username: username }).then(function (t) {
+  // The ticket of a search that is still running is kept for this tab only (sessionStorage), so the
+  // search carries on when the player moves to another play page (see matchwatch.js).
+  var SEARCH_KEY = 'quoridor.search';
+  function saveSearch(info) { try { sessionStorage.setItem(SEARCH_KEY, JSON.stringify(info)); } catch (e) { /* storage blocked */ } }
+  function loadSearch() {
+    try { var v = JSON.parse(sessionStorage.getItem(SEARCH_KEY)); return v && v.ticket ? v : null; } catch (e) { return null; }
+  }
+  function clearSearch() { try { sessionStorage.removeItem(SEARCH_KEY); } catch (e) { /* ignore */ } }
+
+  // search(username, handlers, opts) starts a search, or with opts.ticket picks up a running one.
+  // opts.away: the player is playing something else; the server then asks before matching them.
+  // handlers:
+  //   onTicket(id)            the search exists (store it)
+  //   onUpdate(r)             still searching; r.offer = {opponent, expires} when a match awaits an answer,
+  //                           r.pending when we said yes and the other player has yet to
+  //   onMatched({roomId, token, seat}), onError(failure), optional onConnection(ok), onSuperseded()
+  // A dropped connection is reported through onConnection(false) while we retry; after MAX_FAILURES
+  // in a row the search is over and onError fires, so the UI never claims to be searching when it isn't.
+  // Returns {id(), accept(), decline(), cancel() (leave the queue), detach() (stop polling, keep the search)}.
+  var MAX_FAILURES = 5;
+  function search(username, handlers, opts) {
+    opts = opts || {};
+    var ticket = opts.ticket || null, away = !!opts.away, stopped = false, controller = null, failures = 0, version = 0;
+    if (ticket) poll();
+    else call('POST', '/queue', { username: username }).then(function (t) {
       ticket = t.ticket;
       if (stopped) return call('DELETE', '/queue/' + ticket).catch(function () {});
+      if (handlers.onTicket) handlers.onTicket(ticket);
       poll();
     }, function (err) { if (!stopped) handlers.onError(err); });
 
     function poll() {
       if (stopped) return;
       controller = new AbortController();
-      call('GET', '/queue/' + ticket, undefined, undefined, controller.signal).then(function (r) {
+      call('GET', '/queue/' + ticket + '?v=' + version + '&away=' + (away ? 1 : 0), undefined, undefined, controller.signal).then(function (r) {
         if (stopped) return;
-        if (r.status === 'matched') { stopped = true; handlers.onMatched(r); } else poll();
+        if (failures) { failures = 0; if (handlers.onConnection) handlers.onConnection(true); }
+        if (r.status === 'matched') { stopped = true; handlers.onMatched(r); return; }
+        if (r.status === 'superseded') { stopped = true; if (handlers.onSuperseded) handlers.onSuperseded(); return; } // another page took over this search
+        version = r.v;
+        if (handlers.onUpdate) handlers.onUpdate(r);
+        poll();
       }, function (err) {
         if (stopped || (err && err.name === 'AbortError')) return;
-        if (err.status === 0) setTimeout(poll, 2000); // transient: try again
-        else handlers.onError(err);
+        if (err.status === 0 && ++failures < MAX_FAILURES) { // transient: say so, then try again
+          if (handlers.onConnection) handlers.onConnection(false);
+          setTimeout(poll, 2000);
+        } else {
+          stopped = true;
+          handlers.onError(err);
+        }
       });
     }
+    function stop() { stopped = true; if (controller) controller.abort(); }
     return {
+      id: function () { return ticket; },
+      accept: function () { return call('POST', '/queue/' + ticket + '/accept'); },
+      decline: function () { return call('POST', '/queue/' + ticket + '/decline'); },
       cancel: function () {
-        stopped = true;
-        if (controller) controller.abort();
+        stop();
         if (ticket) call('DELETE', '/queue/' + ticket).catch(function () {});
+      },
+      // Leaving this page while the search carries on elsewhere: stop polling here, and tell the server
+      // now (the request outlives the page) that this player is away, so a match is offered, not forced.
+      detach: function () {
+        stop();
+        if (ticket) {
+          try {
+            fetch(ROOT + 'api/queue/' + ticket + '/away', { method: 'POST', keepalive: true, credentials: 'omit', referrerPolicy: 'no-referrer' }).catch(function () {});
+          } catch (e) { /* ignore */ }
+        }
       }
     };
   }
@@ -126,6 +171,7 @@
   root.QuoridorOnline = {
     root: ROOT, call: call, ApiFailure: ApiFailure,
     saveSeat: saveSeat, loadSeat: loadSeat, forgetSeat: forgetSeat, roomUrl: roomUrl,
+    saveSearch: saveSearch, loadSearch: loadSearch, clearSearch: clearSearch,
     createRoom: function (username) { return call('POST', '/rooms', { username: username }); },
     joinByCode: function (code, username) { return call('POST', '/rooms/join', { code: code, username: username }); },
     peek: function (roomId) { return call('GET', '/rooms/' + roomId); },

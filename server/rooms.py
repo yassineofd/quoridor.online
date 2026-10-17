@@ -29,6 +29,7 @@ WAITING_TTL = 30 * 60    # an unjoined room (and its code) expires
 FINISHED_TTL = 10 * 60   # finished rooms are kept this long so players can ask for a rematch
 ABANDONED_TTL = 5 * 60   # both players gone
 QUEUE_STALE = 20         # a matchmaking ticket not polled for this long is dropped
+OFFER_SECONDS = 20       # a player searching in the background has this long to accept a match
 TURN_SECONDS = 15        # time to make a move; then the server plays one for the player
 TURN_GRACE = 1.0         # extra time for a move that was sent just before the limit
 LONG_POLL = 25           # max time a state request waits for news
@@ -331,45 +332,196 @@ class Hub:
             if len(self.tickets) >= MAX_QUEUE:
                 raise ApiError(503, "busy", "The server is busy. Try again in a moment.")
             ticket_id = secrets.token_urlsafe(18)
-            mine = {"name": name, "created": now, "polled": now, "result": None, "seq": next(_seq)}
-            waiting = [(t["seq"], tid, t) for tid, t in self.tickets.items() if t["result"] is None]
-            self.tickets[ticket_id] = mine
-            if waiting:
-                _, other_id, other = min(waiting)
-                room = self._new_room(other["name"])
-                guest = Seat(name)
-                idx = 1 - room.host
-                room.seats[idx] = guest
-                self._start(room)
-                other["result"] = {"roomId": room.id, "token": room.seats[room.host].token, "seat": room.host}
-                mine["result"] = {"roomId": room.id, "token": guest.token, "seat": idx}
-                self.cond.notify_all()
+            # away: the player left the search page (e.g. to play the computer) and keeps searching in the
+            # background. An away player is only matched after saying yes to an offer; v counts changes.
+            self.tickets[ticket_id] = {
+                "name": name, "created": now, "polled": now, "result": None, "seq": next(_seq),
+                "away": False, "v": 1, "offer": None, "avoid": set(), "gen": 0,
+            }
+            self._pair(ticket_id)
             return {"ticket": ticket_id}
 
-    def _drop_stale_tickets(self, now):
-        for tid in [t for t, v in self.tickets.items() if (v["result"] is None and now - v["polled"] > QUEUE_STALE) or now - v["created"] > 600]:
-            self.tickets.pop(tid, None)
+    def _ticket(self, ticket_id):
+        t = self.tickets.get(ticket_id)
+        if t is None:
+            raise ApiError(404, "unavailable", "That search is no longer active.")
+        return t
 
-    def queue_wait(self, ticket_id, timeout=20):
+    def _pair(self, ticket_id):
+        """Offer this ticket an opponent. Players on the search page come first: an away player has
+        to be asked, so pairing someone with them makes the other side wait for the answer."""
+        mine = self.tickets.get(ticket_id)
+        if mine is None or mine["result"] is not None or mine["offer"] is not None:
+            return
+        others = [(t["away"], t["seq"], tid) for tid, t in self.tickets.items()
+                  if tid != ticket_id and t["result"] is None and t["offer"] is None
+                  and tid not in mine["avoid"] and ticket_id not in t["avoid"]]
+        if not others:
+            return
+        _, _, other_id = min(others)
+        a, b = mine, self.tickets[other_id]
+        offer = {"id": next(_seq), "ids": (ticket_id, other_id), "deadline": time.monotonic() + OFFER_SECONDS,
+                 "yes": {ticket_id: not a["away"], other_id: not b["away"]}}
+        a["offer"] = b["offer"] = offer
+        a["v"] += 1
+        b["v"] += 1
+        if all(offer["yes"].values()):
+            self._complete(offer)
+        self.cond.notify_all()
+
+    def _complete(self, offer):
+        """Everyone said yes: create the room. The player who searched longest hosts."""
+        first_id, second_id = sorted(offer["ids"], key=lambda i: self.tickets[i]["seq"])
+        first, second = self.tickets[first_id], self.tickets[second_id]
+        room = self._new_room(first["name"])
+        guest = Seat(second["name"])
+        idx = 1 - room.host
+        room.seats[idx] = guest
+        self._start(room)
+        first["result"] = {"roomId": room.id, "token": room.seats[room.host].token, "seat": room.host}
+        second["result"] = {"roomId": room.id, "token": guest.token, "seat": idx}
+        for t in (first, second):
+            t["offer"] = None
+            t["v"] += 1
+        self.cond.notify_all()
+
+    def _dissolve(self, offer, avoid=False, drop=()):
+        """Take an offer apart. Tickets in `drop` leave the queue; the rest search again, and are not
+        offered each other again if `avoid` (a decline)."""
+        ids = offer["ids"]
+        for tid in ids:
+            t = self.tickets.get(tid)
+            if t is not None:
+                t["offer"] = None
+                t["v"] += 1
+                if avoid:
+                    t["avoid"].update(i for i in ids if i != tid)
+        for tid in drop:
+            self.tickets.pop(tid, None)
+        for tid in ids:
+            if tid not in drop:
+                self._pair(tid)
+        self.cond.notify_all()
+
+    def _drop_ticket(self, ticket_id):
+        t = self.tickets.get(ticket_id)
+        if t is None:
+            return
+        if t["offer"] is not None:
+            self._dissolve(t["offer"], drop=(ticket_id,))
+        else:
+            self.tickets.pop(ticket_id, None)
+
+    def _expire_offers(self, now):
+        """An offer nobody answered in time ends the search of whoever stayed silent (so a player who
+        walked away can't keep making others wait); the other side goes back to searching."""
+        done = set()
+        for t in list(self.tickets.values()):
+            o = t["offer"]
+            if o is not None and o["id"] not in done and now > o["deadline"]:
+                done.add(o["id"])
+                self._dissolve(o, drop=[tid for tid in o["ids"] if not o["yes"].get(tid)])
+
+    def _drop_stale_tickets(self, now):
+        self._expire_offers(now)
+        for tid in [t for t, v in self.tickets.items() if (v["result"] is None and now - v["polled"] > QUEUE_STALE) or now - v["created"] > 600]:
+            self._drop_ticket(tid)
+
+    def _accept(self, ticket_id):
+        t = self.tickets[ticket_id]
+        offer = t["offer"]
+        offer["yes"][ticket_id] = True
+        if all(offer["yes"].values()):
+            self._complete(offer)
+        else:
+            for tid in offer["ids"]:
+                self.tickets[tid]["v"] += 1
+            self.cond.notify_all()
+
+    def _set_away(self, ticket_id, away):
+        t = self.tickets[ticket_id]
+        t["away"] = away
+        offer = t["offer"]
+        if offer is not None and not away and not offer["yes"].get(ticket_id):
+            self._accept(ticket_id)  # back on the search page with an offer waiting: that means yes
+
+    def _view(self, ticket_id, t, now):
+        out = {"status": "searching", "waited": round(now - t["created"]), "v": t["v"]}
+        offer = t["offer"]
+        if offer is not None:
+            other = self.tickets[next(i for i in offer["ids"] if i != ticket_id)]
+            info = {"opponent": other["name"], "expires": max(0, round(offer["deadline"] - now))}
+            if offer["yes"].get(ticket_id):
+                out["pending"] = info    # we said yes: waiting for the other player to confirm
+            else:
+                out["status"] = "offer"  # waiting for this player's answer
+                out["offer"] = info
+        return out
+
+    def queue_wait(self, ticket_id, timeout=20, since=None, away=None):
+        """Long poll. With `since` (the v last seen) it returns as soon as anything about the search
+        changes; without it, only when matched or on timeout. `away` tells the server whether the
+        player is on the search page (False) or playing elsewhere (True).
+
+        Only the newest poll of a ticket counts: a request the browser abandoned (the player moved to
+        another page) is still waiting here, and must neither flip the away flag back nor swallow a
+        match nobody will read. It ends with "superseded" as soon as a newer poll or an /away arrives."""
         deadline = time.monotonic() + timeout
         with self.cond:
+            t = self._ticket(ticket_id)
+            t["gen"] += 1
+            mine = t["gen"]
+            if away is not None and t["result"] is None and t["away"] != away:
+                self._set_away(ticket_id, away)
+            self.cond.notify_all()   # lets an older poll of this ticket notice and end
             while True:
-                t = self.tickets.get(ticket_id)
-                if t is None:
-                    raise ApiError(404, "unavailable", "That search is no longer active.")
-                t["polled"] = time.monotonic()
+                t = self._ticket(ticket_id)
+                now = time.monotonic()
+                if t["gen"] != mine:
+                    return {"status": "superseded"}
+                t["polled"] = now
                 if t["result"] is not None:
                     self.tickets.pop(ticket_id, None)
                     return {"status": "matched", **t["result"]}
-                remaining = deadline - time.monotonic()
+                if since is not None and t["v"] != since:
+                    return self._view(ticket_id, t, now)
+                remaining = deadline - now
                 if remaining <= 0:
-                    return {"status": "searching", "waited": round(time.monotonic() - t["created"])}
+                    return self._view(ticket_id, t, now)
                 self.cond.wait(min(remaining, 5))
-                t["polled"] = time.monotonic()
+                self._expire_offers(time.monotonic())
+
+    def queue_away(self, ticket_id, away=True):
+        """Sent as the player leaves the search page, so a match found in the gap is offered, not forced."""
+        with self.cond:
+            t = self._ticket(ticket_id)
+            t["gen"] += 1            # retires the poll the page left behind
+            t["polled"] = time.monotonic()
+            if t["result"] is None and t["away"] != away:
+                self._set_away(ticket_id, away)
+            self.cond.notify_all()
+            return {"away": away}
+
+    def queue_accept(self, ticket_id):
+        with self.cond:
+            t = self._ticket(ticket_id)
+            if t["offer"] is None:
+                raise ApiError(409, "no-offer", "That match is no longer available.")
+            self._accept(ticket_id)
+            return {"accepted": True}
+
+    def queue_decline(self, ticket_id):
+        """Not now: both players keep searching, but are not offered each other again."""
+        with self.cond:
+            t = self._ticket(ticket_id)
+            if t["offer"] is None:
+                return {"declined": False}
+            self._dissolve(t["offer"], avoid=True)
+            return {"declined": True}
 
     def queue_cancel(self, ticket_id):
         with self.cond:
-            self.tickets.pop(ticket_id, None)
+            self._drop_ticket(ticket_id)
             self.cond.notify_all()
             return {"cancelled": True}
 

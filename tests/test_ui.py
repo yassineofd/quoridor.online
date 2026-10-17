@@ -54,7 +54,7 @@ class UI(unittest.TestCase):
         cls.base = f"http://127.0.0.1:{cls.port}"
         # A second copy built the way the committed ./public is (online play off), as a static host would serve it.
         env2 = dict(os.environ, QUORIDOR_BUILD_DIR=cls.tmp + "/static", QUORIDOR_PUBLIC=cls.tmp + "/static")
-        env2.pop("QUORIDOR_ONLINE", None)
+        env2["QUORIDOR_ONLINE"] = "0"
         subprocess.run([sys.executable, str(ROOT / "build.py")], cwd=ROOT, env=env2, check=True, capture_output=True)
         cls.static_port = free_port()
         cls.static_server = subprocess.Popen([sys.executable, str(ROOT / "serve.py"), str(cls.static_port)], cwd=ROOT, env=env2,
@@ -80,6 +80,13 @@ class UI(unittest.TestCase):
 
     def tearDown(self):
         for p in self.pages:
+            # A search still in the queue would match the next test's players: cancel it.
+            try:
+                p.js("(function(){var s=window.QuoridorOnline&&QuoridorOnline.loadSearch();"
+                     "return s&&fetch(QuoridorOnline.root+'api/queue/'+s.ticket,{method:'DELETE'})})()")
+                p.pump(0.3)
+            except Exception:
+                pass
             p.close()
         self.pages.clear()
 
@@ -453,7 +460,12 @@ class UI(unittest.TestCase):
         a.type_text("#username", "Ann")
         a.click("button[type=submit]")
         a.wait_for("!document.querySelector('[data-searching]').hidden")
-        self.assertIn("Looking for an opponent", a.js("document.querySelector('[data-search-text]').textContent"))
+        self.assertIn("Finding your opponent", a.js("document.querySelector('[data-search-text]').textContent"))
+        self.assertRegex(a.js("document.querySelector('[data-search-elapsed]').textContent"), r"^\d\d:\d\d$")
+        # the other ways to play stay hidden at first and list the computer before a friend
+        self.assertTrue(a.js("document.querySelector('[data-slow]').hidden"))
+        alts = a.js("Array.from(document.querySelectorAll('[data-alt]')).map(function(l){return l.getAttribute('href')}).join()").split(",")
+        self.assertEqual([h.split("play/")[1] for h in alts], ["computer/", "create-room/"])
         self.shot(a, "online-searching.png")
         # cancelling returns to the form with the name kept
         a.click("[data-cancel-search]")
@@ -476,6 +488,85 @@ class UI(unittest.TestCase):
         self.assertEqual(names, ["Ann", "Bea"])
         self.no_errors(a)
         self.no_errors(b)
+
+    # ---- online: a search that keeps running while the player plays the computer -------------
+    def background_offer(self):
+        """Ann searches, then moves on to the computer game; Bea searches. Returns (ann, bea)."""
+        a, b = self.page(), self.page()
+        a.goto(self.base + "/play/online/")
+        a.type_text("#username", "Ann")
+        a.click("button[type=submit]")
+        a.wait_for("sessionStorage.getItem('quoridor.search')")        # the server has given us a ticket
+        a.goto(self.base + "/play/computer/")             # leaves the search page; the search carries on
+        a.wait_for("document.querySelector('.bg-search')")
+        a.click("button[type=submit]")                    # Ann starts a game against the computer
+        a.wait_for("document.querySelector('svg.board')")
+        b.goto(self.base + "/play/online/")
+        b.type_text("#username", "Bea")
+        b.click("button[type=submit]")
+        try:
+            a.wait_for("document.querySelector('.match-offer')", timeout=15)
+        except AssertionError:
+            state = lambda p: p.js("location.pathname + ' | search=' + sessionStorage.getItem('quoridor.search') + ' | chip=' + ((document.querySelector('.bg-search')||{}).textContent) + ' | text=' + ((document.querySelector('[data-search-text]')||{}).textContent)")
+            self.log.flush()
+            tail = "\n".join(Path(self.tmp, "server.log").read_text().splitlines()[-40:])
+            self.fail(f"no offer. ann: {state(a)} {a.console}; bea: {state(b)} {b.console}\n{tail}")
+        return a, b
+
+    def test_background_search_offers_the_match_mid_game(self):
+        a, b = self.background_offer()
+        self.assertIn("Bea", a.js("document.querySelector('.match-offer').textContent"))
+        self.assertIn("ends the game", a.js("document.querySelector('.match-offer').textContent"))
+        # Bea is told the other player still has to confirm, and is not dropped into a game
+        b.wait_for("document.querySelector('[data-search-text]').textContent.indexOf('confirm') !== -1")
+        self.assertIsNone(b.js("document.querySelector('svg.board')"))
+        # Ann says yes: both land in the same online game
+        a.click(".match-offer .btn--primary")
+        for p in (a, b):
+            p.wait_for("document.querySelector('svg.board') && location.pathname.indexOf('/room/') === 0", timeout=20)
+        names = sorted(a.js("Array.from(document.querySelectorAll('.player-name')).map(function(e){return e.textContent})"))
+        self.assertEqual(names, ["Ann", "Bea"])
+        self.assertIsNone(a.js("document.querySelector('.bg-search')"))
+        self.no_errors(a)
+        self.no_errors(b)
+
+    def test_declining_the_offer_keeps_the_computer_game_and_the_search(self):
+        a, b = self.background_offer()
+        a.click(".match-offer .btn--secondary")
+        a.wait_for("!document.querySelector('.match-offer')")
+        self.assertTrue(a.js("!!document.querySelector('svg.board') && location.pathname.indexOf('/play/computer') === 0"))
+        self.assertTrue(a.js("!!document.querySelector('.bg-search')"))      # still searching in the background
+        b.wait_for("document.querySelector('[data-search-text]').textContent.indexOf('confirm') === -1")
+        self.assertIsNone(b.js("document.querySelector('svg.board')"))        # Bea goes on searching
+        self.no_errors(a)
+
+    def test_stopping_the_background_search(self):
+        a, b = self.page(), self.page()
+        a.goto(self.base + "/play/online/")
+        a.type_text("#username", "Ann")
+        a.click("button[type=submit]")
+        a.wait_for("sessionStorage.getItem('quoridor.search')")
+        a.goto(self.base + "/play/local/")
+        a.wait_for("document.querySelector('.bg-search')")
+        a.click(".bg-search button")
+        a.wait_for("!document.querySelector('.bg-search')")
+        self.assertIsNone(a.js("sessionStorage.getItem('quoridor.search')"))
+        # nobody is left to match with
+        b.goto(self.base + "/play/online/")
+        b.type_text("#username", "Bea")
+        b.click("button[type=submit]")
+        time.sleep(2)
+        self.assertFalse(b.js("document.querySelector('[data-searching]').hidden"))
+
+    def test_search_page_picks_up_a_running_search_after_reload(self):
+        a = self.page()
+        a.goto(self.base + "/play/online/")
+        a.type_text("#username", "Ann")
+        a.click("button[type=submit]")
+        a.wait_for("sessionStorage.getItem('quoridor.search')")
+        a.goto(self.base + "/play/online/")
+        a.wait_for("!document.querySelector('[data-searching]').hidden")
+        self.assertEqual(a.js("document.querySelector('#username').value"), "Ann")
 
 
 if __name__ == "__main__":

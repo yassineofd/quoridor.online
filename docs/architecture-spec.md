@@ -210,8 +210,10 @@ States to design:
 | State | Requirements |
 |---|---|
 | Idle / form | Inline validation, Enter submits, label not placeholder-only |
-| Searching | Spinner **plus** text ("Looking for an opponent…"), elapsed time, **Cancel** button; `aria-live="polite"` |
-| Slow queue | After N seconds, offer: keep waiting, play robot, create private room |
+| Searching | Spinner **plus** text, elapsed time (`mm:ss`), **Cancel** button; the text sits in an `aria-live="polite"` region and changes only at thresholds. Wording by time: 0–15 s "Finding your opponent…", 15–30 s "Searching for an available player…", 30–60 s "Your search is active. Try another game while you wait.", 60 s+ "No match yet. You can keep searching or choose another way to play." (display thresholds, not technical requirements) |
+| Slow queue | From 30 s, offer **Play against the computer** first, then **Invite a friend**, with a line saying the search keeps running in the background |
+| Searching in the background | Choosing either option leaves the search running (the ticket stays in the tab's session storage; the next play page, `matchwatch.js`, keeps polling it and shows a "still searching" note with **Stop searching**). The server treats this player as *away*: if an opponent appears, the player is **asked** ("Opponent found: X is ready… Join online game / Not now", with a warning that joining ends a game in progress) and nothing starts without a yes. The searcher who is still on the search page waits ("Opponent found. Waiting for them to confirm…"). Not answering within 20 s ends the silent player's search and frees the other; declining keeps both searching but never offers them to each other again. Playing a game with a friend ends the background search, so no offer can interrupt it |
+| Connection problem while searching | Replace the searching text with "Connection problem. Trying to reconnect…" and hide the alternatives; after repeated failures end the search with the error state. Never say "Finding your opponent" unless the search is genuinely active |
 | Matched | Brief confirmation with opponent username, then board |
 | Connection lost / reconnecting | Persistent banner with status icon + text; game paused for the opponent; grace period before forfeit |
 | Error | Plain-language message + Retry (server unreachable, queue timeout, username rejected) |

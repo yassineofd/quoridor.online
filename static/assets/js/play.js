@@ -122,41 +122,72 @@
     window.location.href = QuoridorOnline.roomUrl(res.roomId);
   }
 
+  // What the search panel says as time passes. The wording follows the real state: these are
+  // display thresholds, not matchmaking rules. `alt` shows the other ways to play (computer first).
+  var SEARCH_STAGES = [
+    { from: 0,  alt: false, text: 'Finding your opponent…' },
+    { from: 15, alt: false, text: 'Searching for an available player…' },
+    { from: 30, alt: true,  text: 'Your search is active. Try another game while you wait.' },
+    { from: 60, alt: true,  text: 'No match yet. You can keep searching or choose another way to play.' }
+  ];
+  var CONNECTION_TEXT = 'Connection problem. Trying to reconnect…';
+  function stageFor(seconds) {
+    var stage = SEARCH_STAGES[0];
+    SEARCH_STAGES.forEach(function (s) { if (seconds >= s.from) stage = s; });
+    return stage;
+  }
+
+  var PENDING_TEXT = 'Opponent found. Waiting for them to confirm…';
   var searching = null, timer = null;
-  function startSearch(name) {
+  // resume: { ticket, since } picks up a search that kept running while the player was on another page.
+  function startSearch(name, resume) {
     var panel = $('[data-searching]', form), elapsed = $('[data-search-elapsed]', form),
         slow = $('[data-slow]', form), text = $('[data-search-text]', form);
-    var started = Date.now();
+    var started = resume && resume.since ? resume.since : Date.now(), connected = true, pending = false, shown = '';
     form.classList.add('is-searching');
-    panel.hidden = false; slow.hidden = true; text.textContent = 'Looking for an opponent…';
+    panel.hidden = false; slow.hidden = true;
     submitBtn.hidden = true;
-    if (nameInput) nameInput.disabled = true;
+    if (nameInput) { nameInput.value = name; nameInput.disabled = true; }
+
+    // Only touch the live region when the wording changes, so screen readers hear each message once.
+    function say(message) { if (message !== shown) { shown = message; text.textContent = message; } }
     function tick() {
-      var s = Math.floor((Date.now() - started) / 1000);
-      elapsed.textContent = Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2);
-      if (s >= 20) slow.hidden = false;
+      var s = Math.max(0, Math.floor((Date.now() - started) / 1000)), stage = stageFor(s);
+      elapsed.textContent = ('0' + Math.floor(s / 60)).slice(-2) + ':' + ('0' + (s % 60)).slice(-2);
+      say(!connected ? CONNECTION_TEXT : pending ? PENDING_TEXT : stage.text);
+      slow.hidden = !(stage.alt && connected && !pending);
     }
     tick(); timer = setInterval(tick, 1000);
     function stopUi() {
       clearInterval(timer); timer = null; searching = null;
+      QuoridorOnline.clearSearch();
       panel.hidden = true; submitBtn.hidden = false; form.classList.remove('is-searching');
       if (nameInput) nameInput.disabled = false;
     }
     searching = QuoridorOnline.search(name, {
+      onTicket: function (id) { QuoridorOnline.saveSearch({ ticket: id, name: name, since: started }); },
+      onUpdate: function (r) { pending = !!r.pending; tick(); },
       onMatched: function (res) {
-        clearInterval(timer);
-        text.textContent = 'Opponent found. Starting the game…';
+        clearInterval(timer); searching = null;
+        QuoridorOnline.clearSearch();
+        say('Opponent found. Starting the game…');
+        document.title = 'Opponent found | ' + document.title;
         slow.hidden = true;
         enter(res, name);
       },
-      onError: function (err) { stopUi(); showServerError(err); }
-    });
+      onConnection: function (ok) { connected = ok; tick(); },
+      onSuperseded: function () { var keep = QuoridorOnline.loadSearch(); stopUi(); if (keep) QuoridorOnline.saveSearch(keep); }, // another tab runs this search now
+      onError: function (err) {
+        stopUi();
+        if (!(resume && err && err.status === 404)) showServerError(err); // a resumed search that already ended is not an error
+      }
+    }, resume ? { ticket: resume.ticket } : {});
     var cancel = $('[data-cancel-search]', form);
     cancel.onclick = function () {
       searching.cancel(); stopUi();
       if (nameInput) nameInput.focus();
     };
-    cancel.focus();
+    if (!resume) cancel.focus();
   }
 
   function startOnline(name) {
@@ -176,8 +207,11 @@
     });
   }
 
-  // Leaving the page while searching drops the search (the server also expires idle searches).
-  window.addEventListener('pagehide', function () { if (searching) searching.cancel(); });
+  // Leaving the page while searching does not end the search: the ticket stays in this tab's session
+  // storage and matchwatch.js on the next play page picks it up, asking before it starts any match.
+  // (The server drops a search nobody has polled for 20 seconds.)
+  window.addEventListener('pagehide', function () { if (searching) searching.detach(); });
+  window.addEventListener('pageshow', function (e) { if (e.persisted && QuoridorOnline.loadSearch()) window.location.reload(); });
 
   var retry = $('[data-retry]', form);
   if (retry) retry.addEventListener('click', function () { hideServerError(); if (submitBtn) submitBtn.focus(); });
@@ -197,4 +231,10 @@
     if (!live) return showNotice();
     startOnline(name);
   });
+
+  // Coming back to the search page (or reloading it) while a search is still running.
+  if (kind === 'online' && live) {
+    var saved = QuoridorOnline.loadSearch();
+    if (saved) startSearch(saved.name, saved);
+  }
 })();

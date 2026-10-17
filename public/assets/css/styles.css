@@ -562,7 +562,18 @@ a:hover { color: #8fe9fa; }
 .spinner { flex: none; width: 20px; height: 20px; border-radius: 50%; border: 3px solid var(--color-border); border-top-color: var(--color-accent); }
 .search-elapsed { color: var(--color-text-muted); font-variant-numeric: tabular-nums; }
 .search-state .btn-row { margin-top: var(--space-3); }
-.is-searching .field, .is-searching .status-line { display: none; }
+.is-searching .field, .is-searching .status-line, .is-searching [data-hide-searching] { display: none; }
+.search-state [data-slow] .btn-row { margin-top: var(--space-4); }
+/* Background search: the small note on other play pages and the "opponent found" offer (matchwatch.js) */
+.bg-search, .match-offer { position: fixed; z-index: 60; background: var(--color-surface); border: 1px solid var(--control-border); border-radius: var(--radius-card); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35); }
+.bg-search { left: var(--space-4); right: var(--space-4); bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0px)); max-width: 34rem; display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-2) var(--space-3); padding: var(--space-3) var(--space-4); font-size: 0.9375rem; }
+.bg-search__dot { flex: none; width: 10px; height: 10px; border-radius: 50%; background: var(--color-accent); }
+.btn--sm { min-height: 36px; padding: 6px 12px; font-size: 0.875rem; }
+.match-offer { left: var(--space-4); right: var(--space-4); bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0px) + 64px); max-width: 30rem; padding: var(--space-4); border-color: var(--color-accent); border-width: 2px; }
+.match-offer p { margin: 0 0 var(--space-2); }
+.match-offer .match-offer__title { font-weight: 600; font-size: 1.0625rem; }
+.match-offer .btn-row { margin-top: var(--space-3); }
+@media (min-width: 768px) { .bg-search, .match-offer { left: auto; right: var(--space-5); } .bg-search { bottom: var(--space-5); } .match-offer { bottom: calc(var(--space-5) + 64px); } }
 .is-game .stage-panel { max-width: none; }
 .pad-room.is-game { max-width: none; }
 

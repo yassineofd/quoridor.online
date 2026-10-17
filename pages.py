@@ -398,6 +398,11 @@ def username_field(note="2 to 20 characters. This is a display name, not an acco
 GAME_SCRIPTS = ["/assets/js/engine.js", "/assets/js/icons.js", "/assets/js/board.js", "/assets/js/game.js"]
 
 
+def watch_scripts(path):
+    """Every play page except the search page itself carries on a running online search in the background."""
+    return ["/assets/js/matchwatch.js"] if FEATURES["online"] and path != "/play/online/" else []
+
+
 def stage(form_kind, panel_html, board_label, walls=(), pawns=(), live=False):
     return f"""
 <div class="container stage" data-stage>
@@ -425,7 +430,7 @@ def mode_page(path, title, desc, h1, lead, crumb, form_kind, panel, label, index
     return Page(
         path=path, title=title, description=desc, body=body,
         indexable=idx, robots=None if idx else "noindex, follow",
-        breadcrumbs=parent + [(crumb, path)], scripts=list(scripts) + ["/assets/js/online.js", "/assets/js/play.js"], nav_key="play",
+        breadcrumbs=parent + [(crumb, path)], scripts=list(scripts) + ["/assets/js/online.js"] + watch_scripts(path) + ["/assets/js/play.js"], nav_key="play",
     )
 
 
@@ -433,13 +438,16 @@ def play_online():
     live = FEATURES["online"]
     searching = f"""
 <div class="search-state" data-searching hidden>
-  <div class="search-line" role="status" aria-live="polite">
-    <span class="spinner" aria-hidden="true"></span><span data-search-text>Looking for an opponent&hellip;</span><span class="search-elapsed" data-search-elapsed></span>
+  <div class="search-line">
+    <span class="spinner" aria-hidden="true"></span><span data-search-text role="status" aria-live="polite">Finding your opponent&hellip;</span><span class="search-elapsed" data-search-elapsed aria-hidden="true"></span>
   </div>
   <div class="btn-row"><button class="btn btn--secondary" type="button" data-cancel-search>Cancel search</button></div>
   <div data-slow hidden>
-    <p class="small text-muted mt-4">Still looking. There may be nobody else searching right now. Keep waiting, or:</p>
-    <div class="btn-row"><a class="btn btn--secondary" href="/play/computer/">Play the robot</a><a class="btn btn--secondary" href="/play/create-room/">Create a private room</a></div>
+    <div class="btn-row">
+      <a class="btn btn--primary" href="/play/computer/" data-alt>Play against the computer</a>
+      <a class="btn btn--secondary" href="/play/create-room/" data-alt>Invite a friend</a>
+    </div>
+    <p class="small text-muted mt-4">Your search keeps running in the background. If someone is found while you play, we'll ask whether you want to join them.</p>
   </div>
 </div>"""
     panel = (
@@ -449,7 +457,7 @@ def play_online():
         + '<button class="btn btn--primary btn--lg btn--block" type="submit">Find an opponent</button>'
         + (searching + server_error() if live else
            unavailable("Online matchmaking isn't live yet", "There is no matchmaking server on this site yet, so nobody can be paired with you. Nothing was sent anywhere."))
-        + '<p class="small text-muted mt-4">Want to play one specific person? Try a private room: <a href="/play/create-room/">create a room</a> or <a href="/play/join-room/">join a room</a>.</p>'
+        + '<p class="small text-muted mt-4" data-hide-searching>Want to play one specific person? Try a private room: <a href="/play/create-room/">create a room</a> or <a href="/play/join-room/">join a room</a>.</p>'
     )
     return mode_page(
         "/play/online/", "Play Quoridor Online Against Another Player",
@@ -641,7 +649,7 @@ def room():
         path="/room/_/", title="Private room | Quoridor Online",
         description="Private Quoridor room.",
         body=body, indexable=False, robots="noindex, nofollow, noarchive",
-        canonical=False, scripts=GAME_SCRIPTS + ["/assets/js/online.js", "/assets/js/room.js"],
+        canonical=False, scripts=GAME_SCRIPTS + ["/assets/js/online.js"] + watch_scripts("/room/") + ["/assets/js/room.js"],
         out_file="room/index.html", generic_social=True, nav_key="play",
     )
 
@@ -1408,6 +1416,7 @@ def contact():
 PRIVACY_EFFECTIVE = ("2026-10-17", "17 October 2026")
 PRIVACY_HISTORY = (
     ("2026-10-17", "17 October 2026", "First full version of this Privacy Policy. It replaces the earlier draft placeholder."),
+    ("2026-10-17", "17 October 2026", "Explained that an online search can keep running while you play elsewhere on the site, and the session-storage entry that makes this possible."),
 )
 
 
@@ -1425,13 +1434,14 @@ def privacy():
     if online:
         info_online = """<li><strong>Online play.</strong> To play online or in a private room you type a display name. Our game server holds that name, a random seat token that identifies your seat, your moves, and the time you were last connected, for as long as the game or room exists. No account, email address or password is involved.</li>
 <li><strong>Network address.</strong> Your IP address reaches our server with every request. The game server keeps it in memory for about a minute so it can limit abuse, such as creating rooms too fast.</li>"""
-        storage_online = """<p>When you create or join an online room, your browser stores a small entry under the name <em>quoridor.seat.</em> followed by the room's identifier. It contains your seat token, your seat number and the display name you chose. It lets you reload the page or recover from a dropped connection and keep your seat. The entry is removed when you leave the room. If you close the tab without leaving, it stays until you clear it, but it stops working once the room has expired.</p>"""
+        storage_online = """<p>When you create or join an online room, your browser stores a small entry under the name <em>quoridor.seat.</em> followed by the room's identifier. It contains your seat token, your seat number and the display name you chose. It lets you reload the page or recover from a dropped connection and keep your seat. The entry is removed when you leave the room. If you close the tab without leaving, it stays until you clear it, but it stops working once the room has expired.</p>
+<p>While you search for an opponent, your browser also keeps the search ticket and your display name in <em>session storage</em> (an entry named <em>quoridor.search</em>) for that tab only. It lets the search carry on while you play the computer or open a private room, and lets the search page pick it up again after a reload. It is removed when the search ends and disappears when you close the tab.</p>"""
         rooms_html = """<h2 id="rooms">5. Multiplayer rooms, usernames and shared links</h2>
 <ul>
 <li><strong>Usernames are display names, not accounts.</strong> They are 2 to 20 characters. Please do not use your real name, your email address or anything else that identifies you. Two players may choose the same name.</li>
 <li><strong>Who sees your name.</strong> Your opponent sees your display name. Anyone who opens a private-room invitation before it is full can also see the host's display name.</li>
 <li><strong>Shared links and codes act like keys.</strong> A private room is reached through a long random link and a short pairing code. Anyone who has the link or code while a seat is open can take that seat, so share it only with the person you want to play. Room pages ask search engines not to index them and are served so that the page address is not passed on to other sites.</li>
-<li><strong>Matchmaking.</strong> If you ask to be matched with a stranger, your display name and a temporary ticket wait in a queue in the server's memory until an opponent is found. The ticket is dropped if your browser stops checking in for about 20 seconds.</li>
+<li><strong>Matchmaking.</strong> If you ask to be matched with a stranger, your display name and a temporary ticket wait in a queue in the server's memory until an opponent is found. The ticket is dropped if your browser stops checking in for about 20 seconds. Your search can keep running while you play the computer or wait in a private room; if an opponent is found then, you are asked whether to join, and nothing starts unless you say yes within about 20 seconds. If you say no, you keep searching but are not offered that player again. If you do not answer, your search ends.</li>
 <li><strong>No chat.</strong> There is no free-text chat between players, so the only text you share with an opponent is your display name.</li>
 <li><strong>Everything is in memory.</strong> Rooms are not written to a database or to disk. If the game server restarts, active rooms are lost.</li>
 </ul>"""
