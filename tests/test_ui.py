@@ -569,5 +569,181 @@ class UI(unittest.TestCase):
         self.assertEqual(a.js("document.querySelector('#username').value"), "Ann")
 
 
+    # ---- languages ----------------------------------------------------------------------
+    def test_translate_button_switches_the_page_and_remembers_the_choice(self):
+        p = self.page()
+        p.goto(self.static_base + "/")
+        self.assertEqual(p.js("document.documentElement.lang"), "en")
+        self.assertTrue(p.js("document.getElementById('lang-menu').hidden"))
+        p.click("#lang-toggle")
+        self.assertFalse(p.js("document.getElementById('lang-menu').hidden"))
+        self.assertEqual(p.js("document.getElementById('lang-toggle').getAttribute('aria-expanded')"), "true")
+        p.key("Escape")
+        self.assertTrue(p.js("document.getElementById('lang-menu').hidden"))
+        p.click("#lang-toggle")
+        p.click("[data-lang=es]")
+        p.wait_for("document.documentElement.lang === 'es' && document.querySelector('h1').textContent === 'Juega a Quoridor en línea'")
+        self.assertTrue(p.js("document.getElementById('lang-menu').hidden"))                    # picking closes the menu
+        self.assertEqual(p.js("document.querySelector('[data-lang-code]').textContent"), "ES")
+        self.assertNotIn("Play the Quoridor", p.js("document.title"))
+        # links and icons survive the swap, and links still point at the right pages
+        self.assertTrue(p.js("!!document.querySelector('.hero .btn--primary svg')"))
+        self.assertRegex(p.js("document.querySelector('.hero .btn--primary').getAttribute('href')"), r"play/$")
+        self.assertRegex(p.js("document.querySelector('.faq a[href*=\"play/computer\"]').getAttribute('href')"), r"^\./play/computer/$")
+        # the choice follows the visitor to other pages
+        p.goto(self.static_base + "/play/computer/")
+        p.wait_for("document.documentElement.lang === 'es' && document.querySelector('h1').textContent === 'Juega a Quoridor contra el ordenador'")
+        self.assertFalse(p.js("document.documentElement.classList.contains('i18n-pending')"))
+        # Arabic reads right to left
+        p.click("#lang-toggle")
+        p.click("[data-lang=ar]")
+        p.wait_for("document.documentElement.lang === 'ar' && document.documentElement.dir === 'rtl'")
+        self.assertEqual(p.js("getComputedStyle(document.body).direction"), "rtl")
+        self.assertFalse(p.js("document.documentElement.scrollWidth > document.documentElement.clientWidth"))
+        self.shot(p, "language-arabic.png")
+        # and back to English: the original text and structure return
+        p.click("#lang-toggle")
+        p.click("[data-lang=en]")
+        p.wait_for("document.documentElement.lang === 'en' && document.querySelector('h1').textContent === 'Play Quoridor against the computer'")
+        self.assertEqual(p.js("document.documentElement.dir"), "ltr")
+        self.assertEqual(p.js("document.querySelector('#lang-toggle').getAttribute('aria-label')"), "Change language")
+        self.assertTrue(p.js("!!document.querySelector('.stage button[type=submit] svg')"))
+        self.no_errors(p)
+
+    def test_every_page_is_translated_in_every_language(self):
+        p = self.page()
+        for lang, h1 in (("fr", "Jouez à Quoridor en ligne"), ("de", "Quoridor online spielen"), ("ar", "العب كوريدور عبر الإنترنت")):
+            p.goto(self.static_base + "/?lang=" + lang)
+            p.wait_for(f"document.documentElement.lang === '{lang}' && document.querySelector('h1').textContent === {h1!r}")
+        pages = ("/", "/play/", "/play/online/", "/play/computer/", "/play/local/", "/play/create-room/", "/play/join-room/",
+                 "/how-to-play-quoridor/", "/quoridor-rules/", "/quoridor-strategy/", "/quoridor-board-game/", "/about/",
+                 "/contact/", "/privacy-policy/", "/terms/", "/nope/")
+        collect = "Array.from(document.querySelectorAll('main h1, main h2, main h3, main .btn, main li, main summary')).map(function(e){return e.textContent.trim()}).filter(Boolean)"
+        english = {}
+        for path in pages:
+            p.goto(self.static_base + path + "?lang=en")
+            english[path] = p.js(collect)
+        for lang in ("es", "fr", "de", "ar"):
+            for path in pages:
+                p.goto(self.static_base + path + "?lang=" + lang)
+                p.wait_for(f"document.documentElement.lang === '{lang}' && !document.documentElement.classList.contains('i18n-pending')")
+                now = p.js(collect)
+                self.assertEqual(len(now), len(english[path]), f"{lang} {path}: text blocks went missing")
+                same = [e for e, t in zip(english[path], now) if e == t and len(e) > 25]   # short words may be alike in two languages
+                self.assertEqual(same, [], f"{lang} {path}: still English")
+        self.no_errors(p)
+
+    def test_changing_language_in_the_middle_of_a_game(self):
+        p = self.page()
+        p.goto(self.base + "/play/computer/?lang=es")
+        p.wait_for("document.documentElement.lang === 'es'")
+        p.click("button[type=submit]")
+        p.wait_for("document.querySelector('svg.board')")
+        self.assertEqual(self.turn(p), "Tu turno")
+        self.assertIn("Robot medio", p.js("document.querySelector('.players').textContent"))
+        self.assertEqual(self.walls_left(p), ["Muros: 10", "Muros: 10"])
+        self.click_cell(p, 7, 4)
+        p.wait_for("document.querySelector('.turn-bar').textContent === 'Tu turno'", timeout=15)
+        self.assertIn("se movió a", p.js("document.querySelector('.move-log li').textContent"))
+        p.click("#lang-toggle")
+        p.click("[data-lang=fr]")
+        p.wait_for("document.querySelector('.turn-bar').textContent === 'À vous de jouer'")
+        self.assertIn("Robot moyen", p.js("document.querySelector('.players').textContent"))
+        self.assertEqual(self.walls_left(p), ["Murs : 10", "Murs : 10"])
+        self.assertEqual(p.js("document.querySelector('.btn--toggle').textContent.trim()"), "Déplacer le pion")
+        self.assertIn("Plateau de Quoridor", p.js("document.querySelector('svg.board').getAttribute('aria-label')"))
+        self.assertEqual(self.moves(p), 2)                                                   # the game itself is untouched
+        self.assertIn("déplacement en", p.js("document.querySelector('.move-log li').textContent"))
+        # a refused wall explains itself in the current language
+        p.click(".btn--toggle:nth-of-type(2)")
+        p.click_at(*self.wall_xy(p, "h", 6, 4))      # a legal wall is placed ...
+        p.wait_for("document.querySelector('.turn-bar').textContent === 'À vous de jouer'", timeout=15)
+        p.click(".btn--toggle:nth-of-type(2)")
+        p.click_at(*self.wall_xy(p, "h", 6, 4))      # ... and the same slot is refused
+        self.assertIn("chevauche", self.hint(p))
+        p.click("#lang-toggle")
+        p.click("[data-lang=ar]")
+        p.wait_for("document.querySelector('.turn-bar').textContent === 'دورك'")
+        self.assertEqual(p.js("document.documentElement.dir"), "rtl")
+        self.no_errors(p)
+
+    def test_players_who_use_different_languages_meet_and_play(self):
+        """Matchmaking does not care about language: an Arabic page and a Spanish page are paired, each sees the game
+        in its own language, names in any alphabet are shown correctly, and every move reaches the other side."""
+        a, b = self.page(), self.page()
+        a.goto(self.base + "/play/online/?lang=ar")
+        a.wait_for("document.documentElement.lang === 'ar'")
+        b.goto(self.base + "/play/online/?lang=es")
+        b.wait_for("document.documentElement.lang === 'es'")
+        a.type_text("#username", "ليلى")                 # Layla, in Arabic letters
+        b.type_text("#username", "José")
+        a.click("button[type=submit]")
+        a.wait_for("!document.querySelector('[data-searching]').hidden")
+        self.assertIn("البحث", a.js("document.querySelector('[data-search-text]').textContent"))        # "search", in Arabic
+        b.click("button[type=submit]")
+        for p in (a, b):
+            p.wait_for("document.querySelector('svg.board')", timeout=20)
+        self.assertEqual(sorted(a.js("Array.from(document.querySelectorAll('.player-name')).map(function(e){return e.textContent})")),
+                         sorted(["ليلى", "José"]))
+        self.assertEqual(a.js("document.documentElement.lang"), "ar")
+        self.assertEqual(b.js("document.documentElement.lang"), "es")
+        # one of them is on move, and reads that in its own language
+        if self.turn(a) == "دورك":
+            mover, waiter, waiter_turn = a, b, "Tu turno"
+            self.assertIn("Turno de", self.turn(b))
+        else:
+            mover, waiter, waiter_turn = b, a, "دورك"
+            self.assertEqual(self.turn(b), "Tu turno")
+            self.assertIn("دور", self.turn(a))
+        self.click_cell(mover, 7, 4)
+        waiter.wait_for("document.querySelectorAll('.move-log li').length === 1", timeout=10)
+        waiter.wait_for(f"document.querySelector('.turn-bar').textContent === {waiter_turn!r}", timeout=10)
+        # each side reads the move in its own words
+        self.assertIn("انتقل إلى", a.js("document.querySelector('.move-log li').textContent"))
+        self.assertIn("se movió a", b.js("document.querySelector('.move-log li').textContent"))
+        self.assertEqual(self.moves(a), self.moves(b))
+        # a resignation is read in both languages too
+        mover.js("window.confirm = function () { return true; }")
+        mover.click(".game-controls .btn:nth-child(1)")
+        for p in (a, b):
+            p.wait_for("document.querySelector('.result') && !document.querySelector('.result').hidden", timeout=10)
+        self.assertRegex(a.js("document.querySelector('.result h2').textContent"), "[؀-ۿ]")
+        self.assertIn("gan", b.js("document.querySelector('.result h2').textContent").lower())
+        self.no_errors(a)
+        self.no_errors(b)
+
+    def test_private_room_between_two_languages_and_names_in_any_alphabet(self):
+        host, guest = self.page(), self.page()
+        host.goto(self.base + "/play/create-room/?lang=de")
+        host.wait_for("document.documentElement.lang === 'de'")
+        host.type_text("#username", "Мария")             # a Cyrillic name
+        host.click("button[type=submit]")
+        host.wait_for("location.pathname.indexOf('/room/') === 0 && document.getElementById('invite-code').textContent.length === 6")
+        self.assertIn("Warten", host.js("document.querySelector('[data-state=waiting] h1').textContent"))   # German waiting screen
+        code = host.js("document.getElementById('invite-code').textContent")
+        guest.goto(self.base + "/play/join-room/?lang=fr")
+        guest.wait_for("document.documentElement.lang === 'fr'")
+        guest.type_text("#username", "李雷")               # a Chinese name
+        guest.type_text("#code", code)
+        guest.click("button[type=submit]")
+        for p in (host, guest):
+            p.wait_for("document.querySelector('svg.board')", timeout=15)
+        self.assertEqual(sorted(host.js("Array.from(document.querySelectorAll('.player-name')).map(function(e){return e.textContent})")),
+                         sorted(["Мария", "李雷"]))
+        turns = (self.turn(host), self.turn(guest))
+        self.assertTrue(turns[0] == "Du bist dran" or turns[1] == "À vous de jouer", turns)
+        # a wrong code is explained in the language of the person who typed it
+        late = self.page()
+        late.goto(self.base + "/play/join-room/?lang=es")
+        late.wait_for("document.documentElement.lang === 'es'")
+        late.type_text("#username", "Zed")
+        late.type_text("#code", "ZZZZZZ")
+        late.click("button[type=submit]")
+        late.wait_for("!document.querySelector('#code-error').hidden")
+        self.assertIn("no corresponde", late.js("document.querySelector('#code-error').textContent"))
+        self.no_errors(host)
+        self.no_errors(guest)
+
+
 if __name__ == "__main__":
     unittest.main()

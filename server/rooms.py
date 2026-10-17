@@ -14,11 +14,11 @@ import re
 import secrets
 import threading
 import time
+import unicodedata
 from collections import deque
 
 from .engine import Game
 
-USERNAME_RE = re.compile(r"^[A-Za-z0-9 _.\-]{2,20}$")
 CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"  # no 0/O/1/I
 CODE_LENGTH = 6
 
@@ -44,11 +44,21 @@ class ApiError(Exception):
         self.status, self.code, self.message = status, code, message
 
 
+def valid_username(name):
+    """2 to 20 characters: letters and digits of any alphabet (with their accents and marks), spaces, dots,
+    dashes and underscores. Language is no barrier here: a player can type their name in their own script.
+    Control and direction-changing characters are not letters, so they are refused. (static/assets/js/play.js
+    and room.js apply the same rule in the browser.)"""
+    return 2 <= len(name) <= 20 and all(
+        c.isalnum() or c in " _.-" or unicodedata.category(c).startswith("M") for c in name
+    )
+
+
 def clean_username(value):
     if not isinstance(value, str):
         raise ApiError(400, "bad-username", "Choose a name of 2 to 20 characters.")
-    name = value.strip()
-    if not USERNAME_RE.match(name):
+    name = unicodedata.normalize("NFC", value.strip())
+    if not valid_username(name):
         raise ApiError(400, "bad-username", "Use 2 to 20 characters: letters, numbers, spaces, dots, dashes or underscores.")
     return name
 

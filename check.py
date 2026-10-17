@@ -4,6 +4,7 @@ Starts the dev server on a spare port and verifies status codes, SEO metadata, i
 heading structure, sitemap/robots rules and a few accessibility basics.
 """
 
+import json
 import re
 import sys
 import threading
@@ -315,6 +316,31 @@ def main():
         print("  (no site_url set: sitemap.xml correctly not generated)")
         if status != 404 or "Sitemap:" in rb:
             fail("with no site_url there must be no sitemap.xml and no Sitemap: line")
+
+    print("Translations")
+    import i18n
+    result, _units = i18n.problems()
+    for lang, (missing, unused) in result.items():
+        if missing:
+            fail(f"translations/{lang}.txt: {len(missing)} texts have no translation (python i18n.py missing {lang})")
+        if unused:
+            fail(f"translations/{lang}.txt: {len(unused)} entries no page or script uses any more (e.g. {unused[0]})")
+    for line in i18n.lint(_units):
+        fail("translation: " + line)
+    for lang in i18n.TRANSLATED:
+        status, hdr, body = get(f"/assets/i18n/{lang}.json")
+        try:
+            cat = json.loads(body)
+            if not cat["p"] or not cat["j"]:
+                fail(f"/assets/i18n/{lang}.json is empty")
+        except (ValueError, KeyError):
+            fail(f"/assets/i18n/{lang}.json missing or not a catalog (status {status})")
+    for p in pages:
+        if p.http_status == 200 and p.path != "/room/_/":
+            body = get(p.path)[2]
+            for needle in ('id="lang-toggle"', "assets/js/i18n.js", "assets/js/i18n-en.js", 'data-i18n="'):
+                if needle not in body:
+                    fail(f"{p.path}: translation hook {needle!r} missing")
 
     print("Domain independence")
     host = BASE_URL.split("//")[-1].lower()

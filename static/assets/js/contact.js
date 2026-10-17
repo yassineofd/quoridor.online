@@ -8,6 +8,8 @@
   var error = document.getElementById('contact-message-error');
   var status = document.getElementById('contact-status');
   var to = form.getAttribute('data-to');
+  var I18n = window.QuoridorI18n;
+  function t(key, params) { return I18n ? I18n.t(key, params) : key; }
 
   function field(id) { return document.getElementById(id).value.trim(); }
 
@@ -22,7 +24,7 @@
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     if (!field('contact-message')) {
-      showError('Please write a message before continuing.');
+      showError(t('contact.needMessage'));
       message.focus();
       return;
     }
@@ -41,7 +43,7 @@
 
     status.hidden = false;
     var box = status.lastElementChild;
-    box.textContent = 'Your email app should open with the message ready to send. If nothing happens, write to ' + to + ' directly.';
+    box.textContent = t('contact.opened', { email: to });
     window.location.href = href;
   });
 })();

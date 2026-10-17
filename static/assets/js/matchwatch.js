@@ -9,6 +9,8 @@
 (function (root) {
   'use strict';
   var Online = root.QuoridorOnline;
+  var I18n = root.QuoridorI18n;
+  function t(key, params) { return I18n ? I18n.t(key, params) : key; }
   if (!Online) return;
   var saved = Online.loadSearch();
   if (!saved) return;
@@ -26,7 +28,7 @@
     return n;
   }
   function button(text, cls, onClick) {
-    var b = h('button', { type: 'button', 'class': 'btn ' + cls, text: text });
+    var b = h('button', { type: 'button', 'class': 'btn ' + cls, text: t(text) });
     b.addEventListener('click', onClick);
     return b;
   }
@@ -36,7 +38,7 @@
   function showChip(message, withStop) {
     remove(chip);
     var kids = [h('span', { 'class': 'bg-search__dot', 'aria-hidden': 'true' }), h('span', { text: message })];
-    if (withStop) kids.push(button('Stop searching', 'btn--secondary btn--sm', stopSearching));
+    if (withStop) kids.push(button('watch.stop', 'btn--secondary btn--sm', stopSearching));
     chip = h('div', { 'class': 'bg-search', role: 'status' }, kids);
     document.body.appendChild(chip);
   }
@@ -68,18 +70,18 @@
     if (toast && toast.getAttribute('data-opponent') === offer.opponent) return; // already showing it
     hideOffer();
     var left = h('span', { 'class': 'match-offer__left', 'aria-hidden': 'true' });
-    var join = button('Join online game', 'btn--primary', function () { answer(true); });
-    var later = button('Not now', 'btn--secondary', function () { answer(false); });
-    var note = gameInProgress() ? 'Joining ends the game you are playing now.' : 'Joining takes you to the new game.';
-    toast = h('div', { 'class': 'match-offer', role: 'group', 'aria-label': 'Online opponent found', 'data-opponent': offer.opponent }, [
-      h('p', { 'class': 'match-offer__title', role: 'alert', text: 'Opponent found: ' + offer.opponent + ' is ready to play Quoridor online.' }),
+    var join = button('watch.join', 'btn--primary', function () { answer(true); });
+    var later = button('watch.notNow', 'btn--secondary', function () { answer(false); });
+    var note = t(gameInProgress() ? 'watch.endsGame' : 'watch.goesToGame');
+    toast = h('div', { 'class': 'match-offer', role: 'group', 'aria-label': t('watch.offerLabel'), 'data-opponent': offer.opponent }, [
+      h('p', { 'class': 'match-offer__title', role: 'alert', text: t('watch.offerTitle', { name: offer.opponent }) }),
       h('p', { 'class': 'match-offer__note small text-muted' }, [note + ' ', left]),
       h('div', { 'class': 'btn-row' }, [join, later])
     ]);
     document.body.appendChild(toast);
     function update() {
       var s = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
-      left.textContent = 'This offer ends in ' + s + 's.';
+      left.textContent = t('watch.offerEnds', { n: s });
     }
     update(); tick = setInterval(update, 1000);
 
@@ -89,11 +91,11 @@
         search.decline().then(hideOffer, hideOffer);
         return;
       }
-      join.textContent = 'Joining…';
+      join.textContent = t('watch.joining');
       // The poll in progress delivers the match once the server has the answer.
       search.accept().then(null, function () {
         hideOffer();
-        showChip('That match is no longer available. Still searching.', true);
+        showChip(t('watch.gone'), true);
       });
     }
   }
@@ -112,7 +114,7 @@
   }
 
   // ---- start ------------------------------------------------------------------------------
-  showChip('Still searching for an online opponent. We’ll ask before starting a game.', true);
+  showChip(t('watch.still'), true);
 
   search = Online.search(saved.name, {
     onUpdate: function (r) {
@@ -123,7 +125,7 @@
     onConnection: function () {},
     onSuperseded: function () { end(); remove(chip); chip = null; Online.saveSearch(saved); }, // another tab runs it now
     onError: function (err) {
-      end(err && err.status === 404 ? 'Your online search has ended.' : null);
+      end(err && err.status === 404 ? t('watch.ended') : null);
     }
   }, { ticket: saved.ticket, away: true });
 

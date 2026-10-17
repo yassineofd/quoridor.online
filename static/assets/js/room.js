@@ -6,7 +6,10 @@
 (function () {
   var STATES = ['waiting', 'join', 'starting', 'reconnecting', 'invalid', 'full', 'expired', 'unavailable', 'left', 'game'];
   var PREVIEWABLE = STATES.filter(function (s) { return s !== 'game'; });
-  var USERNAME_RE = /^[A-Za-z0-9 _.\-]{2,20}$/;
+  // Display names: letters and digits of any alphabet, plus spaces, dots, dashes and underscores (same rule as valid_username in server/rooms.py).
+  var USERNAME_RE = /^[\p{L}\p{N}\p{M} _.\-]{2,20}$/u;
+  var I18n = window.QuoridorI18n;
+  function t(key, params) { return I18n ? I18n.t(key, params) : key; }
   var params = new URLSearchParams(window.location.search);
   var preview = params.get('preview');
   var isPreview = PREVIEWABLE.indexOf(preview) !== -1;
@@ -32,8 +35,8 @@
 
   // ---- copy buttons -----------------------------------------------------------------------
   function copyText(text) {
-    function done() { status.textContent = 'Copied to clipboard.'; }
-    function fail() { status.textContent = 'Copy failed. Select the text and copy it manually.'; }
+    function done() { status.textContent = t('room.copied'); }
+    function fail() { status.textContent = t('room.copyFailed'); }
     if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, fail);
     else fail();
   }
@@ -52,7 +55,7 @@
     show(preview);
     Array.prototype.forEach.call(document.querySelectorAll('[data-leave]'), function (btn) {
       btn.addEventListener('click', function () {
-        if (window.confirm('Leave this room? If a game is in progress it counts as a forfeit.')) window.location.href = window.location.pathname + '?preview=left';
+        if (window.confirm(t('room.confirmLeavePreview'))) window.location.href = window.location.pathname + '?preview=left';
       });
     });
     return;
@@ -67,7 +70,7 @@
   var session = null, ui = null, seatInfo = null, lastStatus = null, startingTimer = null;
 
   function leaveFlow(confirmed) {
-    if (confirmed !== true && !window.confirm(lastStatus === 'playing' ? 'Leave this room? You will forfeit the game.' : 'Leave this room?')) return;
+    if (confirmed !== true && !window.confirm(t(lastStatus === 'playing' ? 'room.confirmLeaveForfeit' : 'room.confirmLeave'))) return;
     var done = function () {
       Online.forgetSeat(roomId);
       if (ui) { ui.destroy(); ui = null; }
@@ -100,7 +103,7 @@
     if (wasStatus === 'waiting' && snap.status === 'playing') {
       var first = names[0];
       var text = document.getElementById('starting-text');
-      if (text) text.textContent = names[snap.you] + ' and ' + names[1 - snap.you] + ' are connected. ' + (snap.you === 0 ? 'You move first.' : first + ' moves first.');
+      if (text) text.textContent = t('room.connected', { name: names[snap.you], other: names[1 - snap.you] }) + ' ' + (snap.you === 0 ? t('room.youFirst') : t('room.otherFirst', { name: first }));
       show('starting');
       clearTimeout(startingTimer);
       startingTimer = setTimeout(function () { startingTimer = null; if (lastStatus) renderGame(snap); }, 2200);
@@ -138,8 +141,8 @@
 
   function onConnection(ok) {
     if (banner) banner.hidden = ok;
-    if (ui && !ok) ui.announce('Connection lost. Trying to reconnect.');
-    if (ui && ok) ui.announce('Reconnected.');
+    if (ui && !ok) ui.announce(t('room.connectionLost'));
+    if (ui && ok) ui.announce(t('room.reconnected'));
     if (!ok && !ui) show('reconnecting');
   }
 
@@ -167,6 +170,8 @@
     Online.peek(roomId).then(function (info) {
       var hostName = document.getElementById('host-name');
       if (hostName) hostName.textContent = info.host;
+      // Changing language rewrites this sentence; put the host's name back into it.
+      if (I18n) I18n.onChange(function () { var el = document.getElementById('host-name'); if (el) el.textContent = info.host; });
       show('join');
     }, function (err) {
       show(err.code === 'full' ? 'full' : err.status === 0 ? 'unavailable' : 'unavailable');
@@ -178,9 +183,9 @@
     var btn = form && form.querySelector('button[type="submit"]');
     form.addEventListener('submit', function (e) {
       e.preventDefault();
-      var name = input.value.trim();
+      var name = input.value.trim().normalize('NFC');
       if (!USERNAME_RE.test(name)) {
-        errEl.textContent = 'Use 2 to 20 characters: letters, numbers, spaces, dots, dashes or underscores.';
+        errEl.textContent = t('err.bad-username');
         errEl.hidden = false; input.setAttribute('aria-invalid', 'true'); input.focus();
         return;
       }
@@ -194,7 +199,7 @@
         btn.disabled = false;
         if (err.code === 'full') return show('full');
         if (err.code === 'unavailable') return show('unavailable');
-        errEl.textContent = err.message; errEl.hidden = false; input.focus();
+        errEl.textContent = I18n ? I18n.errorText(err) : err.message; errEl.hidden = false; input.focus();
       });
     });
   }

@@ -439,7 +439,7 @@ def play_online():
     searching = f"""
 <div class="search-state" data-searching hidden>
   <div class="search-line">
-    <span class="spinner" aria-hidden="true"></span><span data-search-text role="status" aria-live="polite">Finding your opponent&hellip;</span><span class="search-elapsed" data-search-elapsed aria-hidden="true"></span>
+    <span class="spinner" aria-hidden="true"></span><span data-search-text role="status" aria-live="polite" data-i18n-skip>Finding your opponent&hellip;</span><span class="search-elapsed" data-search-elapsed aria-hidden="true"></span>
   </div>
   <div data-slow hidden>
     <div class="search-actions">
@@ -455,6 +455,7 @@ def play_online():
         + ("Matchmaking status: ready" if live else "Matchmaking status: not connected") + '</span></div>'
         + username_field()
         + '<button class="btn btn--primary btn--lg btn--block" type="submit">Find an opponent</button>'
+        + ('<p class="small text-muted mt-4">Everyone chooses their own language with the translate button at the top of the page. It only changes what you see, so you can be matched with anyone, whichever language they use.</p>' if live else '')
         + (searching + server_error() if live else
            unavailable("Online matchmaking isn't live yet", "There is no matchmaking server on this site yet, so nobody can be paired with you. Nothing was sent anywhere."))
         + '<p class="small text-muted mt-4" data-hide-searching>Want to play one specific person? Try a private room: <a href="/play/create-room/">create a room</a> or <a href="/play/join-room/">join a room</a>.</p>'
@@ -714,6 +715,8 @@ def how_to_play_faq():
              "The game shows your opponent that you are reconnecting, and your browser tries to rejoin your seat automatically. If you can't get back within a minute, the game counts as a forfeit."),
             ("Can I play on my phone?",
              "Yes. Online games run in a mobile browser with nothing to install. In wall mode, tap a groove to select a wall, then press Place selected wall to confirm."),
+            ("Can I play someone who uses a different language?",
+             "Yes. Everyone picks their own language with the translate button in the page header (English, Spanish, French, German or Arabic). It only changes how the page looks to you. The game, the matchmaking and the rooms are the same for everyone, and there is no chat, so you and your opponent can each play in your own language. Names can be written in any alphabet."),
             ("Can I play the same opponent again?",
              "Yes. When a game ends, press Request rematch. The game restarts once your opponent accepts, with the starting seats swapped."),
         ]
@@ -1324,6 +1327,9 @@ def about():
     if FEATURES["local"]:
         modes.append('<li><strong><a href="/play/local/">Play on one device</a>.</strong> Two players share a screen and take turns on the same board.</li>')
     modes_html = "\n".join(modes)
+    online_languages = (
+        ". Players who use different languages can play each other online, because the language only changes what each person sees."
+        if FEATURES["online"] else ".")
     content = f"""
 <h2>Our purpose</h2>
 <p>Quoridor.online exists to give people a simple place to play Quoridor and learn how it works. Quoridor is easy to explain and rewarding to think about, but it can be hard to try if you don't own a set or have someone to play with. A browser is all you need here.</p>
@@ -1346,6 +1352,7 @@ def about():
 <li><strong>Accessible.</strong> The game runs in your browser with nothing to install and no account, on phones, tablets and computers.</li>
 <li><strong>Clear.</strong> A clean board, plain wording and rules that are explained in full rather than assumed.</li>
 <li><strong>Straightforward.</strong> You choose how to play and start. We only describe a feature as available once it works.</li>
+<li><strong>For everyone.</strong> The site and the game can be shown in English, Spanish, French, German or Arabic with the translate button{online_languages}</li>
 </ul>
 <h2>An independent project</h2>
 <p>Quoridor.online is an independent website. It is not affiliated with, sponsored by or endorsed by the designer or publisher of the Quoridor board game. Quoridor was designed by Mirko Marchesi and published by Gigamic, and we credit them as the source of the game. The game rules described here are those of the standard two-player game, and the guides and software on this site are our own work.</p>
@@ -1418,7 +1425,13 @@ PRIVACY_HISTORY = (
     ("2026-10-17", "17 October 2026", "First full version of this Privacy Policy. It replaces the earlier draft placeholder."),
     ("2026-10-17", "17 October 2026", "Explained that an online search can keep running while you play elsewhere on the site, and the session-storage entry that makes this possible."),
     ("2026-10-17", "17 October 2026", "Added Google Analytics (Google tag) on public pages, with its cookies and data processing. It is not loaded on online-room pages."),
+    ("2026-10-17", "17 October 2026", "Described the language choice that the translate button keeps in your browser, and added translated versions of the site."),
 )
+
+LANGUAGE_STORAGE = """<p>If you pick a language with the translate button, your browser keeps the language code (for example <em>es</em>) in an entry named <em>quoridor.lang</em>, so the site opens in that language next time. It is never sent to us, and the game server never learns which language you use. Until you choose, the site reads your browser's language list to pick a first language; that stays in your browser too.</p>"""
+
+TRANSLATION_NOTE = '<p class="small text-muted">This page can be read in other languages with the translate button. The translations are provided for convenience; if they differ from the English text, the English text applies.</p>'
+
 
 
 def privacy():
@@ -1435,7 +1448,7 @@ def privacy():
     if online:
         info_online = """<li><strong>Online play.</strong> To play online or in a private room you type a display name. Our game server holds that name, a random seat token that identifies your seat, your moves, and the time you were last connected, for as long as the game or room exists. No account, email address or password is involved.</li>
 <li><strong>Network address.</strong> Your IP address reaches our server with every request. The game server keeps it in memory for about a minute so it can limit abuse, such as creating rooms too fast.</li>"""
-        storage_online = """<p>When you create or join an online room, your browser stores a small entry under the name <em>quoridor.seat.</em> followed by the room's identifier. It contains your seat token, your seat number and the display name you chose. It lets you reload the page or recover from a dropped connection and keep your seat. The entry is removed when you leave the room. If you close the tab without leaving, it stays until you clear it, but it stops working once the room has expired.</p>
+        storage_online = LANGUAGE_STORAGE + """<p>When you create or join an online room, your browser stores a small entry under the name <em>quoridor.seat.</em> followed by the room's identifier. It contains your seat token, your seat number and the display name you chose. It lets you reload the page or recover from a dropped connection and keep your seat. The entry is removed when you leave the room. If you close the tab without leaving, it stays until you clear it, but it stops working once the room has expired.</p>
 <p>While you search for an opponent, your browser also keeps the search ticket and your display name in <em>session storage</em> (an entry named <em>quoridor.search</em>) for that tab only. It lets the search carry on while you play the computer or open a private room, and lets the search page pick it up again after a reload. It is removed when the search ends and disappears when you close the tab.</p>"""
         rooms_html = """<h2 id="rooms">5. Multiplayer rooms, usernames and shared links</h2>
 <ul>
@@ -1453,13 +1466,14 @@ def privacy():
         rights_extra = "The data our game server holds about a game (a display name, a seat token and an IP address in memory) is deleted within minutes, so there is usually nothing left to give you, correct or erase by the time a request could be answered. "
     else:
         info_online = "<li><strong>Online play.</strong> Online play and private rooms are not available on this site at the moment, so no display names or seat tokens are collected. This policy will be updated before they are offered.</li>"
-        storage_online = "<p>The site does not currently store anything in your browser's local storage. If online play is added later, this section will describe what it stores.</p>"
+        storage_online = LANGUAGE_STORAGE + "<p>Nothing else is stored in your browser's local storage. If online play is added later, this section will describe what it stores.</p>"
         rooms_html = """<h2 id="rooms">5. Multiplayer rooms, usernames and shared links</h2>
 <p>Online play and private rooms are not available on this site at the moment, so no display names, rooms or invitation links exist. This policy will be updated before they are offered.</p>"""
         retention_online = ""
         rights_extra = ""
+    storage_loss = ", and you cannot resume an online seat after a reload" if online else ""
     history_html = "".join(f'<li><time datetime="{d}">{t}</time>: {note}</li>' for d, t, note in PRIVACY_HISTORY)
-    content = f"""
+    content = TRANSLATION_NOTE + f"""
 <p>This policy explains what information Quoridor.online (&ldquo;we&rdquo;, &ldquo;us&rdquo;) handles when you visit the site, play Quoridor, or contact us. We keep it short because we collect very little: there are no accounts and no advertising, and the only analytics is Google Analytics on our public pages.</p>
 <p><strong>In short:</strong> games against the computer and on one device stay in your browser; Google Analytics sets cookies to count visits (never on online-room pages); and the little that online play needs is kept in memory only, for minutes.</p>
 <nav aria-label="On this page"><p><strong>On this page</strong></p>
@@ -1487,7 +1501,7 @@ def privacy():
 <h2 id="storage">3. Local storage in your browser</h2>
 <p>Local storage is a small area of your browser where a site can keep data on your device. It is not sent to us with page requests.</p>
 {storage_online}
-<p>Local storage is used only to make the game work as you asked, never for tracking. If you block or clear it, the site still works; you just cannot resume an online seat after a reload.</p>
+<p>Local storage is used only to make the site work as you asked, never for tracking. If you block or clear it, the site still works; you just have to choose your language again{storage_loss}.</p>
 
 <h2 id="third-parties">4. Third-party services and embedded content</h2>
 <ul>
@@ -1571,7 +1585,7 @@ def terms():
         multiplayer_html = """<h2 id="multiplayer">4. Multiplayer behavior and room sharing</h2>
 <p>Online play and private rooms are not available on this site at the moment. Before they are offered, this section will be updated to cover display names, conduct toward other players, the sharing of room links and codes, and what happens when a player disconnects or forfeits.</p>"""
     history_html = "".join(f'<li><time datetime="{d}">{t}</time>: {note}</li>' for d, t, note in TERMS_HISTORY)
-    content = f"""
+    content = TRANSLATION_NOTE + f"""
 <p>These terms govern your use of Quoridor.online (&ldquo;we&rdquo;, &ldquo;us&rdquo;). They are short because the site is simple: you play Quoridor in your browser and read our guides, with no account to create.</p>
 <p><strong>In short:</strong> use the site fairly and lawfully, be considerate to other players, understand that it is a free service provided as is, and remember that Quoridor.online is independent of the game's designer and publisher.</p>
 <nav class="toc" aria-label="On this page"><h2 id="on-this-page">On this page</h2>

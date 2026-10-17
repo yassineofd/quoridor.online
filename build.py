@@ -12,6 +12,7 @@ import shutil
 from html import escape
 from pathlib import Path
 
+import i18n
 from lib import BASE_PATH, BASE_URL, SITE_NAME, icon, icons_js
 from pages import all_pages
 
@@ -70,6 +71,21 @@ ROOM_HEADERS = {
 }
 
 
+def lang_switch_html():
+    """The translate button: a globe with the current language code, opening the list of languages (wired up by i18n.js)."""
+    items = "".join(
+        f'<li><button type="button" class="lang-option" lang="{code}" data-lang="{code}">{name}</button></li>'
+        for code, name, _ in i18n.LANGUAGES
+    )
+    return (
+        '<div class="lang-switch" data-lang-switch>'
+        '<button class="btn btn--secondary lang-toggle" type="button" id="lang-toggle" aria-haspopup="true" aria-expanded="false" '
+        f'aria-controls="lang-menu" aria-label="Change language">{icon("globe")}<span class="lang-code" data-lang-code data-i18n-skip>EN</span></button>'
+        f'<ul class="lang-menu" id="lang-menu" data-i18n-skip hidden>{items}</ul>'
+        "</div>"
+    )
+
+
 def header_html(page):
     items = []
     for key, href, label in NAV:
@@ -80,12 +96,13 @@ def header_html(page):
   <div class="container header-bar">
     <a class="brand" href="/" aria-label="Quoridor Online home">
       <img src="/assets/img/logo-mark.png" alt="" width="32" height="32">
-      <span class="brand-name">Quoridor <span class="tld">Online</span></span>
+      <span class="brand-name" data-i18n-skip>Quoridor <span class="tld">Online</span></span>
     </a>
     <nav class="site-nav" id="site-nav" aria-label="Main">
       <ul>{''.join(items)}</ul>
     </nav>
     <div class="header-actions">
+      {lang_switch_html()}
       <a class="btn btn--primary" href="/play/">Play Now</a>
       <button class="btn btn--secondary menu-toggle" id="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">{icon('menu')} Menu</button>
     </div>
@@ -103,7 +120,7 @@ def footer_html():
   <div class="container">
     <div class="footer-grid">
       <div class="footer-brand">
-        <a class="brand" href="/" aria-label="Quoridor Online home"><img src="/assets/img/logo-mark.png" alt="" width="32" height="32"><span>Quoridor <span class="tld">Online</span></span></a>
+        <a class="brand" href="/" aria-label="Quoridor Online home"><img src="/assets/img/logo-mark.png" alt="" width="32" height="32"><span data-i18n-skip>Quoridor <span class="tld">Online</span></span></a>
         <p>A simple place to play and learn the Quoridor strategy game in your browser.</p>
       </div>
       {col('Play', FOOTER_PLAY)}
@@ -111,7 +128,7 @@ def footer_html():
       {col('Site', FOOTER_SITE)}
     </div>
     <div class="footer-legal">
-      <p>&copy; {datetime.date.today().year} {SITE_NAME}. Independent site, not affiliated with or endorsed by the publisher or designer of the Quoridor board game.</p>
+      <p><span data-i18n-skip>&copy; {datetime.date.today().year} {SITE_NAME}.</span> <span>Independent site, not affiliated with or endorsed by the publisher or designer of the Quoridor board game.</span></p>
     </div>
   </div>
 </footer>"""
@@ -121,7 +138,9 @@ def jsonld(obj):
     return '<script type="application/ld+json">' + json.dumps(obj, ensure_ascii=False).replace("</", "<\\/") + "</script>"
 
 
-def render(page):
+def render(page, units=None):
+    """The finished HTML of one page. units, if given, collects every translatable text (see i18n.py)."""
+    units = units if units is not None else {}
     robots = page.robots or ("index, follow" if page.indexable else "noindex, follow")
     head = []
     if not page.path.startswith("/room/"):  # room URLs are secret invite links: never send them to a third party
@@ -132,8 +151,8 @@ def render(page):
     head += [
         '<meta charset="utf-8">',
         '<meta name="viewport" content="width=device-width, initial-scale=1">',
-        f"<title>{escape(page.title)}</title>",
-        f'<meta name="description" content="{escape(page.description, quote=True)}">',
+        f"<title{i18n.head_attr(units, 'text', page.title)}>{escape(page.title)}</title>",
+        f'<meta name="description" content="{escape(page.description, quote=True)}"{i18n.head_attr(units, "content", page.description)}>',
         f'<meta name="robots" content="{robots}">',
         '<meta name="theme-color" content="#0B1220">',
         '<meta name="color-scheme" content="dark">',
@@ -153,8 +172,8 @@ def render(page):
     ]
     if not page.generic_social:
         head += [
-            f'<meta property="og:title" content="{escape(page.title, quote=True)}">',
-            f'<meta property="og:description" content="{escape(page.description, quote=True)}">',
+            f'<meta property="og:title" content="{escape(page.title, quote=True)}"{i18n.head_attr(units, "content", page.title)}>',
+            f'<meta property="og:description" content="{escape(page.description, quote=True)}"{i18n.head_attr(units, "content", page.description)}>',
             '<meta name="twitter:card" content="summary_large_image">',
         ]
         if BASE_URL:  # absolute URLs are only valid once the real address is known
@@ -178,15 +197,18 @@ def render(page):
         schema.append({"@context": "https://schema.org", "@type": "WebPage", "name": page.title, "url": page.url, "description": page.description})
     head += [jsonld(s) for s in schema]
 
-    scripts = ["/assets/js/site.js"] + page.scripts
+    scripts = ["/assets/js/i18n-en.js", "/assets/js/i18n.js", "/assets/js/site.js"] + page.scripts
     script_tags = "".join(f'<script src="{s}" defer></script>' for s in scripts)
-    html = (
-        "<!doctype html>\n"
-        '<html lang="en">\n<head>\n' +"\n".join(head) + "\n</head>\n<body>\n"
+    body = (
         '<a class="skip-link" href="#main">Skip to main content</a>\n'
         + header_html(page)
         + '\n<main id="main" tabindex="-1">\n' + page.body + "\n</main>\n"
-        + footer_html() + "\n" + script_tags + "\n</body>\n</html>\n"
+        + footer_html()
+    )
+    html = (
+        "<!doctype html>\n"
+        '<html lang="en">\n<head>\n' + "\n".join(head) + "\n</head>\n<body>\n"
+        + i18n.tag_html(body, units) + "\n" + script_tags + "\n</body>\n</html>\n"
     )
     return localize_urls(html, page)
 
@@ -222,10 +244,21 @@ def main():
     (OUT / "assets" / "js" / "icons.js").write_text(icons_js(), encoding="utf-8")
 
     pages = all_pages()
+    units = {}
     for page in pages:
         dest = out_path(page)
         dest.parent.mkdir(parents=True, exist_ok=True)
-        dest.write_text(render(page), encoding="utf-8")
+        dest.write_text(render(page, units), encoding="utf-8")
+
+    # Translations: one file per language, loaded by the browser only when that language is chosen.
+    (OUT / "assets" / "js" / "i18n-en.js").write_text(i18n.english_js_file(), encoding="utf-8")
+    (OUT / "assets" / "i18n").mkdir(parents=True, exist_ok=True)
+    for lang in i18n.TRANSLATED:
+        cat = i18n.catalog(lang, units)
+        missing = (set(units) | set(i18n.js_english())) - set(cat["p"]) - set(cat["j"])
+        if missing:
+            print(f"  note: {len(missing)} texts have no {lang} translation yet (they show in English); see: python i18n.py status")
+        (OUT / "assets" / "i18n" / f"{lang}.json").write_text(json.dumps(cat, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
 
     # Sitemap: canonical, indexable public pages only. No rooms, tokens, or noindex pages.
     urls = [p for p in pages if (p.in_sitemap if p.in_sitemap is not None else p.indexable)]

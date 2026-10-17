@@ -32,7 +32,7 @@
         var data = null;
         try { data = JSON.parse(text); } catch (e) { /* not our server */ }
         if (!res.ok || data === null) {
-          throw new ApiFailure(data === null ? 0 : res.status, data && data.error, (data && data.message) || 'The game server could not be reached.');
+          throw new ApiFailure(data === null ? 0 : res.status, data && data.error, (data && data.message) || 'The game server could not be reached.');  // the page shows its own translation for the code (QuoridorI18n.errorText)
         }
         return data;
       });

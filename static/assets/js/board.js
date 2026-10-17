@@ -12,6 +12,7 @@
 (function (root) {
   'use strict';
   var Q = root.Quoridor;
+  function t(key, params) { return root.QuoridorI18n ? root.QuoridorI18n.t(key, params) : key; }
 
   var CELL = 78, GAP = 14, PAD = 16, PITCH = CELL + GAP;
   var SIZE = PAD * 2 + 9 * CELL + 8 * GAP;
@@ -30,18 +31,13 @@
   var PAWN_COLORS = ['#42d9f5', '#ff9f43'];
   var WALL_EDGES = ['#b4f3fd', '#ffd3a1'];
 
-  var REASONS = {
-    'overlap': 'That wall overlaps another wall.',
-    'cross': 'That wall would cross another wall.',
-    'blocks-path': 'That wall would leave a pawn with no route to its goal.',
-    'no-walls': 'You have no walls left.',
-    'out-of-bounds': 'That wall is off the board.'
-  };
+  // Why a wall is refused: the engine's reason code, shown in the player's language (messages "err.<code>").
+  function reasonText(code) { return t('err.' + code); }
 
   function create(container, opts) {
     var game = opts.game;
     var flip = !!opts.flip;
-    var names = opts.names || ['Player 1', 'Player 2'];
+    var names = opts.names || [t('game.player1'), t('game.player2')];
     var state = {
       mode: 'move',          // 'move' | 'wall'
       actor: null,           // player index allowed to act, or null when the board is read-only
@@ -55,9 +51,9 @@
 
     var svg = el('svg', {
       'class': 'board', viewBox: '0 0 ' + SIZE + ' ' + SIZE, role: 'application',
-      tabindex: '0', 'aria-roledescription': 'Quoridor board', focusable: 'true'
+      tabindex: '0', 'aria-roledescription': t('board.title'), focusable: 'true'
     });
-    var title = el('title', {}, svg); title.textContent = 'Quoridor board';
+    var title = el('title', {}, svg); title.textContent = t('board.title');
     var desc = el('desc', {}, svg);
     var world = el('g', {}, svg);
     if (flip) world.setAttribute('transform', 'rotate(180 ' + SIZE / 2 + ' ' + SIZE / 2 + ')');
@@ -113,7 +109,7 @@
     function wallStatus(w) {
       if (!w) return null;
       var err = state.actor === null ? 'no-walls' : game.wallError(w.o, w.r, w.c, state.actor);
-      return { wall: w, legal: err === null, reason: err ? REASONS[err] : '' };
+      return { wall: w, legal: err === null, reason: err ? reasonText(err) : '' };
     }
     function canAct() { return state.actor !== null && state.actor === game.turn && game.winner === null; }
 
@@ -214,24 +210,31 @@
       }
 
       desc.textContent = describe(true);
-      svg.setAttribute('aria-label', 'Quoridor board. ' + describe(false));
+      svg.setAttribute('aria-label', t('board.label', { desc: describe(false) }));
+      svg.setAttribute('aria-roledescription', t('board.title'));
+      title.textContent = t('board.title');
     }
 
     // Short summary for the label; with the full wall list it goes in the description.
     function describe(withWallList) {
       var list = game.toJSON().walls, walls = list.length;
       var parts = [
-        names[0] + ' pawn on ' + Q.squareName(game.pawns[0][0], game.pawns[0][1]) + ', ' + game.wallsLeft[0] + ' walls left.',
-        names[1] + ' pawn on ' + Q.squareName(game.pawns[1][0], game.pawns[1][1]) + ', ' + game.wallsLeft[1] + ' walls left.'
+        t('board.pawnOn', { name: names[0], square: Q.squareName(game.pawns[0][0], game.pawns[0][1]), n: game.wallsLeft[0] }),
+        t('board.pawnOn', { name: names[1], square: Q.squareName(game.pawns[1][0], game.pawns[1][1]), n: game.wallsLeft[1] })
       ];
-      parts.push(walls + (walls === 1 ? ' wall' : ' walls') + ' placed.');
-      if (withWallList && walls) parts.push('Walls: ' + list.map(function (x) { return Q.wallName(x[0], x[1], x[2]); }).join(', ') + '.');
+      parts.push(walls === 1 ? t('board.wallPlaced') : t('board.wallsPlaced', { n: walls }));
+      if (withWallList && walls) parts.push(t('board.wallList', { list: list.map(function (x) { return Q.wallName(x[0], x[1], x[2]); }).join(', ') }));
       return parts.join(' ');
     }
 
     // ---- intent -----------------------------------------------------------------------
     function notify() { if (opts.onChange) opts.onChange(api.selection()); }
     function say(text) { if (opts.onAnnounce) opts.onAnnounce(text); }
+    // What is said when the wall cursor lands on a groove: its name, then whether it is legal or why not.
+    function wallCue(w, st) {
+      var name = Q.wallName(w.o, w.r, w.c);
+      return st && st.legal ? t('board.wallLegal', { wall: name }) : t('board.wallReason', { wall: name, reason: st ? st.reason : '' });
+    }
 
     function commitWall(w) {
       var st = wallStatus(w);
@@ -242,9 +245,9 @@
     }
     function commitMove(r, c) {
       if (!canAct()) return;
-      var t = legalTargets(), ok = false;
-      for (var i = 0; i < t.length; i++) if (t[i][0] === r && t[i][1] === c) ok = true;
-      if (!ok) { say(Q.squareName(r, c) + ' is not a legal move.'); return; }
+      var targets = legalTargets(), ok = false;
+      for (var i = 0; i < targets.length; i++) if (targets[i][0] === r && targets[i][1] === c) ok = true;
+      if (!ok) { say(t('board.notLegal', { square: Q.squareName(r, c) })); return; }
       opts.onCommit({ type: 'move', r: r, c: c });
     }
 
@@ -268,7 +271,7 @@
         if (lastPointerType === 'mouse' && e.detail !== 0) { commitWall(s); return; }
         state.sel = s; state.wallCursor = s; draw(); notify();
         var st = wallStatus(s);
-        say(st.legal ? 'Wall ' + Q.wallName(s.o, s.r, s.c) + ' selected. Confirm to place it.' : st.reason);
+        say(st.legal ? t('board.wallSelected', { wall: Q.wallName(s.o, s.r, s.c) }) : st.reason);
       }
     });
     svg.addEventListener('focus', function () {
@@ -293,31 +296,31 @@
           state.wallCursor = { o: wc.o, r: Math.max(0, Math.min(7, wc.r + d[0])), c: Math.max(0, Math.min(7, wc.c + d[1])) };
           state.sel = null;
           var st = wallStatus(state.wallCursor);
-          say('Wall ' + Q.wallName(state.wallCursor.o, state.wallCursor.r, state.wallCursor.c) + (st && st.legal ? ', legal.' : '. ' + (st ? st.reason : '')));
+          say(wallCue(state.wallCursor, st));
         } else {
           state.cursor = [Math.max(0, Math.min(8, state.cursor[0] + d[0])), Math.max(0, Math.min(8, state.cursor[1] + d[1]))];
           var targets = legalTargets(), legal = false;
           for (var i = 0; i < targets.length; i++) if (targets[i][0] === state.cursor[0] && targets[i][1] === state.cursor[1]) legal = true;
-          var who = game.pawns[0][0] === state.cursor[0] && game.pawns[0][1] === state.cursor[1] ? ', ' + names[0] + ' pawn'
-                  : game.pawns[1][0] === state.cursor[0] && game.pawns[1][1] === state.cursor[1] ? ', ' + names[1] + ' pawn' : '';
-          say(Q.squareName(state.cursor[0], state.cursor[1]) + who + (legal ? ', you can move here.' : '.'));
+          var who = game.pawns[0][0] === state.cursor[0] && game.pawns[0][1] === state.cursor[1] ? t('board.pawnSuffix', { name: names[0] })
+                  : game.pawns[1][0] === state.cursor[0] && game.pawns[1][1] === state.cursor[1] ? t('board.pawnSuffix', { name: names[1] }) : '';
+          say(t(legal ? 'board.canMoveHere' : 'board.square', { square: Q.squareName(state.cursor[0], state.cursor[1]), pawn: who }));
         }
       } else if (k === 'Enter' || k === ' ') {
         state.keyboard = true;
-        if (!canAct()) { say('It is not your turn.'); }
+        if (!canAct()) { say(t('board.notYourTurn')); }
         else if (state.mode === 'wall') commitWall(state.wallCursor);
         else commitMove(state.cursor[0], state.cursor[1]);
       } else if (k === 'r' || k === 'R') {
         if (state.mode === 'wall') api.rotate(); else handled = false;
       } else if (k === 'w' || k === 'W') {
         api.setMode('wall'); state.keyboard = true;
-        say('Wall mode. Arrow keys move the wall, R rotates it, Enter places it.');
+        say(t('board.wallModeHelp'));
       } else if (k === 'm' || k === 'M') {
         api.setMode('move'); state.keyboard = true;
-        say('Pawn mode. Arrow keys choose a square, Enter moves there.');
+        say(t('board.pawnModeHelp'));
       } else if (k === 'Escape') {
-        if (state.sel) { state.sel = null; draw(); notify(); say('Wall selection cancelled.'); }
-        else if (state.mode === 'wall') { api.setMode('move'); say('Pawn mode.'); }
+        if (state.sel) { state.sel = null; draw(); notify(); say(t('board.wallCancelled')); }
+        else if (state.mode === 'wall') { api.setMode('move'); say(t('board.pawnMode')); }
         else handled = false;
       } else {
         handled = false;
@@ -343,7 +346,7 @@
         state.hover = null;
         draw(); notify();
         var st = wallStatus(n);
-        say('Wall ' + Q.wallName(n.o, n.r, n.c) + (st && st.legal ? ', legal.' : '. ' + (st ? st.reason : '')));
+        say(wallCue(n, st));
       },
       // Place the selected wall (touch / pen flow).
       confirm: function () { if (state.sel) commitWall(state.sel); },

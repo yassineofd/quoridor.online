@@ -3,6 +3,7 @@
    QuoridorGame.mount(host, cfg) returns a controller.
      cfg.mode     'local' (hot-seat) | 'computer' | 'online'
      cfg.names    [name for player 0, name for player 1]
+     cfg.nameKeys optional [message key | null, ...]: names made up by the site, which are written again when the language changes
      cfg.seat     which player "you" are (computer / online); null for hot-seat
      cfg.flip     draw the board rotated so that `seat` is at the bottom
      cfg.level    computer difficulty
@@ -12,6 +13,7 @@
 (function (root) {
   'use strict';
   var Q = root.Quoridor, B = root.QuoridorBoard;
+  function t(key, params) { return root.QuoridorI18n ? root.QuoridorI18n.t(key, params) : key; }
 
   function h(tag, attrs, kids) {
     var n = document.createElement(tag);
@@ -24,12 +26,18 @@
     return n;
   }
   // icon is a Lucide icon name from icons.js; it sits before the label and is hidden from screen readers.
-  function button(text, cls, onClick, icon) {
+  // labelKey is a message key (translations/js-en.json); the button remembers it so the label can follow a change of language.
+  function button(labelKey, cls, onClick, icon) {
     var b = h('button', { type: 'button', 'class': 'btn ' + (cls || 'btn--secondary') });
     if (icon && root.QuoridorIcons) b.innerHTML = root.QuoridorIcons.svg(icon);
-    b.appendChild(document.createTextNode(text));
+    b.appendChild(document.createTextNode(t(labelKey)));
+    b.__labelKey = labelKey;
     b.addEventListener('click', onClick);
     return b;
+  }
+  function setLabel(b, labelKey) {
+    b.__labelKey = labelKey;
+    b.lastChild.nodeValue = t(labelKey);
   }
 
   var TURN_SECONDS = 15;   // time to make a move; the online server enforces the same limit
@@ -37,10 +45,10 @@
   // The move played for a player whose time ran out: the pawn step that leaves the shortest route.
   function fallbackMove(game) {
     var p = game.turn, from = game.pawns[p], best = null, bestD = Infinity;
-    game.pawnMoves(p).forEach(function (t) {
-      game.pawns[p] = t;
+    game.pawnMoves(p).forEach(function (to) {
+      game.pawns[p] = to;
       var d = game.distance(p);
-      if (d >= 0 && d < bestD) { bestD = d; best = t; }
+      if (d >= 0 && d < bestD) { bestD = d; best = to; }
     });
     game.pawns[p] = from;
     return best ? { type: 'move', r: best[0], c: best[1] } : null;
@@ -75,7 +83,7 @@
 
   function mount(host, cfg) {
     var mode = cfg.mode;
-    var names = (cfg.names || ['Player 1', 'Player 2']).slice();
+    var names = (cfg.names || [t('game.player1'), t('game.player2')]).slice();
     var seat = cfg.seat === undefined ? null : cfg.seat;
     var game = new Q.Game();
     var meta = { connected: [true, true], forfeitIn: null, rematch: [false, false], reason: null };
@@ -101,24 +109,25 @@
     var timerText = h('span', { 'class': 'turn-timer-text', 'aria-hidden': 'true' });
     var timerFill = h('span', { 'class': 'turn-timer-fill' });
     var timer = h('div', { 'class': 'turn-timer', hidden: '' }, [timerText, h('span', { 'class': 'turn-timer-bar', 'aria-hidden': 'true' }, [timerFill])]);
-    var players = h('ul', { 'class': 'players', 'aria-label': 'Players' }, cards.map(function (c) { return c.card; }));
+    var players = h('ul', { 'class': 'players', 'aria-label': t('game.players') }, cards.map(function (c) { return c.card; }));
 
+    // Buttons are made from message keys, so a change of language can set their labels again (see relabel below).
     var modeBtns = {
-      move: button('Move pawn', 'btn--secondary btn--toggle', function () { board.setMode('move'); }, 'move'),
-      wall: button('Place wall', 'btn--secondary btn--toggle', function () { board.setMode('wall'); }, 'wall')
+      move: button('game.movePawn', 'btn--secondary btn--toggle', function () { board.setMode('move'); }, 'move'),
+      wall: button('game.placeWall', 'btn--secondary btn--toggle', function () { board.setMode('wall'); }, 'wall')
     };
-    var rotateBtn = button('Rotate wall', 'btn--secondary', function () { board.rotate(); }, 'rotate');
-    var confirmBtn = button('Place selected wall', 'btn--primary', function () { board.confirm(); }, 'check');
-    var cancelBtn = button('Cancel', 'btn--secondary', function () { board.cancel(); }, 'x');
-    var actionRow = h('div', { 'class': 'btn-row', role: 'group', 'aria-label': 'Choose an action' }, [modeBtns.move, modeBtns.wall]);
+    var rotateBtn = button('game.rotateWall', 'btn--secondary', function () { board.rotate(); }, 'rotate');
+    var confirmBtn = button('game.confirmWall', 'btn--primary', function () { board.confirm(); }, 'check');
+    var cancelBtn = button('game.cancel', 'btn--secondary', function () { board.cancel(); }, 'x');
+    var actionRow = h('div', { 'class': 'btn-row', role: 'group', 'aria-label': t('game.chooseAction') }, [modeBtns.move, modeBtns.wall]);
     var wallRow = h('div', { 'class': 'btn-row wall-row', hidden: '' }, [rotateBtn, confirmBtn, cancelBtn]);
     var hint = h('p', { 'class': 'game-hint small text-muted' });
-    var keys = h('p', { 'class': 'small text-muted game-keys', text: 'Keyboard: focus the board, arrows to choose, Enter to confirm, W for walls, R to rotate, M for pawn, Esc to cancel.' });
+    var keys = h('p', { 'class': 'small text-muted game-keys', text: t('game.keys') });
 
-    var undoBtn = mode !== 'online' ? button('Undo', 'btn--secondary', onUndo, 'undo') : null;
-    var resignBtn = mode !== 'local' ? button('Resign', 'btn--secondary', onResign, 'flag') : null;
-    var restartBtn = mode !== 'online' ? button('Restart', 'btn--secondary', onRestart, 'restart') : null;
-    var leaveBtn = button(mode === 'online' ? 'Leave game' : 'Leave', 'btn--secondary', onLeave, 'logout');
+    var undoBtn = mode !== 'online' ? button('game.undo', 'btn--secondary', onUndo, 'undo') : null;
+    var resignBtn = mode !== 'local' ? button('game.resign', 'btn--secondary', onResign, 'flag') : null;
+    var restartBtn = mode !== 'online' ? button('game.restart', 'btn--secondary', onRestart, 'restart') : null;
+    var leaveBtn = button(mode === 'online' ? 'game.leaveGame' : 'game.leave', 'btn--secondary', onLeave, 'logout');
     var controls = h('div', { 'class': 'btn-row game-controls' }, [undoBtn, resignBtn, restartBtn, leaveBtn]);
 
     var resultTitle = h('h2', { 'class': 'h-sm', tabindex: '-1' });
@@ -127,7 +136,7 @@
     var result = h('div', { 'class': 'card result', hidden: '' }, [resultTitle, resultText, resultActions]);
 
     var logList = h('ol', { 'class': 'move-log' });
-    var log = h('details', { 'class': 'move-log-wrap', open: '' }, [h('summary', { text: 'Move list' }), logList]);
+    var log = h('details', { 'class': 'move-log-wrap', open: '' }, [h('summary', { text: t('game.moveList') }), logList]);
     // On phones the move list starts collapsed so the board and controls fit on screen.
     if (window.matchMedia && window.matchMedia('(max-width: 899px)').matches) log.removeAttribute('open');
     var announcer = h('div', { 'class': 'sr-only', 'aria-live': 'polite', 'aria-atomic': 'true' });
@@ -156,10 +165,10 @@
       if (!running) return;
       var left = Math.max(0, deadline - Date.now());
       var secs = Math.ceil(left / 1000);
-      timerText.textContent = sayWho(game.turn) + ': ' + secs + 's left';
+      timerText.textContent = t('game.timerLeft', { who: sayWho(game.turn), n: secs });
       timerFill.style.width = Math.min(100, left / (TURN_SECONDS * 10)) + '%';
       timer.classList.toggle('is-low', secs <= 5);
-      if (secs <= 5 && !warned && left > 0 && (mode === 'local' || game.turn === seat)) { warned = true; announce(secs + ' seconds left.'); }
+      if (secs <= 5 && !warned && left > 0 && (mode === 'local' || game.turn === seat)) { warned = true; announce(t('game.secondsLeft', { n: secs })); }
       if (left <= 0 && mode !== 'online') timeUp();
     }
     function timeUp() {
@@ -168,7 +177,7 @@
       if (!m) return;
       var who = game.turn;
       commit(m);
-      hint.textContent = ('Time ran out. ' + describeMove(who, m) + ' ' + hint.textContent).trim();
+      hint.textContent = (t('game.timeUp') + ' ' + describeMove(who, m) + ' ' + hint.textContent).trim();
       announce(hint.textContent);
     }
     var tickTimer = setInterval(tick, 250);
@@ -180,7 +189,7 @@
       names: names,
       flip: !!cfg.flip,
       onCommit: commit,
-      onAnnounce: function (t) { hint.textContent = t; announce(t); },
+      onAnnounce: function (text) { hint.textContent = text; announce(text); },
       onChange: syncControls,
       onMode: function () { hint.textContent = ''; }
     });
@@ -193,7 +202,7 @@
       return game.turn === seat ? seat : null;
     }
 
-    function sayWho(i) { return i === seat && seat !== null ? 'You' : names[i]; }
+    function sayWho(i) { return i === seat && seat !== null ? t('game.you') : names[i]; }
 
     function render() {
       board.setGame(game);
@@ -204,8 +213,8 @@
       var over = game.winner !== null;
       cards.forEach(function (c, i) {
         c.name.textContent = names[i];
-        c.tag.textContent = (i === seat ? ' (you)' : '') + (meta.connected[i] === false && mode === 'online' ? ' (disconnected)' : '');
-        c.walls.textContent = 'Walls: ' + game.wallsLeft[i];
+        c.tag.textContent = (i === seat ? ' ' + t('game.youTag') : '') + (meta.connected[i] === false && mode === 'online' ? ' ' + t('game.disconnectedTag') : '');
+        c.walls.textContent = t('game.wallsCount', { n: game.wallsLeft[i] });
         c.card.classList.toggle('is-active', !over && game.turn === i);
         c.card.classList.toggle('is-winner', over && game.winner === i);
         if (!over && game.turn === i) c.card.setAttribute('aria-current', 'true'); else c.card.removeAttribute('aria-current');
@@ -213,10 +222,10 @@
 
       // Turn bar
       var text;
-      if (over) text = (game.winner === seat ? 'You win!' : (seat === null ? names[game.winner] + ' wins!' : names[game.winner] + ' wins'));
-      else if (mode === 'local') text = names[game.turn] + "'s turn";
-      else if (game.turn === seat) text = 'Your turn';
-      else text = mode === 'computer' ? botName + ' is thinking…' : names[game.turn] + "'s turn";
+      if (over) text = (game.winner === seat ? t('game.youWin') : t(seat === null ? 'game.nameWinsBang' : 'game.nameWins', { name: names[game.winner] }));
+      else if (mode === 'local') text = t('game.turnOf', { name: names[game.turn] });
+      else if (game.turn === seat) text = t('game.yourTurn');
+      else text = mode === 'computer' ? t('game.thinking', { name: botName }) : t('game.turnOf', { name: names[game.turn] });
       if (turn.textContent !== text) {
         turn.textContent = text;
         if (!over && game.turn !== lastTurn) { turn.classList.remove('flash'); void turn.offsetWidth; turn.classList.add('flash'); }
@@ -227,7 +236,7 @@
       while (logList.children.length > game.moves.length) logList.removeChild(logList.lastChild);
       for (var i = logList.children.length; i < game.moves.length; i++) {
         var m = game.moves[i], who = i % 2; // player 0 always moves first
-        logList.appendChild(h('li', { text: names[who] + ': ' + (m.type === 'move' ? 'moved to ' + Q.moveName(m) : 'placed wall ' + Q.moveName(m)) }));
+        logList.appendChild(h('li', { text: t(m.type === 'move' ? 'game.logMoved' : 'game.logWall', { name: names[who], move: Q.moveName(m) }) }));
       }
       logList.scrollTop = logList.scrollHeight;
 
@@ -236,7 +245,7 @@
       if (over) showResult();
 
       if (mode === 'local' && !over && game.moves.length > lastCount) {
-        hint.textContent = 'Pass the device to ' + names[game.turn] + '.';
+        hint.textContent = t('game.passDevice', { name: names[game.turn] });
       } else if (!over && game.turn === actor()) {
         hint.textContent = '';
       }
@@ -273,7 +282,7 @@
       var opp = seat === null ? null : 1 - seat;
       if (game.winner === null && opp !== null && meta.connected[opp] === false) {
         banner.hidden = false;
-        banner.textContent = names[opp] + ' lost their connection. ' + (meta.forfeitIn != null ? 'They forfeit in about ' + Math.max(0, Math.ceil(meta.forfeitIn)) + ' seconds if they do not return.' : 'Waiting for them to return.');
+        banner.textContent = t('game.lostConnection', { name: names[opp] }) + ' ' + (meta.forfeitIn != null ? t('game.forfeitIn', { n: Math.max(0, Math.ceil(meta.forfeitIn)) }) : t('game.waitingReturn'));
       } else if (meta.notice) {
         banner.hidden = false; banner.textContent = meta.notice;
       } else {
@@ -283,25 +292,25 @@
 
     function showResult() {
       var youWon = seat !== null && game.winner === seat;
-      resultTitle.textContent = seat === null ? names[game.winner] + ' wins' : (youWon ? 'You won' : names[game.winner] + ' won');
-      var why = meta.reason === 'resign' ? (youWon ? ' Your opponent resigned.' : ' Resignation.')
-        : meta.reason === 'disconnect' ? (youWon ? ' Your opponent left the game.' : ' You were disconnected for too long.')
+      resultTitle.textContent = seat === null ? t('game.nameWins', { name: names[game.winner] }) : (youWon ? t('game.youWon') : t('game.nameWon', { name: names[game.winner] }));
+      var why = meta.reason === 'resign' ? t(youWon ? 'game.resignedOpp' : 'game.resignedSelf')
+        : meta.reason === 'disconnect' ? t(youWon ? 'game.leftOpp' : 'game.disconnectedSelf')
         : '';
       var lastMove = game.moves[game.moves.length - 1];
-      var byMove = !why && lastMove && lastMove.type === 'move' ? ' Reached the far edge in ' + Math.ceil(game.moves.length / 2) + ' turns.' : '';
+      var byMove = !why && lastMove && lastMove.type === 'move' ? t('game.reachedEdge', { n: Math.ceil(game.moves.length / 2) }) : '';
       resultText.textContent = (why || byMove).trim();
       resultActions.textContent = '';
       if (mode === 'online') {
         var wanted = seat !== null && meta.rematch[seat];
         var oppWants = seat !== null && meta.rematch[1 - seat];
-        var rb = button(wanted ? 'Rematch requested' : (oppWants ? 'Accept rematch' : 'Request rematch'), 'btn--primary', function () { cfg.remote.rematch(); }, 'restart');
+        var rb = button(wanted ? 'game.rematchRequested' : (oppWants ? 'game.rematchAccept' : 'game.rematchRequest'), 'btn--primary', function () { cfg.remote.rematch(); }, 'restart');
         rb.disabled = wanted;
         resultActions.appendChild(rb);
-        if (oppWants && !wanted) resultText.textContent += ' Your opponent wants a rematch.';
+        if (oppWants && !wanted) resultText.textContent += ' ' + t('game.rematchWanted');
       } else {
-        resultActions.appendChild(button('Play again', 'btn--primary', function () { exit('again'); }, 'restart'));
+        resultActions.appendChild(button('game.playAgain', 'btn--primary', function () { exit('again'); }, 'restart'));
       }
-      resultActions.appendChild(button('Leave', 'btn--secondary', function () { exit('leave'); }, 'logout'));
+      resultActions.appendChild(button('game.leave', 'btn--secondary', function () { exit('leave'); }, 'logout'));
       if (!result.dataset.announced || result.dataset.announced !== String(game.winner) + game.moves.length) {
         result.dataset.announced = String(game.winner) + game.moves.length;
         announce(resultTitle.textContent + '. ' + resultText.textContent);
@@ -311,7 +320,7 @@
 
     // ---- applying moves ---------------------------------------------------------------
     function describeMove(player, m) {
-      return sayWho(player) + (m.type === 'move' ? ' moved to ' : ' placed wall ') + Q.moveName(m) + '.';
+      return t(m.type === 'move' ? 'game.moved' : 'game.placedWall', { who: sayWho(player), move: Q.moveName(m) });
     }
 
     function commit(move) {
@@ -320,13 +329,13 @@
         busy = true; render();
         cfg.remote.send(move).then(function () { busy = false; }, function (err) {
           busy = false; render();
-          hint.textContent = (err && err.message) || 'That move was not accepted.';
+          hint.textContent = err && (err.code || err.message) && root.QuoridorI18n ? root.QuoridorI18n.errorText(err) : t('game.moveRefused');
           announce(hint.textContent);
         });
         return;
       }
       var err = game.apply(move);
-      if (err) { hint.textContent = 'That move is not allowed.'; announce(hint.textContent); return; }
+      if (err) { hint.textContent = t('game.moveNotAllowed'); announce(hint.textContent); return; }
       board.setMode('move');
       announce(describeMove(who, move));
       if (mode === 'computer' && game.winner === null) {
@@ -346,16 +355,16 @@
     function onUndo() {
       if (mode === 'computer') { game.undo(); game.undo(); } else game.undo();
       board.setMode('move');
-      hint.textContent = 'Move taken back.';
-      announce('Move taken back.');
+      hint.textContent = t('game.movedBack');
+      announce(t('game.movedBack'));
       render();
     }
     function onRestart() {
-      if (game.moves.length && game.winner === null && !window.confirm('Restart the game? The current game will be lost.')) return;
+      if (game.moves.length && game.winner === null && !window.confirm(t('game.confirmRestart'))) return;
       exit('again');
     }
     function onResign() {
-      if (!window.confirm('Resign this game? Your opponent will be the winner.')) return;
+      if (!window.confirm(t('game.confirmResign'))) return;
       if (mode === 'online') { cfg.remote.resign(); return; }
       if (thinker) { thinking = false; thinker.cancel(); }
       game.resign(seat);
@@ -364,7 +373,7 @@
     }
     function onLeave() {
       var live = game.winner === null && game.moves.length > 0;
-      var text = mode === 'online' && live ? 'Leave this game? Leaving counts as a forfeit.' : 'Leave this game?';
+      var text = t(mode === 'online' && live ? 'game.confirmLeaveOnline' : 'game.confirmLeave');
       if ((live || mode === 'online') && !window.confirm(text)) return;
       exit('leave');
     }
@@ -386,6 +395,25 @@
       }
       turn.focus();
     }
+
+    // A change of language: set the static labels again and redraw everything the screen built from messages.
+    function relabel() {
+      if (destroyed) return;
+      // Names the site made up ("You", "Medium robot", "Player 2") follow the language; names people typed do not.
+      if (cfg.nameKeys) cfg.nameKeys.forEach(function (k, i) { if (k) names[i] = t(k); });
+      botName = names[1 - (seat === null ? 0 : seat)];
+      [modeBtns.move, modeBtns.wall, rotateBtn, confirmBtn, cancelBtn, undoBtn, resignBtn, restartBtn, leaveBtn].forEach(function (b) {
+        if (b) setLabel(b, b.__labelKey);
+      });
+      players.setAttribute('aria-label', t('game.players'));
+      actionRow.setAttribute('aria-label', t('game.chooseAction'));
+      keys.textContent = t('game.keys');
+      log.firstChild.textContent = t('game.moveList');
+      logList.textContent = '';
+      hint.textContent = '';
+      render();
+    }
+    var offLanguage = root.QuoridorI18n ? root.QuoridorI18n.onChange(relabel) : null;
 
     var controller = {
       game: function () { return game; },
@@ -410,6 +438,7 @@
       focus: function () { turn.focus(); },
       destroy: function () {
         destroyed = true;
+        if (offLanguage) offLanguage();
         clearInterval(tickTimer);
         if (thinker) thinker.destroy();
         board.destroy();
