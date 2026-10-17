@@ -127,6 +127,46 @@ Keyword placement: "Quoridor game" and "Quoridor online" naturally in `<title>`,
 
 ---
 
+## 3A. Play page (`/play/`) — section order
+
+Primary keyword: **quoridor game online**. Single `<h1>`; each section a `<section>` with an `<h2>`. Static, server-rendered content; the cards are plain `<a href>` links, with no JS needed to read or follow them.
+
+| Item | Value |
+|---|---|
+| `<title>` | Play Quoridor Game Online – Choose Your Game Mode |
+| Meta description | Play the Quoridor strategy game online. Choose a computer opponent, play locally with a friend, or explore online multiplayer options. |
+| Canonical | `https://quoridor.online/play/` (indexable, in sitemap, `BreadcrumbList`: Home › Play) |
+
+| # | Section | Content | Notes |
+|---|---|---|---|
+| A | Header | Logo, nav (Play marked `aria-current="page"`), Play Now | Play Now links to the page you're on; acceptable, or scroll to the cards |
+| B | H1 + intro | H1: **Play Quoridor Online**. One short paragraph naming the ways to play (against the computer, with a friend on one device, online) and that no account is needed | Include "Quoridor game online" once, naturally, in the paragraph. Cards must be visible without scrolling past a long intro: keep the paragraph to 2–3 lines on mobile |
+| C | Game-mode cards | Three cards, content per §4: **Play Online** → `/play/online/`, **Play Against Robot** → `/play/computer/`, **Play With a Friend** → `/play/local/`. Each: icon, H3, 1–2 sentence description, one button | Same order and equal weight as the homepage (§3 C). Each card is one link target; the button is the link (or the whole card via a stretched link), with descriptive text ("Play vs Robot", not "Start"). The Play Online card carries the secondary text link "Create or join a private room" → `/play/create-room/` / `/play/join-room/` |
+| D | What is Quoridor? | H2 + 2–3 sentences: a two-player abstract strategy game on a 9×9 board; move your pawn to the opposite side while placing barriers to slow the opponent, without fully blocking their path. Link "Quoridor board game overview" → `/quoridor-board-game/` | Must not restate rules; defer to Rules |
+| E | New to Quoridor? | H2 + one sentence + two links: **How to play Quoridor** → `/how-to-play-quoridor/` (primary, beginner guide) and **Quoridor rules** → `/quoridor-rules/`; optionally Strategy | Cards or a compact two-link block; visually quieter than C |
+| F | FAQ | H2 + 4–6 short Q&As (see below), `<details>/<summary>` | `FAQPage` JSON-LD only if the visible text matches exactly; optional (see §3 H) |
+| G | Footer | See §2 | |
+
+### FAQ (draft; answers must match what is actually implemented)
+
+| Question | Answer (summary) |
+|---|---|
+| What game modes are available? | Online against another player, against the computer at several difficulty levels, and locally with a friend on the same device. Private rooms are part of online play. *(List only the modes that are live; see below.)* |
+| Do I need an account to play? | No. Online play asks for a display name only; computer and local games can start immediately. *(Only while true; keep in sync with Privacy Policy.)* |
+| How do I start a game? | Pick a mode above and press its button. Local: the board opens right away. Computer: choose a difficulty, then start. Online: enter a name and find an opponent, or create a room and share the link or code. |
+| Can I play with a friend who is not next to me? | Yes: create a private room under online play and send the invitation link or pairing code. |
+| Can I play on my phone? | Yes, in a mobile browser; no installation needed. |
+| Where can I learn the rules? | Link to How to Play (start here) and Rules (reference). |
+
+### Honesty gating
+- Build the cards and FAQ from the same feature-flag config as the homepage (§3 F). A mode that isn't implemented renders as a **"Coming soon"** card: no link, `aria-disabled`, with text, and is omitted from the FAQ and from the meta description if the whole page would otherwise over-promise.
+- Today's meta description names the computer, local and online modes. If online play is not yet live at launch, change "explore online multiplayer options" accordingly (e.g. "online multiplayer is coming soon") rather than shipping an inaccurate snippet.
+
+### Internal links
+Outbound: three mode pages, private-room pages (via the Online card), How to Play, Rules, optionally Strategy and Board Game. Inbound: header, hero CTAs and footer on every page, and the "Play now" CTA at the end of each guide.
+
+---
+
 ## 4. The three primary playing modes
 
 All cards share: icon/illustration, H3, 1–2 sentence description, one button. Equal visual weight; distinguished by icon and accent usage (cyan/indigo), never by color alone.
@@ -352,7 +392,7 @@ Rules: one primary intent per URL; each variation used where it reads naturally 
 | URL | `<title>` (≤ ~60 chars) | Meta description (≤ ~155 chars) |
 |---|---|---|
 | `/` | Quoridor Online — Play the Quoridor Game Free in Your Browser | Play Quoridor online against a friend, a computer opponent, or on one device. No registration needed. *(Only when true.)* |
-| `/play/` | Play Quoridor Game Online — Choose a Mode | Choose how to play Quoridor: online, against the computer, or with a friend on the same device. |
+| `/play/` | Play Quoridor Game Online – Choose Your Game Mode | Play the Quoridor strategy game online. Choose a computer opponent, play locally with a friend, or explore online multiplayer options. |
 | `/how-to-play-quoridor/` | How to Play Quoridor — Beginner's Guide | Learn how to play Quoridor: the goal, how pawns move, how to place barriers, and how to win. |
 | `/quoridor-rules/` | Quoridor Rules — Setup, Movement & Wall Placement | Clear Quoridor rules: board setup, legal moves, wall restrictions, and winning conditions. |
 | `/quoridor-strategy/` | Quoridor Strategy — Tips for Pathfinding & Walls | Improve at Quoridor with strategy on shortest paths, wall timing, defense, and common mistakes. |

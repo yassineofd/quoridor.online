@@ -233,6 +233,7 @@ def home():
     {mode_cards('h3', home=True)}
   </div>
 </section>
+{'<section class="section--tight" aria-label="Play privately with a friend"><div class="container">' + private_strip('h3') + '</div></section>' if FEATURES['rooms'] else ''}
 
 <section class="section" aria-labelledby="how-h">
   <div class="container grid grid--2">
