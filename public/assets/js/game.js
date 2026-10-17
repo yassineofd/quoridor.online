@@ -8,6 +8,7 @@
      cfg.flip     draw the board rotated so that `seat` is at the bottom
      cfg.level    computer difficulty
      cfg.remote   online only: { send(move) -> Promise, resign(), leave(), rematch() }
+     cfg.leaveHref where "Leave" goes (local and computer games): drawn as a link to this address
      cfg.onExit   called with 'again' or 'leave' when the player finishes
    For online games the owner pushes server state in with controller.setState(json, meta).      */
 (function (root) {
@@ -34,6 +35,20 @@
     b.__labelKey = labelKey;
     b.addEventListener('click', onClick);
     return b;
+  }
+  // Same look as button(), but a real link: it can be opened in a new tab, and the address shows on hover.
+  // A plain click is handled in place (onClick may ask for confirmation); a modified click is left to the browser.
+  function link(labelKey, cls, href, onClick, icon) {
+    var a = h('a', { href: href, 'class': 'btn ' + (cls || 'btn--secondary') });
+    if (icon && root.QuoridorIcons) a.innerHTML = root.QuoridorIcons.svg(icon);
+    a.appendChild(document.createTextNode(t(labelKey)));
+    a.__labelKey = labelKey;
+    a.addEventListener('click', function (e) {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      e.preventDefault();
+      onClick(e);
+    });
+    return a;
   }
   function setLabel(b, labelKey) {
     b.__labelKey = labelKey;
@@ -127,7 +142,12 @@
     var undoBtn = mode !== 'online' ? button('game.undo', 'btn--secondary', onUndo, 'undo') : null;
     var resignBtn = mode !== 'local' ? button('game.resign', 'btn--secondary', onResign, 'flag') : null;
     var restartBtn = mode !== 'online' ? button('game.restart', 'btn--secondary', onRestart, 'restart') : null;
-    var leaveBtn = button(mode === 'online' ? 'game.leaveGame' : 'game.leave', 'btn--secondary', onLeave, 'logout');
+    // Leaving a game that never touches the server is just a trip to cfg.leaveHref (when the page gave one).
+    function leaveControl(labelKey, cls, onClick) {
+      if (cfg.leaveHref && mode !== 'online') return link(labelKey, cls, cfg.leaveHref, onClick, 'logout');
+      return button(labelKey, cls, onClick, 'logout');
+    }
+    var leaveBtn = leaveControl(mode === 'online' ? 'game.leaveGame' : 'game.leave', 'btn--secondary', onLeave);
     var controls = h('div', { 'class': 'btn-row game-controls' }, [undoBtn, resignBtn, restartBtn, leaveBtn]);
 
     var resultTitle = h('h2', { 'class': 'h-sm', tabindex: '-1' });
@@ -310,7 +330,7 @@
       } else {
         resultActions.appendChild(button('game.playAgain', 'btn--primary', function () { exit('again'); }, 'restart'));
       }
-      resultActions.appendChild(button('game.leave', 'btn--secondary', function () { exit('leave'); }, 'logout'));
+      resultActions.appendChild(leaveControl('game.leave', 'btn--secondary', function () { exit('leave'); }));
       if (!result.dataset.announced || result.dataset.announced !== String(game.winner) + game.moves.length) {
         result.dataset.announced = String(game.winner) + game.moves.length;
         announce(resultTitle.textContent + '. ' + resultText.textContent);

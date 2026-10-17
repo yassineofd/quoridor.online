@@ -68,12 +68,13 @@
   // ---- showing / hiding the game --------------------------------------------------------
   var controller = null;
   function openGame(cfg) {
+    cfg.leaveHref = QuoridorOnline.root + 'play/';
     cfg.onExit = function (how) {
       controller.destroy();
       controller = null;
       gameWrap.hidden = true;
       stage.hidden = false;
-      if (how === 'leave') { window.location.href = QuoridorOnline.root + 'play/'; return; }
+      if (how === 'leave') { window.location.href = cfg.leaveHref; return; }
       if (submitBtn) submitBtn.focus();
     };
     stage.hidden = true;
