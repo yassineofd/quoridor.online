@@ -203,7 +203,7 @@ def main():
     if "noindex" not in hdr.get("X-Robots-Tag", ""):
         fail("room responses must send X-Robots-Tag: noindex")
     status, hdr, body = get("/nope/")
-    if "We couldn" not in body:
+    if "This Page Couldn" not in body:
         fail("404 must show the branded not-found page")
     if "default-src" not in hdr.get("Content-Security-Policy", ""):
         fail("CSP header missing")

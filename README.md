@@ -89,9 +89,9 @@ always on; `online` and `rooms` follow `online_server` in `site.json`, so a stat
 
 - `og-image.svg` should be exported to a 1200x630 PNG (most social networks ignore SVG previews) and referenced in `build.py`.
 - Add PNG icons (180, 192, 512) for iOS and the web manifest.
-- Replace the Privacy Policy and Terms drafts with reviewed text; review the contact form on `/contact/` (it opens a mailto: draft; there is no server-side mail endpoint).
+- Have the Privacy Policy reviewed (confirm the log-retention wording and name your hosting providers if you wish) and replace the Terms draft with reviewed text; review the contact form on `/contact/` (it opens a mailto: draft; there is no server-side mail endpoint).
 - Review the "Quoridor" name (and any domain you pick) for trademark issues.
 - Set `site_url` in `site.json` once the final address is known, then rebuild.
 - Rooms: the host must serve `/room/<id>/` from `room/index.html` with a 200 (see `serve.py`; `_redirects` does this on Netlify / Cloudflare Pages) and route `/api/` to the Python server.
 - Online play keeps rooms in memory on one server process, with no persistence. Run a single instance (or add sticky routing) and expect games to end on restart. If it sits behind a proxy, set `QUORIDOR_TRUST_PROXY=1` so rate limits see real client addresses, and put HTTPS in front of it.
-- Privacy Policy and Terms drafts now state the facts about what the software stores; have them reviewed and turned into final text.
+- The Privacy Policy (`privacy()` in `pages.py`) is written from what the software stores; if you change storage, logging or add analytics, update it and add an entry to `PRIVACY_HISTORY`.

@@ -1367,74 +1367,255 @@ def contact():
                        scripts=["/assets/js/contact.js"])
 
 
-ONLINE_FACTS = """
-<li><strong>Online games and private rooms</strong> use a game server. It keeps in memory (not on disk) the display name you type, a random seat token, and when you last contacted it, for as long as the room exists. Rooms are deleted shortly after a game ends or both players leave, and an unjoined room expires after 30 minutes.</li>
-<li>Your browser keeps the seat token in its local storage so that a reload can rejoin your seat. It is removed when you leave the room.</li>
-<li>Network addresses are held in memory for about a minute to limit abuse.</li>
-<li>The site sets no cookies and loads no analytics or third-party scripts.</li>"""
+PRIVACY_EFFECTIVE = ("2026-10-17", "17 October 2026")
+PRIVACY_HISTORY = (
+    ("2026-10-17", "17 October 2026", "First full version of this Privacy Policy. It replaces the earlier draft placeholder."),
+)
 
 
 def privacy():
-    online_facts = ONLINE_FACTS if FEATURES["online"] else "<li>Online play is not available on this site, so no names or network addresses are collected.</li>"
+    online = FEATURES["online"]
+    eff_iso, eff_text = PRIVACY_EFFECTIVE
+    toc = [
+        ("information", "Information we collect and why"), ("logs", "Server logs, analytics and cookies"),
+        ("storage", "Local storage in your browser"), ("third-parties", "Third-party services and embedded content"),
+        ("rooms", "Multiplayer rooms, usernames and shared links"), ("retention", "Data retention and deletion"),
+        ("children", "Children's privacy"), ("rights", "Your rights and applicable law"),
+        ("contact", "Contact information"), ("updates", "Effective date and update history"),
+    ]
+    toc_html = "\n".join(f'<li><a href="#{i}">{t}</a></li>' for i, t in toc)
+    if online:
+        info_online = """<li><strong>Online play.</strong> To play online or in a private room you type a display name. Our game server holds that name, a random seat token that identifies your seat, your moves, and the time you were last connected, for as long as the game or room exists. No account, email address or password is involved.</li>
+<li><strong>Network address.</strong> Your IP address reaches our server with every request. The game server keeps it in memory for about a minute so it can limit abuse, such as creating rooms too fast.</li>"""
+        storage_online = """<p>When you create or join an online room, your browser stores a small entry under the name <em>quoridor.seat.</em> followed by the room's identifier. It contains your seat token, your seat number and the display name you chose. It lets you reload the page or recover from a dropped connection and keep your seat. The entry is removed when you leave the room. If you close the tab without leaving, it stays until you clear it, but it stops working once the room has expired.</p>"""
+        rooms_html = """<h2 id="rooms">5. Multiplayer rooms, usernames and shared links</h2>
+<ul>
+<li><strong>Usernames are display names, not accounts.</strong> They are 2 to 20 characters. Please do not use your real name, your email address or anything else that identifies you. Two players may choose the same name.</li>
+<li><strong>Who sees your name.</strong> Your opponent sees your display name. Anyone who opens a private-room invitation before it is full can also see the host's display name.</li>
+<li><strong>Shared links and codes act like keys.</strong> A private room is reached through a long random link and a short pairing code. Anyone who has the link or code while a seat is open can take that seat, so share it only with the person you want to play. Room pages ask search engines not to index them and are served so that the page address is not passed on to other sites.</li>
+<li><strong>Matchmaking.</strong> If you ask to be matched with a stranger, your display name and a temporary ticket wait in a queue in the server's memory until an opponent is found. The ticket is dropped if your browser stops checking in for about 20 seconds.</li>
+<li><strong>No chat.</strong> There is no free-text chat between players, so the only text you share with an opponent is your display name.</li>
+<li><strong>Everything is in memory.</strong> Rooms are not written to a database or to disk. If the game server restarts, active rooms are lost.</li>
+</ul>"""
+        retention_online = """<li><strong>Rooms and display names:</strong> deleted automatically. A room nobody has joined expires after 30 minutes. A finished game stays for up to 10 minutes so that either player can ask for a rematch. A room whose players have both left is deleted after about 5 minutes.</li>
+<li><strong>Matchmaking tickets:</strong> dropped after about 20 seconds without a check-in, and in any case after 10 minutes.</li>
+<li><strong>IP addresses used for abuse limiting:</strong> held in memory for about a minute.</li>
+<li><strong>Seat token in your browser:</strong> removed when you leave the room. You can also delete it at any time through your browser's site-data settings.</li>"""
+        rights_extra = "The data our game server holds about a game (a display name, a seat token and an IP address in memory) is deleted within minutes, so there is usually nothing left to give you, correct or erase by the time a request could be answered. "
+    else:
+        info_online = "<li><strong>Online play.</strong> Online play and private rooms are not available on this site at the moment, so no display names or seat tokens are collected. This policy will be updated before they are offered.</li>"
+        storage_online = "<p>The site does not currently store anything in your browser's local storage. If online play is added later, this section will describe what it stores.</p>"
+        rooms_html = """<h2 id="rooms">5. Multiplayer rooms, usernames and shared links</h2>
+<p>Online play and private rooms are not available on this site at the moment, so no display names, rooms or invitation links exist. This policy will be updated before they are offered.</p>"""
+        retention_online = ""
+        rights_extra = ""
+    history_html = "".join(f'<li><time datetime="{d}">{t}</time>: {note}</li>' for d, t, note in PRIVACY_HISTORY)
     content = f"""
-<div class="callout callout--draft"><p><strong>Draft placeholder.</strong> This is not the final privacy policy. The final text must be written from how the live service actually works and reviewed for the laws that apply.</p></div>
-<h2>How the software works today</h2>
-<p>These are facts about the current software, written down so that the final policy can be checked against them.</p>
+<p>This policy explains what information Quoridor.online (&ldquo;we&rdquo;, &ldquo;us&rdquo;) handles when you visit the site, play Quoridor, or contact us. We keep it short because we collect very little: there are no accounts, no advertising and no analytics.</p>
+<p><strong>In short:</strong> games against the computer and on one device stay in your browser; the site sets no cookies; it loads nothing from other companies; and the little that online play needs is kept in memory only, for minutes.</p>
+<nav aria-label="On this page"><p><strong>On this page</strong></p>
+<ol>
+{toc_html}
+</ol></nav>
+
+<h2 id="information">1. Information we collect and why</h2>
 <ul>
-<li><strong>Same-device and computer games</strong> run entirely in your browser. Nothing about those games is sent anywhere or stored.</li>
-{online_facts}</ul>
-<h2>What the final policy must cover</h2>
+<li><strong>Playing against the computer or on one device.</strong> These games run entirely in your browser. Your moves are not sent to us or stored.</li>
+{info_online}
+<li><strong>Technical data from your visit.</strong> Like any website, our web server receives your IP address and basic details of each request. Section 2 explains how this is used.</li>
+<li><strong>Messages you send us.</strong> If you write to us, we receive your message, your email address and anything else you include. Section 9 explains how.</li>
+</ul>
+<p>We use this information only to run the site and the game, keep it secure and working, prevent abuse, and answer you. We do not sell it, rent it, or use it for advertising or profiling, and we do not make automated decisions about you.</p>
+<p>Where the law asks for a legal basis (for example under the GDPR), we rely on our legitimate interest in running and securing a free game site, and on your request when you contact us. This processing is minimal and short-lived.</p>
+
+<h2 id="logs">2. Server logs, analytics and cookies</h2>
 <ul>
-<li>What data the service collects (for example usernames, connection data and logs) and why.</li>
-<li>How private rooms are created, how long they exist and when they're deleted.</li>
-<li>Analytics, cookies and similar storage, and whether consent is needed.</li>
-<li>Third-party services such as hosting, content delivery and analytics.</li>
-<li>How long data is kept, who can access it, and how people can exercise their rights.</li>
-<li>How to contact us about privacy, and the date the policy took effect.</li>
+<li><strong>Server logs.</strong> When your browser requests a page, our web server and hosting provider receive technical information such as your IP address, the date and time, the page or file requested, the response status and usually your browser and device type. Our own server logs record the request and IP address but replace room identifiers and matchmaking tickets with a placeholder, so a log cannot be used to enter a room. We use logs to keep the site secure and reliable and to investigate faults and abuse. They are kept only as long as needed for those purposes.</li>
+<li><strong>Analytics.</strong> The site does not use analytics, advertising or tracking tools. If that changes we will update this policy first and, where the law requires it, ask for your consent.</li>
+<li><strong>Cookies.</strong> The site does not set cookies, so there is no cookie banner. Section 3 describes the one other kind of browser storage it uses.</li>
+</ul>
+
+<h2 id="storage">3. Local storage in your browser</h2>
+<p>Local storage is a small area of your browser where a site can keep data on your device. It is not sent to us with page requests.</p>
+{storage_online}
+<p>Local storage is used only to make the game work as you asked, never for tracking. If you block or clear it, the site still works; you just cannot resume an online seat after a reload.</p>
+
+<h2 id="third-parties">4. Third-party services and embedded content</h2>
+<ul>
+<li><strong>Nothing from other companies is loaded.</strong> Pages load scripts, styles, fonts and images only from Quoridor.online itself, and the site's security headers block anything else. There are no embedded videos, social-media buttons, advertising or analytics scripts, and no third-party cookies.</li>
+<li><strong>Hosting.</strong> The site and its game server are run by hosting providers who process requests on our behalf, including the technical data in section 2. They act as our service providers and have their own policies for the logs they keep.</li>
+<li><strong>Email.</strong> The form on the <a href="/contact/">contact page</a> does not send anything itself. It prepares a message in your own email app, and nothing is sent until you press send there. Your email provider and ours then handle that message under their own policies.</li>
+<li><strong>Links to other sites.</strong> If you follow a link to another website, that site's own privacy policy applies.</li>
+</ul>
+
+{rooms_html}
+
+<h2 id="retention">6. Data retention and deletion</h2>
+<ul>
+{retention_online}
+<li><strong>Server logs:</strong> kept only as long as needed for security and fault-finding, then deleted.</li>
+<li><strong>Emails to us:</strong> kept for as long as needed to answer you and keep a record of the conversation, then deleted. Ask us at any time to delete yours.</li>
+<li><strong>Games against the computer and on one device:</strong> nothing is stored, so there is nothing to delete.</li>
+</ul>
+<p>Because the site has no accounts, we cannot look up data by name. To have information removed sooner, contact us (section 9) and tell us what you want removed, as precisely as you can.</p>
+
+<h2 id="children">7. Children's privacy</h2>
+<p>Quoridor is a family game, and the site needs no account or personal details. We do not knowingly collect personal information from children, and we do not direct advertising or tracking at anyone. Online play asks only for a display name. Children should pick a nickname rather than their real name and ask a parent or guardian before playing online. If you believe a child has given us personal information, contact us and we will delete it.</p>
+
+<h2 id="rights">8. Your rights and applicable law</h2>
+<p>Depending on where you live (for example in the European Economic Area, the United Kingdom or California), you may have the right to:</p>
+<ul>
+<li>ask whether we hold personal information about you and get a copy;</li>
+<li>have inaccurate information corrected, or have your information deleted;</li>
+<li>restrict or object to how your information is used, and receive it in a portable format where that applies;</li>
+<li>withdraw consent where we relied on it; and</li>
+<li>complain to your local data-protection authority.</li>
+</ul>
+<p>We do not sell or share personal information for advertising, and we will not treat you differently for exercising your rights. {rights_extra}To make a request, contact us as described in section 9. We may need details that let us find the data and confirm that it is yours, and we will reply within the time the law requires.</p>
+
+<h2 id="contact">9. Contact information</h2>
+<p>For questions about this policy or to make a privacy request, email <a href="mailto:{CONTACT_EMAIL}">{CONTACT_EMAIL}</a> or use the <a href="/contact/">contact page</a>. Please do not include passwords or other sensitive details in your message.</p>
+
+<h2 id="updates">10. Effective date and update history</h2>
+<p>This policy is effective from <time datetime="{eff_iso}">{eff_text}</time>. When we change it, we update the date and add an entry below. If a change materially affects how your information is used, we will say so on the site before it takes effect.</p>
+<ul>
+{history_html}
 </ul>"""
-    return simple_page("/privacy-policy/", "Privacy Policy | Quoridor Online", "Privacy policy for Quoridor Online (draft placeholder).",
-                       "Privacy policy", "How Quoridor Online handles information. Draft placeholder.", content, "Privacy policy")
+    return simple_page("/privacy-policy/", "Privacy Policy – Quoridor.online",
+                       "How Quoridor.online handles your information: what we collect, cookies and browser storage, online rooms and usernames, retention, and your rights.",
+                       "Privacy Policy", f"What we collect, what we don't, and how long we keep it. Effective {eff_text}.", content, "Privacy Policy")
 
 
-ONLINE_TERMS_FACTS = """
-<h2>How online games work today</h2>
-<p>These are facts about the current software, written down so that the final terms can be checked against them.</p>
-<ul>
-<li>If a player's connection is lost for more than a minute during an online game, that player forfeits and the opponent wins.</li>
-<li>Leaving or resigning mid-game counts as a forfeit. Either player may ask for a rematch after a game; the first move then passes to the other player.</li>
-<li>An invitation (link and pairing code) expires after 30 minutes if nobody joins. Rooms and their state are not kept after play ends.</li>
-<li>Usernames are display names, not accounts. Two players may choose the same name.</li>
-</ul>"""
+TERMS_EFFECTIVE = ("2026-10-17", "17 October 2026")
+TERMS_HISTORY = (
+    ("2026-10-17", "17 October 2026", "First full version of these Terms of Use. It replaces the earlier draft placeholder."),
+)
 
 
 def terms():
-    content = """
-<div class="callout callout--draft"><p><strong>Draft placeholder.</strong> These are not the final terms. The final wording must reflect the real service and applicable requirements.</p></div>
-""" + (ONLINE_TERMS_FACTS if FEATURES["online"] else "") + """<h2>What the final terms must cover</h2>
+    online = FEATURES["online"]
+    eff_iso, eff_text = TERMS_EFFECTIVE
+    toc = [
+        ("acceptance", "Acceptance of the terms"), ("service", "Description of the website and its features"),
+        ("acceptable-use", "Acceptable and prohibited use"), ("multiplayer", "Multiplayer behavior and room sharing"),
+        ("availability", "Availability, interruptions and changes to the service"),
+        ("intellectual-property", "Intellectual property and trademarks"),
+        ("disclaimers", "Disclaimers and limitations"), ("third-parties", "Links to third-party services"),
+        ("changes", "Changes to the terms"), ("contact", "Contact details and effective date"),
+    ]
+    toc_html = "\n".join(f'<li><a href="#{i}">{t}</a></li>' for i, t in toc)
+    if online:
+        service_online = """<li><strong>Online play.</strong> Play against another person after choosing a display name. No account is needed.</li>
+<li><strong>Private rooms.</strong> Invite a specific friend with a link or a short pairing code.</li>"""
+        multiplayer_html = """<h2 id="multiplayer">4. Multiplayer behavior and room sharing</h2>
 <ul>
-<li>Who may use the service and how.</li>
-<li>User responsibilities, including acceptable usernames and conduct toward other players.</li>
-<li>Service availability, changes and interruptions.</li>
-<li>What happens on disconnection or forfeit.</li>
-<li>Intellectual property and the site's independence from the game's designer and publisher.</li>
-<li>Limitation of liability, changes to the terms, and governing law.</li>
+<li><strong>Display names.</strong> A name is 2 to 20 characters and is not an account, so it gives you no ownership of the name and two players may choose the same one. Choose a name you would be comfortable having shown to a stranger. Do not use a name that is offensive, hateful, sexually explicit or threatening, that impersonates another person or the site, or that reveals personal details such as your real name or email address.</li>
+<li><strong>Conduct toward other players.</strong> Play fairly and respectfully. Do not harass others, and do not abandon games repeatedly to frustrate opponents.</li>
+<li><strong>Shared links and codes act like keys.</strong> A private room is reached through a long random link and a short pairing code. Anyone who has the link or code while a seat is open can take that seat. You are responsible for sharing it only with the person you want to play, and for any use made of a link or code you share publicly.</li>
+<li><strong>Invitations expire.</strong> An invitation expires after 30 minutes if nobody joins. Rooms and their state are not kept after play ends.</li>
+<li><strong>Disconnection and forfeit.</strong> If a player's connection is lost for more than a minute during an online game, that player forfeits and the opponent wins. Leaving or resigning mid-game also counts as a forfeit. A player who does not move within the time limit has a move played for them by the server. After a game, either player may ask for a rematch, and the first move then passes to the other player.</li>
+<li><strong>We may act on misuse.</strong> We may end a game, remove a room or display name, or block access to online play for anyone who breaks these terms or abuses the service, without notice where that is needed to protect the service or other players.</li>
 </ul>"""
-    return simple_page("/terms/", "Terms of Use | Quoridor Online", "Terms of use for Quoridor Online (draft placeholder).",
-                       "Terms of use", "The rules for using Quoridor Online. Draft placeholder.", content, "Terms of use")
+    else:
+        service_online = '<li><strong>Online play and private rooms.</strong> These are not available at the moment. These terms will be updated before they are offered.</li>'
+        multiplayer_html = """<h2 id="multiplayer">4. Multiplayer behavior and room sharing</h2>
+<p>Online play and private rooms are not available on this site at the moment. Before they are offered, this section will be updated to cover display names, conduct toward other players, the sharing of room links and codes, and what happens when a player disconnects or forfeits.</p>"""
+    history_html = "".join(f'<li><time datetime="{d}">{t}</time>: {note}</li>' for d, t, note in TERMS_HISTORY)
+    content = f"""
+<p>These terms govern your use of Quoridor.online (&ldquo;we&rdquo;, &ldquo;us&rdquo;). They are short because the site is simple: you play Quoridor in your browser and read our guides, with no account to create.</p>
+<p><strong>In short:</strong> use the site fairly and lawfully, be considerate to other players, understand that it is a free service provided as is, and remember that Quoridor.online is independent of the game's designer and publisher.</p>
+<nav class="toc" aria-label="On this page"><h2 id="on-this-page">On this page</h2>
+<ol>
+{toc_html}
+</ol></nav>
+
+<h2 id="acceptance">1. Acceptance of the terms</h2>
+<p>By visiting or using Quoridor.online you agree to these Terms of Use. Please also read our <a href="/privacy-policy/">Privacy Policy</a>, which explains how information is handled. If you do not agree to these terms, please do not use the site.</p>
+<p>The site is meant for everyone who enjoys the game. If you are a child, please ask a parent or guardian before playing online. If you are using the site on behalf of an organization, you confirm that you may agree to these terms for it.</p>
+
+<h2 id="service">2. Description of the website and its features</h2>
+<p>Quoridor.online is a free website where you can play the board game Quoridor and learn how it works. Depending on what is available at the time, it offers:</p>
+<ul>
+<li><strong>Play against the computer</strong> at several difficulty levels, running in your browser.</li>
+<li><strong>Play on one device,</strong> where two players share a screen and take turns.</li>
+{service_online}
+<li><strong>Guides,</strong> including how to play, the full rules and strategy.</li>
+</ul>
+<p>We describe a feature as available only once it works. The site needs no account, and we may add, change or remove features over time.</p>
+
+<h2 id="acceptable-use">3. Acceptable and prohibited use</h2>
+<p>You may use the site for your own personal, non-commercial enjoyment and learning. You agree not to:</p>
+<ul>
+<li>break any law, or use the site to harm, harass, threaten or deceive anyone;</li>
+<li>attack, overload or disrupt the site or its game server, including by flooding it with requests or creating rooms in bulk;</li>
+<li>probe for or exploit security weaknesses, or try to reach another player&rsquo;s seat, room or data;</li>
+<li>use bots, scripts or other automated tools to play online games, to queue for matches or to scrape the site, other than ordinary search-engine crawling;</li>
+<li>cheat, for example by modifying the game or tampering with requests in a way that defeats the fairness of an online game;</li>
+<li>copy, resell or sell access to the site, or present our software, text or design as your own; or</li>
+<li>use the site in any way that interferes with other people&rsquo;s enjoyment of it.</li>
+</ul>
+<p>You are free to link to the site and to play with friends. If you believe you have found a security problem, please tell us through the <a href="/contact/">contact page</a> rather than exploiting it.</p>
+
+{multiplayer_html}
+
+<h2 id="availability">5. Availability, interruptions and changes to the service</h2>
+<p>We aim to keep the site running, but we do not promise that it will always be available, fast, secure or free of errors. The site may be interrupted for maintenance, updates, hosting problems or reasons outside our control, and we may change, suspend or end any feature, or the whole service, at any time.</p>
+<p>Games are not guaranteed to survive an interruption. Games against the computer and on one device live only in your browser, and active online rooms are kept in memory and are lost if the game server restarts. Please do not rely on the site for anything that cannot be lost.</p>
+
+<h2 id="intellectual-property">6. Intellectual property and trademarks</h2>
+<p>The software, text, guides, graphics, board and design of Quoridor.online are our own work and are protected by copyright and other laws. You may play the game, read the guides, and share links to the site. Beyond that, please do not copy, adapt or distribute them without our written permission, except where the law allows it.</p>
+<p>Quoridor was designed by Mirko Marchesi and is published by Gigamic. &ldquo;Quoridor&rdquo; and any related names, logos and trademarks belong to their respective owners. Quoridor.online is an independent website. It is not affiliated with, sponsored by or endorsed by the designer or publisher of the board game, and any use of their names is only to credit and identify the game. If you would like a physical set, it is available from its publisher and from game retailers.</p>
+<p>If you send us feedback or suggestions, you allow us to use them to improve the site without owing you anything for them.</p>
+
+<h2 id="disclaimers">7. Disclaimers and limitations</h2>
+<p>To the extent permitted by applicable law:</p>
+<ul>
+<li>The site is provided <strong>&ldquo;as is&rdquo; and &ldquo;as available&rdquo;</strong>, without warranties of any kind, whether express or implied, including that it will be uninterrupted, error-free, secure, or suitable for a particular purpose.</li>
+<li>The guides are for general learning and enjoyment. The computer opponent can make poor moves, and we do not promise that any rule explanation or game result is free of mistakes.</li>
+<li>We are not liable for any indirect, incidental or consequential loss, or for loss of data, games, profits or goodwill, arising from your use of, or inability to use, the site. Our total liability for any claim relating to the site is limited to the amount you paid us to use it, which is nothing for a free service.</li>
+<li>We are not responsible for what other players do, or for what happens if you share a room link or code with someone else.</li>
+</ul>
+<p>Nothing in these terms excludes or limits any right or liability that cannot be excluded or limited by law, including liability for death or personal injury caused by negligence, for fraud, and any mandatory consumer rights you have where you live.</p>
+
+<h2 id="third-parties">8. Links to third-party services</h2>
+<p>The site may link to other websites, such as the publisher of the game, retailers, or services you use to email us. We do not control those sites and are not responsible for their content, availability, policies or practices. A link is not an endorsement. Their own terms and privacy policies apply when you use them.</p>
+
+<h2 id="changes">9. Changes to the terms</h2>
+<p>We may update these terms as the site changes or as the law requires. When we do, we will change the effective date below and add an entry to the update history. If a change materially affects your rights, we will say so on the site before it takes effect. Your continued use of the site after a change means you accept the updated terms. If you do not accept them, please stop using the site.</p>
+
+<h2 id="contact">10. Contact details and effective date</h2>
+<p>For questions about these terms, email <a href="mailto:{CONTACT_EMAIL}">{CONTACT_EMAIL}</a> or use the <a href="/contact/">contact page</a>.</p>
+<p>These terms are effective from <time datetime="{eff_iso}">{eff_text}</time>.</p>
+<ul>
+{history_html}
+</ul>"""
+    return simple_page("/terms/", "Terms of Use – Quoridor.online",
+                       "The terms for using Quoridor.online: acceptable use, multiplayer conduct and room sharing, availability, intellectual property, disclaimers and how the terms change.",
+                       "Terms of Use", f"The rules for using Quoridor.online. Effective {eff_text}.", content, "Terms of Use")
 
 
 def not_found():
+    links = [("Home", "/", "Start from the beginning."),
+             ("How to Play", "/how-to-play-quoridor/", "Learn the basics in a few minutes."),
+             ("Rules", "/quoridor-rules/", "The full rules, step by step."),
+             ("Strategy", "/quoridor-strategy/", "Tips for winning more games.")]
+    link_cards = "".join(
+        f'<li><a class="card notfound-link" href="{href}"><strong>{label}</strong><span class="text-muted">{blurb}</span></a></li>'
+        for label, href, blurb in links)
     body = f"""
 <div class="container notfound">
   {board_svg([("h",5,3),("h",5,5),("v",6,3),("v",6,4)], [(7,4,"p1")], "A cyan pawn enclosed by indigo barriers, unable to move forward.", goal_tint=False)}
-  <h1>We couldn't find that page</h1>
-  <p class="lead">The page you're looking for doesn't exist or has moved.</p>
+  <h1>This Page Couldn't Be Found</h1>
+  <p class="lead">It may have moved, or the link might have a typo. No harm done: even the best pawn gets blocked sometimes. Pick a way back below.</p>
   <div class="btn-row">
-    <a class="btn btn--primary" href="/">Go to Home</a>
-    <a class="btn btn--secondary" href="/play/">Go to Play</a>
+    <a class="btn btn--primary btn--lg" href="/play/">{icon('arrow')} Play Quoridor</a>
   </div>
+  <nav class="notfound-nav" aria-labelledby="notfound-h">
+    <h2 id="notfound-h" class="h-sm">Or head somewhere useful</h2>
+    <ul>{link_cards}</ul>
+  </nav>
 </div>"""
-    return Page(path="/404/", title="Page not found | Quoridor Online", description="This page could not be found.",
+    return Page(path="/404/", title="Page Not Found | Quoridor Online", description="This page could not be found. Play Quoridor or browse the rules, strategy and how-to-play guides.",
                 body=body, indexable=False, robots="noindex, follow", canonical=False, out_file="404.html", http_status=404)
 
 

@@ -578,6 +578,15 @@ a:hover { color: #8fe9fa; }
 .notfound .board-art { max-width: 280px; margin: 0 auto var(--space-5); }
 .notfound .btn-row { justify-content: center; }
 .notfound p { max-width: 32em; margin-inline: auto; margin-bottom: var(--space-5); }
+.notfound-nav { margin-top: var(--space-7); }
+.notfound-nav h2 { margin-bottom: var(--space-4); }
+.notfound-nav ul { list-style: none; padding: 0; margin: 0 auto; max-width: 56rem; display: grid; gap: var(--space-3); grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 600px) { .notfound-nav ul { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 960px) { .notfound-nav ul { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.notfound-nav li { margin: 0; }
+.notfound-link { display: flex; flex-direction: column; gap: var(--space-1); height: 100%; text-align: left; text-decoration: none; color: var(--color-text); }
+.notfound-link:hover, .notfound-link:focus-visible { border-color: var(--color-accent); }
+.notfound .notfound-link span { font-size: 0.9375rem; }
 
 /* ---------- Footer ---------- */
 .site-footer { margin-top: auto; background: var(--color-surface); border-top: 1px solid var(--color-border); padding-block: var(--space-7) var(--space-5); }
