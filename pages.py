@@ -631,6 +631,17 @@ GOAL_BOARD = board_svg([], [(1, 4, "p1"), (7, 4, "p2")],
     marks=[(0, c, "✓") for c in range(9)])
 
 
+OVERLAP_BOARD = board_svg([("h", 4, 3)], [(7, 4, "p1"), (1, 4, "p2")],
+    "An indigo wall lies below the fifth row across the fourth and fifth columns. A dashed red wall marked with a cross would share the fifth column with it, so it is not allowed.",
+    bad_walls=[("h", 4, 4)])
+CROSS_BOARD = board_svg([("h", 4, 3)], [(7, 4, "p1"), (1, 4, "p2")],
+    "An indigo wall lies across the board. A dashed red vertical wall marked with a cross would cross it at its middle point, so it is not allowed.",
+    bad_walls=[("v", 4, 3)])
+WALL_JUMP_BOARD = board_svg([("h", 4, 3)], [(5, 4, "p1"), (4, 4, "p2")],
+    "A cyan pawn directly below a white ring pawn with an indigo wall between them. The three dashed squares left, right and below the cyan pawn are its only moves: it cannot jump the white pawn through the wall.",
+    marks=[(5, 3, "←"), (5, 5, "→"), (6, 4, "↓")])
+
+
 def how_to_play_faq():
     """[(question, answer_html)]: online-play questions the sections above do not already answer in full."""
     online = FEATURES["online"]
@@ -799,64 +810,130 @@ def how_to_play():
 
 def rules():
     sections = [
-        ("setup", "Board setup", f"""
-<p>The board is a <strong>9×9 grid</strong> of 81 squares. Walls fit in the grooves between squares. In a two-player game each player has <strong>one pawn and 10 walls</strong>.</p>
-{figure(SETUP_BOARD, 'Board setup with pawns on their starting squares and no walls placed.')}"""),
-        ("starting", "Starting positions", """
-<p>Each pawn starts on the <strong>middle square of its own edge</strong>. The two pawns face each other across the board. A player's goal is any square on the edge where the opponent started.</p>"""),
-        ("turns", "Turn order", """
-<p>Players alternate turns. On your turn you must do exactly one of the following:</p>
-<ul><li>move your pawn, or</li><li>place one of your walls.</li></ul>
-<p>Passing isn't allowed. Who goes first is agreed or decided by chance before the game begins. This site will always show who moves first.</p>"""),
-        ("movement", "Legal movement", """
+        ("objective", "Game objective and winning condition", """
+<p>Quoridor is a two-player game on a 9×9 board. You win by being <strong>the first player to move your pawn onto any one of the 9 squares of the opposite edge</strong>, the edge your opponent started on. You don't need to land on a particular square, and you win the moment you arrive.</p>
+<p>Nothing is captured and nothing is removed from the board. The game is a race in which walls make a route longer, so each player's goal edge is simply the other player's starting edge.</p>
+<p class="small text-muted">This page describes the two-player game. The official four-player version uses the same rules with 5 walls per player and a pawn on each edge. It is not covered here and is not available on this site.</p>"""),
+        ("pieces", "Board layout, player positions and pieces", f"""
+<p>A standard set has one board with 81 squares, 20 walls and 4 pawns. A two-player game uses two pawns and all 20 walls.</p>
 <ul>
-<li>A pawn moves <strong>one square</strong> up, down, left or right.</li>
-<li>A pawn can't move diagonally, except for the special jump case below.</li>
-<li>A pawn can't pass through a wall or leave the board.</li>
+<li><strong>Board.</strong> 9 rows by 9 columns of squares, separated by thin grooves.</li>
+<li><strong>Pawns.</strong> One per player. Each player starts on the <strong>middle square (the fifth of nine) of their own edge</strong>, so the two pawns face each other across the board.</li>
+<li><strong>Walls.</strong> A wall is two squares long. It is placed in the grooves between squares, never on a square.</li>
 </ul>
-<h3>Jumping</h3>
-<ul>
-<li>If your opponent's pawn is on an adjacent square, you may <strong>jump straight over it</strong> to the square directly behind, provided no wall lies between you and them or between them and that square.</li>
-<li>If a wall or the board edge blocks that straight jump, you may move to a square <strong>beside the opponent's pawn</strong> (diagonal from your starting square), provided no wall blocks that move.</li>
-</ul>"""),
-        ("walls", "Wall placement restrictions", """
-<ul>
-<li>A wall covers the width of <strong>two squares</strong>.</li>
-<li>It must lie entirely on the board, in the grooves between squares.</li>
-<li>It can't <strong>overlap</strong> another wall, even partly.</li>
-<li>It can't <strong>cross</strong> another wall at the middle (a horizontal wall can't cross a vertical wall at the same point).</li>
-<li>Once placed, a wall stays for the rest of the game.</li>
-<li>When you've placed all your walls you can only move.</li>
-</ul>"""),
-        ("paths", "Keeping paths open", """
-<p>You may <strong>never</strong> place a wall that leaves either player without any route to their goal edge. Before placing a wall, check both pawns: each must still be able to reach at least one goal square. For this check, only walls count as obstacles.</p>
-<p>A wall that makes a route much longer is perfectly legal; a wall that closes it entirely is not.</p>"""),
-        ("winning", "Winning conditions", """
-<p>The first player to move their pawn onto <strong>any square of the opposite edge</strong> wins at once.</p>"""),
-        ("reference", "Quick reference", """
+{figure(SETUP_BOARD, "Starting position: a pawn in the middle of each player's edge and no walls on the board. Each player's goal is the whole edge where the other pawn starts.")}"""),
+        ("setup", "Standard setup and walls per player", """
+<p>In a two-player game each player takes <strong>10 walls</strong> and keeps them to the side. Both pawns go on the middle square of their starting edge.</p>
 <div class="table-wrap"><table>
 <thead><tr><th scope="col">Item</th><th scope="col">Two-player game</th></tr></thead>
 <tbody>
-<tr><td>Board</td><td>9×9 squares</td></tr>
-<tr><td>Walls per player</td><td>10</td></tr>
-<tr><td>Starting square</td><td>Middle of your own edge</td></tr>
-<tr><td>Each turn</td><td>Move one square <em>or</em> place one wall</td></tr>
-<tr><td>Wall size</td><td>2 squares wide</td></tr>
-<tr><td>Wall rule</td><td>No overlap, no crossing, never block every route</td></tr>
-<tr><td>Win</td><td>Reach any square of the opposite edge first</td></tr>
+<tr><td>Board</td><td>9×9 squares (81)</td></tr>
+<tr><td>Pawns</td><td>1 per player, on the middle square of its own edge</td></tr>
+<tr><td>Walls</td><td>10 per player (20 in the set)</td></tr>
+<tr><td>Wall length</td><td>2 squares</td></tr>
+<tr><td>Wall positions</td><td>8 × 8 in each of 2 orientations (128 in total)</td></tr>
 </tbody></table></div>
-<p class="small text-muted">Published rule sets and house rules can differ in small details. The game on this site uses exactly the rules on this page. In same-device and computer games Player 1 (the filled cyan pawn, starting at the bottom) always moves first. In online games the server decides who moves first, and a rematch swaps it. The check that every player keeps a route open ignores pawns and counts only walls.</p>"""),
+<p>The official rulebook has the players draw lots to decide who starts. On this site, Player 1 (the filled cyan pawn that starts at the bottom) always moves first in same-device and computer games. In online games the server picks who goes first at random, and a rematch swaps the order.</p>"""),
+        ("turns", "Turn order: move the pawn or place a wall", """
+<p>Players alternate turns. On your turn you do <strong>exactly one</strong> of these two things:</p>
+<ol>
+<li>move your pawn, or</li>
+<li>place one of your walls.</li>
+</ol>
+<p>You can't do both and you can't pass. Once you have placed all 10 of your walls, you can only move your pawn.</p>"""),
+        ("movement", "Legal pawn movement", f"""
+<ul>
+<li>A pawn moves <strong>one square</strong> up, down, left or right. Moving backwards or sideways is allowed.</li>
+<li>A pawn <strong>can't move diagonally</strong>, apart from the sidestep described in the next section.</li>
+<li>A pawn <strong>can't pass through a wall</strong>. It has to go around. A wall blocks movement across its groove in both directions.</li>
+<li>A pawn <strong>can't leave the board</strong> and can't end its move on the other pawn's square.</li>
+</ul>
+{figure(MOVE_BOARD, 'The cyan pawn can step left, right or down. The wall above it blocks the move up.')}"""),
+        ("jumping", "Jumping over an opponent and special movement situations", f"""
+<p>When the two pawns stand on <strong>neighboring squares</strong> that are <strong>not separated by a wall</strong>, the player whose turn it is may <strong>jump</strong> over the opponent's pawn and land on the square directly behind it, advancing an extra square. The jump is your whole move for that turn. It is a choice, never an obligation.</p>
+{figure(JUMP_BOARD, 'Straight jump: the cyan pawn jumps over the white pawn and lands on A.')}
+<h3>When the jump is blocked: the sidestep</h3>
+<p>If a <strong>wall</strong> is directly behind the pawn you would jump, you can't jump. Instead you may place your pawn on a square <strong>to the left or to the right of the opponent's pawn</strong>. This is the one situation in which a pawn moves diagonally.</p>
+{figure(SIDESTEP_BOARD, 'The wall behind the white pawn blocks the straight jump, so the cyan pawn may move to A or B instead.')}
+<h3>Details that matter</h3>
+<ul>
+<li><strong>A wall between the pawns blocks the jump.</strong> Neighboring pawns separated by a wall can't jump over each other. Each is simply blocked in that direction.</li>
+<li><strong>The sidestep squares must be reachable.</strong> You can't step to a side square if a wall lies between it and the opponent's pawn.</li>
+<li><strong>Jumps work in every direction.</strong> Forwards, backwards or sideways, whenever the two pawns are neighbors.</li>
+<li><strong>The board edge.</strong> The official rulebook mentions only a wall behind the jumped pawn. This site treats the board edge the same way: with no square to land on, you sidestep instead.</li>
+</ul>"""),
+        ("walls", "Wall placement, orientation and restrictions", f"""
+<p>A wall covers the length of <strong>two squares</strong> and sits exactly in the grooves between two sets of two squares. It is either <strong>horizontal</strong> (blocking movement up and down) or <strong>vertical</strong> (blocking movement left and right).</p>
+<p>A wall placement is legal only if all of these are true:</p>
+<ol>
+<li><strong>You have a wall left.</strong> Each player has 10.</li>
+<li><strong>It lies fully on the board</strong>, centered between two pairs of squares. There are 8 × 8 positions in each orientation.</li>
+<li><strong>It does not overlap another wall,</strong> not even by one square.</li>
+<li><strong>It does not cross another wall.</strong> A horizontal and a vertical wall can't share the same middle point.</li>
+<li><strong>It leaves every player a route to their goal edge</strong> (see the next section).</li>
+</ol>
+<p>Walls may touch end to end or meet at a right angle, and you can place them in front of your opponent or anywhere else. Once placed, a wall <strong>stays for the rest of the game</strong>. It can't be moved, rotated or taken back.</p>
+{figure(WALL_BOARD, 'Two horizontal walls placed end to end. Together they cover four columns, so the white pawn has to walk sideways around them.')}"""),
+        ("paths", "The legal route rule", f"""
+<p>You may place a wall to slow your opponent or to protect your own path, but you may <strong>never leave any player, yourself included, with no route at all to their goal edge</strong>. The official rulebook puts it as: an access to the goal line must always be left open.</p>
+<ul>
+<li>Check both pawns before you place a wall. Each must still have a path of legal one-square steps to at least one square of its goal edge.</li>
+<li>A wall that makes a route <strong>much longer</strong> is perfectly legal. Only a wall that makes it <strong>impossible</strong> is forbidden.</li>
+<li>For this check, <strong>only walls count as obstacles.</strong> Pawns are ignored because they move and can be jumped. This is how this site enforces the rule.</li>
+<li>The check applies to the position <em>after</em> your wall is placed, with all earlier walls in place. A wall that is legal now can become illegal later, once other walls have been added.</li>
+</ul>
+{figure(SEALED_BOARD, 'Not allowed: the dashed wall would shut the white pawn into the top-left corner, leaving it no route to the bottom edge.')}"""),
+        ("illegal", "Common illegal moves, with examples", f"""
+<p>These are the attempts that break the rules most often. The game on this site refuses each of them and says why.</p>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">Illegal move</th><th scope="col">Why it's illegal</th></tr></thead>
+<tbody>
+<tr><td>Moving two squares in one turn</td><td>A pawn moves one square. The only extra distance comes from a jump, which lands behind the opponent's pawn.</td></tr>
+<tr><td>Moving diagonally on an open board</td><td>A diagonal step exists only as the sidestep when a straight jump is blocked.</td></tr>
+<tr><td>Walking through a wall</td><td>A wall blocks movement across the groove it sits in.</td></tr>
+<tr><td>Jumping over a pawn through a wall</td><td>A jump needs neighboring pawns that are <em>not separated by a wall</em>.</td></tr>
+<tr><td>Sidestepping when the straight jump is possible</td><td>The sidestep is only allowed when a wall (or the board edge) is directly behind the opponent's pawn.</td></tr>
+<tr><td>Moving and placing a wall in one turn, or passing</td><td>Each turn is exactly one action.</td></tr>
+<tr><td>Placing a wall on top of another wall</td><td>Walls may not overlap, even partly.</td></tr>
+<tr><td>Crossing two walls at their middle</td><td>A horizontal and a vertical wall can't share a middle point.</td></tr>
+<tr><td>Placing an 11th wall</td><td>Each player has 10 walls.</td></tr>
+<tr><td>Sealing a pawn in</td><td>Every player must keep at least one route to their goal edge.</td></tr>
+<tr><td>Moving or taking back a placed wall</td><td>Walls are permanent.</td></tr>
+</tbody></table></div>
+<h3>Overlapping walls</h3>
+{figure(OVERLAP_BOARD, 'Not allowed: the dashed wall would overlap the existing wall along one square.')}
+<h3>Crossing walls</h3>
+{figure(CROSS_BOARD, 'Not allowed: the dashed vertical wall would cross the horizontal wall at its middle point.')}
+<h3>Jumping through a wall</h3>
+{figure(WALL_JUMP_BOARD, 'With a wall between the pawns no jump is possible. The cyan pawn can only step left, right or down.')}"""),
+        ("summary", "Quick rules summary", f"""
+<ol>
+<li>Two players, a 9×9 board, one pawn each on the middle square of opposite edges, 10 walls each.</li>
+<li>Win by being first to reach <strong>any square</strong> of the opposite edge.</li>
+<li>Each turn: move your pawn one square <strong>or</strong> place one wall.</li>
+<li>Pawns step up, down, left or right, never through walls.</li>
+<li>Neighboring pawns with no wall between them: jump to the square behind the opponent. If a wall is behind them, step to their left or right instead.</li>
+<li>A wall is 2 squares long, can't overlap or cross another wall, and is permanent.</li>
+<li>No wall may leave any player without a route to their goal edge.</li>
+<li>With no walls left, you can only move.</li>
+</ol>
+<div class="card cta-panel">
+  <p class="h-sm"><strong>Put the rules into practice.</strong></p>
+  <p>The board highlights your legal moves and explains why a wall isn't allowed, so you can learn as you play.</p>
+  <div class="btn-row"><a class="btn btn--primary" href="/play/">Play Quoridor {icon('arrow')}</a><a class="btn btn--secondary" href="/how-to-play-quoridor/">Beginner's guide</a></div>
+</div>
+<p class="small text-muted">These rules follow the official Gigamic rulebook (Quoridor, designed by Mirko Marchesi). The rulebook is silent on a few edge cases, and there this site's game applies the conventions marked above: the board edge acts like a wall behind a jumped pawn, and pawns are ignored by the route check. Quoridor Online is independent and not affiliated with Gigamic or the designer.</p>"""),
     ]
     return article_page(
-        "/quoridor-rules/", "Quoridor Rules: Setup, Movement & Wall Placement",
-        "Clear Quoridor rules: board setup, starting positions, legal moves and jumps, wall placement restrictions, and winning conditions.",
-        "Quoridor rules",
-        "A structured reference to the rules of Quoridor, from board setup to the wall restrictions that keep every path open.",
+        "/quoridor-rules/", "Quoridor Rules Explained – How to Move and Place Walls",
+        "Understand the Quoridor rules, including pawn movement, jumping, wall placement, legal paths, turn order, and how to win the game.",
+        "Quoridor Rules: The Complete Guide",
+        "The full reference to the two-player Quoridor rules: setup, pawn movement, jumps, wall placement and the rule that keeps every path open.",
         sections,
         [("How to play Quoridor", "/how-to-play-quoridor/", "a gentler, step-by-step introduction."),
          ("Quoridor strategy", "/quoridor-strategy/", "what to do with these rules once you know them."),
          ("The Quoridor board game", "/quoridor-board-game/", "components, history and how play modes differ.")],
-        "Quoridor rules", "rules",
+        "Quoridor rules", "rules", cta=False,
     )
 
 
