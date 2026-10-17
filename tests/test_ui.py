@@ -178,6 +178,28 @@ class UI(unittest.TestCase):
         self.shot(p, "local-after-wall.png")
         self.no_errors(p)
 
+    def test_walls_use_the_colour_of_the_player_who_placed_them(self):
+        p = self.page()
+        self.start_local(p)
+        p.click(".btn--toggle:nth-of-type(2)")
+        p.click_at(*self.wall_xy(p, "h", 6, 4))   # Alice (cyan pawn)
+        p.click(".btn--toggle:nth-of-type(2)")
+        p.click_at(*self.wall_xy(p, "h", 2, 1))   # Bob (orange pawn)
+        fills = p.js("Array.from(document.querySelectorAll('svg.board g')).filter(function(g){return g.children.length===2 && g.children[0].getAttribute('rx')==='6'}).map(function(g){return Array.from(g.children).map(function(r){return r.getAttribute('fill')})})[0]")
+        self.assertEqual(fills, ["#42d9f5", "#ff9f43"])
+        self.no_errors(p)
+
+    def test_local_turn_timer_counts_down_and_plays_when_time_is_up(self):
+        p = self.page()
+        self.start_local(p)
+        self.assertRegex(p.js("document.querySelector('.turn-timer').textContent"), r"Alice: 1[45]s left")
+        self.assertEqual(self.moves(p), 0)
+        p.wait_for("document.querySelectorAll('.move-log li').length === 1", timeout=20)
+        self.assertEqual(self.turn(p), "Bob's turn")
+        self.assertIn("Time ran out. Alice moved to e2.", self.hint(p))
+        self.assertRegex(p.js("document.querySelector('.turn-timer').textContent"), r"Bob: 1[45]s left")
+        self.no_errors(p)
+
     def test_local_keyboard_play(self):
         p = self.page()
         self.start_local(p)

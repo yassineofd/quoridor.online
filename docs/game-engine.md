@@ -99,6 +99,10 @@ intent (a move) and receive the resulting state; the server validates everything
   version changes. Every change bumps the version; the response is a full snapshot.
 * **Presence and forfeit.** A seat is connected while it has a poll in flight or polled in the last 15 s. A seat that
   is gone for 60 s forfeits (`reason: "disconnect"`); the opponent sees a countdown.
+* **Turn timer.** Each move must be made within 15 s (`TURN_SECONDS`, plus 1 s of grace). When time runs out the sweeper
+  plays the pawn step that leaves the shortest route (`Game.timeout_move`); a disconnected player's clock is held. The
+  snapshot carries `turnLeft` (seconds) for the on-screen countdown. Same-device and computer games run the same 15 s
+  clock in the browser (`game.js`).
 * **Matchmaking.** `POST /api/queue` returns a ticket; `GET /api/queue/<ticket>` long-polls until matched, then returns
   the room id and seat token. Tickets not polled for 20 s are dropped.
 * **Limits.** Per address, per minute: 10 room creations, 12 join attempts (code guessing), 15 searches, 240 moves.

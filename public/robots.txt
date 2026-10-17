@@ -3,3 +3,5 @@ Allow: /
 Disallow: /room/
 Disallow: /api/
 Disallow: /ws/
+
+Sitemap: https://quoridor.online/sitemap.xml

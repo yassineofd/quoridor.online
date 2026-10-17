@@ -29,6 +29,20 @@
     return b;
   }
 
+  var TURN_SECONDS = 15;   // time to make a move; the online server enforces the same limit
+
+  // The move played for a player whose time ran out: the pawn step that leaves the shortest route.
+  function fallbackMove(game) {
+    var p = game.turn, from = game.pawns[p], best = null, bestD = Infinity;
+    game.pawnMoves(p).forEach(function (t) {
+      game.pawns[p] = t;
+      var d = game.distance(p);
+      if (d >= 0 && d < bestD) { bestD = d; best = t; }
+    });
+    game.pawns[p] = from;
+    return best ? { type: 'move', r: best[0], c: best[1] } : null;
+  }
+
   // ---- computer opponent runner (Web Worker with a main-thread fallback) --------------
   function createThinker(level) {
     var worker = null, pending = null, nextId = 1;
@@ -81,6 +95,9 @@
       var card = h('li', { 'class': 'player-card' }, [glyph, h('span', { 'class': 'player-text' }, [name, tag]), walls]);
       return { card: card, name: name, tag: tag, walls: walls };
     });
+    var timerText = h('span', { 'class': 'turn-timer-text', 'aria-hidden': 'true' });
+    var timerFill = h('span', { 'class': 'turn-timer-fill' });
+    var timer = h('div', { 'class': 'turn-timer', hidden: '' }, [timerText, h('span', { 'class': 'turn-timer-bar', 'aria-hidden': 'true' }, [timerFill])]);
     var players = h('ul', { 'class': 'players', 'aria-label': 'Players' }, cards.map(function (c) { return c.card; }));
 
     var modeBtns = {
@@ -112,8 +129,46 @@
     if (window.matchMedia && window.matchMedia('(max-width: 899px)').matches) log.removeAttribute('open');
     var announcer = h('div', { 'class': 'sr-only', 'aria-live': 'polite', 'aria-atomic': 'true' });
 
-    var side = h('div', { 'class': 'game-side' }, [turn, banner, players, result, actionRow, wallRow, hint, controls, keys, log, announcer]);
+    var side = h('div', { 'class': 'game-side' }, [turn, timer, banner, players, result, actionRow, wallRow, hint, controls, keys, log, announcer]);
     host.appendChild(h('div', { 'class': 'game-layout' }, [boardHost, side]));
+
+    // ---- turn timer ---------------------------------------------------------------------
+    // Hot-seat and computer games count down here and play the fallback move at zero. Online the
+    // server is in charge (it sends turnLeft and plays the move itself); this only shows the clock.
+    var deadline = null, timerKey = null, warned = false;
+
+    function timerRunning() {
+      if (game.winner !== null || destroyed) return false;
+      if (mode === 'online') return deadline !== null;
+      return mode === 'local' || (game.turn === seat && !thinking);
+    }
+    function resetTimer(seconds) {
+      deadline = Date.now() + (seconds === undefined ? TURN_SECONDS : seconds) * 1000;
+      warned = false;
+    }
+    function tick() {
+      if (deadline === null && mode !== 'online' && timerRunning()) resetTimer();
+      var running = timerRunning();
+      timer.hidden = !running;
+      if (!running) return;
+      var left = Math.max(0, deadline - Date.now());
+      var secs = Math.ceil(left / 1000);
+      timerText.textContent = sayWho(game.turn) + ': ' + secs + 's left';
+      timerFill.style.width = Math.min(100, left / (TURN_SECONDS * 10)) + '%';
+      timer.classList.toggle('is-low', secs <= 5);
+      if (secs <= 5 && !warned && left > 0 && (mode === 'local' || game.turn === seat)) { warned = true; announce(secs + ' seconds left.'); }
+      if (left <= 0 && mode !== 'online') timeUp();
+    }
+    function timeUp() {
+      var m = fallbackMove(game);
+      deadline = null;
+      if (!m) return;
+      var who = game.turn;
+      commit(m);
+      hint.textContent = ('Time ran out. ' + describeMove(who, m) + ' ' + hint.textContent).trim();
+      announce(hint.textContent);
+    }
+    var tickTimer = setInterval(tick, 250);
 
     function announce(text) { announcer.textContent = ''; setTimeout(function () { announcer.textContent = text; }, 20); }
 
@@ -183,6 +238,11 @@
         hint.textContent = '';
       }
       lastCount = game.moves.length;
+      if (mode !== 'online') {
+        var key = game.moves.length + ':' + game.winner;
+        if (key !== timerKey || (deadline === null && timerRunning())) { timerKey = key; resetTimer(); }
+      }
+      tick();
       syncControls(board.selection());
     }
 
@@ -338,12 +398,16 @@
           announce(describeMove((game.moves.length - 1) % 2, mv));
         }
         busy = false;
+        var key = game.moves.length + ':' + game.winner;
+        if (meta.turnLeft != null && key !== timerKey) { timerKey = key; resetTimer(meta.turnLeft); }
+        else if (meta.turnLeft == null) deadline = null;
         render();
       },
       announce: announce,
       focus: function () { turn.focus(); },
       destroy: function () {
         destroyed = true;
+        clearInterval(tickTimer);
         if (thinker) thinker.destroy();
         board.destroy();
         host.textContent = '';

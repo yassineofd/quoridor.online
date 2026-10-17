@@ -29,6 +29,8 @@ WAITING_TTL = 30 * 60    # an unjoined room (and its code) expires
 FINISHED_TTL = 10 * 60   # finished rooms are kept this long so players can ask for a rematch
 ABANDONED_TTL = 5 * 60   # both players gone
 QUEUE_STALE = 20         # a matchmaking ticket not polled for this long is dropped
+TURN_SECONDS = 15        # time to make a move; then the server plays one for the player
+TURN_GRACE = 1.0         # extra time for a move that was sent just before the limit
 LONG_POLL = 25           # max time a state request waits for news
 
 MAX_ROOMS = 5000
@@ -80,6 +82,7 @@ class Room:
         self.rematch = [False, False]
         self.presence = (True, True)
         self.finished_at = None
+        self.turn_started = now           # when the player to move got the turn
 
 
 class Hub:
@@ -126,6 +129,7 @@ class Hub:
         room.reason = None
         room.rematch = [False, False]
         room.finished_at = None
+        room.turn_started = time.monotonic()
         for s in room.seats:
             s.lost_at = None
         self.codes.pop(room.code, None)
@@ -169,6 +173,7 @@ class Hub:
             "reason": room.reason,
             "rematch": list(room.rematch),
             "forfeitIn": forfeit_in,
+            "turnLeft": max(0.0, TURN_SECONDS - (now - room.turn_started)) if room.status == "playing" else None,
         }
         if room.status == "waiting" and seat_index == room.host:
             out["code"] = room.code
@@ -258,6 +263,7 @@ class Hub:
             err = room.game.apply(move)
             if err:
                 raise ApiError(422, err, "That move is not allowed.")
+            room.turn_started = time.monotonic()
             if room.game.winner is not None:
                 self._finish(room)
             else:
@@ -397,6 +403,18 @@ class Hub:
                             room.game.resign(i)
                             self._finish(room, "disconnect")
                             break
+                if room.status == "playing":
+                    # Out of time: play the pawn step that is closest to the goal. A player who is
+                    # disconnected keeps their clock stopped (the forfeit timer deals with them).
+                    if not presence[room.game.turn]:
+                        room.turn_started = now
+                    elif now - room.turn_started > TURN_SECONDS + TURN_GRACE:
+                        room.game.apply(room.game.timeout_move())
+                        room.turn_started = now
+                        if room.game.winner is not None:
+                            self._finish(room)
+                        else:
+                            self._bump(room)
                 if presence != room.presence:
                     room.presence = presence
                     self._bump(room)

@@ -26,6 +26,10 @@
   function cellPos(i) { return PAD + i * PITCH; }
   function anchorPos(i) { return PAD + i * PITCH + CELL + GAP / 2; } // centre of the groove crossing after index i
 
+  // Pawn colour and the matching wall edge colour for each player; walls are drawn in their owner's colour.
+  var PAWN_COLORS = ['#42d9f5', '#ff9f43'];
+  var WALL_EDGES = ['#b4f3fd', '#ffd3a1'];
+
   var REASONS = {
     'overlap': 'That wall overlaps another wall.',
     'cross': 'That wall would cross another wall.',
@@ -130,11 +134,13 @@
         el('rect', { x: cellPos(state.last.c) + 2, y: cellPos(state.last.r) + 2, width: CELL - 4, height: CELL - 4, rx: 8, fill: 'none', stroke: '#ffffff', 'stroke-opacity': 0.5, 'stroke-width': 2, 'stroke-dasharray': '6 5' }, gHints);
       }
 
-      var walls = game.toJSON().walls;
-      for (i = 0; i < walls.length; i++) {
-        w = walls[i];
-        var isLast = state.last && state.last.type === 'wall' && state.last.o === w[0] && state.last.r === w[1] && state.last.c === w[2];
-        drawWall(gWalls, w[0], w[1], w[2], { fill: '#5267f2', stroke: isLast ? '#ffffff' : '#9aa8ff', 'stroke-width': isLast ? 3 : 1.5 });
+      // The move list tells who placed each wall: players alternate, player 0 first.
+      var moves = game.moves;
+      for (i = 0; i < moves.length; i++) {
+        w = moves[i];
+        if (w.type !== 'wall') continue;
+        var isLast = state.last && state.last.type === 'wall' && state.last.o === w.o && state.last.r === w.r && state.last.c === w.c;
+        drawWall(gWalls, w.o, w.r, w.c, { fill: PAWN_COLORS[i % 2], stroke: isLast ? '#ffffff' : WALL_EDGES[i % 2], 'stroke-width': isLast ? 3 : 1.5 });
       }
 
       if (state.mode === 'wall' && canAct()) {
@@ -142,7 +148,7 @@
         var st = wallStatus(shown);
         if (st) {
           drawWall(gPreview, st.wall.o, st.wall.r, st.wall.c, st.legal
-            ? { fill: '#5267f2', 'fill-opacity': 0.55, stroke: '#42d9f5', 'stroke-width': 3, 'stroke-dasharray': '8 4' }
+            ? { fill: PAWN_COLORS[state.actor], 'fill-opacity': 0.55, stroke: WALL_EDGES[state.actor], 'stroke-width': 3, 'stroke-dasharray': '8 4' }
             : { fill: '#ff8a96', 'fill-opacity': 0.45, stroke: '#ff8a96', 'stroke-width': 3, 'stroke-dasharray': '3 3' });
         }
       }
@@ -152,7 +158,7 @@
         var active = game.winner === null && game.turn === i;
         if (game.winner === i) el('circle', { cx: cx, cy: cy, r: 36, fill: 'none', stroke: '#5eead4', 'stroke-width': 4 }, gPawns);
         else if (active) el('circle', { cx: cx, cy: cy, r: 35, fill: 'none', stroke: '#ffffff', 'stroke-opacity': 0.45, 'stroke-width': 2 }, gPawns);
-        el('circle', { cx: cx, cy: cy, r: 27, fill: i === 0 ? '#42d9f5' : '#ff9f43' }, gPawns);
+        el('circle', { cx: cx, cy: cy, r: 27, fill: PAWN_COLORS[i] }, gPawns);
       }
 
       if (state.keyboard && document.activeElement === svg) {

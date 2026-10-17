@@ -72,10 +72,10 @@ class Game:
         return out
 
     # ---- paths ----------------------------------------------------------------------
-    def distance(self, player):
+    def distance(self, player, start=None):
         """Shortest number of pawn steps to the goal row. Only walls count as obstacles.
-        Returns None if no route exists."""
-        start = self.pawns[player]
+        Returns None if no route exists. `start` tries another square instead of the pawn's own."""
+        start = self.pawns[player] if start is None else start
         goal = GOAL_ROW[player]
         if start[0] == goal:
             return 0
@@ -147,6 +147,13 @@ class Game:
         if self.winner is None:
             self.turn = 1 - p
         return None
+
+    def timeout_move(self):
+        """The move played for the player to move when their time runs out: the pawn step that
+        leaves the shortest route to the goal."""
+        p = self.turn
+        best = min(self.pawn_moves(p), key=lambda sq: self.distance(p, sq))
+        return {"type": "move", "r": best[0], "c": best[1]}
 
     def resign(self, player):
         if self.winner is None:

@@ -191,6 +191,55 @@ class LongPoll(Setup):
         self.assertEqual(snap["version"], v)
 
 
+class TurnTimer(Setup):
+    def setUp(self):
+        super().setUp()
+        self._saved = (rooms.TURN_SECONDS, rooms.TURN_GRACE)
+
+    def tearDown(self):
+        rooms.TURN_SECONDS, rooms.TURN_GRACE = self._saved
+
+    def test_snapshot_reports_time_left(self):
+        room, seats = self.start_game()
+        snap = self.hub.wait_state(room.id, seats[0]["token"], None)
+        self.assertLessEqual(snap["turnLeft"], rooms.TURN_SECONDS)
+        self.assertGreater(snap["turnLeft"], rooms.TURN_SECONDS - 2)
+
+    def test_default_limit_is_15_seconds(self):
+        self.assertEqual(rooms.TURN_SECONDS, 15)
+
+    def test_out_of_time_plays_a_pawn_step_toward_the_goal(self):
+        rooms.TURN_SECONDS, rooms.TURN_GRACE = 0.1, 0
+        room, seats = self.start_game()
+        time.sleep(0.2)
+        self.hub.sweep()
+        self.assertEqual(len(room.game.moves), 1)
+        self.assertEqual(room.game.moves[0], {"type": "move", "r": 7, "c": 4})
+        self.assertEqual(room.game.turn, 1)
+
+    def test_a_move_restarts_the_clock(self):
+        rooms.TURN_SECONDS, rooms.TURN_GRACE = 0.3, 0
+        room, seats = self.start_game()
+        time.sleep(0.2)
+        first = seats[room.game.turn]
+        self.hub.move("1.1.1.1", room.id, first["token"], step_toward_goal(room, room.game.turn))
+        time.sleep(0.2)
+        self.hub.sweep()
+        self.assertEqual(len(room.game.moves), 1)   # the second player still has time
+
+    def test_a_disconnected_players_clock_is_held(self):
+        rooms.TURN_SECONDS, rooms.TURN_GRACE = 0.1, 0
+        saved = rooms.PRESENCE
+        rooms.PRESENCE = 0.05
+        try:
+            room, seats = self.start_game()
+            time.sleep(0.2)
+            self.hub.sweep()
+            self.assertEqual(len(room.game.moves), 0)
+        finally:
+            rooms.PRESENCE = saved
+
+
 class Presence(Setup):
     def setUp(self):
         super().setUp()
