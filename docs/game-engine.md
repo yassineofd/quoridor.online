@@ -20,7 +20,24 @@ at the middle or leave either pawn without a route (pawns are ignored by that ch
 opposite edge wins. Player 0 (cyan filled pawn, starts at the bottom, `e1`) always moves first in same-device and
 computer games. In online games the server picks who is seat 0 (random); a rematch swaps seats.
 
-Coordinates are rows 0..8 from the top and columns 0..8 from the left. A wall `("h", r, c)` lies below row `r`
+## Variants
+
+A variant is a row in `VARIANTS` at the top of `engine.js`: board size (`rows`, `cols`), the two start squares, the two goal rows
+and the walls each player gets. `new Quoridor.Game()` is the classic game; `new Quoridor.Game('wallrush')` is a variant. Everything
+else (wall rules, jumps, the "keep a path open" check, the board, the game screen, the computer's search) reads those numbers from
+the game, so a new variant needs no new engine code. Snapshots carry a `variant` key; without one they are classic, so the server's
+snapshots still load.
+
+| Variant | Page | Board | Start | Goal |
+|---|---|---|---|---|
+| Wallrush | `/variants/wallrush/` | 9 columns x 13 rows, 10 walls each | both pawns on row 8 (columns 2 and 6) | both race to row 0 |
+
+Variants are played on one device only: the Python engine and the online server know only the classic game, so `tests/test_parity.py`
+covers classic only. To add a variant: add its row to `VARIANTS`, give it a page like `wallrush()` in `pages.py` (a form with
+`data-play-form="local" data-variant="<key>" data-leave="variants"`), and list it in `VARIANT_CARDS` so `/variants/` shows it.
+Screen names for squares and walls use the board's own height (`game.squareName`, `game.wallName`, `game.moveName`).
+
+Coordinates (classic) are rows 0..8 from the top and columns 0..8 from the left. A wall `("h", r, c)` lies below row `r`
 across columns `c` and `c+1`; `("v", r, c)` lies right of column `c` across rows `r` and `r+1` (`r`, `c` in 0..7).
 Moves are `{type:"move", r, c}` or `{type:"wall", o:"h"|"v", r, c}`. Screen names: files a..i left to right, ranks
 1..9 bottom to top; a wall is named after the square just below and left of its centre, plus its direction (`d4h`).

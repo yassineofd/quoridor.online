@@ -30,6 +30,7 @@ NAV = [
     ("how", "/how-to-play-quoridor/", "How to Play"),
     ("rules", "/quoridor-rules/", "Rules"),
     ("strategy", "/quoridor-strategy/", "Strategy"),
+    ("variants", "/variants/", "Variants"),
     ("about", "/about/", "About Us"),
 ]
 
@@ -38,6 +39,8 @@ FOOTER_PLAY = [
     ("/play/online/", "Play Online"),
     ("/play/computer/", "Play vs Computer"),
     ("/play/local/", "Play Locally"),
+    ("/variants/", "Quoridor Variants"),
+    ("/variants/wallrush/", "Wallrush"),
 ]
 FOOTER_LEARN = [
     ("/how-to-play-quoridor/", "How to Play"),

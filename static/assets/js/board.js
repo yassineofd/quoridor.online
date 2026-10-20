@@ -1,4 +1,5 @@
 /* Quoridor board: an accessible SVG view of a Quoridor.Game plus pointer, touch and keyboard input.
+   It draws whatever size the game has (game.rows x game.cols), so the variants use it unchanged.
 
    The board only draws and collects intent. It never changes the game: when the player picks a
    move it calls opts.onCommit(move) and the owner applies it (locally, or by asking the server)
@@ -15,7 +16,8 @@
   function t(key, params) { return root.QuoridorI18n ? root.QuoridorI18n.t(key, params) : key; }
 
   var CELL = 78, GAP = 14, PAD = 16, PITCH = CELL + GAP;
-  var SIZE = PAD * 2 + 9 * CELL + 8 * GAP;
+  var SIZE = PAD * 2 + 9 * CELL + 8 * GAP; // the classic board; other sizes are worked out per board in create()
+  var SHARED_GOAL = '#5eead4'; // goal row that both players race to
   var NS = 'http://www.w3.org/2000/svg';
 
   function el(tag, attrs, parent) {
@@ -36,13 +38,15 @@
 
   function create(container, opts) {
     var game = opts.game;
+    var ROWS = game.rows, COLS = game.cols;
+    var W = PAD * 2 + COLS * CELL + (COLS - 1) * GAP, H = PAD * 2 + ROWS * CELL + (ROWS - 1) * GAP;
     var flip = !!opts.flip;
     var names = opts.names || [t('game.player1'), t('game.player2')];
     var state = {
       mode: 'move',          // 'move' | 'wall'
       actor: null,           // player index allowed to act, or null when the board is read-only
-      cursor: [8, 4],        // keyboard cursor for squares
-      wallCursor: { o: 'h', r: 3, c: 3 },
+      cursor: game.pawns[0].slice(), // keyboard cursor for squares
+      wallCursor: { o: 'h', r: (ROWS >> 1) - 1, c: (COLS >> 1) - 1 },
       sel: null,             // selected wall {o,r,c}
       hover: null,           // hovered wall (mouse)
       keyboard: false,       // show the keyboard cursor
@@ -50,21 +54,26 @@
     };
 
     var svg = el('svg', {
-      'class': 'board', viewBox: '0 0 ' + SIZE + ' ' + SIZE, role: 'application',
+      'class': 'board', viewBox: '0 0 ' + W + ' ' + H, role: 'application',
       tabindex: '0', 'aria-roledescription': t('board.title'), focusable: 'true'
     });
+    svg.style.aspectRatio = W + ' / ' + H;
     var title = el('title', {}, svg); title.textContent = t('board.title');
     var desc = el('desc', {}, svg);
     var world = el('g', {}, svg);
-    if (flip) world.setAttribute('transform', 'rotate(180 ' + SIZE / 2 + ' ' + SIZE / 2 + ')');
-    el('rect', { width: SIZE, height: SIZE, rx: 28, fill: '#0b1220' }, world);
+    if (flip) world.setAttribute('transform', 'rotate(180 ' + W / 2 + ' ' + H / 2 + ')');
+    el('rect', { width: W, height: H, rx: 28, fill: '#0b1220' }, world);
 
-    var cellEls = [];
-    for (var r = 0; r < 9; r++) {
-      for (var c = 0; c < 9; c++) {
+    // A row is tinted in the colour of the player who wins by reaching it, or in one shared colour when both do.
+    function goalTint(r) {
+      var mine = [0, 1].filter(function (p) { return game.goals[p] === r; });
+      return mine.length === 2 ? SHARED_GOAL : mine.length === 1 ? PAWN_COLORS[mine[0]] : null;
+    }
+    for (var r = 0; r < ROWS; r++) {
+      var tint = goalTint(r);
+      for (var c = 0; c < COLS; c++) {
         el('rect', { x: cellPos(c), y: cellPos(r), width: CELL, height: CELL, rx: 9, fill: '#111c30', stroke: '#26364f', 'stroke-width': 2 }, world);
-        if (r === 0) el('rect', { x: cellPos(c), y: cellPos(r), width: CELL, height: CELL, rx: 9, fill: '#42d9f5', 'fill-opacity': 0.13 }, world);
-        if (r === 8) el('rect', { x: cellPos(c), y: cellPos(r), width: CELL, height: CELL, rx: 9, fill: '#ff9f43', 'fill-opacity': 0.13 }, world);
+        if (tint) el('rect', { x: cellPos(c), y: cellPos(r), width: CELL, height: CELL, rx: 9, fill: tint, 'fill-opacity': 0.13 }, world);
       }
     }
     var gHints = el('g', {}, world), gWalls = el('g', {}, world), gPreview = el('g', {}, world),
@@ -73,7 +82,7 @@
     // Pointer events always land on this one stable layer. The pieces above are redrawn often (on
     // focus, on hover), and a click is lost if the element under the pointer is replaced between
     // mouse-down and mouse-up.
-    el('rect', { width: SIZE, height: SIZE, fill: 'transparent', 'pointer-events': 'all' }, svg);
+    el('rect', { width: W, height: H, fill: 'transparent', 'pointer-events': 'all' }, svg);
     container.appendChild(svg);
 
     // ---- geometry helpers -----------------------------------------------------------
@@ -91,16 +100,16 @@
 
     function toBoard(clientX, clientY) {
       var b = svg.getBoundingClientRect();
-      var x = (clientX - b.left) / b.width * SIZE, y = (clientY - b.top) / b.height * SIZE;
-      return flip ? { x: SIZE - x, y: SIZE - y } : { x: x, y: y };
+      var x = (clientX - b.left) / b.width * W, y = (clientY - b.top) / b.height * H;
+      return flip ? { x: W - x, y: H - y } : { x: x, y: y };
     }
     function cellAt(p) {
       var c = Math.floor((p.x - PAD + GAP / 2) / PITCH), r = Math.floor((p.y - PAD + GAP / 2) / PITCH);
-      return r >= 0 && r < 9 && c >= 0 && c < 9 ? [r, c] : null;
+      return r >= 0 && r < ROWS && c >= 0 && c < COLS ? [r, c] : null;
     }
     function slotAt(p) {
-      var c = Math.max(0, Math.min(7, Math.round((p.x - anchorPos(0)) / PITCH)));
-      var r = Math.max(0, Math.min(7, Math.round((p.y - anchorPos(0)) / PITCH)));
+      var c = Math.max(0, Math.min(COLS - 2, Math.round((p.x - anchorPos(0)) / PITCH)));
+      var r = Math.max(0, Math.min(ROWS - 2, Math.round((p.y - anchorPos(0)) / PITCH)));
       var dx = p.x - anchorPos(c), dy = p.y - anchorPos(r);
       return { o: Math.abs(dx) > Math.abs(dy) ? 'h' : 'v', r: r, c: c };
     }
@@ -219,11 +228,11 @@
     function describe(withWallList) {
       var list = game.toJSON().walls, walls = list.length;
       var parts = [
-        t('board.pawnOn', { name: names[0], square: Q.squareName(game.pawns[0][0], game.pawns[0][1]), n: game.wallsLeft[0] }),
-        t('board.pawnOn', { name: names[1], square: Q.squareName(game.pawns[1][0], game.pawns[1][1]), n: game.wallsLeft[1] })
+        t('board.pawnOn', { name: names[0], square: game.squareName(game.pawns[0][0], game.pawns[0][1]), n: game.wallsLeft[0] }),
+        t('board.pawnOn', { name: names[1], square: game.squareName(game.pawns[1][0], game.pawns[1][1]), n: game.wallsLeft[1] })
       ];
       parts.push(walls === 1 ? t('board.wallPlaced') : t('board.wallsPlaced', { n: walls }));
-      if (withWallList && walls) parts.push(t('board.wallList', { list: list.map(function (x) { return Q.wallName(x[0], x[1], x[2]); }).join(', ') }));
+      if (withWallList && walls) parts.push(t('board.wallList', { list: list.map(function (x) { return game.wallName(x[0], x[1], x[2]); }).join(', ') }));
       return parts.join(' ');
     }
 
@@ -232,7 +241,7 @@
     function say(text) { if (opts.onAnnounce) opts.onAnnounce(text); }
     // What is said when the wall cursor lands on a groove: its name, then whether it is legal or why not.
     function wallCue(w, st) {
-      var name = Q.wallName(w.o, w.r, w.c);
+      var name = game.wallName(w.o, w.r, w.c);
       return st && st.legal ? t('board.wallLegal', { wall: name }) : t('board.wallReason', { wall: name, reason: st ? st.reason : '' });
     }
 
@@ -247,7 +256,7 @@
       if (!canAct()) return;
       var targets = legalTargets(), ok = false;
       for (var i = 0; i < targets.length; i++) if (targets[i][0] === r && targets[i][1] === c) ok = true;
-      if (!ok) { say(t('board.notLegal', { square: Q.squareName(r, c) })); return; }
+      if (!ok) { say(t('board.notLegal', { square: game.squareName(r, c) })); return; }
       opts.onCommit({ type: 'move', r: r, c: c });
     }
 
@@ -271,7 +280,7 @@
         if (lastPointerType === 'mouse' && e.detail !== 0) { commitWall(s); return; }
         state.sel = s; state.wallCursor = s; draw(); notify();
         var st = wallStatus(s);
-        say(st.legal ? t('board.wallSelected', { wall: Q.wallName(s.o, s.r, s.c) }) : st.reason);
+        say(st.legal ? t('board.wallSelected', { wall: game.wallName(s.o, s.r, s.c) }) : st.reason);
       }
     });
     svg.addEventListener('focus', function () {
@@ -293,17 +302,17 @@
         var d = screenDelta(k);
         if (state.mode === 'wall') {
           var wc = state.wallCursor;
-          state.wallCursor = { o: wc.o, r: Math.max(0, Math.min(7, wc.r + d[0])), c: Math.max(0, Math.min(7, wc.c + d[1])) };
+          state.wallCursor = { o: wc.o, r: Math.max(0, Math.min(ROWS - 2, wc.r + d[0])), c: Math.max(0, Math.min(COLS - 2, wc.c + d[1])) };
           state.sel = null;
           var st = wallStatus(state.wallCursor);
           say(wallCue(state.wallCursor, st));
         } else {
-          state.cursor = [Math.max(0, Math.min(8, state.cursor[0] + d[0])), Math.max(0, Math.min(8, state.cursor[1] + d[1]))];
+          state.cursor = [Math.max(0, Math.min(ROWS - 1, state.cursor[0] + d[0])), Math.max(0, Math.min(COLS - 1, state.cursor[1] + d[1]))];
           var targets = legalTargets(), legal = false;
           for (var i = 0; i < targets.length; i++) if (targets[i][0] === state.cursor[0] && targets[i][1] === state.cursor[1]) legal = true;
           var who = game.pawns[0][0] === state.cursor[0] && game.pawns[0][1] === state.cursor[1] ? t('board.pawnSuffix', { name: names[0] })
                   : game.pawns[1][0] === state.cursor[0] && game.pawns[1][1] === state.cursor[1] ? t('board.pawnSuffix', { name: names[1] }) : '';
-          say(t(legal ? 'board.canMoveHere' : 'board.square', { square: Q.squareName(state.cursor[0], state.cursor[1]), pawn: who }));
+          say(t(legal ? 'board.canMoveHere' : 'board.square', { square: game.squareName(state.cursor[0], state.cursor[1]), pawn: who }));
         }
       } else if (k === 'Enter' || k === ' ') {
         state.keyboard = true;
@@ -330,6 +339,7 @@
 
     var api = {
       svg: svg,
+      ratio: W / H, // width over height, for the page layout
       setGame: function (g) { game = g; prev = null; anims = {}; state.sel = null; state.hover = null; draw(); notify(); },
       refresh: function () {
         if (state.sel && !wallStatus(state.sel).legal) state.sel = null;
