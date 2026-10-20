@@ -1,5 +1,5 @@
 /* Play-mode pages: validates the setup form, then starts the game for that mode.
-     local        two players on one device         (engine.js, board.js, game.js)
+     local        two players on one device         (engine.js, board.js, game.js); a variant may offer 2 to 4
      computer     one player against the computer  (+ ai.js, ai-worker.js)
      online       matchmaking, then the room page   (online.js, server)
      create-room / join-room   private rooms        (online.js, server)
@@ -86,20 +86,66 @@
   }
 
   // ---- local and computer ---------------------------------------------------------------
+  // A variant for more than two players has radio buttons named "players"; the name fields past the chosen count are hidden.
+  function playerCount() {
+    var chosen = $('input[name="players"]:checked', form);
+    return chosen ? parseInt(chosen.value, 10) : 2;
+  }
+  function syncPlayerFields() {
+    var count = playerCount();
+    Array.prototype.forEach.call(form.querySelectorAll('[data-player-field]'), function (field) {
+      field.hidden = parseInt(field.getAttribute('data-player-field'), 10) > count;
+    });
+  }
+  Array.prototype.forEach.call(form.querySelectorAll('input[name="players"]'), function (radio) {
+    radio.addEventListener('change', syncPlayerFields);
+  });
+  syncPlayerFields();
+
+  // The settings of a custom game (data-variant="custom"): the board size, walls, borrowed moves and the turn clock.
+  // Returns null, after saying what is wrong, when a setting is not valid.
+  var wallsInput = $('#walls', form), wallsError = $('#walls-error', form);
+  if (wallsInput) wallsInput.addEventListener('input', function () { clearError(wallsInput, wallsError); });
+  function readCustom() {
+    if (!wallsInput) return {};
+    var limits = window.Quoridor.CUSTOM_LIMITS, raw = wallsInput.value.trim();
+    var walls = /^\d{1,2}$/.test(raw) ? parseInt(raw, 10) : NaN;
+    if (!(walls >= limits.minWalls && walls <= limits.maxWalls)) {
+      showError(wallsInput, wallsError, t('play.wallsRule', { min: limits.minWalls, max: limits.maxWalls }));
+      return null;
+    }
+    clearError(wallsInput, wallsError);
+    return {
+      options: { size: parseInt($('#size', form).value, 10), walls: walls, borrow: $('#borrow', form).checked },
+      turnSeconds: parseInt($('#clock', form).value, 10)
+    };
+  }
+
+  var PLAYER_KEYS = ['game.player1', 'game.player2', 'game.player3', 'game.player4'];
+
   function startLocal() {
-    var n1 = $('#name1', form), n2 = $('#name2', form);
-    var names = [(n1 && n1.value.trim().normalize('NFC')) || t('game.player1'), (n2 && n2.value.trim().normalize('NFC')) || t('game.player2')];
-    var nameKeys = [names[0] === t('game.player1') ? 'game.player1' : null, names[1] === t('game.player2') ? 'game.player2' : null];
-    for (var i = 0; i < 2; i++) {
-      var field = i === 0 ? n1 : n2, err = $('#name' + (i + 1) + '-error', form);
-      if (field && field.value.trim().normalize('NFC') && !USERNAME_RE.test(field.value.trim().normalize('NFC'))) {
+    var custom = readCustom();
+    if (!custom) return;
+    var count = playerCount(), names = [], nameKeys = [], typed = [], i;
+    for (i = 0; i < count; i++) {
+      var field = $('#name' + (i + 1), form), err = $('#name' + (i + 1) + '-error', form);
+      var value = field ? field.value.trim().normalize('NFC') : '';
+      if (value && !USERNAME_RE.test(value)) {
         showError(field, err, t('play.nameRuleOptional'));
         return;
       }
       if (err) { err.hidden = true; }
+      typed.push(value);
     }
-    if (names[0].toLowerCase() === names[1].toLowerCase()) { names[1] += ' (2)'; nameKeys[1] = null; }
-    openGame({ mode: 'local', variant: variant, names: names, nameKeys: nameKeys });
+    for (i = 0; i < count; i++) {
+      var key = PLAYER_KEYS[i];
+      names.push(typed[i] || t(key));
+      nameKeys.push(names[i] === t(key) ? key : null);
+      for (var j = 0; j < i; j++) {
+        if (names[j].toLowerCase() === names[i].toLowerCase()) { names[i] += ' (' + (i + 1) + ')'; nameKeys[i] = null; break; }
+      }
+    }
+    openGame({ mode: 'local', variant: variant, players: count, names: names, nameKeys: nameKeys, options: custom.options, turnSeconds: custom.turnSeconds });
   }
 
   var LEVEL_NAMES = { easy: 'play.robotEasy', medium: 'play.robotMedium', hard: 'play.robotHard', expert: 'play.robotExpert' };

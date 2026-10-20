@@ -39,8 +39,12 @@ FOOTER_PLAY = [
     ("/play/online/", "Play Online"),
     ("/play/computer/", "Play vs Computer"),
     ("/play/local/", "Play Locally"),
+]
+FOOTER_VARIANTS = [
     ("/variants/", "Quoridor Variants"),
     ("/variants/wallrush/", "Wallrush"),
+    ("/variants/pointrush/", "Pointrush"),
+    ("/variants/custom/", "Custom Game"),
 ]
 FOOTER_LEARN = [
     ("/how-to-play-quoridor/", "How to Play"),
@@ -157,6 +161,7 @@ def footer_html():
         <p>A simple place to play and learn the Quoridor strategy game in your browser.</p>
       </div>
       {col('Play', FOOTER_PLAY)}
+      {col('Variants', FOOTER_VARIANTS)}
       {col('Learn', FOOTER_LEARN)}
       {col('Site', FOOTER_SITE)}
     </div>

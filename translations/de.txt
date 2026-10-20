@@ -862,6 +862,8 @@ ac4f6c|<strong>Einladungen laufen ab.</strong> Eine Einladung läuft nach 30 Min
 6a66d4|<strong>Wir können bei Missbrauch eingreifen.</strong> Wir können eine Partie beenden, einen Raum oder Anzeigenamen entfernen oder den Zugang zum Online-Spiel für jeden sperren, der gegen diese Bedingungen verstößt oder den Dienst missbraucht, ohne Vorankündigung, wo dies zum Schutz des Dienstes oder anderer Spieler erforderlich ist.
 game.player1|Spieler 1
 game.player2|Spieler 2
+game.player3|Spieler 3
+game.player4|Spieler 4
 game.you|Du
 game.youTag|(du)
 game.disconnectedTag|(getrennt)
@@ -904,6 +906,7 @@ game.resignedSelf|Aufgabe.
 game.leftOpp|Dein Gegner hat die Partie verlassen.
 game.disconnectedSelf|Du warst zu lange getrennt.
 game.reachedEdge|Gegenüberliegende Kante in {n} Zügen erreicht.
+game.reachedCenter|Mitte in {n} Zügen erreicht.
 game.rematchRequested|Rückspiel angefragt
 game.rematchAccept|Rückspiel annehmen
 game.rematchRequest|Rückspiel anfragen
@@ -961,6 +964,7 @@ err.blocks-path|Diese Mauer ließe einer Figur keinen Weg zu ihrem Ziel.
 err.no-walls|Du hast keine Mauern mehr.
 err.out-of-bounds|Diese Mauer liegt außerhalb des Spielbretts.
 play.nameRuleOptional|Verwende 2 bis 20 Zeichen: Buchstaben, Zahlen, Leerzeichen, Punkte, Bindestriche oder Unterstriche, oder lass das Feld leer.
+play.wallsRule|Gib eine ganze Zahl an Wänden von {min} bis {max} ein.
 play.codeRule|Kopplungscodes haben 6 Zeichen (Buchstaben von A bis Z und Ziffern von 2 bis 9). Prüfe den Code und versuche es erneut.
 play.robotEasy|Leichter Roboter
 play.robotMedium|Mittlerer Roboter
@@ -1029,3 +1033,107 @@ d5325f|Quoridor-Strategiediagramm. Eine Reihe indigofarbener Mauern, in der Mitt
 15846d|Quoridor-Strategiediagramm. Dieselbe Stellung mit einer senkrechten, weiß umrandeten Mauer neben der Lücke am linken Rand. Sie sperrt Cyan in einen ein Feld breiten Gang am linken Rand ein.
 60f904|Quoridor-Strategiediagramm. Eine Reihe indigofarbener Mauern mit einer Lücke in der Mitte und einer senkrechten, weiß umrandeten Mauer mitten in dieser Lücke. Eine gestrichelte rote Mauer mit Kreuz markiert die einzige waagerechte Mauer, die die Lücke hätte schließen können. Eine cyanfarbene Figur steht unter der Lücke und eine weiße Ringfigur oben rechts.
 26bd49|Quoridor-Figur von Mauern blockiert. Eine cyanfarbene Figur, von indigofarbenen Barrieren eingeschlossen, die nicht vorwärtskommt.
+87f0a1|Varianten
+e9aacf|Quoridor-Varianten
+9bf84e|Wallrush
+e50dd0|Pointrush
+aa0174|Probiere eine Quoridor-Variante aus
+809cd7|Dieselben Figuren und Mauern, ein neues Rennen. Beginne mit Wallrush, bei dem beide Figuren auf derselben Linie eines höheren Spielbretts starten.
+d3aeae|Varianten entdecken <svg/>
+042dd0|Quoridor-Varianten – Neue Arten, Quoridor zu spielen
+ae34d5|Das klassische Spiel ist nicht die einzige Art, mit Figuren und Mauern zu spielen. Probiere eine Variante aus: dieselben Ideen, ein neues Spielbrett und ein anderes Rennen.
+4b7db1|Wähle eine Variante
+c6eb8a|Ein Rennen auf einem höheren Spielbrett. Beide Figuren starten nebeneinander auf derselben Linie und laufen zur selben Zielkante; mit Mauern bremsen sie einander aus.
+77c03f|Wallrush spielen <svg/>
+eddfe6|Ein Rennen zur Mitte für zwei, drei oder vier Spieler. Jede Figur startet in der Mitte einer Kante eines quadratischen Spielbretts und läuft zum mittleren Feld; mit Mauern halten die Spieler die anderen auf.
+3e1212|Pointrush spielen <svg/>
+79c189|Was ist eine Quoridor-Variante?
+c31ec3|Eine Variante behält den Kern von Quoridor: Du ziehst entweder deine Figur oder setzt eine Mauer, und du darfst nie alle Wege zum Ziel versperren. Anders sind der Aufbau, etwa die Größe des Spielbretts, wo die Figuren starten und wohin sie unterwegs sind.
+fc63b4|Wenn Mauern und Figuren neu für dich sind, beginne mit dem klassischen Spiel. Die Varianten machen mehr Spaß, wenn du weißt, wie eine Mauer einen Weg umlenkt.
+9af05b|Klassisches Quoridor spielen
+996e6d|Mit der Zeit kommen hier weitere Varianten dazu.
+457555|Wallrush – Ein Quoridor-Rennen auf einem hohen Spielbrett
+a3b96d|Spiele Wallrush kostenlos im Browser: eine Quoridor-Variante, bei der beide Figuren auf derselben Linie eines 9×13-Spielbretts starten und zur selben Kante laufen, mit je 10 Mauern.
+37b36b|Eine Quoridor-Variante, bei der beide Figuren auf derselben Linie starten und zur selben Kante laufen.
+3c4e07|Teilt euch den Bildschirm und spielt abwechselnd. Beide Figuren laufen zur hervorgehobenen Reihe am oberen Rand des Spielbretts.
+ce61a3|Beide Figuren starten auf derselben Linie, mit vier Reihen hinter sich.
+c9abc2|Die Figur, die zuerst die oberste Reihe erreicht, gewinnt.
+6904fa|Wallrush-Spielbrett zu Beginn einer Partie: ein hohes Raster, 9 Felder breit und 13 hoch. Zwei Figuren stehen nebeneinander in derselben Reihe, mit vier Reihen hinter sich, und die oberste Reihe ist als Ziel für beide Spieler hervorgehoben.
+a0d8e7|So funktioniert Wallrush
+009660|Wallrush wird auf einem hohen Spielbrett gespielt, 9 Felder breit und 13 hoch. Im klassischen Quoridor starten die Figuren an gegenüberliegenden Kanten und überqueren das Spielbrett aufeinander zu. Hier starten beide Figuren nebeneinander in derselben Reihe, mit vier Reihen Platz hinter sich, und beide laufen zum selben Ziel: der obersten Reihe.
+dbe02a|<strong>Eine Aktion pro Zug.</strong> Ziehe deine Figur ein Feld nach oben, unten, links oder rechts oder setze eine Mauer. Spieler 1 beginnt.
+58325a|<strong>Mauern.</strong> Jeder Spieler hat 10 Mauern. Eine Mauer ist zwei Felder lang. Sie versperrt beiden Figuren den Weg, und Mauern dürfen sich weder überlappen noch kreuzen.
+913fc0|<strong>Einen Weg offen lassen.</strong> Du darfst keine Mauer setzen, die einer der beiden Figuren den Weg zur obersten Reihe abschneidet.
+013dec|<strong>Begegnung mit der anderen Figur.</strong> Steht die andere Figur direkt vor deiner, springst du über sie. Blockiert eine Mauer oder die Kante den Sprung, ziehst du stattdessen seitlich daneben, genau wie im Quoridor.
+586f9f|<strong>Geliehene Züge.</strong> Solange deine Figur direkt neben der anderen Figur steht, ohne Mauer dazwischen, darfst du auch auf jedes Feld ziehen, auf das die andere Figur von ihrem Standort aus ziehen könnte, einschließlich Sprüngen und Seitwärtsschritten.
+f69960|<strong>Gewinnen.</strong> Die Figur, die zuerst irgendein Feld der obersten Reihe erreicht, gewinnt.
+36de14|Jeder Zug hat eine Uhr von 15 Sekunden. Läuft sie ab, zieht das Spiel deine Figur einen Schritt entlang ihres kürzesten Wegs.
+ba26fa|Dinge zum Nachdenken
+7f513f|Da beide Figuren dasselbe Ziel haben, läufst du auf derselben Bahn wie dein Gegner. Eine Mauer, die ihn bremst, kann auch dich bremsen, wenn sich eure Wege überschneiden – schau dir also beide Wege an, bevor du eine setzt. Der Platz hinter der Startlinie gehört dir: Seitlich auf eine freie Spalte auszuweichen kann besser sein, als geradewegs gegen eine Mauer zu laufen.
+0f22ff|Alle Regeln zu Mauern, Sprüngen und Seitwärtsschritten findest du in den Quoridor-Regeln. Wallrush verwendet sie, dazu die geliehenen Züge von oben.
+54eb20|Alle Varianten
+24b78a|Pointrush – Ein Quoridor-Rennen zur Mitte für 2 bis 4 Spieler
+dd39c3|Spiele Pointrush kostenlos im Browser: eine Quoridor-Variante für 2 bis 4 Spieler auf einem 11×11-Spielbrett, bei der jede Figur zum mittleren Feld läuft.
+933ab8|Eine Quoridor-Variante für zwei, drei oder vier Spieler, bei der jede Figur zum selben Feld in der Mitte läuft.
+787a3f|Zwei bis vier Spieler, ein Gerät
+b4ca34|Teilt euch den Bildschirm und spielt abwechselnd. Jede Figur läuft zum hervorgehobenen Feld in der Mitte des Spielbretts.
+90ac30|Die Figuren starten in der Mitte der Kanten, fünf Felder vom Zentrum entfernt.
+3d1055|Jeder Spieler hat 12, 8 oder 6 Mauern, bei zwei, drei oder vier Spielern.
+a281dd|Die Figur, die zuerst das mittlere Feld erreicht, gewinnt.
+0f70a6|Anzahl der Spieler
+6b6b68|2 Spieler
+2e459d|3 Spieler
+27eb08|4 Spieler
+b751cd|Name von Spieler 3 (optional)
+c536ea|Name von Spieler 4 (optional)
+4d2b28|Pointrush-Spielbrett zu Beginn einer Partie: ein quadratisches Raster mit 11 Feldern Seitenlänge. Vier Figuren in Cyan, Orange, Violett und Grün stehen in der Mitte der vier Kanten, und das Feld in der Mitte des Spielbretts ist als Ziel für alle Spieler hervorgehoben.
+9af2d1|So funktioniert Pointrush
+98a00e|Pointrush wird auf einem quadratischen Spielbrett mit 11 Feldern Seitenlänge gespielt, in dessen Mitte ein besonderes Feld liegt. Im klassischen Quoridor überquert jede Figur das Spielbrett bis zur gegenüberliegenden Kante. Hier startet jede Figur in der Mitte einer Kante, fünf Felder vom Zentrum entfernt, und alle laufen zum selben Ziel: dem mittleren Feld. Zwei, drei oder vier Spieler können mitspielen.
+6a4ed0|<strong>Eine Aktion pro Zug.</strong> Ziehe deine Figur ein Feld nach oben, unten, links oder rechts oder setze eine Mauer. Spieler 1 beginnt, danach sind die Spieler der Reihe nach ab Spieler 2 dran.
+84fd47|<strong>Startkanten.</strong> Spieler 1 startet an der unteren Kante. In einer Partie mit zwei Spielern startet Spieler 2 an der oberen Kante. Bei drei oder vier Spielern startet Spieler 2 an der linken Kante, Spieler 3 an der oberen Kante und Spieler 4 an der rechten Kante.
+810155|<strong>Mauern.</strong> Jeder Spieler hat 12 Mauern in einer Partie mit zwei Spielern, 8 bei drei Spielern und 6 bei vier Spielern. Eine Mauer ist zwei Felder lang. Sie versperrt allen Figuren den Weg, und Mauern dürfen sich weder überlappen noch kreuzen.
+d64bef|<strong>Einen Weg offen lassen.</strong> Du darfst keine Mauer setzen, die irgendeiner Figur den Weg zum mittleren Feld abschneidet.
+463323|<strong>Begegnung mit anderen Figuren.</strong> Steht eine andere Figur direkt vor deiner, springst du über sie. Blockiert eine Mauer, die Kante oder eine dritte Figur den Sprung, ziehst du stattdessen seitlich daneben, wie im Quoridor. Du darfst nie auf einem besetzten Feld landen.
+a2da36|<strong>Gewinnen.</strong> Die Figur, die zuerst das mittlere Feld betritt, gewinnt.
+96c52f|Alle Wege enden auf demselben Feld, die Bahnen kreuzen sich also in der Mitte und die Figuren drängen sich auf den letzten Feldern. Eine Mauer nahe der Mitte bremst alle, nicht nur den Spieler, auf den du gezielt hast, und bei drei oder vier Spielern kann eine Mauer, die einen Rivalen aufhält, einem anderen helfen. Behalte im Blick, wer am nächsten dran ist, und spare deine Mauern für den Moment, in dem der Führende gleich ankommt.
+0529dd|Alle Regeln zu Mauern, Sprüngen und Seitwärtsschritten findest du in den Quoridor-Regeln. Pointrush verwendet sie, mit dem mittleren Feld als einzigem Ziel.
+e6b00a|Eigenes Spiel
+e0547d|Klassisches Quoridor, nach deinen Wünschen eingestellt. Wähle die Größe des Spielbretts, wie viele Mauern jeder Spieler bekommt, geliehene Züge und die Dauer eines Zugs, und spiele dann mit einem Freund am selben Gerät.
+b251a1|Eigenes Spiel einrichten <svg/>
+cf6622|Eigenes Quoridor – Wähle Spielbrettgröße, Mauern und Regeln
+d72e97|Spiele eigenes Quoridor kostenlos in deinem Browser mit einem Freund am selben Gerät. Wähle die Größe des Spielbretts, wie viele Mauern jeder Spieler bekommt, geliehene Züge und die Zeit pro Zug.
+ecd22e|Klassisches Quoridor mit Regeln nach deiner Wahl: Spielbrettgröße, Mauern, geliehene Züge und Uhr.
+e92343|Richte dein Spiel ein
+e15160|Wähle die Regeln, teile dann den Bildschirm mit einem Freund und spielt abwechselnd. Die Voreinstellungen entsprechen dem klassischen Quoridor.
+348a57|Größe des Spielbretts
+b68393|5 × 5 Felder
+336697|7 × 7 Felder
+978e39|9 × 9 Felder (klassisch)
+8c62dd|11 × 11 Felder
+a2c74e|13 × 13 Felder
+dadb5d|Die Figuren starten in der Mitte gegenüberliegender Ränder. Ein größeres Spielbrett macht das Rennen länger.
+3130ef|Mauern pro Spieler
+56a561|Von 0 bis 30. Im klassischen Quoridor bekommt jeder Spieler 10.
+395f50|Zeit pro Zug
+d26be3|Kein Zeitlimit
+a1f99f|15 Sekunden pro Zug
+0e30c6|30 Sekunden pro Zug
+3cb8d1|1 Minute pro Zug
+ebd40d|2 Minuten pro Zug
+7a3a3e|Läuft die Zeit ab, zieht das Spiel die Figur einen Schritt entlang ihres kürzesten Wegs.
+5c6b8a|Geliehene Züge
+a74abc|(an)
+9a4248|Neben der anderen Figur darfst du auch dorthin ziehen, wohin sie ziehen könnte.
+e3488a|Eigenes Quoridor: Vorschau des Spielbretts mit zwei Figuren, hier in der klassischen Größe 9 mal 9.
+400cd6|So funktioniert ein eigenes Spiel
+aaf5d8|Ein eigenes Spiel wird wie klassisches Quoridor gespielt: Zwei Figuren starten in der Mitte gegenüberliegender Ränder, und wer zuerst den gegenüberliegenden Rand erreicht, gewinnt. Bevor ihr beginnt, legen du und dein Freund fest, wie das Spiel eingerichtet wird. Spieler 1 zieht zuerst.
+c895ba|<strong>Größe des Spielbretts.</strong> Spiele auf einem Spielbrett mit 5 × 5, 7 × 7, 9 × 9, 11 × 11 oder 13 × 13 Feldern. Ein kleines Spielbrett ist ein schnelles Scharmützel. Ein großes lässt Platz für lange Umwege.
+4034cf|<strong>Mauern pro Spieler.</strong> Gib jedem Spieler zwischen 0 und 30 Mauern. Ohne Mauern ist das Spiel ein reines Rennen. Mit vielen wird es ein Labyrinth-Kampf. Eine Mauer ist zwei Felder lang, und Mauern dürfen sich weder überlappen noch kreuzen.
+90373e|<strong>Halte einen Weg offen.</strong> Egal wie das Spiel eingerichtet ist, du darfst keine Mauer setzen, die einer Figur keinen Weg zu ihrem Ziel mehr lässt.
+d43ac9|<strong>Geliehene Züge.</strong> Wenn du das einschaltest, darf eine Figur, die direkt neben der anderen Figur steht, ohne Mauer dazwischen, auch auf jedes Feld ziehen, auf das die andere Figur von ihrem Standort aus ziehen könnte.
+c8018f|<strong>Zeit pro Zug.</strong> Spiele ohne Uhr oder wähle 15 Sekunden, 30 Sekunden, 1 Minute oder 2 Minuten. Läuft die Uhr ab, zieht das Spiel deine Figur einen Schritt entlang ihres kürzesten Wegs.
+778aaf|Ideen zum Ausprobieren
+e3327f|Probiere ein Spielbrett mit 5 × 5 Feldern und je 3 Mauern für ein Spiel, das in Minuten vorbei ist, oder ein Spielbrett mit 13 × 13 Feldern und je 20 Mauern für eine lange Schlacht der Umwege. Beide Spieler bekommen immer gleich viele Mauern. Wenn ihr noch einmal spielt, bleiben eure Einstellungen erhalten.
+4bc4b3|Dieses Spiel wird an einem Gerät gespielt. Für ein Spiel mit einem Freund an einem anderen Gerät nutze einen privaten Raum, in dem die klassischen Regeln gelten.
+459fae|Privaten Raum erstellen
+00a9e8|Quoridor-Varianten, die du kostenlos in deinem Browser spielen kannst. Probiere Wallrush, Pointrush oder ein eigenes Spiel mit Regeln deiner Wahl.

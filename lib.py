@@ -100,6 +100,7 @@ _ICONS = {
     "login": '<path d="m10 17 5-5-5-5"/><path d="M15 12H3"/><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>',
     "play": '<path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z"/>',
     "plus": '<path d="M5 12h14"/><path d="M12 5v14"/>',
+    "sliders": '<line x1="21" x2="14" y1="4" y2="4"/><line x1="10" x2="3" y1="4" y2="4"/><line x1="21" x2="12" y1="12" y2="12"/><line x1="8" x2="3" y1="12" y2="12"/><line x1="21" x2="16" y1="20" y2="20"/><line x1="12" x2="3" y1="20" y2="20"/><line x1="14" x2="14" y1="2" y2="6"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="16" x2="16" y1="18" y2="22"/>',
 }
 
 
@@ -137,13 +138,15 @@ _PITCH = _CELL + _GAP
 CLASSIC_GOALS = ((0, "#42D9F5", 0.13), (8, "#FFFFFF", 0.08))
 
 
-def board_svg(walls=(), pawns=(), label: str = "", goal_tint: bool = True, marks=(), bad_walls=(), new_walls=(), rows=9, cols=9, goals=CLASSIC_GOALS) -> str:
+def board_svg(walls=(), pawns=(), label: str = "", goal_tint: bool = True, marks=(), bad_walls=(), new_walls=(), rows=9, cols=9, goals=CLASSIC_GOALS, goal_cells=()) -> str:
     """Minimalist board, 9x9 unless rows / cols say otherwise (goals: the tinted goal rows, see CLASSIC_GOALS). walls: ("h", r, c) lies below row r across cols c..c+1;
     ("v", r, c) lies right of col c across rows r..r+1. pawns: (row, col, "p1"|"p2").
     P1 is a filled circle, P2 a ring, so the two are never told apart by color alone.
     marks: (row, col, text) squares a pawn can reach, drawn dashed with a letter or number.
     bad_walls: walls in the same format as walls, drawn dashed with a cross to show an illegal placement.
-    new_walls: walls in the same format as walls, drawn with a bright outline to show the wall just placed."""
+    new_walls: walls in the same format as walls, drawn with a bright outline to show the wall just placed.
+    A pawn's last item may also be a "#rrggbb" colour: it is then drawn as a filled circle in that colour (boards for more than two players).
+    goal_cells: (row, col, colour) single goal squares, tinted and ringed."""
     width = _PAD * 2 + cols * _CELL + (cols - 1) * _GAP
     height = _PAD * 2 + rows * _CELL + (rows - 1) * _GAP
     out = [
@@ -159,6 +162,10 @@ def board_svg(walls=(), pawns=(), label: str = "", goal_tint: bool = True, marks
             for goal_row, fill, opacity in (goals if goal_tint else ()):
                 if r == goal_row:
                     out.append(f'<rect x="{x}" y="{y}" width="{_CELL}" height="{_CELL}" rx="10" fill="{fill}" fill-opacity="{opacity}"/>')
+    for r, c, fill in goal_cells:
+        x, y = _PAD + c * _PITCH, _PAD + r * _PITCH
+        out.append(f'<rect x="{x}" y="{y}" width="{_CELL}" height="{_CELL}" rx="10" fill="{fill}" fill-opacity="0.28"/>')
+        out.append(f'<circle cx="{x + _CELL / 2}" cy="{y + _CELL / 2}" r="26" fill="none" stroke="{fill}" stroke-opacity="0.8" stroke-width="5"/>')
     for r, c, text in marks:
         x, y = _PAD + c * _PITCH, _PAD + r * _PITCH
         out.append(f'<rect x="{x}" y="{y}" width="{_CELL}" height="{_CELL}" rx="10" fill="#42D9F5" fill-opacity="0.22" stroke="#42D9F5" stroke-width="4" stroke-dasharray="10 7"/>')
@@ -181,6 +188,8 @@ def board_svg(walls=(), pawns=(), label: str = "", goal_tint: bool = True, marks
         cx, cy = _PAD + c * _PITCH + _CELL / 2, _PAD + r * _PITCH + _CELL / 2
         if who == "p1":
             out.append(f'<circle cx="{cx}" cy="{cy}" r="27" fill="#42D9F5"/>')
+        elif who.startswith("#"):
+            out.append(f'<circle cx="{cx}" cy="{cy}" r="27" fill="{who}"/>')
         else:
             out.append(f'<circle cx="{cx}" cy="{cy}" r="24" fill="#0B1220" stroke="#FFFFFF" stroke-width="9"/>')
     out.append("</svg>")

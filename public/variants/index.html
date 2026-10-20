@@ -6,7 +6,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title data-i18n-attr="text:042dd0">Quoridor Variants – New Ways to Play Quoridor</title>
-<meta name="description" content="Quoridor variants you can play free in your browser. Try Wallrush, a race on a tall board where both pawns start on the same line." data-i18n-attr="content:89cdb1">
+<meta name="description" content="Quoridor variants you can play free in your browser. Try Wallrush, Pointrush or a Custom Game with rules you choose." data-i18n-attr="content:00a9e8">
 <meta name="robots" content="index, follow">
 <meta name="theme-color" content="#0B1220">
 <meta name="color-scheme" content="dark">
@@ -19,7 +19,7 @@
 <meta property="og:site_name" content="Quoridor Online">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Quoridor Variants – New Ways to Play Quoridor" data-i18n-attr="content:042dd0">
-<meta property="og:description" content="Quoridor variants you can play free in your browser. Try Wallrush, a race on a tall board where both pawns start on the same line." data-i18n-attr="content:89cdb1">
+<meta property="og:description" content="Quoridor variants you can play free in your browser. Try Wallrush, Pointrush or a Custom Game with rules you choose." data-i18n-attr="content:00a9e8">
 <meta name="twitter:card" content="summary_large_image">
 <meta property="og:url" content="https://quoridor.online/variants">
 <meta property="og:image" content="https://quoridor.online/assets/img/og-image.svg">
@@ -32,6 +32,8 @@
 --color-accent: #42d9f5;
 --color-accent-2: #5267f2;
 --color-player-2: #ff9f43;
+--color-player-3: #c084fc;
+--color-player-4: #a3e635;
 --color-border: #26364f;
 --color-danger: #ff8a96;
 --color-success: #5eead4;
@@ -461,6 +463,9 @@ font: inherit;
 .field-error[hidden] { display: none; }
 .fieldset { border: 0; padding: 0; margin: 0 0 var(--space-4); min-width: 0; }
 .choice-group { display: grid; gap: var(--space-3); }
+.choice-group--row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.choice-group--row .choice-body { grid-template-columns: 1fr; padding: var(--space-3); text-align: center; }
+.choice-group--row .choice-body .check { display: none; }
 .choice { position: relative; }
 .choice input { position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; z-index: 1; }
 .choice-body {
@@ -538,6 +543,8 @@ background: var(--color-surface); border: 2px solid var(--control-border); borde
 .pawn-glyph { flex: none; width: 24px; height: 24px; border-radius: 50%; }
 .pawn-glyph--0 { background: var(--color-accent); }
 .pawn-glyph--1 { background: var(--color-player-2); }
+.pawn-glyph--2 { background: var(--color-player-3); }
+.pawn-glyph--3 { background: var(--color-player-4); }
 .player-text { flex: 1 1 5em; min-width: 0; overflow-wrap: anywhere; font-weight: 600; }
 .player-tag { color: var(--color-text-muted); font-weight: 400; }
 .player-walls { flex: 1 0 100%; font-size: 0.875rem; color: var(--color-text-muted); }
@@ -596,7 +603,7 @@ background: var(--color-surface); border: 2px solid var(--control-border); borde
 .notfound .notfound-link span { font-size: 0.9375rem; }
 .site-footer { margin-top: auto; background: var(--color-surface); border-top: 1px solid var(--color-border); padding-block: var(--space-7) var(--space-5); }
 .footer-grid { display: grid; gap: var(--space-6); grid-template-columns: minmax(0, 1fr); }
-@media (min-width: 768px) { .footer-grid { grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 768px) { .footer-grid { grid-template-columns: minmax(0, 1.4fr) repeat(4, minmax(0, 1fr)); } }
 .site-footer h2 { font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-text-muted); margin-bottom: var(--space-3); }
 .site-footer ul { list-style: none; padding: 0; margin: 0; }
 .site-footer li { margin: 0; }
@@ -649,7 +656,7 @@ setTimeout(function () { root.classList.remove('i18n-pending'); }, 3000);
 }
 })();</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://quoridor.online"}, {"@type": "ListItem", "position": 2, "name": "Variants", "item": "https://quoridor.online/variants"}]}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "Quoridor Variants – New Ways to Play Quoridor", "url": "https://quoridor.online/variants", "description": "Quoridor variants you can play free in your browser. Try Wallrush, a race on a tall board where both pawns start on the same line."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "Quoridor Variants – New Ways to Play Quoridor", "url": "https://quoridor.online/variants", "description": "Quoridor variants you can play free in your browser. Try Wallrush, Pointrush or a Custom Game with rules you choose."}</script>
 </head>
 <body>
 <a class="skip-link" href="#main" data-i18n="20f159">Skip to main content</a>
@@ -683,6 +690,22 @@ setTimeout(function () { root.classList.remove('i18n-pending'); }, 3000);
     </div>
     <a class="btn btn--primary" href="./variants/wallrush" data-i18n="77c03f">Play Wallrush <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
   </article>
+  <article class="card mode-card mode-card--variant">
+    <span class="icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span>
+    <div class="mode-body">
+      <h3 data-i18n="e50dd0">Pointrush</h3>
+      <p data-i18n="eddfe6">A race to the center for two, three or four players. Every pawn starts in the middle of an edge of a square board and sprints for the central square, placing walls to hold the others back.</p>
+    </div>
+    <a class="btn btn--primary" href="./variants/pointrush" data-i18n="3e1212">Play Pointrush <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+  </article>
+  <article class="card mode-card mode-card--variant">
+    <span class="icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><line x1="21" x2="14" y1="4" y2="4"/><line x1="10" x2="3" y1="4" y2="4"/><line x1="21" x2="12" y1="12" y2="12"/><line x1="8" x2="3" y1="12" y2="12"/><line x1="21" x2="16" y1="20" y2="20"/><line x1="12" x2="3" y1="20" y2="20"/><line x1="14" x2="14" y1="2" y2="6"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="16" x2="16" y1="18" y2="22"/></svg></span>
+    <div class="mode-body">
+      <h3 data-i18n="e6b00a">Custom Game</h3>
+      <p data-i18n="e0547d">Classic Quoridor, set up your way. Pick the board size, how many walls each player gets, whether to borrow moves and how long a turn lasts, then play a friend on the same device.</p>
+    </div>
+    <a class="btn btn--primary" href="./variants/custom" data-i18n="b251a1">Set Up a Custom Game <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+  </article>
   </div>
 </div></section>
 <section class="section" aria-labelledby="variants-why-h"><div class="container prose">
@@ -705,7 +728,8 @@ setTimeout(function () { root.classList.remove('i18n-pending'); }, 3000);
         <a class="brand" href="./" aria-label="Quoridor Online home" data-i18n-attr="aria-label:e416b9"><img src="./assets/img/logo-mark.png" alt="Quoridor Online logo" width="32" height="32" data-i18n-attr="alt:334588"><span data-i18n-skip>Quoridor <span class="tld">Online</span></span></a>
         <p data-i18n="1b196f">A simple place to play and learn the Quoridor strategy game in your browser.</p>
       </div>
-      <div><h2 data-i18n="70c9aa">Play</h2><ul><li><a href="./play" data-i18n="40af30">Play Quoridor</a></li><li><a href="./play/online" data-i18n="e531b2">Play Online</a></li><li><a href="./play/computer" data-i18n="ade3a8">Play vs Computer</a></li><li><a href="./play/local" data-i18n="dcf544">Play Locally</a></li><li><a href="./variants" data-i18n="e9aacf">Quoridor Variants</a></li><li><a href="./variants/wallrush" data-i18n="9bf84e">Wallrush</a></li></ul></div>
+      <div><h2 data-i18n="70c9aa">Play</h2><ul><li><a href="./play" data-i18n="40af30">Play Quoridor</a></li><li><a href="./play/online" data-i18n="e531b2">Play Online</a></li><li><a href="./play/computer" data-i18n="ade3a8">Play vs Computer</a></li><li><a href="./play/local" data-i18n="dcf544">Play Locally</a></li></ul></div>
+      <div><h2 data-i18n="87f0a1">Variants</h2><ul><li><a href="./variants" data-i18n="e9aacf">Quoridor Variants</a></li><li><a href="./variants/wallrush" data-i18n="9bf84e">Wallrush</a></li><li><a href="./variants/pointrush" data-i18n="e50dd0">Pointrush</a></li><li><a href="./variants/custom" data-i18n="e6b00a">Custom Game</a></li></ul></div>
       <div><h2 data-i18n="e138be">Learn</h2><ul><li><a href="./how-to-play-quoridor" data-i18n="f66e3b">How to Play</a></li><li><a href="./quoridor-rules" data-i18n="a57a64">Quoridor Rules</a></li><li><a href="./quoridor-strategy" data-i18n="4994f9">Quoridor Strategy</a></li><li><a href="./quoridor-board-game" data-i18n="bcaa86">Board Game Guide</a></li></ul></div>
       <div><h2 data-i18n="3658f9">Site</h2><ul><li><a href="./about" data-i18n="1a3c0a">About Us</a></li><li><a href="./contact" data-i18n="5250a4">Contact Us</a></li><li><a href="./privacy-policy" data-i18n="8dbcdd">Privacy Policy</a></li><li><a href="./terms" data-i18n="0a95a1">Terms of Use</a></li></ul></div>
     </div>

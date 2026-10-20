@@ -1,0 +1,68 @@
+<!doctype html>
+<meta charset="utf-8">
+<pre id="result"></pre>
+<script src="../static/assets/js/engine.js"></script>
+<script>
+  function mv(r, c) { return { type: 'move', r: r, c: c }; }
+  function throws(f) { try { f(); return false; } catch (e) { return true; } }
+  function key(moves) { return moves.map(function (m) { return m.join(','); }).sort().join(';'); }
+  var out = {};
+
+  // setup for every size: pawns in the middle of the bottom and top rows, goals on the opposite rows
+  out.setups = [5, 7, 9, 11, 13].map(function (n) {
+    var g = new Quoridor.Game('custom', 2, { size: n });
+    return [g.rows, g.cols, JSON.stringify(g.pawns), g.goals.join('/'), g.wallsLeft.join(',')].join(' ');
+  });
+  var d = new Quoridor.Game('custom'), c = new Quoridor.Game();
+  out.defaultsMatchClassic = [JSON.stringify(d.pawns) === JSON.stringify(c.pawns), d.goals.join() === c.goals.join(), d.wallsLeft.join() === c.wallsLeft.join(), d.rows === c.rows, d.borrow === c.borrow].join(',');
+
+  // walls and borrowed moves are taken from the options
+  var g = new Quoridor.Game('custom', 2, { size: 7, walls: 3, borrow: true });
+  out.options = [g.wallsLeft.join(','), g.borrow, JSON.stringify(g.options)].join(' ');
+  out.zeroWalls = new Quoridor.Game('custom', 2, { walls: 0 }).wallError('h', 3, 3);
+  out.badOptions = [
+    throws(function () { new Quoridor.Game('custom', 2, { size: 8 }); }),
+    throws(function () { new Quoridor.Game('custom', 2, { size: 3 }); }),
+    throws(function () { new Quoridor.Game('custom', 2, { size: 15 }); }),
+    throws(function () { new Quoridor.Game('custom', 2, { walls: -1 }); }),
+    throws(function () { new Quoridor.Game('custom', 2, { walls: 31 }); }),
+    throws(function () { new Quoridor.Game('custom', 2, { walls: 2.5 }); }),
+    throws(function () { new Quoridor.Game('custom', 2, { walls: '5' }); }),
+    throws(function () { new Quoridor.Game('custom', 3); })
+  ].join(',');
+  out.limits = [Quoridor.CUSTOM_LIMITS.minWalls, Quoridor.CUSTOM_LIMITS.maxWalls, Quoridor.CUSTOM_LIMITS.sizes.join('/')].join(' ');
+
+  // the small board: jumps, wall bounds and a win
+  g = new Quoridor.Game('custom', 2, { size: 5 });
+  g.apply(mv(3, 2)); g.apply(mv(1, 2)); g.apply(mv(2, 2));   // the pawns now stand face to face
+  out.smallJump = key(g.pawnMoves(1));
+  out.wallBounds = [g.wallError('h', 3, 3, 1), g.wallError('h', 4, 0, 1), g.wallError('h', 3, 4, 1)].join(',');
+  g = new Quoridor.Game('custom', 2, { size: 5 });
+  [mv(3, 2), mv(0, 1), mv(2, 2), mv(0, 0), mv(1, 2), mv(0, 1), mv(0, 2)].forEach(function (m) { if (g.apply(m)) throw new Error('refused'); });
+  out.win = [g.winner, g.apply(mv(0, 1)), g.distance(0)].join(' ');
+  out.widestOk = !throws(function () { new Quoridor.Game('custom', 2, { walls: 30, size: 13 }); });
+
+  // borrowed moves only when the option is on
+  function adjacentPair(opts) {
+    var h = new Quoridor.Game('custom', 2, opts);
+    h.pawns[0] = [4, 4]; h.pawns[1] = [3, 4];
+    h._setWall('v', 3, 4, 1);                // right of column 4 across rows 3 and 4: neither pawn can step right
+    return key(h.pawnMoves(0));
+  }
+  out.borrowOff = adjacentPair({ size: 9, borrow: false });
+  out.borrowOn = adjacentPair({ size: 9, borrow: true });
+
+  // the whole setup survives a snapshot, undo and clone
+  g = new Quoridor.Game('custom', 2, { size: 11, walls: 4, borrow: true });
+  g.apply(mv(9, 5)); g.apply({ type: 'wall', o: 'h', r: 4, c: 4 });
+  var snap = JSON.parse(JSON.stringify(g.toJSON()));
+  var back = Quoridor.Game.fromJSON(snap);
+  out.snapshot = [JSON.stringify(back.toJSON()) === JSON.stringify(g.toJSON()), back.rows, back.wallsLeft.join(','), back.borrow, g.clone().rows].join(' ');
+  g.undo();
+  out.undo = [g.wallsLeft.join(','), g.turn, g.rows].join(' ');
+  out.classicHasNoOptions = JSON.stringify(new Quoridor.Game().toJSON()).indexOf('options') < 0;
+
+  // square and wall names reach the 13th file
+  out.names = [Quoridor.squareName(0, 12, 13), Quoridor.squareName(12, 0, 13), Quoridor.wallName('v', 11, 11, 13)].join(',');
+  document.getElementById('result').textContent = JSON.stringify(out);
+</script>

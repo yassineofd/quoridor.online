@@ -31,10 +31,24 @@ snapshots still load.
 | Variant | Page | Board | Start | Goal |
 |---|---|---|---|---|
 | Wallrush | `/variants/wallrush/` | 9 columns x 13 rows, 10 walls each | both pawns on row 8 (columns 2 and 6) | both race to row 0 |
+| Pointrush | `/variants/pointrush/` | 11 x 11, 2 to 4 players; 12, 8 or 6 walls each | middle of each edge (bottom, left, top, right), 5 squares from the centre | all race to the centre square (5,5) |
+| Custom Game | `/variants/custom/` | square, 5 to 13 (odd), 0 to 30 walls each, chosen by the players | middle of the bottom and top rows | opposite row, as in classic |
 
 Variants are played on one device only: the Python engine and the online server know only the classic game, so `tests/test_parity.py`
 covers classic only. To add a variant: add its row to `VARIANTS`, give it a page like `wallrush()` in `pages.py` (a form with
 `data-play-form="local" data-variant="<key>" data-leave="variants"`), and list it in `VARIANT_CARDS` so `/variants/` shows it.
+Custom Game is the one variant that is not a fixed row: `new Quoridor.Game('custom', 2, {size, walls, borrow})` builds its row from
+the options (`customOptions` checks them against `CUSTOM_LIMITS` and throws on anything else). The options are part of a snapshot
+(`toJSON().options`), so `fromJSON`, `clone` and undo keep the setup; classic snapshots have no such key. The turn clock is not a
+rule of the engine: `play.js` reads it from the form and passes `turnSeconds` to the game screen (`0` means no clock).
+Pointrush is the variant for more than two players: `new Quoridor.Game('pointrush', n)` with `n` 2, 3 or 4 (`game.nPlayers`; every other
+variant is two-player and refuses another count). Its row has `starts` for the four seats clockwise from the bottom, a `seats` map saying which
+seats a game of `n` uses (2: bottom and top; 3: bottom, left, top; 4: all), and walls per player by count. Its goal is a single `goalCell`
+instead of goal rows, so `distance()` and the win test look for that square. Turns pass in order (`(turn + 1) % nPlayers`, and
+`moves[i]` belongs to player `i % nPlayers`); no one is ever eliminated. A pawn is never a destination: a jump needs the square behind the
+pawn to be free, otherwise it side-steps, and a side-step square must be free too. A wall must leave a route for every pawn. Snapshots carry
+`players` (missing means 2). The setup form (`players` radio buttons, `data-player-field` name fields) is read by `play.js`; the board draws
+the four player colours (`PAWN_COLORS` in `board.js`) and rings the goal square. There is no computer opponent or online mode for it.
 Screen names for squares and walls use the board's own height (`game.squareName`, `game.wallName`, `game.moveName`).
 
 Coordinates (classic) are rows 0..8 from the top and columns 0..8 from the left. A wall `("h", r, c)` lies below row `r`

@@ -1,0 +1,67 @@
+<!doctype html>
+<meta charset="utf-8">
+<pre id="result"></pre>
+<script src="../static/assets/js/engine.js"></script>
+<script>
+  function key(moves) { return moves.map(function (m) { return m.join(','); }).sort().join(';'); }
+  function turns(g, list) { list.forEach(function (m) { var e = g.apply(m); if (e) throw new Error('refused ' + JSON.stringify(m) + ': ' + e); }); }
+  function mv(r, c) { return { type: 'move', r: r, c: c }; }
+  var out = {};
+
+  // setup for 2, 3 and 4 players
+  [2, 3, 4].forEach(function (n) {
+    var g = new Quoridor.Game('pointrush', n);
+    out['setup' + n] = [g.nPlayers, g.rows, g.cols, JSON.stringify(g.pawns), g.wallsLeft.join(',')].join(' ');
+  });
+  out.defaultPlayers = new Quoridor.Game('pointrush').nPlayers;
+  out.classicPlayers = new Quoridor.Game().nPlayers;
+  function throws(f) { try { f(); return false; } catch (e) { return true; } }
+  out.badCounts = [throws(function () { new Quoridor.Game('pointrush', 5); }), throws(function () { new Quoridor.Game('pointrush', 1); }), throws(function () { new Quoridor.Game('classic', 3); }), throws(function () { new Quoridor.Game('wallrush', 4); })].join(',');
+
+  // turns pass in order and wrap around
+  var g = new Quoridor.Game('pointrush', 3), order = [];
+  turns(g, [mv(9, 5), mv(5, 1), mv(1, 5), mv(8, 5), mv(5, 2)]);
+  out.turnAfter5 = g.turn;
+  out.moveOwners = g.moves.map(function (m, i) { return i % g.nPlayers; }).join('');
+
+  // a pawn next to the others: straight jump, then side-steps when the landing square is taken
+  g = new Quoridor.Game('pointrush', 4);
+  g.pawns[0] = [6, 5]; g.pawns[1] = [5, 4]; g.pawns[2] = [8, 8]; g.pawns[3] = [10, 0];
+  out.plain = key(g.pawnMoves(0));             // the pawn at (5,4) is diagonal, so it is no obstacle
+  g.pawns[1] = [7, 5];
+  out.jump = key(g.pawnMoves(0));              // jump over (7,5) lands on (8,5)
+  g.pawns[2] = [8, 5];
+  out.jumpBlockedByPawn = key(g.pawnMoves(0)); // landing square taken: step beside (7,5) instead
+  g._setWall('h', 6, 4, 1);                    // wall below row 6 across columns 4 and 5: pawn 0 cannot step down at all
+  out.walled = key(g.pawnMoves(0));
+
+  // first to reach the centre wins, from any side
+  g = new Quoridor.Game('pointrush', 4);
+  var seq = [];  // four pawns walk straight in; player 1 is first to arrive
+  [[9, 5], [5, 1], [1, 5], [5, 9], [8, 5], [5, 2], [2, 5], [5, 8], [7, 5], [5, 3], [3, 5], [5, 7], [6, 5], [5, 4], [4, 5], [5, 6], [5, 5]].forEach(function (m) { seq.push(mv(m[0], m[1])); });
+  turns(g, seq);
+  out.winner = g.winner;
+  out.afterWin = g.apply(mv(5, 6));
+  out.winnerDistance = g.distance(0);
+
+  // nobody may be shut in
+  g = new Quoridor.Game('pointrush', 2);
+  g.pawns[0] = [10, 0];
+  g._setWall('h', 9, 0, 1);                    // closes the top of the corner squares (10,0) and (10,1)
+  out.sealed = g.wallError('v', 9, 1, 0);      // closing their right side would shut the pawn in
+  out.openWall = g.wallError('v', 3, 3, 0);
+  g._setWall('h', 9, 0, 0);
+  out.distances = [g.distance(0), g.distance(1)].join(',');
+
+  // snapshots and undo
+  g = new Quoridor.Game('pointrush', 3);
+  turns(g, [mv(9, 5), { type: 'wall', o: 'h', r: 4, c: 4 }, mv(1, 5), mv(8, 5)]);
+  var snap = g.toJSON();
+  var back = Quoridor.Game.fromJSON(JSON.parse(JSON.stringify(snap)));
+  out.snapshot = [snap.players, snap.pawns.length, back.nPlayers, back.turn, JSON.stringify(back.toJSON()) === JSON.stringify(snap)].join(' ');
+  g.undo(); g.undo();
+  out.undo = [g.turn, JSON.stringify(g.pawns), g.wallsLeft.join(',')].join(' ');
+  out.classicSnapshot = Quoridor.Game.fromJSON({ moves: [] }).nPlayers;
+  out.names = [Quoridor.squareName(5, 5, 11), Quoridor.squareName(10, 10, 11), Quoridor.wallName('h', 9, 9, 11)].join(',');
+  document.getElementById('result').textContent = JSON.stringify(out);
+</script>

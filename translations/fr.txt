@@ -862,6 +862,8 @@ ac4f6c|<strong>Les invitations expirent.</strong> Une invitation expire après 3
 6a66d4|<strong>Nous pouvons réagir en cas d'abus.</strong> Nous pouvons mettre fin à une partie, supprimer une salle ou un nom affiché, ou bloquer l'accès au jeu en ligne à toute personne qui enfreint ces conditions ou abuse du service, sans préavis lorsque cela est nécessaire pour protéger le service ou les autres joueurs.
 game.player1|Joueur 1
 game.player2|Joueur 2
+game.player3|Joueur 3
+game.player4|Joueur 4
 game.you|Vous
 game.youTag|(vous)
 game.disconnectedTag|(déconnecté)
@@ -904,6 +906,7 @@ game.resignedSelf|Abandon.
 game.leftOpp|Votre adversaire a quitté la partie.
 game.disconnectedSelf|Vous avez été déconnecté trop longtemps.
 game.reachedEdge|Bord opposé atteint en {n} tours.
+game.reachedCenter|Centre atteint en {n} tours.
 game.rematchRequested|Revanche demandée
 game.rematchAccept|Accepter la revanche
 game.rematchRequest|Demander une revanche
@@ -961,6 +964,7 @@ err.blocks-path|Ce mur laisserait un pion sans chemin vers son objectif.
 err.no-walls|Il ne vous reste plus de murs.
 err.out-of-bounds|Ce mur est hors du plateau.
 play.nameRuleOptional|Utilisez de 2 à 20 caractères : lettres, chiffres, espaces, points, tirets ou tirets bas, ou laissez le champ vide.
+play.wallsRule|Saisissez un nombre entier de murs entre {min} et {max}.
 play.codeRule|Les codes d'association comptent 6 caractères (lettres de A à Z et chiffres de 2 à 9). Vérifiez le code et réessayez.
 play.robotEasy|Robot facile
 play.robotMedium|Robot moyen
@@ -1029,3 +1033,107 @@ d5325f|Schéma de stratégie de Quoridor. Une rangée de murs indigo fermée au 
 15846d|Schéma de stratégie de Quoridor. La même position avec un mur vertical, entouré de blanc, à côté de l'ouverture du bord gauche. Il enferme le cyan dans un couloir d'une case de large le long du bord gauche.
 60f904|Schéma de stratégie de Quoridor. Une rangée de murs indigo avec une ouverture au milieu, et un mur vertical entouré de blanc au beau milieu de cette ouverture. Un mur rouge en pointillés marqué d'une croix indique le seul mur horizontal qui aurait pu fermer l'ouverture. Un pion cyan se trouve sous l'ouverture et un pion blanc en anneau en haut à droite.
 26bd49|Pion de Quoridor bloqué par des murs. Un pion cyan encerclé par des barrières indigo, incapable d'avancer.
+87f0a1|Variantes
+e9aacf|Variantes de Quoridor
+9bf84e|Wallrush
+e50dd0|Pointrush
+aa0174|Essayez une variante de Quoridor
+809cd7|Les mêmes pions et les mêmes murs, une nouvelle façon de courir. Commencez par Wallrush, où les deux pions partent de la même ligne d'un plateau plus haut.
+d3aeae|Découvrir les variantes <svg/>
+042dd0|Variantes de Quoridor – De nouvelles façons de jouer à Quoridor
+ae34d5|Le jeu classique n'est pas la seule façon de jouer avec des pions et des murs. Essayez une variante : les mêmes idées, un nouveau plateau et une course différente.
+4b7db1|Choisissez une variante
+c6eb8a|Une course sur un plateau plus haut. Les deux pions partent côte à côte sur la même ligne et foncent vers le même bord d'arrivée, en posant des murs pour se ralentir l'un l'autre.
+77c03f|Jouer à Wallrush <svg/>
+eddfe6|Une course vers le centre pour deux, trois ou quatre joueurs. Chaque pion part du milieu d'un bord d'un plateau carré et fonce vers la case centrale, en posant des murs pour retenir les autres.
+3e1212|Jouer à Pointrush <svg/>
+79c189|Qu'est-ce qu'une variante de Quoridor ?
+c31ec3|Une variante garde le cœur de Quoridor : à votre tour, vous déplacez votre pion ou vous posez un mur, et vous ne pouvez jamais fermer tous les chemins vers l'arrivée. Ce qui change, c'est la mise en place : la taille du plateau, le point de départ des pions et leur destination.
+fc63b4|Si les murs et les pions sont nouveaux pour vous, commencez par le jeu classique. Les variantes se savourent mieux quand on sait comment un mur détourne un chemin.
+9af05b|Jouer au Quoridor classique
+996e6d|D'autres variantes seront ajoutées ici au fil du temps.
+457555|Wallrush – Une course de Quoridor sur un plateau en hauteur
+a3b96d|Jouez à Wallrush gratuitement dans votre navigateur : une variante de Quoridor où les deux pions partent de la même ligne d'un plateau de 9 sur 13 et courent vers le même bord, avec 10 murs chacun.
+37b36b|Une variante de Quoridor où les deux pions partent de la même ligne et courent vers le même bord.
+3c4e07|Partagez l'écran et jouez chacun votre tour. Les deux pions courent vers la rangée en surbrillance en haut du plateau.
+ce61a3|Les deux pions partent de la même ligne, avec quatre rangées derrière eux.
+c9abc2|Le premier pion à atteindre la rangée du haut gagne.
+6904fa|Plateau de Wallrush au début d'une partie : une grille haute de 9 cases de large sur 13 de haut. Deux pions se tiennent côte à côte sur la même rangée, avec quatre rangées derrière eux, et la rangée du haut est mise en évidence comme arrivée pour les deux joueurs.
+a0d8e7|Comment fonctionne Wallrush
+009660|Wallrush se joue sur un plateau haut, de 9 cases de large sur 13 de haut. Dans le Quoridor classique, les pions partent de bords opposés et traversent le plateau l'un vers l'autre. Ici, les deux pions partent côte à côte sur la même rangée, avec quatre rangées d'espace derrière eux, et courent tous deux vers le même but : la rangée du haut.
+dbe02a|<strong>Une action par tour.</strong> Déplacez votre pion d'une case vers le haut, le bas, la gauche ou la droite, ou posez un mur. Le joueur 1 joue en premier.
+58325a|<strong>Les murs.</strong> Chaque joueur a 10 murs. Un mur mesure deux cases de long. Il bloque le passage pour les deux pions, et les murs ne peuvent ni se chevaucher ni se croiser.
+913fc0|<strong>Gardez un chemin ouvert.</strong> Vous ne pouvez pas poser un mur qui laisse l'un des pions sans route vers la rangée du haut.
+013dec|<strong>Rencontrer l'autre pion.</strong> Si l'autre pion se trouve juste devant le vôtre, sautez par-dessus. Si un mur ou le bord bloque le saut, passez sur l'un de ses côtés, exactement comme au Quoridor.
+586f9f|<strong>Mouvements empruntés.</strong> Tant que votre pion se trouve juste à côté de l'autre pion, sans mur entre eux, vous pouvez aussi aller sur n'importe quelle case que l'autre pion pourrait atteindre depuis sa position, sauts et pas de côté compris.
+f69960|<strong>Gagner.</strong> Le premier pion à atteindre n'importe quelle case de la rangée du haut gagne.
+36de14|Chaque tour est limité à 15 secondes. Si le temps s'écoule, le jeu avance votre pion d'un pas sur son plus court chemin.
+ba26fa|Points à méditer
+7f513f|Comme les deux pions partagent un même but, vous courez dans le même couloir que votre adversaire. Un mur qui le ralentit peut aussi vous ralentir si vos routes se recoupent ; regardez donc les deux routes avant d'en poser un. L'espace derrière la ligne de départ est à vous : se décaler vers une colonne libre peut valoir mieux que de foncer droit dans un mur.
+0f22ff|Pour toutes les règles des murs, des sauts et des pas de côté, lisez les règles du Quoridor. Wallrush les utilise, avec en plus les mouvements empruntés ci-dessus.
+54eb20|Toutes les variantes
+24b78a|Pointrush – Une course de Quoridor vers le centre pour 2 à 4 joueurs
+dd39c3|Jouez à Pointrush gratuitement dans votre navigateur : une variante de Quoridor pour 2 à 4 joueurs sur un plateau de 11 sur 11 où chaque pion court vers la case centrale.
+933ab8|Une variante de Quoridor pour deux, trois ou quatre joueurs où chaque pion court vers la même case au centre.
+787a3f|De deux à quatre joueurs, un appareil
+b4ca34|Partagez l'écran et jouez chacun votre tour. Chaque pion court vers la case en surbrillance au centre du plateau.
+90ac30|Les pions partent du milieu des bords, à cinq cases du centre.
+3d1055|Chaque joueur a 12, 8 ou 6 murs, avec deux, trois ou quatre joueurs.
+a281dd|Le premier pion à atteindre la case centrale gagne.
+0f70a6|Nombre de joueurs
+6b6b68|2 joueurs
+2e459d|3 joueurs
+27eb08|4 joueurs
+b751cd|Nom du joueur 3 (facultatif)
+c536ea|Nom du joueur 4 (facultatif)
+4d2b28|Plateau de Pointrush au début d'une partie : une grille carrée de 11 cases de côté. Quatre pions, cyan, orange, violet et vert, se tiennent au milieu des quatre bords, et la case au centre du plateau est mise en évidence comme arrivée pour tous les joueurs.
+9af2d1|Comment fonctionne Pointrush
+98a00e|Pointrush se joue sur un plateau carré de 11 cases de côté, avec une case spéciale au milieu. Dans le Quoridor classique, chaque pion traverse le plateau jusqu'au bord opposé. Ici, tous les pions partent du milieu d'un bord, à cinq cases du centre, et courent tous vers le même but : la case centrale. Deux, trois ou quatre joueurs peuvent y participer.
+6a4ed0|<strong>Une action par tour.</strong> Déplacez votre pion d'une case vers le haut, le bas, la gauche ou la droite, ou posez un mur. Le joueur 1 joue en premier, puis les tours passent dans l'ordre à partir du joueur 2.
+84fd47|<strong>Bords de départ.</strong> Le joueur 1 part du bord du bas. Dans une partie à deux, le joueur 2 part du bord du haut. À trois ou quatre joueurs, le joueur 2 part du bord gauche, le joueur 3 du bord du haut et le joueur 4 du bord droit.
+810155|<strong>Les murs.</strong> Chaque joueur a 12 murs dans une partie à deux, 8 à trois joueurs et 6 à quatre joueurs. Un mur mesure deux cases de long. Il bloque le passage pour tous les pions, et les murs ne peuvent ni se chevaucher ni se croiser.
+d64bef|<strong>Gardez un chemin ouvert.</strong> Vous ne pouvez pas poser un mur qui laisse un pion sans route vers la case centrale.
+463323|<strong>Rencontrer d'autres pions.</strong> Si un autre pion se trouve juste devant le vôtre, sautez par-dessus. Si un mur, le bord ou un troisième pion bloque le saut, passez sur l'un de ses côtés, comme au Quoridor. Vous ne pouvez jamais atterrir sur une case occupée.
+a2da36|<strong>Gagner.</strong> Le premier pion à poser le pied sur la case centrale gagne.
+96c52f|Toutes les routes finissent sur la même case : les couloirs se croisent au milieu et les pions s'entassent sur les dernières cases. Un mur près du centre ralentit tout le monde, pas seulement le joueur visé, et à trois ou quatre joueurs, un mur qui retient un rival peut en aider un autre. Surveillez qui est le plus proche et gardez vos murs pour le moment où le leader est sur le point d'arriver.
+0529dd|Pour toutes les règles des murs, des sauts et des pas de côté, lisez les règles du Quoridor. Pointrush les utilise, avec la case centrale pour seul but.
+e6b00a|Partie personnalisée
+e0547d|Le Quoridor classique, réglé à votre façon. Choisissez la taille du plateau, le nombre de murs de chaque joueur, les mouvements empruntés et la durée d'un tour, puis jouez avec un ami sur le même appareil.
+b251a1|Créer une partie personnalisée <svg/>
+cf6622|Quoridor personnalisé – Choisissez la taille du plateau, les murs et les règles
+d72e97|Jouez gratuitement à Quoridor personnalisé dans votre navigateur avec un ami sur le même appareil. Choisissez la taille du plateau, le nombre de murs de chaque joueur, les mouvements empruntés et le temps par coup.
+ecd22e|Le Quoridor classique avec les règles que vous choisissez : taille du plateau, murs, mouvements empruntés et chronomètre.
+e92343|Préparez votre partie
+e15160|Choisissez les règles, puis partagez l'écran avec un ami et jouez chacun votre tour. Les réglages par défaut sont ceux du Quoridor classique.
+348a57|Taille du plateau
+b68393|5 × 5 cases
+336697|7 × 7 cases
+978e39|9 × 9 cases (classique)
+8c62dd|11 × 11 cases
+a2c74e|13 × 13 cases
+dadb5d|Les pions partent du milieu de bords opposés. Un plateau plus grand rend la course plus longue.
+3130ef|Murs par joueur
+56a561|De 0 à 30. Au Quoridor classique, chaque joueur en a 10.
+395f50|Temps par coup
+d26be3|Pas de limite de temps
+a1f99f|15 secondes par coup
+0e30c6|30 secondes par coup
+3cb8d1|1 minute par coup
+ebd40d|2 minutes par coup
+7a3a3e|Quand le temps s'écoule, le jeu avance le pion d'un pas sur son plus court chemin.
+5c6b8a|Mouvements empruntés
+a74abc|(activé)
+9a4248|À côté de l'autre pion, vous pouvez aussi aller où il pourrait aller.
+e3488a|Quoridor personnalisé : aperçu du plateau avec deux pions, affiché ici à la taille classique de 9 sur 9.
+400cd6|Comment fonctionne une partie personnalisée
+aaf5d8|Une partie personnalisée se joue comme le Quoridor classique : deux pions partent du milieu de bords opposés, et le premier à atteindre le bord éloigné gagne. Avant de commencer, vous décidez avec votre ami des réglages de la partie. Le joueur 1 commence.
+c895ba|<strong>Taille du plateau.</strong> Jouez sur un plateau de 5 × 5, 7 × 7, 9 × 9, 11 × 11 ou 13 × 13. Un petit plateau offre une escarmouche rapide. Un grand laisse de la place pour de longs détours.
+4034cf|<strong>Murs par joueur.</strong> Donnez à chaque joueur de 0 à 30 murs. Sans mur, la partie est une pure course. Avec beaucoup, elle devient un combat de labyrinthe. Un mur mesure deux cases de long, et les murs ne peuvent ni se chevaucher ni se croiser.
+90373e|<strong>Gardez un chemin ouvert.</strong> Quels que soient les réglages, vous ne pouvez pas poser un mur qui ne laisse à l'un des pions aucun chemin vers son but.
+d43ac9|<strong>Mouvements empruntés.</strong> Si vous activez cette option, un pion juste à côté de l'autre pion, sans mur entre eux, peut aussi aller sur n'importe quelle case que l'autre pion pourrait atteindre depuis sa position.
+c8018f|<strong>Temps par coup.</strong> Jouez sans chronomètre, ou choisissez 15 secondes, 30 secondes, 1 minute ou 2 minutes. Quand le temps s'écoule, le jeu avance votre pion d'un pas sur son plus court chemin.
+778aaf|Idées à essayer
+e3327f|Essayez un plateau de 5 × 5 avec 3 murs chacun pour une partie terminée en quelques minutes, ou un plateau de 13 × 13 avec 20 murs chacun pour une longue bataille de détours. Les deux joueurs ont toujours le même nombre de murs. Quand vous rejouez, vos réglages restent en place.
+4bc4b3|Cette partie se joue sur un seul appareil. Pour jouer avec un ami sur un autre appareil, utilisez une salle privée, qui suit les règles classiques.
+459fae|Créer une salle privée
+00a9e8|Variantes de Quoridor à jouer gratuitement dans votre navigateur. Essayez Wallrush, Pointrush ou une partie personnalisée avec les règles de votre choix.

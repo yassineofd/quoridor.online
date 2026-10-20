@@ -3,7 +3,10 @@
    QuoridorGame.mount(host, cfg) returns a controller.
      cfg.mode     'local' (hot-seat) | 'computer' | 'online'
      cfg.variant  which game to play (a key of Quoridor.VARIANTS); the classic game when left out
-     cfg.names    [name for player 0, name for player 1]
+     cfg.players  how many play (2 unless the variant allows more); cfg.names then has one name per player
+     cfg.options  the setup of a 'custom' game: { size, walls, borrow } (see Quoridor.CUSTOM_LIMITS)
+     cfg.turnSeconds time to move in a local or computer game; 0 = no clock (15 when left out)
+     cfg.names    [name for player 0, name for player 1, ...]
      cfg.nameKeys optional [message key | null, ...]: names made up by the site, which are written again when the language changes
      cfg.seat     which player "you" are (computer / online); null for hot-seat
      cfg.flip     draw the board rotated so that `seat` is at the bottom
@@ -99,9 +102,10 @@
 
   function mount(host, cfg) {
     var mode = cfg.mode;
-    var names = (cfg.names || [t('game.player1'), t('game.player2')]).slice();
     var seat = cfg.seat === undefined ? null : cfg.seat;
-    var game = new Q.Game(cfg.variant);
+    var game = new Q.Game(cfg.variant, cfg.players, cfg.options);
+    var turnSeconds = cfg.turnSeconds === undefined ? TURN_SECONDS : cfg.turnSeconds; // 0: the players take as long as they like
+    var names = (cfg.names || [t('game.player1'), t('game.player2'), t('game.player3'), t('game.player4')].slice(0, game.nPlayers)).slice();
     var meta = { connected: [true, true], forfeitIn: null, rematch: [false, false], reason: null };
     var thinker = mode === 'computer' ? createThinker(cfg.level || 'medium') : null;
     var thinking = false, busy = false, destroyed = false, lastTurn = -1, lastCount = 0;
@@ -114,7 +118,7 @@
     var boardHost = h('div', { 'class': 'game-board' });
     var turn = h('div', { 'class': 'turn-bar', role: 'status', tabindex: '-1' });
     var banner = h('div', { 'class': 'notice game-banner', role: 'status', hidden: '' });
-    var cards = [0, 1].map(function (i) {
+    var cards = game.pawns.map(function (pawn, i) {
       var glyph = h('span', { 'class': 'pawn-glyph pawn-glyph--' + i, 'aria-hidden': 'true' });
       var name = h('span', { 'class': 'player-name' });
       var tag = h('span', { 'class': 'player-tag' });
@@ -172,11 +176,12 @@
 
     function timerRunning() {
       if (game.winner !== null || destroyed) return false;
+      if (mode !== 'online' && !turnSeconds) return false;
       if (mode === 'online') return deadline !== null;
       return mode === 'local' || (game.turn === seat && !thinking);
     }
     function resetTimer(seconds) {
-      deadline = Date.now() + (seconds === undefined ? TURN_SECONDS : seconds) * 1000;
+      deadline = Date.now() + (seconds === undefined ? turnSeconds : seconds) * 1000;
       warned = false;
     }
     function tick() {
@@ -187,7 +192,7 @@
       var left = Math.max(0, deadline - Date.now());
       var secs = Math.ceil(left / 1000);
       timerText.textContent = t('game.timerLeft', { who: sayWho(game.turn), n: secs });
-      timerFill.style.width = Math.min(100, left / (TURN_SECONDS * 10)) + '%';
+      timerFill.style.width = Math.min(100, left / ((mode === 'online' ? TURN_SECONDS : turnSeconds) * 10)) + '%';
       timer.classList.toggle('is-low', secs <= 5);
       if (secs <= 5 && !warned && left > 0 && (mode === 'local' || game.turn === seat)) { warned = true; announce(t('game.secondsLeft', { n: secs })); }
       if (left <= 0 && mode !== 'online') timeUp();
@@ -257,7 +262,7 @@
       // Move log
       while (logList.children.length > game.moves.length) logList.removeChild(logList.lastChild);
       for (var i = logList.children.length; i < game.moves.length; i++) {
-        var m = game.moves[i], who = i % 2; // player 0 always moves first
+        var m = game.moves[i], who = i % game.nPlayers; // player 0 always moves first, then in turn
         logList.appendChild(h('li', { text: t(m.type === 'move' ? 'game.logMoved' : 'game.logWall', { name: names[who], move: game.moveName(m) }) }));
       }
       logList.scrollTop = logList.scrollHeight;
@@ -319,7 +324,7 @@
         : meta.reason === 'disconnect' ? t(youWon ? 'game.leftOpp' : 'game.disconnectedSelf')
         : '';
       var lastMove = game.moves[game.moves.length - 1];
-      var byMove = !why && lastMove && lastMove.type === 'move' ? t('game.reachedEdge', { n: Math.ceil(game.moves.length / 2) }) : '';
+      var byMove = !why && lastMove && lastMove.type === 'move' ? t(game.goalCell ? 'game.reachedCenter' : 'game.reachedEdge', { n: Math.ceil(game.moves.length / game.nPlayers) }) : '';
       resultText.textContent = (why || byMove).trim();
       resultActions.textContent = '';
       if (mode === 'online') {
@@ -448,7 +453,7 @@
         if (game.moves.length < prev) { logList.textContent = ''; }
         if (game.moves.length > prev && prev > 0 || (game.moves.length > 0 && prev === 0 && lastCount === 0)) {
           var mv = game.moves[game.moves.length - 1];
-          announce(describeMove((game.moves.length - 1) % 2, mv));
+          announce(describeMove((game.moves.length - 1) % game.nPlayers, mv));
         }
         busy = false;
         var key = game.moves.length + ':' + game.winner;

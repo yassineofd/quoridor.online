@@ -234,6 +234,108 @@ class UI(unittest.TestCase):
         self.assertIn("placed wall d1h", p.js("document.querySelector('.move-log li').textContent"))
         self.no_errors(p)
 
+    # ---- Pointrush (a variant: 11 x 11, two to four players, everybody races to the center square) ----
+    PR = PAD * 2 + 11 * CELL + 10 * (PITCH - CELL)
+
+    def pr_click(self, p, r, c):
+        left, top, width, height = p.js("(function(){var b=document.querySelector('svg.board').getBoundingClientRect();return [b.left,b.top,b.width,b.height]})()")
+        p.click_at(left + (PAD + c * PITCH + CELL / 2) * width / self.PR, top + (PAD + r * PITCH + CELL / 2) * height / self.PR)
+
+    def test_pointrush_with_four_players_everyone_races_to_the_center(self):
+        p = self.page()
+        p.goto(self.base + "/variants/pointrush/")
+        self.shot(p, "pointrush-page.png")
+        # two players to begin with: only the first two name fields show
+        self.assertEqual(p.js("document.querySelector('#players-2').checked"), True)
+        self.assertEqual(p.js("[1,2,3,4].map(function(n){return document.querySelector('[data-player-field=\"'+n+'\"]').hidden}).join()"), "false,false,true,true")
+        p.js("document.querySelector('#players-4').click()")
+        self.assertEqual(p.js("[1,2,3,4].map(function(n){return document.querySelector('[data-player-field=\"'+n+'\"]').hidden}).join()"), "false,false,false,false")
+        for i, name in enumerate(["Alice", "Bob", "Cara", "Dan"], 1):
+            p.type_text(f"#name{i}", name)
+        p.click("button[type=submit]")
+        p.wait_for("document.querySelector('svg.board')")
+        self.assertEqual(p.js("document.querySelector('svg.board').getAttribute('viewBox')"), f"0 0 {self.PR} {self.PR}")
+        self.assertEqual(p.js("document.querySelectorAll('svg.board rect[fill=\"#111c30\"]').length"), 11 * 11)
+        self.assertEqual(p.js("document.querySelectorAll('.player-card').length"), 4)
+        self.assertEqual(self.walls_left(p), ["Walls: 6"] * 4)
+        self.assertEqual(self.turn(p), "Alice's turn")
+        self.shot(p, "pointrush-start.png")
+        # walk in from the four edges, one square each per round; Alice (first to move) arrives first
+        paths = [[(9, 5), (8, 5), (7, 5), (6, 5), (5, 5)], [(5, 1), (5, 2), (5, 3), (5, 4)], [(1, 5), (2, 5), (3, 5), (4, 5)], [(5, 9), (5, 8), (5, 7), (5, 6)]]
+        order = ["Alice", "Bob", "Cara", "Dan"]
+        self.pr_click(p, 8, 5)         # two squares from Alice's pawn: refused, still her turn
+        self.assertEqual(self.moves(p), 0)
+        for step in range(5):
+            for who in range(4):
+                if step >= len(paths[who]):
+                    continue
+                self.assertIn(order[who], self.turn(p))
+                self.pr_click(p, *paths[who][step])
+        self.assertIn("Alice wins", self.turn(p))
+        self.assertEqual(self.moves(p), 17)
+        self.assertIn("Reached the center in 5 turns.", p.js("document.querySelector('.result').textContent"))
+        self.assertIn("Alice: moved to f6", p.js("document.querySelector('.move-log li:last-child').textContent"))
+        self.shot(p, "pointrush-finish.png")
+        self.no_errors(p)
+
+    def test_pointrush_with_two_players_by_default(self):
+        p = self.page()
+        p.goto(self.base + "/variants/pointrush/")
+        p.click("button[type=submit]")
+        p.wait_for("document.querySelector('svg.board')")
+        self.assertEqual(self.walls_left(p), ["Walls: 12", "Walls: 12"])
+        self.assertEqual(self.turn(p), "Player 1's turn")
+        self.pr_click(p, 9, 5)
+        self.assertEqual(self.turn(p), "Player 2's turn")
+        self.pr_click(p, 1, 5)         # Player 2 started on the top edge
+        self.assertEqual(self.turn(p), "Player 1's turn")
+        self.assertEqual(self.moves(p), 2)
+        self.no_errors(p)
+
+    # ---- Custom Game (a variant: the players choose the board size, the walls, borrowed moves and the clock) ----
+    def set_field(self, p, selector, value):
+        p.js(f"(function(){{var e=document.querySelector({selector!r});e.value={value!r};e.dispatchEvent(new Event('input',{{bubbles:true}}));}})()")
+
+    def test_custom_game_uses_the_chosen_board_walls_and_clock(self):
+        p = self.page()
+        p.goto(self.base + "/variants/custom/")
+        self.shot(p, "custom-page.png")
+        # the form starts out as classic Quoridor
+        self.assertEqual(p.js("[document.querySelector('#size').value, document.querySelector('#walls').value, document.querySelector('#borrow').checked].join()"), "9,10,false")
+        self.set_field(p, "#size", "5")
+        self.set_field(p, "#walls", "2")
+        self.set_field(p, "#clock", "60")
+        p.js("document.querySelector('#borrow').click()")
+        p.type_text("#name1", "Alice")
+        p.type_text("#name2", "Bob")
+        p.click("button[type=submit]")
+        p.wait_for("document.querySelector('svg.board')")
+        small = PAD * 2 + 5 * CELL + 4 * (PITCH - CELL)
+        self.assertEqual(p.js("document.querySelector('svg.board').getAttribute('viewBox')"), f"0 0 {small} {small}")
+        self.assertEqual(p.js("document.querySelectorAll('svg.board rect[fill=\"#111c30\"]').length"), 25)
+        self.assertEqual(self.walls_left(p), ["Walls: 2", "Walls: 2"])
+        self.assertEqual(self.turn(p), "Alice's turn")
+        self.assertIn("60", p.js("document.querySelector('.turn-timer-text').textContent"))
+        self.shot(p, "custom-start.png")
+        self.no_errors(p)
+
+    def test_custom_game_without_a_clock_and_with_a_bad_wall_count(self):
+        p = self.page()
+        p.goto(self.base + "/variants/custom/")
+        self.set_field(p, "#walls", "31")
+        p.click("button[type=submit]")
+        self.assertFalse(p.js("document.querySelector('#walls-error').hidden"))
+        self.assertEqual(p.js("document.querySelector('svg.board')"), None)
+        self.set_field(p, "#walls", "0")      # typing again clears the message
+        self.assertTrue(p.js("document.querySelector('#walls-error').hidden"))
+        self.set_field(p, "#clock", "0")
+        p.click("button[type=submit]")
+        p.wait_for("document.querySelector('svg.board')")
+        self.assertEqual(self.walls_left(p), ["Walls: 0", "Walls: 0"])
+        self.assertTrue(p.js("document.querySelector('.turn-timer').hidden"))
+        self.assertTrue(p.js("document.querySelector('.btn--toggle:nth-of-type(2)').disabled"))  # no walls: only pawn moves
+        self.no_errors(p)
+
     def test_walls_use_the_colour_of_the_player_who_placed_them(self):
         p = self.page()
         self.start_local(p)

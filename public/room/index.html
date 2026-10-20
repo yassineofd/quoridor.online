@@ -24,6 +24,8 @@
 --color-accent: #42d9f5;
 --color-accent-2: #5267f2;
 --color-player-2: #ff9f43;
+--color-player-3: #c084fc;
+--color-player-4: #a3e635;
 --color-border: #26364f;
 --color-danger: #ff8a96;
 --color-success: #5eead4;
@@ -453,6 +455,9 @@ font: inherit;
 .field-error[hidden] { display: none; }
 .fieldset { border: 0; padding: 0; margin: 0 0 var(--space-4); min-width: 0; }
 .choice-group { display: grid; gap: var(--space-3); }
+.choice-group--row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.choice-group--row .choice-body { grid-template-columns: 1fr; padding: var(--space-3); text-align: center; }
+.choice-group--row .choice-body .check { display: none; }
 .choice { position: relative; }
 .choice input { position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; z-index: 1; }
 .choice-body {
@@ -530,6 +535,8 @@ background: var(--color-surface); border: 2px solid var(--control-border); borde
 .pawn-glyph { flex: none; width: 24px; height: 24px; border-radius: 50%; }
 .pawn-glyph--0 { background: var(--color-accent); }
 .pawn-glyph--1 { background: var(--color-player-2); }
+.pawn-glyph--2 { background: var(--color-player-3); }
+.pawn-glyph--3 { background: var(--color-player-4); }
 .player-text { flex: 1 1 5em; min-width: 0; overflow-wrap: anywhere; font-weight: 600; }
 .player-tag { color: var(--color-text-muted); font-weight: 400; }
 .player-walls { flex: 1 0 100%; font-size: 0.875rem; color: var(--color-text-muted); }
@@ -588,7 +595,7 @@ background: var(--color-surface); border: 2px solid var(--control-border); borde
 .notfound .notfound-link span { font-size: 0.9375rem; }
 .site-footer { margin-top: auto; background: var(--color-surface); border-top: 1px solid var(--color-border); padding-block: var(--space-7) var(--space-5); }
 .footer-grid { display: grid; gap: var(--space-6); grid-template-columns: minmax(0, 1fr); }
-@media (min-width: 768px) { .footer-grid { grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 768px) { .footer-grid { grid-template-columns: minmax(0, 1.4fr) repeat(4, minmax(0, 1fr)); } }
 .site-footer h2 { font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-text-muted); margin-bottom: var(--space-3); }
 .site-footer ul { list-style: none; padding: 0; margin: 0; }
 .site-footer li { margin: 0; }
@@ -733,7 +740,8 @@ setTimeout(function () { root.classList.remove('i18n-pending'); }, 3000);
         <a class="brand" href="../" aria-label="Quoridor Online home" data-i18n-attr="aria-label:e416b9"><img src="../assets/img/logo-mark.png" alt="Quoridor Online logo" width="32" height="32" data-i18n-attr="alt:334588"><span data-i18n-skip>Quoridor <span class="tld">Online</span></span></a>
         <p data-i18n="1b196f">A simple place to play and learn the Quoridor strategy game in your browser.</p>
       </div>
-      <div><h2 data-i18n="70c9aa">Play</h2><ul><li><a href="../play" data-i18n="40af30">Play Quoridor</a></li><li><a href="../play/online" data-i18n="e531b2">Play Online</a></li><li><a href="../play/computer" data-i18n="ade3a8">Play vs Computer</a></li><li><a href="../play/local" data-i18n="dcf544">Play Locally</a></li><li><a href="../variants" data-i18n="e9aacf">Quoridor Variants</a></li><li><a href="../variants/wallrush" data-i18n="9bf84e">Wallrush</a></li></ul></div>
+      <div><h2 data-i18n="70c9aa">Play</h2><ul><li><a href="../play" data-i18n="40af30">Play Quoridor</a></li><li><a href="../play/online" data-i18n="e531b2">Play Online</a></li><li><a href="../play/computer" data-i18n="ade3a8">Play vs Computer</a></li><li><a href="../play/local" data-i18n="dcf544">Play Locally</a></li></ul></div>
+      <div><h2 data-i18n="87f0a1">Variants</h2><ul><li><a href="../variants" data-i18n="e9aacf">Quoridor Variants</a></li><li><a href="../variants/wallrush" data-i18n="9bf84e">Wallrush</a></li><li><a href="../variants/pointrush" data-i18n="e50dd0">Pointrush</a></li><li><a href="../variants/custom" data-i18n="e6b00a">Custom Game</a></li></ul></div>
       <div><h2 data-i18n="e138be">Learn</h2><ul><li><a href="../how-to-play-quoridor" data-i18n="f66e3b">How to Play</a></li><li><a href="../quoridor-rules" data-i18n="a57a64">Quoridor Rules</a></li><li><a href="../quoridor-strategy" data-i18n="4994f9">Quoridor Strategy</a></li><li><a href="../quoridor-board-game" data-i18n="bcaa86">Board Game Guide</a></li></ul></div>
       <div><h2 data-i18n="3658f9">Site</h2><ul><li><a href="../about" data-i18n="1a3c0a">About Us</a></li><li><a href="../contact" data-i18n="5250a4">Contact Us</a></li><li><a href="../privacy-policy" data-i18n="8dbcdd">Privacy Policy</a></li><li><a href="../terms" data-i18n="0a95a1">Terms of Use</a></li></ul></div>
     </div>

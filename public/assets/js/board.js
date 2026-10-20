@@ -30,8 +30,8 @@
   function anchorPos(i) { return PAD + i * PITCH + CELL + GAP / 2; } // centre of the groove crossing after index i
 
   // Pawn colour and the matching wall edge colour for each player; walls are drawn in their owner's colour.
-  var PAWN_COLORS = ['#42d9f5', '#ff9f43'];
-  var WALL_EDGES = ['#b4f3fd', '#ffd3a1'];
+  var PAWN_COLORS = ['#42d9f5', '#ff9f43', '#c084fc', '#a3e635'];
+  var WALL_EDGES = ['#b4f3fd', '#ffd3a1', '#e4cbff', '#d9f99d'];
 
   // Why a wall is refused: the engine's reason code, shown in the player's language (messages "err.<code>").
   function reasonText(code) { return t('err.' + code); }
@@ -41,7 +41,7 @@
     var ROWS = game.rows, COLS = game.cols;
     var W = PAD * 2 + COLS * CELL + (COLS - 1) * GAP, H = PAD * 2 + ROWS * CELL + (ROWS - 1) * GAP;
     var flip = !!opts.flip;
-    var names = opts.names || [t('game.player1'), t('game.player2')];
+    var names = opts.names || [t('game.player1'), t('game.player2'), t('game.player3'), t('game.player4')].slice(0, game.nPlayers);
     var state = {
       mode: 'move',          // 'move' | 'wall'
       actor: null,           // player index allowed to act, or null when the board is read-only
@@ -64,10 +64,11 @@
     if (flip) world.setAttribute('transform', 'rotate(180 ' + W / 2 + ' ' + H / 2 + ')');
     el('rect', { width: W, height: H, rx: 28, fill: '#0b1220' }, world);
 
-    // A row is tinted in the colour of the player who wins by reaching it, or in one shared colour when both do.
+    // A row is tinted in the colour of the player who wins by reaching it, or in one shared colour when several do.
     function goalTint(r) {
-      var mine = [0, 1].filter(function (p) { return game.goals[p] === r; });
-      return mine.length === 2 ? SHARED_GOAL : mine.length === 1 ? PAWN_COLORS[mine[0]] : null;
+      var mine = [];
+      for (var p = 0; p < game.nPlayers; p++) if (game.goals[p] === r) mine.push(p);
+      return mine.length > 1 ? SHARED_GOAL : mine.length === 1 ? PAWN_COLORS[mine[0]] : null;
     }
     for (var r = 0; r < ROWS; r++) {
       var tint = goalTint(r);
@@ -75,6 +76,11 @@
         el('rect', { x: cellPos(c), y: cellPos(r), width: CELL, height: CELL, rx: 9, fill: '#111c30', stroke: '#26364f', 'stroke-width': 2 }, world);
         if (tint) el('rect', { x: cellPos(c), y: cellPos(r), width: CELL, height: CELL, rx: 9, fill: tint, 'fill-opacity': 0.13 }, world);
       }
+    }
+    if (game.goalCell) { // a variant with one goal square for everybody: marked with a ring
+      var gx = cellPos(game.goalCell[1]), gy = cellPos(game.goalCell[0]);
+      el('rect', { x: gx, y: gy, width: CELL, height: CELL, rx: 9, fill: SHARED_GOAL, 'fill-opacity': 0.28 }, world);
+      el('circle', { cx: gx + CELL / 2, cy: gy + CELL / 2, r: 24, fill: 'none', stroke: SHARED_GOAL, 'stroke-width': 4, 'stroke-opacity': 0.8 }, world);
     }
     var gHints = el('g', {}, world), gWalls = el('g', {}, world), gPreview = el('g', {}, world),
         gPawns = el('g', {}, world), gCursor = el('g', {}, world);
@@ -135,11 +141,11 @@
     }
     function wallKey(w) { return w.o + w.r + w.c; }
     function trackChanges() {
-      var now = Date.now(), pawns = [game.pawns[0].slice(), game.pawns[1].slice()], walls = {}, fresh = [], i;
+      var now = Date.now(), pawns = game.pawns.map(function (p) { return p.slice(); }), walls = {}, fresh = [], i;
       for (i = 0; i < game.moves.length; i++) if (game.moves[i].type === 'wall') walls[wallKey(game.moves[i])] = game.moves[i];
       if (prev) {
-        for (i = 0; i < 2; i++) {
-          if (prev.pawns[i][0] !== pawns[i][0] || prev.pawns[i][1] !== pawns[i][1]) {
+        for (i = 0; i < pawns.length; i++) {
+          if (prev.pawns[i] && (prev.pawns[i][0] !== pawns[i][0] || prev.pawns[i][1] !== pawns[i][1])) {
             anims['p' + i] = { t0: now, dx: (prev.pawns[i][1] - pawns[i][1]) * PITCH, dy: (prev.pawns[i][0] - pawns[i][0]) * PITCH };
           }
         }
@@ -179,13 +185,13 @@
         el('rect', { x: cellPos(state.last.c) + 2, y: cellPos(state.last.r) + 2, width: CELL - 4, height: CELL - 4, rx: 8, fill: 'none', stroke: '#ffffff', 'stroke-opacity': 0.5, 'stroke-width': 2, 'stroke-dasharray': '6 5' }, gHints);
       }
 
-      // The move list tells who placed each wall: players alternate, player 0 first.
+      // The move list tells who placed each wall: players take turns in order, player 0 first.
       var moves = game.moves;
       for (i = 0; i < moves.length; i++) {
         w = moves[i];
         if (w.type !== 'wall') continue;
         var isLast = state.last && state.last.type === 'wall' && state.last.o === w.o && state.last.r === w.r && state.last.c === w.c;
-        play(drawWall(gWalls, w.o, w.r, w.c, { fill: PAWN_COLORS[i % 2], stroke: isLast ? '#ffffff' : WALL_EDGES[i % 2], 'stroke-width': isLast ? 3 : 1.5 }), 'w:' + wallKey(w), 'wall');
+        play(drawWall(gWalls, w.o, w.r, w.c, { fill: PAWN_COLORS[i % game.nPlayers], stroke: isLast ? '#ffffff' : WALL_EDGES[i % game.nPlayers], 'stroke-width': isLast ? 3 : 1.5 }), 'w:' + wallKey(w), 'wall');
       }
 
       if (state.mode === 'wall' && canAct()) {
@@ -198,7 +204,7 @@
         }
       }
 
-      for (i = 0; i < 2; i++) {
+      for (i = 0; i < game.pawns.length; i++) {
         var pr = game.pawns[i][0], pc = game.pawns[i][1], cx = cellPos(pc) + CELL / 2, cy = cellPos(pr) + CELL / 2;
         var active = game.winner === null && game.turn === i;
         var pg = el('g', {}, gPawns);
@@ -227,10 +233,9 @@
     // Short summary for the label; with the full wall list it goes in the description.
     function describe(withWallList) {
       var list = game.toJSON().walls, walls = list.length;
-      var parts = [
-        t('board.pawnOn', { name: names[0], square: game.squareName(game.pawns[0][0], game.pawns[0][1]), n: game.wallsLeft[0] }),
-        t('board.pawnOn', { name: names[1], square: game.squareName(game.pawns[1][0], game.pawns[1][1]), n: game.wallsLeft[1] })
-      ];
+      var parts = game.pawns.map(function (pawn, i) {
+        return t('board.pawnOn', { name: names[i], square: game.squareName(pawn[0], pawn[1]), n: game.wallsLeft[i] });
+      });
       parts.push(walls === 1 ? t('board.wallPlaced') : t('board.wallsPlaced', { n: walls }));
       if (withWallList && walls) parts.push(t('board.wallList', { list: list.map(function (x) { return game.wallName(x[0], x[1], x[2]); }).join(', ') }));
       return parts.join(' ');
@@ -310,8 +315,10 @@
           state.cursor = [Math.max(0, Math.min(ROWS - 1, state.cursor[0] + d[0])), Math.max(0, Math.min(COLS - 1, state.cursor[1] + d[1]))];
           var targets = legalTargets(), legal = false;
           for (var i = 0; i < targets.length; i++) if (targets[i][0] === state.cursor[0] && targets[i][1] === state.cursor[1]) legal = true;
-          var who = game.pawns[0][0] === state.cursor[0] && game.pawns[0][1] === state.cursor[1] ? t('board.pawnSuffix', { name: names[0] })
-                  : game.pawns[1][0] === state.cursor[0] && game.pawns[1][1] === state.cursor[1] ? t('board.pawnSuffix', { name: names[1] }) : '';
+          var who = '';
+          for (var q = 0; q < game.pawns.length; q++) {
+            if (game.pawns[q][0] === state.cursor[0] && game.pawns[q][1] === state.cursor[1]) who = t('board.pawnSuffix', { name: names[q] });
+          }
           say(t(legal ? 'board.canMoveHere' : 'board.square', { square: game.squareName(state.cursor[0], state.cursor[1]), pawn: who }));
         }
       } else if (k === 'Enter' || k === ' ') {

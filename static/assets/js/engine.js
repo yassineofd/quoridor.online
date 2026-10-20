@@ -1,15 +1,19 @@
-/* Quoridor rules engine (two players, 10 walls each) for the classic game and its variants.
+/* Quoridor rules engine for the classic game (two players, 10 walls each) and its variants.
    Pure logic, no DOM. Works in pages, in a Web Worker and (via module.exports) in tests.
    Keep in step with server/engine.py: the server is authoritative for online games and
    tests/test_parity.py replays games through both implementations (classic only: the variants
    are played on one device and never reach the server).
 
-   A variant is just a board size, two start squares, two goal rows and a wall count (VARIANTS
-   below); `new Game()` is the classic game, `new Game('wallrush')` a variant.
+   A variant is just a board size, start squares, goals and a wall count (VARIANTS below);
+   `new Game()` is the classic game, `new Game('wallrush')` a variant, `new Game('pointrush', 4)`
+   a variant that can be played by 2, 3 or 4 players, and `new Game('custom', 2, {size: 7, walls: 5})`
+   a classic-style game whose board size, walls and borrowed moves the players choose (see CUSTOM_LIMITS).
 
    Coordinates: rows 0..rows-1 from the top, columns 0..cols-1 from the left.
      classic: 9x9, player 0 starts at (8,4) and wins on row 0; player 1 starts at (0,4) and wins on row 8.
      wallrush: 13 rows x 9 columns, both pawns start on row 8 (columns 2 and 6) and race to row 0.
+     pointrush: 11x11, pawns start in the middle of each edge and race to the centre square (5,5).
+     custom: size x size (odd, 5..13) like classic: player 0 starts at the middle of the bottom row, player 1 at the top.
      wall ("h", r, c) lies below row r across columns c and c+1 (r in 0..rows-2, c in 0..cols-2)
      wall ("v", r, c) lies right of column c across rows r and r+1 (same ranges)
    Moves: {type:'move', r, c}  or  {type:'wall', o:'h'|'v', r, c}                              */
@@ -25,26 +29,64 @@
   // The games this engine can play. `starts` and `goals` are per player; `walls` is how many each player gets.
   var VARIANTS = {
     classic:  { rows: 9,  cols: 9, starts: [[8, 4], [0, 4]], goals: [0, 8], walls: 10 },
-    wallrush: { rows: 13, cols: 9, starts: [[8, 2], [8, 6]], goals: [0, 0], walls: 10, borrow: true }
+    wallrush: { rows: 13, cols: 9, starts: [[8, 2], [8, 6]], goals: [0, 0], walls: 10, borrow: true },
+    // `starts` lists the seats clockwise from the bottom edge; `seats` says which of them a game with that
+    // many players uses (the first player always sits at the bottom). `walls` is per player, by player count.
+    pointrush: { rows: 11, cols: 11, starts: [[10, 5], [5, 0], [0, 5], [5, 10]], goalCell: [5, 5],
+                 seats: { 2: [0, 2], 3: [0, 1, 2], 4: [0, 1, 2, 3] }, walls: { 2: 12, 3: 8, 4: 6 } }
   };
   // `borrow`: a pawn standing next to the opponent (no wall between them) may also move to any
-  // square the opponent could reach from where it stands.
+  // square the opponent could reach from where it stands (two-player variants only).
+  // `goalCell`: instead of a goal row, every player races to this one square.
 
-  function Game(variant) {
+  // What the players of a custom game may choose, and what they get when they leave a setting out.
+  var CUSTOM_LIMITS = { sizes: [5, 7, 9, 11, 13], minWalls: 0, maxWalls: 30, size: 9, walls: 10, borrow: false };
+
+  // The setup of a custom game, checked: { size, walls, borrow }. Throws on a value outside CUSTOM_LIMITS.
+  function customOptions(o) {
+    o = o || {};
+    var L = CUSTOM_LIMITS;
+    var size = o.size === undefined ? L.size : o.size, walls = o.walls === undefined ? L.walls : o.walls;
+    if (L.sizes.indexOf(size) < 0) throw new Error('Unsupported board size ' + size);
+    if (!isInt(walls) || walls < L.minWalls || walls > L.maxWalls) throw new Error('Unsupported wall count ' + walls);
+    return { size: size, walls: walls, borrow: !!o.borrow };
+  }
+
+  // The variant row for a custom game: the classic layout on a square board of the chosen size.
+  function customVariant(o) {
+    var mid = (o.size - 1) / 2;
+    return { rows: o.size, cols: o.size, starts: [[o.size - 1, mid], [0, mid]], goals: [0, o.size - 1], walls: o.walls, borrow: o.borrow };
+  }
+
+  // `players` only applies to variants that allow more than two (VARIANTS[...].seats); it defaults to 2.
+  // `options` only applies to 'custom' (see customOptions).
+  function Game(variant, players, options) {
     var name = variant === undefined || variant === null ? 'classic' : variant;
-    var v = Object.prototype.hasOwnProperty.call(VARIANTS, name) ? VARIANTS[name] : null;
+    var v = null;
+    if (name === 'custom') {
+      this.options = customOptions(options);
+      v = customVariant(this.options);
+    } else if (Object.prototype.hasOwnProperty.call(VARIANTS, name)) {
+      v = VARIANTS[name];
+    }
     if (!v) throw new Error('Unknown variant ' + name);
+    var np = players === undefined || players === null ? 2 : players;
+    var seats = v.seats ? v.seats[np] : np === 2 ? [0, 1] : null;
+    if (!seats) throw new Error('Variant ' + name + ' cannot be played by ' + np + ' players');
     var R = v.rows, C = v.cols;
     this.variant = name;
     this.rows = R;
     this.cols = C;
-    this.goals = v.goals.slice();
+    this.nPlayers = np;
+    this.goals = v.goals ? v.goals.slice() : seats.map(function () { return -1; });
+    this.goalCell = v.goalCell ? v.goalCell.slice() : null;
     this.borrow = !!v.borrow;
-    this.pawns = [v.starts[0].slice(), v.starts[1].slice()];
+    this.pawns = seats.map(function (s) { return v.starts[s].slice(); });
     this._ws = C - 1;                            // wall slots per row: walls are anchored at (r, c) with c in 0..cols-2
     this.h = new Uint8Array((R - 1) * (C - 1)); // h[r*(cols-1)+c] = 1 when a horizontal wall is anchored at (r,c)
     this.v = new Uint8Array((R - 1) * (C - 1));
-    this.wallsLeft = [v.walls, v.walls];
+    var walls = typeof v.walls === 'number' ? v.walls : v.walls[np];
+    this.wallsLeft = seats.map(function () { return walls; });
     this.turn = 0;
     this.winner = null;
     this.moves = [];   // applied moves, in order
@@ -90,24 +132,31 @@
     return this.blk[(r * this.cols + c) * 4 + (dr === -1 ? 0 : dr === 1 ? 1 : dc === -1 ? 2 : 3)] === 1;
   };
 
-  // Legal destinations of a pawn standing on `me` with `opp` as the other pawn, jumps included.
-  // `adjacent` is set to true when the other pawn is next to `me` with no wall between them.
-  Game.prototype._movesFrom = function (me, opp, out) {
+  Game.prototype._occupied = function (r, c) {
+    var p = this.pawns;
+    for (var i = 0; i < p.length; i++) if (p[i][0] === r && p[i][1] === c) return true;
+    return false;
+  };
+
+  // Legal destinations of a pawn standing on `me`, jumps included. No pawn is ever a destination.
+  // `adjacent` is set to true when another pawn is next to `me` with no wall between them.
+  // A jump needs the square behind the pawn to be free; otherwise the pawn side-steps, to a free square.
+  Game.prototype._movesFrom = function (me, out) {
     var R = this.rows, C = this.cols, adjacent = false;
     for (var d = 0; d < 4; d++) {
       var dr = DR[d], dc = DC[d];
       var nr = me[0] + dr, nc = me[1] + dc;
       if (nr < 0 || nr >= R || nc < 0 || nc >= C || this.blocked(me[0], me[1], dr, dc)) continue;
-      if (nr !== opp[0] || nc !== opp[1]) { out.push([nr, nc]); continue; }
+      if (!this._occupied(nr, nc)) { out.push([nr, nc]); continue; }
       adjacent = true;
       var jr = nr + dr, jc = nc + dc;
-      if (jr >= 0 && jr < R && jc >= 0 && jc < C && !this.blocked(nr, nc, dr, dc)) { out.push([jr, jc]); continue; }
-      // Straight jump blocked by a wall or the edge: step beside the opponent instead.
+      if (jr >= 0 && jr < R && jc >= 0 && jc < C && !this.blocked(nr, nc, dr, dc) && !this._occupied(jr, jc)) { out.push([jr, jc]); continue; }
+      // Straight jump blocked by a wall, the edge or another pawn: step beside the pawn instead.
       for (var e = 0; e < 4; e++) {
         var sr = DR[e], sc = DC[e];
         if ((sr === dr && sc === dc) || (sr === -dr && sc === -dc)) continue;
         var tr = nr + sr, tc = nc + sc;
-        if (tr >= 0 && tr < R && tc >= 0 && tc < C && !this.blocked(nr, nc, sr, sc)) out.push([tr, tc]);
+        if (tr >= 0 && tr < R && tc >= 0 && tc < C && !this.blocked(nr, nc, sr, sc) && !this._occupied(tr, tc)) out.push([tr, tc]);
       }
     }
     return adjacent;
@@ -117,12 +166,11 @@
   // In a `borrow` variant a pawn next to the opponent also gets the opponent's own moves.
   Game.prototype.pawnMoves = function (player) {
     var p = player === undefined ? this.turn : player;
-    var me = this.pawns[p], opp = this.pawns[1 - p];
     var out = [];
-    var adjacent = this._movesFrom(me, opp, out);
+    var adjacent = this._movesFrom(this.pawns[p], out);
     if (adjacent && this.borrow) {
-      var extra = [];
-      this._movesFrom(opp, me, extra);
+      var me = this.pawns[p], extra = [];
+      this._movesFrom(this.pawns[1 - p], extra);
       for (var i = 0; i < extra.length; i++) {
         var t = extra[i], dup = (t[0] === me[0] && t[1] === me[1]);
         for (var k = 0; !dup && k < out.length; k++) dup = out[k][0] === t[0] && out[k][1] === t[1];
@@ -133,11 +181,12 @@
   };
 
   // Breadth-first search over walls only (pawns are ignored, as the rules specify for the
-  // "keep a path open" check). Returns the number of steps to the goal row, or -1 if none.
+  // "keep a path open" check). Returns the number of steps to the goal (a row, or the goal square), or -1 if none.
   // When `path` is an array it receives the cells of one shortest route, start to goal.
   Game.prototype.distance = function (player, path) {
     var start = this.pawns[player], goal = this.goals[player], C = this.cols, step = this._step;
-    if (start[0] === goal) { if (path) { path.length = 0; path.push([start[0], start[1]]); } return 0; }
+    var gc = this.goalCell ? this.goalCell[0] * C + this.goalCell[1] : -1; // goal square, when there is one instead of a row
+    if (gc >= 0 ? start[0] * C + start[1] === gc : start[0] === goal) { if (path) { path.length = 0; path.push([start[0], start[1]]); } return 0; }
     var seen = this._seen, queue = this._queue, blk = this.blk;
     var stamp = ++this._stamp;
     if (stamp > 30000) { seen.fill(0); this._stamp = stamp = 1; }
@@ -154,7 +203,7 @@
         if (seen[n] === stamp) continue;
         seen[n] = stamp;
         if (parent) parent[n] = cur;
-        if (((n / C) | 0) === goal) {
+        if (gc >= 0 ? n === gc : ((n / C) | 0) === goal) {
           if (path) {
             path.length = 0;
             for (var k = n; k !== s; k = parent[k]) path.push([(k / C) | 0, k % C]);
@@ -191,7 +240,8 @@
     var err = this.wallGeometryError(o, r, c, player);
     if (err) return err;
     this._setWall(o, r, c, 1);
-    var ok = this.distance(0) >= 0 && this.distance(1) >= 0;
+    var ok = true;
+    for (var i = 0; ok && i < this.nPlayers; i++) ok = this.distance(i) >= 0;
     this._setWall(o, r, c, 0);
     return ok ? null : 'blocks-path';
   };
@@ -213,7 +263,7 @@
       rec = { player: p, prev: [this.pawns[p][0], this.pawns[p][1]], winner: this.winner };
       this.pawns[p] = [r, c];
       this.moves.push({ type: 'move', r: r, c: c });
-      if (r === this.goals[p]) this.winner = p;
+      if (this.goalCell ? r === this.goalCell[0] && c === this.goalCell[1] : r === this.goals[p]) this.winner = p;
     } else if (move.type === 'wall') {
       if (!isInt(move.r) || !isInt(move.c)) return 'bad-move';
       var err = this.wallError(move.o, move.r, move.c, p);
@@ -226,7 +276,7 @@
       return 'bad-move';
     }
     this._undo.push(rec);
-    if (this.winner === null) this.turn = 1 - p;
+    if (this.winner === null) this.turn = (p + 1) % this.nPlayers;
     return null;
   };
 
@@ -247,7 +297,7 @@
   };
 
   Game.prototype.resign = function (player) {
-    if (this.winner === null) this.winner = 1 - player;
+    if (this.winner === null) this.winner = (player + 1) % this.nPlayers;
   };
 
   // Plain-data snapshot (the shape the server sends) and its inverse.
@@ -256,7 +306,7 @@
     for (i = 0; i < this.h.length; i++) if (this.h[i]) walls.push(['h', (i / ws) | 0, i % ws]);
     for (i = 0; i < this.v.length; i++) if (this.v[i]) walls.push(['v', (i / ws) | 0, i % ws]);
     return {
-      variant: this.variant, pawns: [this.pawns[0].slice(), this.pawns[1].slice()], walls: walls,
+      variant: this.variant, players: this.nPlayers, options: this.options ? Object.assign({}, this.options) : undefined, pawns: this.pawns.map(function (p) { return p.slice(); }), walls: walls,
       wallsLeft: this.wallsLeft.slice(), turn: this.turn, winner: this.winner,
       moves: this.moves.map(function (m) { return Object.assign({}, m); })
     };
@@ -265,7 +315,7 @@
   // Rebuild a game by replaying its move list, so it can still be undone. `winner` from the
   // snapshot is honoured for results that aren't a move (resignation, disconnect).
   Game.fromJSON = function (data) {
-    var g = new Game(data && data.variant), list = (data && data.moves) || [];
+    var g = new Game(data && data.variant, data && data.players, data && data.options), list = (data && data.moves) || [];
     for (var i = 0; i < list.length; i++) if (g.apply(list[i])) throw new Error('Invalid move list at ' + i);
     if (data && data.winner !== undefined && data.winner !== null && g.winner === null) g.winner = data.winner;
     return g;
@@ -275,18 +325,18 @@
 
   function isInt(x) { return typeof x === 'number' && isFinite(x) && Math.floor(x) === x; }
 
-  // Short human-readable names. Files a..i run left to right, ranks 1..rows bottom to top (in the
+  // Short human-readable names. Files a..m run left to right, ranks 1..rows bottom to top (in the
   // classic game player 0 starts on e1 and player 1 on e9). A wall is named after the square just
   // below and left of the point where it is centred, plus its direction: "d4h", "f6v".
   // `rows` is the board's height; the plain functions assume the classic 9, the Game methods use their own.
-  function squareName(r, c, rows) { return 'abcdefghi'.charAt(c) + ((rows || 9) - r); }
-  function wallName(o, r, c, rows) { return 'abcdefghi'.charAt(c) + ((rows || 9) - 1 - r) + o; }
+  function squareName(r, c, rows) { return 'abcdefghijklm'.charAt(c) + ((rows || 9) - r); }
+  function wallName(o, r, c, rows) { return 'abcdefghijklm'.charAt(c) + ((rows || 9) - 1 - r) + o; }
   function moveName(m, rows) { return m.type === 'move' ? squareName(m.r, m.c, rows) : wallName(m.o, m.r, m.c, rows); }
   Game.prototype.squareName = function (r, c) { return squareName(r, c, this.rows); };
   Game.prototype.wallName = function (o, r, c) { return wallName(o, r, c, this.rows); };
   Game.prototype.moveName = function (m) { return moveName(m, this.rows); };
 
-  var api = { Game: Game, SIZE: SIZE, WALLS_EACH: WALLS_EACH, GOAL_ROW: GOAL_ROW, VARIANTS: VARIANTS, squareName: squareName, wallName: wallName, moveName: moveName };
+  var api = { Game: Game, SIZE: SIZE, WALLS_EACH: WALLS_EACH, GOAL_ROW: GOAL_ROW, VARIANTS: VARIANTS, CUSTOM_LIMITS: CUSTOM_LIMITS, squareName: squareName, wallName: wallName, moveName: moveName };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.Quoridor = api;
 })(typeof self !== 'undefined' ? self : this);
