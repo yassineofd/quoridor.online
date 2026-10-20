@@ -33,7 +33,7 @@
     if (g.wallsLeft[p] <= 0) return [];
     var opp = 1 - p, path = [], base = g.distance(opp, path), seen = {}, out = [];
     function consider(o, r, c) {
-      if (r < 0 || r > 7 || c < 0 || c > 7) return;
+      if (r < 0 || r > g.rows - 2 || c < 0 || c > g.cols - 2) return;
       var key = o + r + c;
       if (seen[key]) return;
       seen[key] = 1;
@@ -68,7 +68,7 @@
     for (i = 0; i < pm.length; i++) {
       var forward = next && pm[i][0] === next[0] && pm[i][1] === next[1];
       // Jumps can skip the path's next square, so also favour moves that end nearer the goal row.
-      var progress = Math.abs(pm[i][0] - Q.GOAL_ROW[p]);
+      var progress = Math.abs(pm[i][0] - g.goals[p]);
       moves.push({ move: { type: 'move', r: pm[i][0], c: pm[i][1] }, key: (forward ? 100 : 0) - progress });
     }
     var walls = wallCandidates(g, p, wallLimit);
@@ -122,7 +122,7 @@
     // An immediate win always gets played, whatever the level.
     for (var w = 0; w < roots.length; w++) {
       var m0 = roots[w].move;
-      if (m0.type === 'move' && m0.r === Q.GOAL_ROW[g.turn]) return m0;
+      if (m0.type === 'move' && m0.r === g.goals[g.turn]) return m0;
     }
     var iterative = cfg.timeMs > 0; // only the strongest level is budgeted by time / node count
     var timeMs = iterative && opts.timeMs !== undefined ? opts.timeMs : cfg.timeMs;

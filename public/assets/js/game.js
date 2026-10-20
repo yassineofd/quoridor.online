@@ -2,6 +2,7 @@
 
    QuoridorGame.mount(host, cfg) returns a controller.
      cfg.mode     'local' (hot-seat) | 'computer' | 'online'
+     cfg.variant  which game to play (a key of Quoridor.VARIANTS); the classic game when left out
      cfg.names    [name for player 0, name for player 1]
      cfg.nameKeys optional [message key | null, ...]: names made up by the site, which are written again when the language changes
      cfg.seat     which player "you" are (computer / online); null for hot-seat
@@ -88,7 +89,7 @@
           if (!worker) return local();
           var id = nextId++;
           pending = { id: id, resolve: done, fallback: local };
-          worker.postMessage({ id: id, moves: game.moves, level: level });
+          worker.postMessage({ id: id, variant: game.variant, moves: game.moves, level: level });
         });
       },
       cancel: function () { pending = null; },
@@ -100,7 +101,7 @@
     var mode = cfg.mode;
     var names = (cfg.names || [t('game.player1'), t('game.player2')]).slice();
     var seat = cfg.seat === undefined ? null : cfg.seat;
-    var game = new Q.Game();
+    var game = new Q.Game(cfg.variant);
     var meta = { connected: [true, true], forfeitIn: null, rematch: [false, false], reason: null };
     var thinker = mode === 'computer' ? createThinker(cfg.level || 'medium') : null;
     var thinking = false, busy = false, destroyed = false, lastTurn = -1, lastCount = 0;
@@ -213,6 +214,7 @@
       onChange: syncControls,
       onMode: function () { hint.textContent = ''; }
     });
+    host.style.setProperty('--board-ratio', String(board.ratio)); // a tall board must not claim the width of a square one
 
     // ---- who may act ------------------------------------------------------------------
     function actor() {
@@ -256,7 +258,7 @@
       while (logList.children.length > game.moves.length) logList.removeChild(logList.lastChild);
       for (var i = logList.children.length; i < game.moves.length; i++) {
         var m = game.moves[i], who = i % 2; // player 0 always moves first
-        logList.appendChild(h('li', { text: t(m.type === 'move' ? 'game.logMoved' : 'game.logWall', { name: names[who], move: Q.moveName(m) }) }));
+        logList.appendChild(h('li', { text: t(m.type === 'move' ? 'game.logMoved' : 'game.logWall', { name: names[who], move: game.moveName(m) }) }));
       }
       logList.scrollTop = logList.scrollHeight;
 
@@ -340,7 +342,7 @@
 
     // ---- applying moves ---------------------------------------------------------------
     function describeMove(player, m) {
-      return t(m.type === 'move' ? 'game.moved' : 'game.placedWall', { who: sayWho(player), move: Q.moveName(m) });
+      return t(m.type === 'move' ? 'game.moved' : 'game.placedWall', { who: sayWho(player), move: game.moveName(m) });
     }
 
     function commit(move) {

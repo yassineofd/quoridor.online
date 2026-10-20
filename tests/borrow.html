@@ -1,0 +1,21 @@
+<!doctype html>
+<meta charset="utf-8">
+<pre id="result"></pre>
+<script src="../static/assets/js/engine.js"></script>
+<script>
+  function key(moves) { return moves.map(function (m) { return m.join(','); }).sort().join(';'); }
+  var out = {};
+  var g = new Quoridor.Game('wallrush');
+  g.pawns[0] = [5, 3]; g.pawns[1] = [5, 4];
+  out.adjacent = key(g.pawnMoves());
+  g.pawns[1] = [4, 4];
+  out.diagonal = key(g.pawnMoves());
+  g.pawns[1] = [5, 4]; g.turn = 1;
+  out.theirTurn = key(g.pawnMoves());
+  g.turn = 0; g._setWall('v', 4, 3, 1);  // wall between the two pawns: not next to each other any more
+  out.walled = key(g.pawnMoves());
+  var c = new Quoridor.Game();
+  c.pawns[0] = [4, 4]; c.pawns[1] = [3, 4];
+  out.classic = key(c.pawnMoves());
+  document.getElementById('result').textContent = JSON.stringify(out);
+</script>

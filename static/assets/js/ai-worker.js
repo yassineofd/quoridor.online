@@ -2,6 +2,6 @@
 importScripts('engine.js', 'ai.js');
 
 self.onmessage = function (e) {
-  var d = e.data, game = self.Quoridor.Game.fromJSON({ moves: d.moves });
+  var d = e.data, game = self.Quoridor.Game.fromJSON({ variant: d.variant, moves: d.moves });
   self.postMessage({ id: d.id, move: self.QuoridorAI.chooseMove(game, { level: d.level }) });
 };

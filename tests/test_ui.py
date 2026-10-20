@@ -185,6 +185,55 @@ class UI(unittest.TestCase):
         self.shot(p, "local-after-wall.png")
         self.no_errors(p)
 
+    # ---- Wallrush (a variant: 13 rows x 9 columns, both pawns start on row 8 and race to row 0) ----
+    WR_W, WR_H = PAD * 2 + 9 * CELL + 8 * (PITCH - CELL), PAD * 2 + 13 * CELL + 12 * (PITCH - CELL)
+
+    def wr_xy(self, p, bx, by):
+        left, top, width, height = p.js("(function(){var b=document.querySelector('svg.board').getBoundingClientRect();return [b.left,b.top,b.width,b.height]})()")
+        return left + bx * width / self.WR_W, top + by * height / self.WR_H
+
+    def wr_cell(self, p, r, c):
+        return self.wr_xy(p, PAD + c * PITCH + CELL / 2, PAD + r * PITCH + CELL / 2)
+
+    def start_wallrush(self, p, n1="Alice", n2="Bob"):
+        p.goto(self.base + "/variants/wallrush/")
+        self.shot(p, "wallrush-page.png")
+        p.type_text("#name1", n1)
+        p.type_text("#name2", n2)
+        p.click("button[type=submit]")
+        p.wait_for("document.querySelector('svg.board')")
+
+    def test_wallrush_board_start_and_race_to_the_top(self):
+        p = self.page(height=1400)  # tall enough for the whole 13-row board
+        self.start_wallrush(p)
+        self.assertEqual(p.js("document.querySelectorAll('svg.board rect[fill=\"#111c30\"]').length"), 13 * 9)
+        self.assertEqual(p.js("document.querySelector('svg.board').getAttribute('viewBox')"), f"0 0 {self.WR_W} {self.WR_H}")
+        self.shot(p, "wallrush-start.png")
+        self.assertEqual(self.turn(p), "Alice's turn")
+        self.assertEqual(self.walls_left(p), ["Walls: 10", "Walls: 10"])
+        self.click_cell_wr = lambda r, c: p.click_at(*self.wr_cell(p, r, c))
+        self.click_cell_wr(6, 2)      # two steps away: refused
+        self.assertEqual(self.moves(p), 0)
+        for r in range(7, -1, -1):    # Alice (first to move) reaches row 0 one move before Bob
+            self.click_cell_wr(r, 2)
+            if r > 0:
+                self.assertEqual(self.turn(p), "Bob's turn")
+                self.click_cell_wr(r, 6)
+        self.assertIn("Alice wins", self.turn(p))
+        self.assertEqual(self.moves(p), 15)
+        self.assertTrue(p.js("document.querySelector('.result a.btn[href$=\"variants\"]') !== null"))
+        self.no_errors(p)
+
+    def test_wallrush_walls_can_be_placed_in_the_lowest_row(self):
+        p = self.page(height=1400)
+        self.start_wallrush(p)
+        p.click(".btn--toggle:nth-of-type(2)")
+        # the lowest wall slot: below row 11, across columns 3 and 4
+        p.click_at(*self.wr_xy(p, PAD + 3 * PITCH + CELL + 7 + 30, PAD + 11 * PITCH + CELL + 7))
+        self.assertEqual(self.walls_left(p), ["Walls: 9", "Walls: 10"])
+        self.assertIn("placed wall d1h", p.js("document.querySelector('.move-log li').textContent"))
+        self.no_errors(p)
+
     def test_walls_use_the_colour_of_the_player_who_placed_them(self):
         p = self.page()
         self.start_local(p)

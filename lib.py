@@ -133,28 +133,32 @@ _CELL, _GAP, _PAD = 80, 10, 50
 _PITCH = _CELL + _GAP
 
 
-def board_svg(walls=(), pawns=(), label: str = "", goal_tint: bool = True, marks=(), bad_walls=(), new_walls=()) -> str:
-    """Minimalist 9x9 board. walls: ("h", r, c) lies below row r across cols c..c+1;
+# Goal-row tints of the classic board: (row, fill, opacity).
+CLASSIC_GOALS = ((0, "#42D9F5", 0.13), (8, "#FFFFFF", 0.08))
+
+
+def board_svg(walls=(), pawns=(), label: str = "", goal_tint: bool = True, marks=(), bad_walls=(), new_walls=(), rows=9, cols=9, goals=CLASSIC_GOALS) -> str:
+    """Minimalist board, 9x9 unless rows / cols say otherwise (goals: the tinted goal rows, see CLASSIC_GOALS). walls: ("h", r, c) lies below row r across cols c..c+1;
     ("v", r, c) lies right of col c across rows r..r+1. pawns: (row, col, "p1"|"p2").
     P1 is a filled circle, P2 a ring, so the two are never told apart by color alone.
     marks: (row, col, text) squares a pawn can reach, drawn dashed with a letter or number.
     bad_walls: walls in the same format as walls, drawn dashed with a cross to show an illegal placement.
     new_walls: walls in the same format as walls, drawn with a bright outline to show the wall just placed."""
-    size = _PAD * 2 + 9 * _CELL + 8 * _GAP
+    width = _PAD * 2 + cols * _CELL + (cols - 1) * _GAP
+    height = _PAD * 2 + rows * _CELL + (rows - 1) * _GAP
     out = [
-        f'<svg class="board-art" viewBox="0 0 {size} {size}" width="{size}" height="{size}" '
+        f'<svg class="board-art{" board-art--tall" if height > width else ""}" viewBox="0 0 {width} {height}" width="{width}" height="{height}" '
         + (f'role="img" aria-label="{escape(label, quote=True)}"' if label else 'aria-hidden="true" focusable="false"')
         + ' xmlns="http://www.w3.org/2000/svg">',
-        f'<rect width="{size}" height="{size}" rx="40" fill="#0B1220"/>',
+        f'<rect width="{width}" height="{height}" rx="40" fill="#0B1220"/>',
     ]
-    for r in range(9):
-        for c in range(9):
+    for r in range(rows):
+        for c in range(cols):
             x, y = _PAD + c * _PITCH, _PAD + r * _PITCH
             out.append(f'<rect x="{x}" y="{y}" width="{_CELL}" height="{_CELL}" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/>')
-            if goal_tint and r == 0:
-                out.append(f'<rect x="{x}" y="{y}" width="{_CELL}" height="{_CELL}" rx="10" fill="#42D9F5" fill-opacity="0.13"/>')
-            if goal_tint and r == 8:
-                out.append(f'<rect x="{x}" y="{y}" width="{_CELL}" height="{_CELL}" rx="10" fill="#FFFFFF" fill-opacity="0.08"/>')
+            for goal_row, fill, opacity in (goals if goal_tint else ()):
+                if r == goal_row:
+                    out.append(f'<rect x="{x}" y="{y}" width="{_CELL}" height="{_CELL}" rx="10" fill="{fill}" fill-opacity="{opacity}"/>')
     for r, c, text in marks:
         x, y = _PAD + c * _PITCH, _PAD + r * _PITCH
         out.append(f'<rect x="{x}" y="{y}" width="{_CELL}" height="{_CELL}" rx="10" fill="#42D9F5" fill-opacity="0.22" stroke="#42D9F5" stroke-width="4" stroke-dasharray="10 7"/>')

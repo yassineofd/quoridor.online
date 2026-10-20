@@ -38,6 +38,8 @@
   if (!form) return;
 
   var kind = form.getAttribute('data-play-form');
+  var variant = form.getAttribute('data-variant') || undefined; // a game other than classic Quoridor (see Quoridor.VARIANTS)
+  var leavePage = form.getAttribute('data-leave') || 'play';   // where "Leave" goes, relative to the site root
   var live = form.getAttribute('data-live') === 'true';
   var notice = $('[data-unavailable]');
   var stage = $('[data-stage]');
@@ -68,7 +70,7 @@
   // ---- showing / hiding the game --------------------------------------------------------
   var controller = null;
   function openGame(cfg) {
-    cfg.leaveHref = QuoridorOnline.root + 'play';
+    cfg.leaveHref = QuoridorOnline.root + leavePage;
     cfg.onExit = function (how) {
       controller.destroy();
       controller = null;
@@ -97,7 +99,7 @@
       if (err) { err.hidden = true; }
     }
     if (names[0].toLowerCase() === names[1].toLowerCase()) { names[1] += ' (2)'; nameKeys[1] = null; }
-    openGame({ mode: 'local', names: names, nameKeys: nameKeys });
+    openGame({ mode: 'local', variant: variant, names: names, nameKeys: nameKeys });
   }
 
   var LEVEL_NAMES = { easy: 'play.robotEasy', medium: 'play.robotMedium', hard: 'play.robotHard', expert: 'play.robotExpert' };

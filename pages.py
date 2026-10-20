@@ -331,6 +331,13 @@ def play_hub():
   {mode_cards('h3')}
 </div></section>
 <section class="section--tight" aria-label="Play Quoridor online with friends"><div class="container">{private_strip('h2', 'Play Quoridor Online With Friends')}</div></section>
+<section class="section--tight" aria-labelledby="variants-cta-h"><div class="container">
+  <div class="card cta-panel">
+    <h2 id="variants-cta-h">Try a Quoridor Variant</h2>
+    <p>Same pawns and walls, a new kind of race. Start with Wallrush, where both pawns begin on the same line of a taller board.</p>
+    <a class="btn btn--secondary" href="/variants/">Explore Variants {icon('arrow')}</a>
+  </div>
+</div></section>
 <section class="section" aria-labelledby="how-h"><div class="container prose">
   <h2 id="how-h">How to Play Quoridor</h2>
   <p>Quoridor is a strategy board game built around two choices: move your pawn toward the goal or place a wall to slow your opponent down. Every wall uses a limited resource, so the best move is not always the most obvious one.</p>
@@ -403,13 +410,15 @@ def watch_scripts(path):
     return ["/assets/js/matchwatch.js"] if FEATURES["online"] and path != "/play/online/" else []
 
 
-def stage(form_kind, panel_html, board_label, walls=(), pawns=(), live=False):
+def stage(form_kind, panel_html, board_label, walls=(), pawns=(), live=False, art=None, form_attrs=""):
+    """art: ready-made board picture for pages that are not the classic board (see the variants below)."""
+    tall = art is not None and "board-art--tall" in art
     return f"""
 <div class="container stage" data-stage>
   <div class="stage-panel">
-    <form data-play-form="{form_kind}" data-live="{'true' if live else 'false'}" novalidate>{panel_html}</form>
+    <form data-play-form="{form_kind}" {form_attrs}data-live="{'true' if live else 'false'}" novalidate>{panel_html}</form>
   </div>
-  <div class="stage-board">{board_svg(walls, pawns, board_label)}</div>
+  <div class="stage-board{' stage-board--tall' if tall else ''}">{art or board_svg(walls, pawns, board_label)}</div>
 </div>
 <div class="container game-wrap" data-game-wrap hidden><div data-game-host></div></div>"""
 
@@ -528,6 +537,119 @@ def play_local():
         "Play Quoridor with a friend", "Share one screen and take turns on the same board.",
         "Play with a friend", "local", panel, "Play Quoridor with a friend on one device: board game preview with two pawns and walls.",
         scripts=GAME_SCRIPTS,
+    )
+
+
+# ---------------------------------------------------------------- variants
+# Each variant is a game of its own (rules in static/assets/js/engine.js, VARIANTS). Add one here, give it a
+# page like wallrush(), and list it in VARIANT_CARDS so the /variants/ page shows it.
+WALLRUSH_PAWNS = [(8, 2, "p1"), (8, 6, "p2")]
+WALLRUSH_GOALS = ((0, "#5EEAD4", 0.16),)  # one goal row, shared by both players
+WALLRUSH_ALT = (
+    "Wallrush board at the start of a game: a tall grid, 9 squares wide and 13 high. Two pawns stand side by side "
+    "on the same row, with four rows behind them, and the top row is highlighted as the goal for both players."
+)
+
+
+def wallrush_art():
+    return board_svg([], WALLRUSH_PAWNS, WALLRUSH_ALT, rows=13, cols=9, goals=WALLRUSH_GOALS)
+
+
+# (path, name, icon, one-line summary, button label)
+VARIANT_CARDS = [
+    ("/variants/wallrush/", "Wallrush", "wall",
+     "A race on a taller board. Both pawns start side by side on the same line and sprint for the same goal edge, "
+     "placing walls to slow each other down.", "Play Wallrush"),
+]
+
+
+def variants_hub():
+    cards = "".join(f"""
+  <article class="card mode-card mode-card--variant">
+    <span class="icon-badge">{icon(ic)}</span>
+    <div class="mode-body">
+      <h3>{name}</h3>
+      <p>{text}</p>
+    </div>
+    <a class="btn btn--primary" href="{href}">{label} {icon('arrow')}</a>
+  </article>""" for href, name, ic, text, label in VARIANT_CARDS)
+    body = (
+        page_head(
+            "Quoridor Variants",
+            "The classic game is not the only way to play with pawns and walls. Try a variant: same ideas, a new board and a different race.",
+            [("Variants", None)],
+        )
+        + f"""
+<section class="section--tight" aria-labelledby="variants-h"><div class="container">
+  <div class="section-head"><h2 id="variants-h">Choose a Variant</h2></div>
+  <div class="grid grid--3 grid--modes">{cards}
+  </div>
+</div></section>
+<section class="section" aria-labelledby="variants-why-h"><div class="container prose">
+  <h2 id="variants-why-h">What Is a Quoridor Variant?</h2>
+  <p>A variant keeps the heart of Quoridor: on your turn you either move your pawn or place a wall, and you may never close off every route to the goal. What changes is the setup, such as the size of the board, where the pawns start and where they are heading.</p>
+  <p>If you are new to walls and pawns, start with the classic game. The variants are easier to enjoy once you know how a wall bends a route.</p>
+  <div class="btn-row">
+    <a class="btn btn--secondary" href="/how-to-play-quoridor/">Learn How to Play Quoridor</a>
+    <a class="btn btn--secondary" href="/play/">Play Classic Quoridor</a>
+  </div>
+  <p class="mt-4">More variants will be added here over time.</p>
+</div></section>
+"""
+    )
+    return Page(
+        path="/variants/",
+        title="Quoridor Variants – New Ways to Play Quoridor",
+        description="Quoridor variants you can play free in your browser. Try Wallrush, a race on a tall board where both pawns start on the same line.",
+        body=body, breadcrumbs=[("Variants", "/variants/")], nav_key="variants",
+    )
+
+
+def wallrush():
+    panel = (
+        '<div class="card"><h2 class="h-sm">Two players, one device</h2>'
+        '<p class="text-muted">Share the screen and take turns. Both pawns race to the highlighted row at the top of the board.</p>'
+        '<ul class="text-muted"><li>Both pawns start on the same line, with four rows behind them.</li><li>Each player has 10 walls.</li><li>The first pawn to reach the top row wins.</li></ul></div>'
+        '<div class="spacer"></div>'
+        + name_field(1) + name_field(2)
+        + f'<button class="btn btn--primary btn--lg btn--block" type="submit">{icon("play")} Start game</button>'
+    )
+    parent = [("Variants", "/variants/")]
+    body = (
+        '<div class="page-head"><div class="container">'
+        + crumbs(parent + [("Wallrush", None)])
+        + '<h1>Wallrush</h1><p class="lead">A Quoridor variant where both pawns start on the same line and race for the same edge.</p></div></div>'
+        + stage("local", panel, "", live=False, art=wallrush_art(), form_attrs='data-variant="wallrush" data-leave="variants" ')
+        + f"""
+<section class="section" aria-labelledby="wr-rules-h"><div class="container prose">
+  <h2 id="wr-rules-h">How Wallrush Works</h2>
+  <p>Wallrush is played on a tall board, 9 squares wide and 13 high. In classic Quoridor the pawns start on opposite edges and cross the board toward each other. Here both pawns start side by side on the same row, with four rows of space behind them, and both race to the same goal: the top row.</p>
+  <ol>
+    <li><strong>One action per turn.</strong> Move your pawn one square up, down, left or right, or place one wall. Player 1 moves first.</li>
+    <li><strong>Walls.</strong> Each player has 10 walls. A wall is two squares long. It blocks movement across it for both pawns, and walls cannot overlap or cross each other.</li>
+    <li><strong>Keep a path open.</strong> You may not place a wall that leaves either pawn with no route to the top row.</li>
+    <li><strong>Meeting the other pawn.</strong> If the other pawn stands right in front of yours, jump over it. If a wall or the edge blocks the jump, step to either side of it instead, exactly as in Quoridor.</li>
+    <li><strong>Borrowed moves.</strong> While your pawn stands right next to the other pawn, with no wall between them, you may also move to any square the other pawn could move to from where it stands, jumps and side-steps included.</li>
+    <li><strong>Winning.</strong> The first pawn to reach any square of the top row wins.</li>
+  </ol>
+  <p>Each turn has a 15 second clock. If it runs out, the game moves your pawn one step along its shortest route.</p>
+  <h2 id="wr-tips-h">Things to Think About</h2>
+  <p>Because both pawns share one goal, you are racing in the same lane as your opponent. A wall that slows them down can also slow you if your routes overlap, so look at both routes before you place one. The room behind the starting line is yours to use: stepping sideways to a clear column can beat walking straight into a wall.</p>
+  <p>For the full wall, jump and side-step rules, read the Quoridor rules. Wallrush uses them, plus the borrowed moves above.</p>
+  <div class="btn-row">
+    <a class="btn btn--secondary" href="/quoridor-rules/">Read the Quoridor Rules</a>
+    <a class="btn btn--secondary" href="/quoridor-strategy/">Quoridor Strategy</a>
+    <a class="btn btn--secondary" href="/variants/">All Variants</a>
+  </div>
+</div></section>
+"""
+    )
+    return Page(
+        path="/variants/wallrush/",
+        title="Wallrush – A Quoridor Race on a Tall Board",
+        description="Play Wallrush free in your browser: a Quoridor variant where both pawns start on the same line of a 9 by 13 board and race to the same edge, with 10 walls each.",
+        body=body, breadcrumbs=parent + [("Wallrush", "/variants/wallrush/")], nav_key="variants",
+        scripts=GAME_SCRIPTS + ["/assets/js/online.js"] + watch_scripts("/variants/wallrush/") + ["/assets/js/play.js"],
     )
 
 
@@ -1686,5 +1808,6 @@ def not_found():
 def all_pages():
     return [
         home(), play_hub(), play_online(), play_computer(), play_local(), create_room(), join_room(), room(),
+        variants_hub(), wallrush(),
         how_to_play(), rules(), strategy(), board_game(), about(), contact(), privacy(), terms(), not_found(),
     ]
