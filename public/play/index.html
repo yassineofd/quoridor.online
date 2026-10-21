@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-70NW0H4444"></script>
-<script src="./assets/js/gtag-init.js" defer></script>
+<script src="/assets/js/gtag-init.js" defer></script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title data-i18n-attr="text:0a69a3">Play Quoridor Game Online – Free Strategy Game</title>
@@ -11,11 +11,11 @@
 <meta name="theme-color" content="#0B1220">
 <meta name="color-scheme" content="dark">
 <link rel="canonical" href="https://quoridor.online/play">
-<link rel="icon" href="./favicon.ico" sizes="48x48">
-<link rel="icon" href="./assets/img/favicon-32.png" type="image/png" sizes="32x32">
-<link rel="icon" href="./assets/img/favicon-48.png" type="image/png" sizes="48x48">
-<link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png">
-<link rel="manifest" href="./site.webmanifest">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" href="/assets/img/favicon-32.png" type="image/png" sizes="32x32">
+<link rel="icon" href="/assets/img/favicon-48.png" type="image/png" sizes="48x48">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
 <meta property="og:site_name" content="Quoridor Online">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Play Quoridor Game Online – Free Strategy Game" data-i18n-attr="content:0a69a3">
@@ -511,23 +511,24 @@ background: var(--color-surface); border: 2px solid var(--control-border); borde
 .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 .game-wrap { padding-block: var(--space-4) var(--space-7); }
 .game-layout { display: grid; gap: var(--space-3); grid-template-columns: minmax(0, 1fr); align-items: start; }
-.game-board { order: 3; width: min(100%, calc((100dvh - var(--header-h) - 150px) * var(--board-ratio, 1))); min-width: min(100%, 288px); margin-inline: auto; }
+.game-board { order: 3; width: min(100%, calc((100dvh - var(--header-h) - 340px) * var(--board-ratio, 1))); min-width: min(100%, 288px); margin-inline: auto; }
 .game-side { display: contents; }
 .game-side > * { order: 5; margin: 0; }
 .game-side > .game-banner { order: 0; }
-.game-side > .turn-bar { order: 1; }
-.game-side > .turn-timer { order: 1; }
-.game-side > .players { order: 2; }
+.game-side > .players { order: 1; }
+.game-side > .turn-bar { order: 2; }
+.game-side > .turn-timer { order: 2; }
 .game-side > .result { order: 4; }
 @media (min-width: 900px) {
-.game-layout { grid-template-columns: minmax(0, min(calc((100dvh - var(--header-h) - 40px) * var(--board-ratio, 1)), 760px)) minmax(280px, 1fr); gap: var(--space-6); }
+.game-layout { grid-template-columns: minmax(0, min(calc((100dvh - var(--header-h) - 100px) * var(--board-ratio, 1)), 760px)) minmax(320px, 1fr); gap: var(--space-6); }
 .game-board { order: 0; width: 100%; margin: 0; }
 .game-side { display: flex; flex-direction: column; gap: var(--space-4); }
 .game-side > * { order: 0 !important; }
 }
 .board { display: block; width: 100%; height: auto; aspect-ratio: 1 / 1; border-radius: var(--radius-panel); touch-action: manipulation; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; cursor: pointer; }
 .board:focus-visible { outline: 3px solid var(--color-accent); outline-offset: 3px; }
-.turn-bar { font-size: 1.25rem; font-weight: 600; padding: var(--space-3) var(--space-4); border: 1px solid var(--color-border); border-radius: var(--radius-card); background: var(--color-surface); }
+.turn-bar { font-size: 1.0625rem; font-weight: 600; text-align: center; padding: var(--space-2) var(--space-4); border: 1px solid var(--color-border); border-radius: var(--radius-card); background: var(--color-surface); }
+@media (min-width: 900px) { .turn-bar { font-size: 1.25rem; padding: var(--space-3) var(--space-4); text-align: start; } }
 .turn-timer { display: flex; align-items: center; gap: var(--space-3); font-weight: 600; font-variant-numeric: tabular-nums; }
 .turn-timer[hidden] { display: none; }
 .turn-timer-text { flex: none; min-width: 9ch; }
@@ -536,22 +537,51 @@ background: var(--color-surface); border: 2px solid var(--control-border); borde
 .turn-timer.is-low { color: #ff8a96; }
 .turn-timer.is-low .turn-timer-fill { background: #ff8a96; }
 .turn-bar:focus-visible { outline: 3px solid var(--color-accent); outline-offset: 2px; }
-.players { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
-.player-card { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3); margin: 0; padding: var(--space-3); border: 1px solid var(--color-border); border-radius: var(--radius-card); background: var(--color-surface); min-width: 0; }
-.player-card.is-active { border: 3px solid var(--color-accent); padding: calc(var(--space-3) - 2px); }
-.player-card.is-winner { border: 3px solid var(--color-success); padding: calc(var(--space-3) - 2px); }
-.pawn-glyph { flex: none; width: 24px; height: 24px; border-radius: 50%; }
-.pawn-glyph--0 { background: var(--color-accent); }
-.pawn-glyph--1 { background: var(--color-player-2); }
-.pawn-glyph--2 { background: var(--color-player-3); }
-.pawn-glyph--3 { background: var(--color-player-4); }
-.player-text { flex: 1 1 5em; min-width: 0; overflow-wrap: anywhere; font-weight: 600; }
+.players { list-style: none; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: stretch; gap: var(--space-2); }
+.players--multi { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.vs-chip { align-self: center; padding: 10px 8px; border: 1px solid var(--color-border); border-radius: 12px; background: var(--color-surface); color: var(--color-text-muted); font-size: 0.8125rem; font-weight: 700; letter-spacing: 0.08em; }
+.player-card { --pc: var(--color-accent); display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-areas: "glyph text" "meta meta"; align-items: center; gap: 6px var(--space-2); margin: 0; padding: 10px; border: 2px solid rgba(255, 255, 255, 0.14); border: 2px solid color-mix(in srgb, var(--pc) 45%, transparent); border-radius: 16px; background: var(--color-surface); background: color-mix(in srgb, var(--pc) 14%, var(--color-surface)); min-width: 0; transition: box-shadow 0.2s, border-color 0.2s; }
+.player-card--1 { --pc: var(--color-player-2); }
+.player-card--2 { --pc: var(--color-player-3); }
+.player-card--3 { --pc: var(--color-player-4); }
+.player-card.is-active { border-color: var(--pc); box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2); box-shadow: 0 0 0 3px color-mix(in srgb, var(--pc) 40%, transparent); }
+.player-card.is-winner { border-color: var(--color-success); box-shadow: 0 0 0 3px rgba(94, 234, 212, 0.35); }
+.pawn-glyph { grid-area: glyph; width: 30px; height: 30px; border-radius: 50%; background: radial-gradient(circle at 35% 28%, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.1) 45%, rgba(0, 0, 0, 0.3)), var(--pc, var(--color-accent)); }
+.player-text { grid-area: text; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
 .player-tag { color: var(--color-text-muted); font-weight: 400; }
-.player-walls { flex: 1 0 100%; font-size: 0.875rem; color: var(--color-text-muted); }
-.btn--toggle[aria-pressed="true"] { border-color: var(--color-accent); box-shadow: inset 0 0 0 1px var(--color-accent); background: rgba(66, 217, 245, 0.12); }
-.btn--toggle[aria-pressed="true"]::before { content: "\2713"; color: var(--color-accent); font-weight: 700; }
+.player-meta { grid-area: meta; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px var(--space-2); }
+.player-walls { font-size: 0.8125rem; color: var(--color-text-muted); white-space: nowrap; }
+.player-clock { padding: 5px 9px; border-radius: 10px; background: rgba(255, 255, 255, 0.1); font-size: 1.125rem; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
+.player-clock[hidden] { display: none; }
+.player-clock.is-low { color: #ff8a96; background: rgba(255, 138, 150, 0.16); }
+.board-tag { display: flex; align-items: center; gap: var(--space-3); padding-block: 6px; color: var(--color-accent); font-size: 0.8125rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; }
+.board-tag[hidden] { display: none; }
+.board-tag::before, .board-tag::after { content: ""; flex: 1; height: 2px; border-radius: 2px; background: currentColor; opacity: 0.5; }
+.board-tag-text { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.board-tag--p1 { color: var(--color-player-2); }
+[dir="rtl"] .board-tag { letter-spacing: 0; }
+.wall-tray { --pc: var(--color-accent); display: flex; align-items: center; justify-content: center; gap: var(--space-3); padding: 10px var(--space-3); border: 1px solid var(--color-border); border-radius: 22px; background: var(--color-surface); }
+.wall-tray[hidden] { display: none; }
+.wall-tray[data-pawn="1"] { --pc: var(--color-player-2); }
+.wall-tray[data-pawn="2"] { --pc: var(--color-player-3); }
+.wall-tray[data-pawn="3"] { --pc: var(--color-player-4); }
+.wall-tray-info { flex: none; display: flex; align-items: center; gap: 6px; min-width: 56px; font-size: 1.25rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.wall-tray-icon svg { display: block; width: 26px; height: 26px; }
+.wall-chip { flex: 1 1 0; max-width: 150px; height: 64px; display: grid; place-items: center; padding: 0; border: 1px solid var(--color-border); border-radius: 18px; background: rgba(255, 255, 255, 0.05); color: inherit; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; }
+.wall-chip[aria-pressed="true"] { border-color: var(--pc); box-shadow: inset 0 0 0 1px var(--pc); background: rgba(255, 255, 255, 0.1); }
+.wall-chip:disabled { opacity: 0.4; cursor: not-allowed; }
+.wall-chip:focus-visible { outline: 3px solid var(--color-accent); outline-offset: 2px; }
+.wall-chip-bar { display: block; border-radius: 999px; background: var(--pc); box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.22), inset 0 2px 0 rgba(255, 255, 255, 0.35); }
+.wall-chip[data-o="h"] .wall-chip-bar { width: 72px; height: 14px; }
+.wall-chip[data-o="v"] .wall-chip-bar { width: 14px; height: 50px; }
+.wall-ghost { position: fixed; left: 0; top: 0; z-index: 80; pointer-events: none; border-radius: 999px; background: var(--color-accent); box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4), inset 0 2px 0 rgba(255, 255, 255, 0.35); }
+.wall-ghost--p1 { background: var(--color-player-2); }
+.wall-ghost--p2 { background: var(--color-player-3); }
+.wall-ghost--p3 { background: var(--color-player-4); }
+.is-carrying, .is-carrying .board { touch-action: none; }
 .game-side .btn-row .btn { flex: 1 1 auto; }
-.game-hint { min-height: 1.5em; }
+.game-hint { min-height: 1.5em; text-align: center; }
+.game-hint:empty::before { content: attr(data-tip); }
 .game-keys { display: none; }
 @media (hover: hover) and (pointer: fine) { .game-keys { display: block; } }
 .move-log-wrap summary { cursor: pointer; font-weight: 600; min-height: 44px; display: flex; align-items: center; }
@@ -664,22 +694,22 @@ setTimeout(function () { root.classList.remove('i18n-pending'); }, 3000);
 
 <header class="site-header">
   <div class="container header-bar">
-    <a class="brand" href="./" aria-label="Quoridor Online home" data-i18n-attr="aria-label:e416b9">
-      <img src="./assets/img/logo-mark.png" alt="Quoridor Online logo" width="32" height="32" data-i18n-attr="alt:334588">
+    <a class="brand" href="/" aria-label="Quoridor Online home" data-i18n-attr="aria-label:e416b9">
+      <img src="/assets/img/logo-mark.png" alt="Quoridor Online logo" width="32" height="32" data-i18n-attr="alt:334588">
       <span class="brand-name" data-i18n-skip>Quoridor <span class="tld">Online</span></span>
     </a>
     <nav class="site-nav" id="site-nav" aria-label="Main" data-i18n-attr="aria-label:355848">
-      <ul><li><a href="./" data-i18n="56dee6">Home</a></li><li><a href="./play" aria-current="page" data-i18n="70c9aa">Play</a></li><li><a href="./how-to-play-quoridor" data-i18n="f66e3b">How to Play</a></li><li><a href="./quoridor-rules" data-i18n="2494e3">Rules</a></li><li><a href="./quoridor-strategy" data-i18n="edc95f">Strategy</a></li><li><a href="./variants" data-i18n="87f0a1">Variants</a></li><li><a href="./about" data-i18n="1a3c0a">About Us</a></li></ul>
+      <ul><li><a href="/" data-i18n="56dee6">Home</a></li><li><a href="/play" aria-current="page" data-i18n="70c9aa">Play</a></li><li><a href="/how-to-play-quoridor" data-i18n="f66e3b">How to Play</a></li><li><a href="/quoridor-rules" data-i18n="2494e3">Rules</a></li><li><a href="/quoridor-strategy" data-i18n="edc95f">Strategy</a></li><li><a href="/variants" data-i18n="87f0a1">Variants</a></li><li><a href="/about" data-i18n="1a3c0a">About Us</a></li></ul>
     </nav>
     <div class="header-actions">
       <div class="lang-switch" data-lang-switch><button class="btn btn--secondary lang-toggle" type="button" id="lang-toggle" aria-haspopup="true" aria-expanded="false" aria-controls="lang-menu" aria-label="Change language" data-i18n-attr="aria-label:6073ea"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg><span class="lang-code" data-lang-code data-i18n-skip>EN</span></button><ul class="lang-menu" id="lang-menu" data-i18n-skip hidden><li><button type="button" class="lang-option" lang="en" data-lang="en">English</button></li><li><button type="button" class="lang-option" lang="es" data-lang="es">Español</button></li><li><button type="button" class="lang-option" lang="fr" data-lang="fr">Français</button></li><li><button type="button" class="lang-option" lang="de" data-lang="de">Deutsch</button></li><li><button type="button" class="lang-option" lang="ar" data-lang="ar">العربية</button></li></ul></div>
-      <a class="btn btn--primary" href="./play" data-i18n="2ed681">Play Now</a>
+      <a class="btn btn--primary" href="/play" data-i18n="2ed681">Play Now</a>
       <button class="btn btn--secondary menu-toggle" id="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" data-i18n="ae62c7"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 5h16"/><path d="M4 12h16"/><path d="M4 19h16"/></svg> Menu</button>
     </div>
   </div>
 </header>
 <main id="main" tabindex="-1">
-<div class="page-head"><div class="container"><nav class="breadcrumbs" aria-label="Breadcrumb" data-i18n-attr="aria-label:85d36d"><ol><li><a href="./" data-i18n="56dee6">Home</a></li><li><span aria-current="page" data-i18n="70c9aa">Play</span></li></ol></nav><h1 data-i18n="bc3e7f">Play Quoridor Game Online</h1><p class="lead" data-i18n="d9d79d">Choose how you want to play: online against another person, against the computer at your own level, or side by side on one device.</p></div></div>
+<div class="page-head"><div class="container"><nav class="breadcrumbs" aria-label="Breadcrumb" data-i18n-attr="aria-label:85d36d"><ol><li><a href="/" data-i18n="56dee6">Home</a></li><li><span aria-current="page" data-i18n="70c9aa">Play</span></li></ol></nav><h1 data-i18n="bc3e7f">Play Quoridor Game Online</h1><p class="lead" data-i18n="d9d79d">Choose how you want to play: online against another person, against the computer at your own level, or side by side on one device.</p></div></div>
 <section class="section--tight" aria-labelledby="modes-h"><div class="container">
   <div class="section-head"><h2 id="modes-h" data-i18n="974164">Choose Your Quoridor Game Mode</h2></div>
   
@@ -691,7 +721,7 @@ setTimeout(function () { root.classList.remove('i18n-pending'); }, 3000);
       
       <p data-i18n="95db44">Play Quoridor online against another person. Choose a username, no registration, and enter matchmaking. Want to play a specific friend? Use a private room.</p>
     </div>
-    <a class="btn btn--primary" href="./play/online" data-i18n="002c51">Play Online <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+    <a class="btn btn--primary" href="/play/online" data-i18n="002c51">Play Online <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
   </article>
   <article class="card mode-card mode-card--robot">
     <span class="icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg></span>
@@ -700,7 +730,7 @@ setTimeout(function () { root.classList.remove('i18n-pending'); }, 3000);
       
       <p data-i18n="ace1e3">Practice against the computer. Pick Easy, Medium, Hard or Expert, from gentle for beginners to a tougher test. No registration needed.</p>
     </div>
-    <a class="btn btn--primary" href="./play/computer" data-i18n="cb3d84">Play vs Robot <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+    <a class="btn btn--primary" href="/play/computer" data-i18n="cb3d84">Play vs Robot <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
   </article>
   <article class="card mode-card mode-card--local">
     <span class="icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><path d="M16 3.128a4 4 0 0 1 0 7.744"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/></svg></span>
@@ -709,7 +739,7 @@ setTimeout(function () { root.classList.remove('i18n-pending'); }, 3000);
       
       <p data-i18n="cc7d19">Two players, one device. You share the screen and take turns on the same board. Great for playing side by side.</p>
     </div>
-    <a class="btn btn--primary" href="./play/local" data-i18n="73bd9b">Play Together <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+    <a class="btn btn--primary" href="/play/local" data-i18n="73bd9b">Play Together <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
   </article>
 </div>
 </div></section>
@@ -727,15 +757,15 @@ setTimeout(function () { root.classList.remove('i18n-pending'); }, 3000);
     </ul>
   </div>
   <div class="btn-row private-strip__actions">
-    <a class="btn btn--primary btn--lg" href="./play/create-room" data-i18n="0f39c0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="M12 5v14"/></svg> Create a Room</a>
-    <a class="btn btn--secondary btn--lg" href="./play/join-room" data-i18n="b73b75"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m10 17 5-5-5-5"/><path d="M15 12H3"/><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/></svg> Join a Room</a>
+    <a class="btn btn--primary btn--lg" href="/play/create-room" data-i18n="0f39c0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="M12 5v14"/></svg> Create a Room</a>
+    <a class="btn btn--secondary btn--lg" href="/play/join-room" data-i18n="b73b75"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m10 17 5-5-5-5"/><path d="M15 12H3"/><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/></svg> Join a Room</a>
   </div>
 </div></div></section>
 <section class="section--tight" aria-labelledby="variants-cta-h"><div class="container">
   <div class="card cta-panel">
     <h2 id="variants-cta-h" data-i18n="aa0174">Try a Quoridor Variant</h2>
     <p data-i18n="809cd7">Same pawns and walls, a new kind of race. Start with Wallrush, where both pawns begin on the same line of a taller board.</p>
-    <a class="btn btn--secondary" href="./variants" data-i18n="d3aeae">Explore Variants <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+    <a class="btn btn--secondary" href="/variants" data-i18n="d3aeae">Explore Variants <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
   </div>
 </div></section>
 <section class="section" aria-labelledby="how-h"><div class="container prose">
@@ -744,21 +774,21 @@ setTimeout(function () { root.classList.remove('i18n-pending'); }, 3000);
   <p data-i18n="d6402c">Your objective is to reach the opposite side of the board before your opponent. You can make progress along your own route, create detours for your opponent, and adapt your strategy as the board changes. However, you must always leave each player a legal path to their goal.</p>
   <p data-i18n="d1d6eb">New to the game? Learn the rules before your first match.</p>
   <div class="btn-row">
-    <a class="btn btn--secondary" href="./how-to-play-quoridor" data-i18n="31621a">Learn How to Play Quoridor</a>
-    <a class="btn btn--secondary" href="./quoridor-rules" data-i18n="4f044d">Read the Quoridor Rules</a>
+    <a class="btn btn--secondary" href="/how-to-play-quoridor" data-i18n="31621a">Learn How to Play Quoridor</a>
+    <a class="btn btn--secondary" href="/quoridor-rules" data-i18n="4f044d">Read the Quoridor Rules</a>
   </div>
 </div></section>
 <section class="section" aria-labelledby="strategy-h"><div class="container prose">
   <h2 id="strategy-h" data-i18n="0bb6ae">Improve Your Quoridor Strategy</h2>
   <p data-i18n="ddf3e2">Winning takes more than moving forward. Think ahead before placing a wall, compare possible routes, and decide when to advance your pawn instead of using a barrier. Understanding how your decisions affect both players can help you make better moves.</p>
   <p data-i18n="e989ae">Explore practical tactics and learn how to use your walls effectively.</p>
-  <div class="btn-row"><a class="btn btn--secondary" href="./quoridor-strategy" data-i18n="3c338f">Explore Quoridor Strategy</a></div>
+  <div class="btn-row"><a class="btn btn--secondary" href="/quoridor-strategy" data-i18n="3c338f">Explore Quoridor Strategy</a></div>
 </div></section>
 <section class="section" aria-labelledby="faq-h"><div class="container prose article">
   <h2 id="faq-h" data-i18n="5a95b4">Frequently Asked Questions</h2>
   <h3 data-i18n="e65067">Can I play Quoridor online for free?</h3><p data-i18n="edaa57">Yes. You can play Quoridor online on this website without registration. Choose an available game mode and start playing.</p><h3 data-i18n="eba827">Can I play Quoridor against a computer?</h3><p data-i18n="5c4cb6">Yes. Select the computer mode and choose Easy, Medium, Hard, or Expert difficulty.</p><h3 data-i18n="117058">Can I play Quoridor with a friend?</h3><p data-i18n="c90935">You can play locally on the same device or create a private online room and invite your friend.</p><h3 data-i18n="c65359">Do I need an account to play Quoridor?</h3><p data-i18n="073977">No account is required to start playing. Online play uses a username rather than a registration process.</p><h3 data-i18n="eb2e74">What is the objective of Quoridor?</h3><p data-i18n="ef2a01">The goal is to move your pawn to the opposite side of the board before your opponent. You can also place walls to create detours, but you cannot completely block a player's route to the goal.</p>
   <p class="mt-4" data-i18n="314e30">Ready to put your tactics to the test?</p>
-  <div class="btn-row"><a class="btn btn--primary btn--lg" href="./play/online" data-i18n="0fed45">Play Quoridor Online Now <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a></div>
+  <div class="btn-row"><a class="btn btn--primary btn--lg" href="/play/online" data-i18n="0fed45">Play Quoridor Online Now <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a></div>
 </div></section>
 
 </main>
@@ -767,19 +797,19 @@ setTimeout(function () { root.classList.remove('i18n-pending'); }, 3000);
   <div class="container">
     <div class="footer-grid">
       <div class="footer-brand">
-        <a class="brand" href="./" aria-label="Quoridor Online home" data-i18n-attr="aria-label:e416b9"><img src="./assets/img/logo-mark.png" alt="Quoridor Online logo" width="32" height="32" data-i18n-attr="alt:334588"><span data-i18n-skip>Quoridor <span class="tld">Online</span></span></a>
+        <a class="brand" href="/" aria-label="Quoridor Online home" data-i18n-attr="aria-label:e416b9"><img src="/assets/img/logo-mark.png" alt="Quoridor Online logo" width="32" height="32" data-i18n-attr="alt:334588"><span data-i18n-skip>Quoridor <span class="tld">Online</span></span></a>
         <p data-i18n="1b196f">A simple place to play and learn the Quoridor strategy game in your browser.</p>
       </div>
-      <div><h2 data-i18n="70c9aa">Play</h2><ul><li><a href="./play" data-i18n="40af30">Play Quoridor</a></li><li><a href="./play/online" data-i18n="e531b2">Play Online</a></li><li><a href="./play/computer" data-i18n="ade3a8">Play vs Computer</a></li><li><a href="./play/local" data-i18n="dcf544">Play Locally</a></li></ul></div>
-      <div><h2 data-i18n="87f0a1">Variants</h2><ul><li><a href="./variants/wallrush" data-i18n="9bf84e">Wallrush</a></li><li><a href="./variants/pointrush" data-i18n="e50dd0">Pointrush</a></li><li><a href="./variants/custom" data-i18n="e6b00a">Custom Game</a></li></ul></div>
-      <div><h2 data-i18n="e138be">Learn</h2><ul><li><a href="./how-to-play-quoridor" data-i18n="f66e3b">How to Play</a></li><li><a href="./quoridor-rules" data-i18n="a57a64">Quoridor Rules</a></li><li><a href="./quoridor-strategy" data-i18n="4994f9">Quoridor Strategy</a></li><li><a href="./quoridor-board-game" data-i18n="bcaa86">Board Game Guide</a></li></ul></div>
-      <div><h2 data-i18n="3658f9">Site</h2><ul><li><a href="./about" data-i18n="1a3c0a">About Us</a></li><li><a href="./contact" data-i18n="5250a4">Contact Us</a></li><li><a href="./privacy-policy" data-i18n="8dbcdd">Privacy Policy</a></li><li><a href="./terms" data-i18n="0a95a1">Terms of Use</a></li></ul></div>
+      <div><h2 data-i18n="70c9aa">Play</h2><ul><li><a href="/play" data-i18n="40af30">Play Quoridor</a></li><li><a href="/play/online" data-i18n="e531b2">Play Online</a></li><li><a href="/play/computer" data-i18n="ade3a8">Play vs Computer</a></li><li><a href="/play/local" data-i18n="dcf544">Play Locally</a></li></ul></div>
+      <div><h2 data-i18n="87f0a1">Variants</h2><ul><li><a href="/variants/wallrush" data-i18n="9bf84e">Wallrush</a></li><li><a href="/variants/pointrush" data-i18n="e50dd0">Pointrush</a></li><li><a href="/variants/custom" data-i18n="e6b00a">Custom Game</a></li></ul></div>
+      <div><h2 data-i18n="e138be">Learn</h2><ul><li><a href="/how-to-play-quoridor" data-i18n="f66e3b">How to Play</a></li><li><a href="/quoridor-rules" data-i18n="a57a64">Quoridor Rules</a></li><li><a href="/quoridor-strategy" data-i18n="4994f9">Quoridor Strategy</a></li><li><a href="/quoridor-board-game" data-i18n="bcaa86">Board Game Guide</a></li></ul></div>
+      <div><h2 data-i18n="3658f9">Site</h2><ul><li><a href="/about" data-i18n="1a3c0a">About Us</a></li><li><a href="/contact" data-i18n="5250a4">Contact Us</a></li><li><a href="/privacy-policy" data-i18n="8dbcdd">Privacy Policy</a></li><li><a href="/terms" data-i18n="0a95a1">Terms of Use</a></li></ul></div>
     </div>
     <div class="footer-legal">
       <p><span data-i18n-skip>&copy; 2026 Quoridor Online.</span> <span data-i18n="247843">Independent site, not affiliated with or endorsed by the publisher or designer of the Quoridor board game.</span></p>
     </div>
   </div>
 </footer>
-<script src="./assets/js/i18n-en.js" defer></script><script src="./assets/js/i18n.js" defer></script><script src="./assets/js/site.js" defer></script>
+<script src="/assets/js/i18n-en.js" defer></script><script src="/assets/js/i18n.js" defer></script><script src="/assets/js/site.js" defer></script>
 </body>
 </html>

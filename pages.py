@@ -582,8 +582,40 @@ VARIANT_CARDS = [
 ]
 
 
+def variant_faq(faq, heading_id, heading):
+    """FAQ section (visible text) and its FAQPage JSON-LD for a variants page."""
+    html = (
+        f'<section class="section" aria-labelledby="{heading_id}"><div class="container prose">'
+        f'<h2 id="{heading_id}">{heading}</h2><div class="faq">'
+        + "".join(f'<details><summary>{q}</summary><div class="answer"><p>{a}</p></div></details>' for q, a in faq)
+        + "</div></div></section>"
+    )
+    schema = {
+        "@context": "https://schema.org", "@type": "FAQPage",
+        "mainEntity": [{"@type": "Question", "name": q,
+                        "acceptedAnswer": {"@type": "Answer", "text": re.sub(r"<[^>]+>", "", a)}} for q, a in faq],
+    }
+    return html, schema
+
+
+VARIANTS_FAQ = [
+    ("What are Quoridor variants?",
+     "Quoridor variants are different ways to play the Quoridor board game: a new board size, a different starting position, "
+     "more players or custom rules. Wallrush, Pointrush and Custom Quoridor keep the pawns, walls and path rule of the classic game."),
+    ("Can I play Quoridor with 3 or 4 players?",
+     'Yes. <a href="/variants/pointrush/">Pointrush</a> is a Quoridor variant for two, three or four players on one device, '
+     "where every pawn races to the square in the center of the board."),
+    ("Can I change the board size or the number of walls in Quoridor?",
+     'Yes. <a href="/variants/custom/">Custom Quoridor</a> lets you choose a board from 5 × 5 to 13 × 13, from 0 to 30 walls per player, '
+     "borrowed moves and the time per move."),
+    ("Are the Quoridor variants free to play?",
+     "Yes. All variants are free in your browser, with no download and no account."),
+]
+
+
 def variants_hub():
-    cards = "".join(f"""
+    faq_html, faq_schema = variant_faq(VARIANTS_FAQ, "variants-faq-h", "Quoridor Variants: Frequently Asked Questions")
+    cards ="".join(f"""
   <article class="card mode-card mode-card--variant">
     <span class="icon-badge">{icon(ic)}</span>
     <div class="mode-body">
@@ -594,8 +626,8 @@ def variants_hub():
   </article>""" for href, name, ic, text, label in VARIANT_CARDS)
     body = (
         page_head(
-            "Quoridor Variants",
-            "The classic game is not the only way to play with pawns and walls. Try a variant: same ideas, a new board and a different race.",
+            "Quoridor Variants Online",
+            "Play free Quoridor variants in your browser: Wallrush, Pointrush for 2 to 4 players, and Custom Quoridor with your own board size, walls and rules.",
             [("Variants", None)],
         )
         + f"""
@@ -614,17 +646,33 @@ def variants_hub():
   </div>
   <p class="mt-4">More variants will be added here over time.</p>
 </div></section>
-"""
+""" + faq_html
     )
     return Page(
         path="/variants/",
-        title="Quoridor Variants – New Ways to Play Quoridor",
-        description="Quoridor variants you can play free in your browser. Try Wallrush, Pointrush or a Custom Game with rules you choose.",
-        body=body, breadcrumbs=[("Variants", "/variants/")], nav_key="variants",
+        title="Quoridor Variants Online – Wallrush, Pointrush & Custom",
+        description="Play free Quoridor variants online: Wallrush, Pointrush for 2 to 4 players, and Custom Quoridor with your own board size, walls and rules. No download, no sign-up.",
+        body=body, breadcrumbs=[("Variants", "/variants/")], nav_key="variants", schema=[faq_schema],
     )
 
 
+WALLRUSH_FAQ = [
+    ("What is Wallrush?",
+     "Wallrush is a free two-player Quoridor variant played on a tall 9 by 13 board. Both pawns start side by side on the same line "
+     "and race to the same goal row, placing walls to slow each other down."),
+    ("How is Wallrush different from classic Quoridor?",
+     'In classic Quoridor the pawns start on opposite edges and cross the board toward each other. In Wallrush they race in the same direction, '
+     'and a pawn standing next to the other one may also use its moves (borrowed moves). The wall and path rules are those of the '
+     '<a href="/quoridor-rules/">Quoridor rules</a>.'),
+    ("How many walls does each player have in Wallrush?",
+     "Each player has 10 walls. A wall is two squares long, and you may never block every route to the top row."),
+    ("Can I play Wallrush online for free?",
+     "Yes. Wallrush is free in your browser, with no download and no account. Two players take turns on one device."),
+]
+
+
 def wallrush():
+    faq_html, faq_schema = variant_faq(WALLRUSH_FAQ, "wr-faq-h", "Wallrush: Frequently Asked Questions")
     panel = (
         '<div class="card"><h2 class="h-sm">Two players, one device</h2>'
         '<p class="text-muted">Share the screen and take turns. Both pawns race to the highlighted row at the top of the board.</p>'
@@ -637,7 +685,7 @@ def wallrush():
     body = (
         '<div class="page-head"><div class="container">'
         + crumbs(parent + [("Wallrush", None)])
-        + '<h1>Wallrush</h1><p class="lead">A Quoridor variant where both pawns start on the same line and race for the same edge.</p></div></div>'
+        + '<h1>Wallrush: A Quoridor Variant</h1><p class="lead">Play Wallrush free online, a two-player Quoridor race game where both pawns start on the same line of a 9 by 13 board and sprint for the same edge.</p></div></div>'
         + stage("local", panel, "", live=False, art=wallrush_art(), form_attrs='data-variant="wallrush" data-leave="variants" ')
         + f"""
 <section class="section" aria-labelledby="wr-rules-h"><div class="container prose">
@@ -651,7 +699,7 @@ def wallrush():
     <li><strong>Borrowed moves.</strong> While your pawn stands right next to the other pawn, with no wall between them, you may also move to any square the other pawn could move to from where it stands, jumps and side-steps included.</li>
     <li><strong>Winning.</strong> The first pawn to reach any square of the top row wins.</li>
   </ol>
-  <p>Each turn has a 15 second clock. If it runs out, the game moves your pawn one step along its shortest route.</p>
+  <p>Each turn has a 32 second clock, and each player has 5 minutes for the whole game. If a turn runs out of time, the game moves your pawn one step along its shortest route. If your 5 minutes run out, you lose.</p>
   <h2 id="wr-tips-h">Things to Think About</h2>
   <p>Because both pawns share one goal, you are racing in the same lane as your opponent. A wall that slows them down can also slow you if your routes overlap, so look at both routes before you place one. The room behind the starting line is yours to use: stepping sideways to a clear column can beat walking straight into a wall.</p>
   <p>For the full wall, jump and side-step rules, read the Quoridor rules. Wallrush uses them, plus the borrowed moves above.</p>
@@ -661,13 +709,13 @@ def wallrush():
     <a class="btn btn--secondary" href="/variants/">All Variants</a>
   </div>
 </div></section>
-"""
+""" + faq_html
     )
     return Page(
         path="/variants/wallrush/",
-        title="Wallrush – A Quoridor Race on a Tall Board",
-        description="Play Wallrush free in your browser: a Quoridor variant where both pawns start on the same line of a 9 by 13 board and race to the same edge, with 10 walls each.",
-        body=body, breadcrumbs=parent + [("Wallrush", "/variants/wallrush/")], nav_key="variants",
+        title="Wallrush – Free Online Quoridor Variant Race Game",
+        description="Play Wallrush online free: a two-player Quoridor variant on a tall 9 by 13 board where both pawns start on one line and race to the same edge, with 10 walls each.",
+        body=body, breadcrumbs=parent + [("Wallrush", "/variants/wallrush/")], nav_key="variants", schema=[faq_schema],
         scripts=GAME_SCRIPTS + ["/assets/js/online.js"] + watch_scripts("/variants/wallrush/") + ["/assets/js/play.js"],
     )
 
@@ -683,8 +731,24 @@ def players_choice():
     return f'<fieldset class="fieldset"><legend>Number of players</legend><div class="choice-group choice-group--row">{items}</div></fieldset>'
 
 
+POINTRUSH_FAQ = [
+    ("What is Pointrush?",
+     "Pointrush is a free Quoridor variant for two, three or four players on an 11 by 11 board. Every pawn starts in the middle of an edge "
+     "and races to the same goal: the square in the center."),
+    ("Can you play Quoridor with 4 players?",
+     "Yes. In Pointrush four players share one device and take turns, each starting from a different edge. With three players each has 8 walls, "
+     "and with four players each has 6."),
+    ("How do you win at Pointrush?",
+     "The first pawn to step onto the center square wins. You can place walls to hold the other pawns back, but you may never leave a pawn "
+     "with no route to the center."),
+    ("Is Pointrush free to play online?",
+     "Yes. Pointrush is free in your browser, with no download and no account."),
+]
+
+
 def pointrush():
-    names = "".join(f'<div data-player-field="{n}"{" hidden" if n > 2 else ""}>{name_field(n)}</div>' for n in (1, 2, 3, 4))
+    faq_html, faq_schema = variant_faq(POINTRUSH_FAQ, "pr-faq-h", "Pointrush: Frequently Asked Questions")
+    names ="".join(f'<div data-player-field="{n}"{" hidden" if n > 2 else ""}>{name_field(n)}</div>' for n in (1, 2, 3, 4))
     panel = (
         '<div class="card"><h2 class="h-sm">Two to four players, one device</h2>'
         '<p class="text-muted">Share the screen and take turns. Every pawn races to the highlighted square in the center of the board.</p>'
@@ -697,7 +761,7 @@ def pointrush():
     body = (
         '<div class="page-head"><div class="container">'
         + crumbs(parent + [("Pointrush", None)])
-        + '<h1>Pointrush</h1><p class="lead">A Quoridor variant for two, three or four players where every pawn races for the same square in the center.</p></div></div>'
+        + '<h1>Pointrush: A Quoridor Variant for 2 to 4 Players</h1><p class="lead">Play Pointrush free online, a multiplayer Quoridor variant where two, three or four pawns race for the same square in the center of an 11 by 11 board.</p></div></div>'
         + stage("local", panel, "", live=False, art=pointrush_art(), form_attrs='data-variant="pointrush" data-leave="variants" ')
         + f"""
 <section class="section" aria-labelledby="pr-rules-h"><div class="container prose">
@@ -711,7 +775,7 @@ def pointrush():
     <li><strong>Meeting other pawns.</strong> If another pawn stands right in front of yours, jump over it. If a wall, the edge or a third pawn blocks the jump, step to either side of it instead, as in Quoridor. You can never land on a square that is taken.</li>
     <li><strong>Winning.</strong> The first pawn to step onto the center square wins.</li>
   </ol>
-  <p>Each turn has a 15 second clock. If it runs out, the game moves your pawn one step along its shortest route.</p>
+  <p>Each turn has a 32 second clock, and each player has 5 minutes for the whole game. If a turn runs out of time, the game moves your pawn one step along its shortest route. If your 5 minutes run out, you lose.</p>
   <h2 id="pr-tips-h">Things to Think About</h2>
   <p>Every route ends on the same square, so the lanes cross in the middle and the pawns crowd the last few squares. A wall near the center slows everyone, not only the player you aimed at, and with three or four players a wall that holds back one rival can help another. Watch who is closest, and save your walls for the moment the leader is about to arrive.</p>
   <p>For the full wall, jump and side-step rules, read the Quoridor rules. Pointrush uses them, with the center square as the only goal.</p>
@@ -721,20 +785,20 @@ def pointrush():
     <a class="btn btn--secondary" href="/variants/">All Variants</a>
   </div>
 </div></section>
-"""
+""" + faq_html
     )
     return Page(
         path="/variants/pointrush/",
-        title="Pointrush – A Quoridor Race to the Center for 2 to 4 Players",
-        description="Play Pointrush free in your browser: a Quoridor variant for 2 to 4 players on an 11 by 11 board where every pawn races to the center square.",
-        body=body, breadcrumbs=parent + [("Pointrush", "/variants/pointrush/")], nav_key="variants",
+        title="Pointrush – 4-Player Quoridor Variant, Play Free Online",
+        description="Play Pointrush online free: a multiplayer Quoridor variant for 2 to 4 players on an 11 by 11 board where every pawn races to the center square. No download needed.",
+        body=body, breadcrumbs=parent + [("Pointrush", "/variants/pointrush/")], nav_key="variants", schema=[faq_schema],
         scripts=GAME_SCRIPTS + ["/assets/js/online.js"] + watch_scripts("/variants/pointrush/") + ["/assets/js/play.js"],
     )
 
 
 # Custom Game: the classic layout with settings the players choose. The limits mirror CUSTOM_LIMITS in engine.js.
 CUSTOM_SIZES = (5, 7, 9, 11, 13)
-CUSTOM_CLOCKS = ((0, "No time limit"), (15, "15 seconds per move"), (30, "30 seconds per move"), (60, "1 minute per move"), (120, "2 minutes per move"))
+CUSTOM_CLOCKS = ((0, "No time limit"), (15, "15 seconds per move"), (32, "32 seconds per move"), (60, "1 minute per move"), (120, "2 minutes per move"))
 
 
 def custom_settings():
@@ -755,7 +819,7 @@ def custom_settings():
 <div class="field">
   <label for="clock">Time per move</label>
   <select class="input" id="clock" name="clock" aria-describedby="clock-hint">{clocks}</select>
-  <span class="hint" id="clock-hint">When the time runs out, the game moves the pawn one step along its shortest route.</span>
+  <span class="hint" id="clock-hint">When the time runs out, the game moves the pawn one step along its shortest route. With a clock on, each player also has 5 minutes in total.</span>
 </div>
 <div class="fieldset">
   <div class="choice"><input type="checkbox" id="borrow" name="borrow">
@@ -766,7 +830,20 @@ def custom_settings():
 </div>"""
 
 
+CUSTOM_FAQ = [
+    ("Can I change the board size in Quoridor?",
+     "Yes. In a Custom Quoridor game you can play on a 5 × 5, 7 × 7, 9 × 9, 11 × 11 or 13 × 13 board. The classic board is 9 × 9."),
+    ("How many walls can each player have in a custom game?",
+     "From 0 to 30 walls per player, the same for both players. Classic Quoridor gives each player 10 walls."),
+    ("Can I play Quoridor with a time limit?",
+     "Yes. Choose no clock, or 15 seconds, 32 seconds, 1 minute or 2 minutes per move. When the clock runs out, the game moves your pawn one step along its shortest route."),
+    ("Can I play a custom Quoridor game with a friend?",
+     'Yes, on the same device: share the screen and take turns. For a game on two devices, use a <a href="/play/create-room/">private room</a>, which uses the classic rules.'),
+]
+
+
 def custom_game():
+    faq_html, faq_schema = variant_faq(CUSTOM_FAQ, "cg-faq-h", "Custom Quoridor: Frequently Asked Questions")
     panel = (
         '<div class="card"><h2 class="h-sm">Set up your game</h2>'
         '<p class="text-muted">Choose the rules, then share the screen with a friend and take turns. The defaults are classic Quoridor.</p></div>'
@@ -779,7 +856,7 @@ def custom_game():
     body = (
         '<div class="page-head"><div class="container">'
         + crumbs(parent + [("Custom Game", None)])
-        + '<h1>Custom Game</h1><p class="lead">Classic Quoridor with the rules set by you: board size, walls, borrowed moves and the clock.</p></div></div>'
+        + '<h1>Custom Quoridor Game</h1><p class="lead">Play Quoridor with your own rules: choose the board size, the number of walls, borrowed moves and the time per move.</p></div></div>'
         + stage("local", panel, "Custom Game: board game preview with two pawns, shown here at the classic 9 by 9 size.", (), [(8, 4, "p1"), (0, 4, "p2")],
                 form_attrs='data-variant="custom" data-leave="variants" ')
         + """
@@ -791,7 +868,7 @@ def custom_game():
     <li><strong>Walls per player.</strong> Give each player anywhere from 0 to 30 walls. With none, the game is a pure race. With many, it turns into a maze fight. A wall is two squares long, and walls cannot overlap or cross each other.</li>
     <li><strong>Keep a path open.</strong> Whatever the setup, you may not place a wall that leaves either pawn with no route to its goal.</li>
     <li><strong>Borrowed moves.</strong> If you turn this on, a pawn standing right next to the other pawn, with no wall between them, may also move to any square the other pawn could move to from where it stands.</li>
-    <li><strong>Time per move.</strong> Play with no clock, or choose 15 seconds, 30 seconds, 1 minute or 2 minutes. When the clock runs out, the game moves your pawn one step along its shortest route.</li>
+    <li><strong>Time per move.</strong> Play with no clock, or choose 15 seconds, 32 seconds, 1 minute or 2 minutes. When the clock runs out, the game moves your pawn one step along its shortest route. With a clock on, each player also has 5 minutes for the whole game.</li>
   </ol>
   <h2 id="cg-tips-h">Ideas to Try</h2>
   <p>Try a 5 × 5 board with 3 walls each for a game that is over in minutes, or a 13 × 13 board with 20 walls each for a long battle of detours. Both players always get the same number of walls. When you play again, your settings stay in place.</p>
@@ -802,13 +879,13 @@ def custom_game():
     <a class="btn btn--secondary" href="/variants/">All Variants</a>
   </div>
 </div></section>
-"""
+""" + faq_html
     )
     return Page(
         path="/variants/custom/",
-        title="Custom Quoridor – Choose the Board Size, Walls and Rules",
-        description="Play Custom Quoridor free in your browser with a friend on one device. Choose the board size, how many walls each player gets, borrowed moves and the time per move.",
-        body=body, breadcrumbs=parent + [("Custom Game", "/variants/custom/")], nav_key="variants",
+        title="Custom Quoridor – Choose Board Size, Walls & Rules Online",
+        description="Play custom Quoridor online free with a friend on one device. Choose the board size from 5×5 to 13×13, the number of walls, borrowed moves and the time per move.",
+        body=body, breadcrumbs=parent + [("Custom Game", "/variants/custom/")], nav_key="variants", schema=[faq_schema],
         scripts=GAME_SCRIPTS + ["/assets/js/online.js"] + watch_scripts("/variants/custom/") + ["/assets/js/play.js"],
     )
 
@@ -996,7 +1073,7 @@ def how_to_play_faq():
             ("What if my connection drops during a game?",
              "The game shows your opponent that you are reconnecting, and your browser tries to rejoin your seat automatically. If you can't get back within a minute, the game counts as a forfeit."),
             ("Can I play on my phone?",
-             "Yes. Online games run in a mobile browser with nothing to install. In wall mode, tap a groove to select a wall, then press Place selected wall to confirm."),
+             "Yes. Online games run in a mobile browser with nothing to install. Drag a wall from the tray onto the board to place it, or tap a wall in the tray, tap a groove and press Place selected wall to confirm."),
             ("Can I play someone who uses a different language?",
              "Yes. Everyone picks their own language with the translate button in the page header (English, Spanish, French, German or Arabic). It only changes how the page looks to you. The game, the matchmaking and the rooms are the same for everyone, and there is no chat, so you and your opponent can each play in your own language. Names can be written in any alphabet."),
             ("Can I play the same opponent again?",
@@ -1050,15 +1127,15 @@ def how_to_play():
         move_steps = """
 <ol class="steps">
 <li><strong>Wait for <em>Your turn</em>.</strong>Moves are only accepted from you when the turn bar says it's your go.</li>
-<li><strong>Stay in Move pawn mode.</strong>The squares you can legally reach are highlighted. Walls and the board edge are already taken into account.</li>
+<li><strong>Look for the highlighted squares.</strong>The squares you can legally reach are highlighted. Walls and the board edge are already taken into account.</li>
 <li><strong>Click or tap a highlighted square.</strong>Your pawn moves one square and the turn passes to your opponent. With a keyboard, use the arrow keys and Enter.</li>
 </ol>"""
-        timer_note = '<div class="callout"><p><strong>Watch the clock.</strong> Each turn has a 15-second timer, shown above the players. If it runs out, the server plays a pawn step along your shortest route for you, so you lose the chance to place a wall that turn.</p></div>'
+        timer_note = '<div class="callout"><p><strong>Watch the clock.</strong> Each turn has a 32-second timer, and each player has 5 minutes for the whole game; both clocks are shown above the board. If a turn runs out, the server plays a pawn step along your shortest route for you, so you lose the chance to place a wall that turn. If your 5 minutes run out, you lose.</p></div>'
     else:
         move_steps = """
 <ol class="steps">
 <li><strong>Wait for your turn.</strong>The turn bar shows whose go it is.</li>
-<li><strong>Stay in Move pawn mode.</strong>The squares you can legally reach are highlighted.</li>
+<li><strong>Look for the highlighted squares.</strong>The squares you can legally reach are highlighted.</li>
 <li><strong>Click or tap a highlighted square.</strong>Your pawn moves one square and the turn passes.</li>
 </ol>"""
         timer_note = ""
@@ -1095,10 +1172,10 @@ def how_to_play():
         ("place-walls", "How to Place Walls", f"""
 <p>Instead of moving, you can place one wall. A wall makes your opponent's route longer, which is just as good as getting you closer to the goal.</p>
 <ol class="steps">
-<li><strong>Press Place wall.</strong>The board switches to wall mode. Press Move pawn to go back.</li>
-<li><strong>Pick a groove.</strong>Point at the board and the nearest groove shows a preview. Press Rotate wall to switch between across and up and down.</li>
-<li><strong>Check that it's allowed.</strong>A wall can't overlap or cross another wall, and it can never take away a player's last route to their goal. If the preview isn't legal, a message under the buttons says why and the wall can't be placed.</li>
-<li><strong>Place it.</strong>With a mouse, click the groove. On a touch screen, tap it to select it and then press Place selected wall. Your wall count goes down by one.</li>
+<li><strong>Pick a wall.</strong>Under the board is your wall tray, with one horizontal and one vertical wall. Drag the one you want onto the board.</li>
+<li><strong>Choose the spot.</strong>While you drag, the nearest groove shows a preview. On a touch screen the wall is held just above your finger so you can see it.</li>
+<li><strong>Check that it's allowed.</strong>A wall can't overlap or cross another wall, and it can never take away a player's last route to their goal. If the preview isn't legal, a message under the board says why and the wall can't be placed.</li>
+<li><strong>Let go to place it.</strong>Release the wall over the groove you want and your wall count goes down by one. You can also tap a wall in the tray to choose its type, tap a groove on the board, and then press Place selected wall.</li>
 </ol>
 <p>Walls are final. They can't be moved or picked up again, and an online game has no undo, so take a second look at the preview first.</p>
 {figure(WALL_BOARD, 'Two walls side by side. The white pawn needed 6 steps to reach the bottom row; now it needs 8, counting only the walls.')}
@@ -1115,7 +1192,7 @@ def how_to_play():
 <li><strong>Plan one step further.</strong>Ask what your opponent can do in reply before you commit to a move or a wall.</li>
 <li><strong>Spend walls where they hurt most.</strong>A wall that adds one step costs you a turn and a wall. Look for walls that force several steps of detour.</li>
 <li><strong>Balance moving and blocking.</strong>Only moving lets a good blocker catch you out, and only walling leaves you no closer to the goal.</li>
-<li><strong>Keep an eye on the timer.</strong>""" + ("Online turns last 15 seconds. Decide early, and keep the tab open so you don't forfeit by disconnecting." if online else "Each turn has a 15-second timer.") + """</li>
+<li><strong>Keep an eye on the timer.</strong>""" + ("Online turns last 32 seconds, and each player has 5 minutes in total. Decide early, and keep the tab open so you don't forfeit by disconnecting." if online else "Each turn has a 32-second timer, and each player has 5 minutes in total.") + """</li>
 <li><strong>Practice first.</strong>""" + ('<a href="/play/computer/">Play the computer on Easy</a> to get used to the controls before you meet a person.' if FEATURES["computer"] else "Take a few moves slowly to get used to the controls.") + """</li>
 </ol>
 <p>When you're ready for more, read the <a href="/quoridor-strategy/">Quoridor strategy guide</a>.</p>"""),

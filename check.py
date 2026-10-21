@@ -239,10 +239,12 @@ def main():
             fail(f"{label}: empty title")
         if not d.meta.get("description"):
             fail(f"{label}: missing meta description")
-        if label != "404":
-            root_abs = [h for h in d.hrefs + d.srcs if h.startswith("/") and not h.startswith("//")]
-            if root_abs:
-                fail(f"{label}: root-absolute URLs would break in a sub-folder: {root_abs[:3]}")
+        page_rel = [h for h in d.hrefs + d.srcs if h.startswith(("./", "../"))]
+        if page_rel:
+            fail(f"{label}: internal URLs must be root-relative (/play), found page-relative {page_rel[:3]}")
+        trailing = [h for h in d.hrefs if h.startswith("/") and not h.startswith("//") and h != BASE_PATH + "/" and h.split("?")[0].split("#")[0].endswith("/")]
+        if trailing:
+            fail(f"{label}: internal links must have no trailing slash: {trailing[:3]}")
         if d.inline_styles:
             fail(f"{label}: {d.inline_styles} inline style attribute(s) (breaks strict CSP)")
         if d.imgs_no_alt:

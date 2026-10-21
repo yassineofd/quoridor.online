@@ -194,10 +194,10 @@ class LongPoll(Setup):
 class TurnTimer(Setup):
     def setUp(self):
         super().setUp()
-        self._saved = (rooms.TURN_SECONDS, rooms.TURN_GRACE)
+        self._saved = (rooms.TURN_SECONDS, rooms.TURN_GRACE, rooms.BANK_SECONDS)
 
     def tearDown(self):
-        rooms.TURN_SECONDS, rooms.TURN_GRACE = self._saved
+        rooms.TURN_SECONDS, rooms.TURN_GRACE, rooms.BANK_SECONDS = self._saved
 
     def test_snapshot_reports_time_left(self):
         room, seats = self.start_game()
@@ -205,8 +205,57 @@ class TurnTimer(Setup):
         self.assertLessEqual(snap["turnLeft"], rooms.TURN_SECONDS)
         self.assertGreater(snap["turnLeft"], rooms.TURN_SECONDS - 2)
 
-    def test_default_limit_is_15_seconds(self):
-        self.assertEqual(rooms.TURN_SECONDS, 15)
+    def test_default_limits_are_32_seconds_a_move_and_5_minutes_a_game(self):
+        self.assertEqual(rooms.TURN_SECONDS, 32)
+        self.assertEqual(rooms.BANK_SECONDS, 300)
+
+    def test_snapshot_reports_both_clocks(self):
+        room, seats = self.start_game()
+        snap = self.hub.wait_state(room.id, seats[0]["token"], None)
+        turn = room.game.turn
+        self.assertGreater(snap["clocks"][turn], rooms.BANK_SECONDS - 2)
+        self.assertEqual(snap["clocks"][1 - turn], rooms.BANK_SECONDS)   # the other bank waits for its turn
+
+    def test_a_move_takes_its_time_off_the_players_bank_only(self):
+        room, seats = self.start_game()
+        time.sleep(0.3)
+        mover = room.game.turn
+        self.hub.move("1.1.1.1", room.id, seats[mover]["token"], step_toward_goal(room, mover))
+        snap = self.hub.wait_state(room.id, seats[mover]["token"], None)
+        self.assertLess(snap["clocks"][mover], rooms.BANK_SECONDS - 0.25)
+        self.assertGreater(snap["clocks"][mover], rooms.BANK_SECONDS - 3)
+        self.assertEqual(snap["clocks"][1 - mover], rooms.BANK_SECONDS)
+
+    def test_the_move_clock_never_shows_more_than_the_bank(self):
+        rooms.BANK_SECONDS = 5
+        room, seats = self.start_game()
+        snap = self.hub.wait_state(room.id, seats[0]["token"], None)
+        self.assertLessEqual(snap["turnLeft"], 5)
+
+    def test_a_player_whose_bank_runs_out_loses_on_time(self):
+        rooms.BANK_SECONDS, rooms.TURN_GRACE = 0.1, 0
+        room, seats = self.start_game()
+        slow = room.game.turn
+        time.sleep(0.25)
+        self.hub.sweep()
+        self.assertEqual(room.status, "finished")
+        self.assertEqual(room.reason, "timeout")
+        self.assertEqual(room.game.winner, 1 - slow)
+        snap = self.hub.wait_state(room.id, seats[slow]["token"], None)
+        self.assertEqual(snap["clocks"][slow], 0)
+        self.assertIsNone(snap["turnLeft"])
+
+    def test_a_rematch_gives_both_players_a_full_bank_again(self):
+        rooms.BANK_SECONDS, rooms.TURN_GRACE = 0.1, 0
+        room, seats = self.start_game()
+        time.sleep(0.25)
+        self.hub.sweep()
+        self.assertEqual(room.status, "finished")
+        rooms.BANK_SECONDS = 300
+        for s in seats.values():
+            self.hub.rematch(room.id, s["token"])
+        self.assertEqual(room.status, "playing")
+        self.assertEqual(room.bank, [300.0, 300.0])
 
     def test_out_of_time_plays_a_pawn_step_toward_the_goal(self):
         rooms.TURN_SECONDS, rooms.TURN_GRACE = 0.1, 0

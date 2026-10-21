@@ -195,6 +195,26 @@ class Page:
             self.send("Input.dispatchMouseEvent", type="mouseReleased", x=x, y=y, button="left", clickCount=1)
         self.pump(0.15)
 
+    def drag(self, x0, y0, x1, y1, steps=8, release=True):
+        """Press at (x0, y0), move to (x1, y1) in small steps and let go (a finger on touch pages, else the left button)."""
+        pts = [(x0 + (x1 - x0) * i / steps, y0 + (y1 - y0) * i / steps) for i in range(1, steps + 1)]
+        if self.touch:
+            self.send("Input.dispatchTouchEvent", type="touchStart", touchPoints=[{"x": x0, "y": y0}])
+            for x, y in pts:
+                self.send("Input.dispatchTouchEvent", type="touchMove", touchPoints=[{"x": x, "y": y}])
+                self.pump(0.02)
+            if release:
+                self.send("Input.dispatchTouchEvent", type="touchEnd", touchPoints=[])
+        else:
+            self.send("Input.dispatchMouseEvent", type="mouseMoved", x=x0, y=y0)
+            self.send("Input.dispatchMouseEvent", type="mousePressed", x=x0, y=y0, button="left", buttons=1, clickCount=1)
+            for x, y in pts:
+                self.send("Input.dispatchMouseEvent", type="mouseMoved", x=x, y=y, buttons=1)
+                self.pump(0.02)
+            if release:
+                self.send("Input.dispatchMouseEvent", type="mouseReleased", x=x1, y=y1, button="left", clickCount=1)
+        self.pump(0.15)
+
     def move_to(self, x, y):
         self.send("Input.dispatchMouseEvent", type="mouseMoved", x=x, y=y)
         self.pump(0.05)

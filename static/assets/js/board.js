@@ -9,7 +9,10 @@
      pawn mode  click / tap a highlighted square. Keyboard: arrows move the cursor, Enter moves.
      wall mode  the groove nearest the pointer is previewed. Mouse: click places it. Touch / pen:
                 tap selects, then Confirm. Keyboard: arrows move the wall, R rotates, Enter places.
-     W / M      switch to wall / pawn mode.  Esc: cancel a wall selection.                      */
+     W / M      switch to wall / pawn mode.  Esc: cancel a wall selection.
+     drag       the owner's wall tray calls dragTo() while a wall is carried over the board (the nearest
+                groove is previewed, lifted above a finger so it stays visible), then dragDrop() to place
+                it or dragCancel(). No mode change is needed.                                          */
 (function (root) {
   'use strict';
   var Q = root.Quoridor;
@@ -19,6 +22,8 @@
   var SIZE = PAD * 2 + 9 * CELL + 8 * GAP; // the classic board; other sizes are worked out per board in create()
   var SHARED_GOAL = '#5eead4'; // goal row that both players race to
   var NS = 'http://www.w3.org/2000/svg';
+  var TOUCH_LIFT = 56;         // px a carried wall is shown above a finger, so the finger does not hide it
+  var boards = 0;              // gives each board's gradients their own ids
 
   function el(tag, attrs, parent) {
     var n = document.createElementNS(NS, tag);
@@ -48,6 +53,8 @@
       cursor: game.pawns[0].slice(), // keyboard cursor for squares
       wallCursor: { o: 'h', r: (ROWS >> 1) - 1, c: (COLS >> 1) - 1 },
       sel: null,             // selected wall {o,r,c}
+      orient: null,          // 'h' | 'v' | null: the wall type chosen in the tray (null: whichever groove is nearest)
+      drag: null,            // groove under a wall being carried over the board {o,r,c}, or null
       hover: null,           // hovered wall (mouse)
       keyboard: false,       // show the keyboard cursor
       last: null
@@ -60,6 +67,12 @@
     svg.style.aspectRatio = W + ' / ' + H;
     var title = el('title', {}, svg); title.textContent = t('board.title');
     var desc = el('desc', {}, svg);
+    var uid = 'qb' + (++boards);
+    var defs = el('defs', {}, svg);
+    var shine = el('radialGradient', { id: uid + '-shine', cx: '35%', cy: '28%', r: '70%' }, defs);
+    el('stop', { offset: '0', 'stop-color': '#ffffff', 'stop-opacity': 0.75 }, shine);
+    el('stop', { offset: '0.45', 'stop-color': '#ffffff', 'stop-opacity': 0.08 }, shine);
+    el('stop', { offset: '1', 'stop-color': '#000000', 'stop-opacity': 0.28 }, shine);
     var world = el('g', {}, svg);
     if (flip) world.setAttribute('transform', 'rotate(180 ' + W / 2 + ' ' + H / 2 + ')');
     el('rect', { width: W, height: H, rx: 28, fill: '#0b1220' }, world);
@@ -113,11 +126,12 @@
       var c = Math.floor((p.x - PAD + GAP / 2) / PITCH), r = Math.floor((p.y - PAD + GAP / 2) / PITCH);
       return r >= 0 && r < ROWS && c >= 0 && c < COLS ? [r, c] : null;
     }
-    function slotAt(p) {
+    // The groove crossing nearest to p. A wall type chosen in the tray (or o) fixes the direction; otherwise it follows the pointer.
+    function slotAt(p, o) {
       var c = Math.max(0, Math.min(COLS - 2, Math.round((p.x - anchorPos(0)) / PITCH)));
       var r = Math.max(0, Math.min(ROWS - 2, Math.round((p.y - anchorPos(0)) / PITCH)));
       var dx = p.x - anchorPos(c), dy = p.y - anchorPos(r);
-      return { o: Math.abs(dx) > Math.abs(dy) ? 'h' : 'v', r: r, c: c };
+      return { o: o || state.orient || (Math.abs(dx) > Math.abs(dy) ? 'h' : 'v'), r: r, c: c };
     }
 
     function legalTargets() { return state.actor !== null && state.actor === game.turn && game.winner === null ? game.pawnMoves(state.actor) : []; }
@@ -173,7 +187,7 @@
       trackChanges();
 
       var i, w, j;
-      if (canAct() && state.mode === 'move') {
+      if (canAct() && state.mode === 'move' && !state.drag) {
         var targets = legalTargets();
         for (i = 0; i < targets.length; i++) {
           var tr = targets[i][0], tc = targets[i][1];
@@ -194,8 +208,8 @@
         play(drawWall(gWalls, w.o, w.r, w.c, { fill: PAWN_COLORS[i % game.nPlayers], stroke: isLast ? '#ffffff' : WALL_EDGES[i % game.nPlayers], 'stroke-width': isLast ? 3 : 1.5 }), 'w:' + wallKey(w), 'wall');
       }
 
-      if (state.mode === 'wall' && canAct()) {
-        var shown = state.sel || state.hover || (state.keyboard ? state.wallCursor : null);
+      if ((state.mode === 'wall' || state.drag) && canAct()) {
+        var shown = state.drag || state.sel || state.hover || (state.keyboard ? state.wallCursor : null);
         var st = wallStatus(shown);
         if (st) {
           drawWall(gPreview, st.wall.o, st.wall.r, st.wall.c, st.legal
@@ -211,6 +225,7 @@
         if (game.winner === i) el('circle', { cx: cx, cy: cy, r: 36, fill: 'none', stroke: '#5eead4', 'stroke-width': 4 }, pg);
         else if (active) el('circle', { cx: cx, cy: cy, r: 35, fill: 'none', stroke: '#ffffff', 'stroke-opacity': 0.45, 'stroke-width': 2 }, pg);
         el('circle', { cx: cx, cy: cy, r: 27, fill: PAWN_COLORS[i] }, pg);
+        el('circle', { cx: cx, cy: cy, r: 27, fill: 'url(#' + uid + '-shine)' }, pg);
         play(pg, 'p' + i, 'move');
       }
 
@@ -263,6 +278,17 @@
       for (var i = 0; i < targets.length; i++) if (targets[i][0] === r && targets[i][1] === c) ok = true;
       if (!ok) { say(t('board.notLegal', { square: game.squareName(r, c) })); return; }
       opts.onCommit({ type: 'move', r: r, c: c });
+    }
+
+    // A wall carried over the board from the tray. Returns the wall's status ({wall, legal, reason}), or null off the board.
+    function dragTo(clientX, clientY, o, pointerType) {
+      var p = toBoard(clientX, clientY - (pointerType && pointerType !== 'mouse' ? TOUCH_LIFT : 0));
+      var m = PITCH * 0.4, target = null;
+      if (canAct() && p.x >= -m && p.y >= -m && p.x <= W + m && p.y <= H + m) target = slotAt(p, o);
+      var d = state.drag;
+      if ((target && d && target.o === d.o && target.r === d.r && target.c === d.c) || (!target && !d)) return wallStatus(target);
+      state.drag = target; state.hover = null; draw();
+      return wallStatus(target);
     }
 
     var lastPointerType = 'mouse';
@@ -347,18 +373,25 @@
     var api = {
       svg: svg,
       ratio: W / H, // width over height, for the page layout
-      setGame: function (g) { game = g; prev = null; anims = {}; state.sel = null; state.hover = null; draw(); notify(); },
+      setGame: function (g) { game = g; prev = null; anims = {}; state.sel = null; state.hover = null; state.drag = null; draw(); notify(); },
       refresh: function () {
         if (state.sel && !wallStatus(state.sel).legal) state.sel = null;
         draw(); notify();
       },
-      setActor: function (player) { state.actor = player; if (player !== null) state.cursor = game.pawns[player].slice(); state.sel = null; state.hover = null; draw(); notify(); },
-      setMode: function (m) { state.mode = m; state.sel = null; state.hover = null; draw(); notify(); if (opts.onMode) opts.onMode(m); },
+      setActor: function (player) { state.actor = player; if (player !== null) state.cursor = game.pawns[player].slice(); state.sel = null; state.hover = null; state.drag = null; draw(); notify(); },
+      setMode: function (m) { state.mode = m; state.sel = null; state.hover = null; state.drag = null; if (m !== 'wall') state.orient = null; draw(); notify(); if (opts.onMode) opts.onMode(m); },
       getMode: function () { return state.mode; },
+      // Wall mode with the wall type picked in the tray: 'h' or 'v' (null: the groove nearest the pointer decides).
+      setOrient: function (o) { state.orient = o; if (state.sel && o) state.sel = { o: o, r: state.sel.r, c: state.sel.c }; state.hover = null; draw(); notify(); },
+      getOrient: function () { return state.orient; },
+      dragTo: dragTo,
+      dragDrop: function () { var w = state.drag; state.drag = null; draw(); if (w) commitWall(w); },
+      dragCancel: function () { if (state.drag) { state.drag = null; draw(); } },
       rotate: function () {
         var s = state.sel || state.hover || state.wallCursor;
         var n = { o: s.o === 'h' ? 'v' : 'h', r: s.r, c: s.c };
         state.wallCursor = n;
+        if (state.orient) state.orient = n.o;
         if (state.sel) state.sel = n;
         state.hover = null;
         draw(); notify();
@@ -379,5 +412,5 @@
     return api;
   }
 
-  root.QuoridorBoard = { create: create, SIZE: SIZE };
+  root.QuoridorBoard = { create: create, SIZE: SIZE, TOUCH_LIFT: TOUCH_LIFT, CELL: CELL, GAP: GAP };
 })(typeof self !== 'undefined' ? self : this);

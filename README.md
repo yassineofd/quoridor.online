@@ -20,16 +20,17 @@ Run the game tests with `python -m unittest tests.test_engine tests.test_rooms t
 
 ## Hosting anywhere (no domain or address needed)
 
-Every internal link and asset path in the built pages is relative to the page ("../assets/css/styles.css"), so the contents of
-`public/` work as they are on any host, any domain, and in any sub-folder (`https://host.example/me/quoridor/`). There is nothing to
-configure: run `python build.py` and upload the `public/` folder.
+Every internal link and asset path in the built pages is root-relative ("/play", "/assets/css/styles.css", no trailing slash), so it
+works on any domain without naming one. Only a site served from a sub-folder needs configuration: set `base_path` in `site.json`
+(e.g. `"/me/quoridor"`) and `build.py` prefixes every internal link with it. Run `python build.py` and upload the `public/` folder.
 
-To prove it, serve the site from an arbitrary sub-folder and run the checks there:
+Check a sub-folder deployment locally:
 
 ```powershell
 $env:SERVE_PREFIX="/any/folder"; python serve.py     # open http://localhost:8000/any/folder/
-$env:SERVE_PREFIX="/any/folder"; python check.py
 ```
+
+(set `base_path` to the same folder in `site.json` and rebuild first, otherwise the root-relative links point outside it)
 
 `site.json` is optional and only matters for things that need a full address:
 
@@ -69,7 +70,7 @@ always on; `online` and `rooms` follow `online_server` in `site.json`, so a stat
 | URL | What to check |
 |---|---|
 | `/` | Hero, three mode cards, private-room strip, FAQ |
-| `/play/local/` | Two players on one screen; click a highlighted square to move, "Place wall" then click a groove to wall |
+| `/play/local/` | Two players on one screen; click a highlighted square to move, drag a wall from the tray onto the board to wall; each player has 5 minutes in total and 32 s a move |
 | `/play/computer/` | Pick a level, you move first; Undo takes back your move and the robot's reply |
 | `/play/online/`, `/play/create-room/`, `/play/join-room/` | With online play on: matchmaking, and private rooms (open two browsers) |
 | `/play/online/` (online off) | Enter a 1-character name to see the validation error; a valid one shows the "not live yet" notice |

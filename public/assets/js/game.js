@@ -5,7 +5,8 @@
      cfg.variant  which game to play (a key of Quoridor.VARIANTS); the classic game when left out
      cfg.players  how many play (2 unless the variant allows more); cfg.names then has one name per player
      cfg.options  the setup of a 'custom' game: { size, walls, borrow } (see Quoridor.CUSTOM_LIMITS)
-     cfg.turnSeconds time to move in a local or computer game; 0 = no clock (15 when left out)
+     cfg.turnSeconds time to move in a local or computer game; 0 = no clock (32 when left out)
+     cfg.bankSeconds each player's time for the whole local or computer game (300 when left out); ignored when there is no clock
      cfg.names    [name for player 0, name for player 1, ...]
      cfg.nameKeys optional [message key | null, ...]: names made up by the site, which are written again when the language changes
      cfg.seat     which player "you" are (computer / online); null for hot-seat
@@ -59,7 +60,15 @@
     b.lastChild.nodeValue = t(labelKey);
   }
 
-  var TURN_SECONDS = 15;   // time to make a move; the online server enforces the same limit
+  var TURN_SECONDS = 32;   // time to make a move; the online server enforces the same limit
+  var BANK_SECONDS = 300;  // time each player has for the whole game (5 min), spent only on their own turns
+
+  // 3:07 style clock text.
+  function fmtClock(secs) {
+    secs = Math.max(0, Math.ceil(secs));
+    var s = secs % 60;
+    return Math.floor(secs / 60) + ':' + (s < 10 ? '0' : '') + s;
+  }
 
   // The move played for a player whose time ran out: the pawn step that leaves the shortest route.
   function fallbackMove(game) {
@@ -105,6 +114,10 @@
     var seat = cfg.seat === undefined ? null : cfg.seat;
     var game = new Q.Game(cfg.variant, cfg.players, cfg.options);
     var turnSeconds = cfg.turnSeconds === undefined ? TURN_SECONDS : cfg.turnSeconds; // 0: the players take as long as they like
+    var bankSeconds = cfg.bankSeconds === undefined ? BANK_SECONDS : cfg.bankSeconds;
+    var bankOn = mode === 'online' || (turnSeconds > 0 && bankSeconds > 0);
+    var banks = game.pawns.map(function () { return bankSeconds; }); // seconds left per player as of turnMark
+    var turnMark = Date.now();                                        // when the player to move started using their bank
     var names = (cfg.names || [t('game.player1'), t('game.player2'), t('game.player3'), t('game.player4')].slice(0, game.nPlayers)).slice();
     var meta = { connected: [true, true], forfeitIn: null, rematch: [false, false], reason: null };
     var thinker = mode === 'computer' ? createThinker(cfg.level || 'medium') : null;
@@ -115,7 +128,12 @@
     host.classList.add('game');
 
     // ---- layout -----------------------------------------------------------------------
-    var boardHost = h('div', { 'class': 'game-board' });
+    var boardHost = h('div', { 'class': 'game-board-svg' });
+    // Who sits at each end of the board (a board with one goal edge per player only).
+    var twoSided = game.nPlayers === 2 && game.goals[0] !== game.goals[1];
+    var tagTop = h('div', { 'class': 'board-tag', 'aria-hidden': 'true', hidden: '' }, [h('span', { 'class': 'board-tag-text' })]);
+    var tagBottom = h('div', { 'class': 'board-tag', 'aria-hidden': 'true', hidden: '' }, [h('span', { 'class': 'board-tag-text' })]);
+    var boardWrap = h('div', { 'class': 'game-board' }, [tagTop, boardHost, tagBottom]);
     var turn = h('div', { 'class': 'turn-bar', role: 'status', tabindex: '-1' });
     var banner = h('div', { 'class': 'notice game-banner', role: 'status', hidden: '' });
     var cards = game.pawns.map(function (pawn, i) {
@@ -123,25 +141,39 @@
       var name = h('span', { 'class': 'player-name' });
       var tag = h('span', { 'class': 'player-tag' });
       var walls = h('span', { 'class': 'player-walls' });
-      var card = h('li', { 'class': 'player-card' }, [glyph, h('span', { 'class': 'player-text' }, [name, tag]), walls]);
-      return { card: card, name: name, tag: tag, walls: walls };
+      var clock = h('span', { 'class': 'player-clock', 'aria-hidden': 'true' });
+      if (!bankOn) clock.hidden = true;
+      var card = h('li', { 'class': 'player-card player-card--' + i }, [glyph, h('span', { 'class': 'player-text' }, [name, tag]), h('span', { 'class': 'player-meta' }, [walls, clock])]);
+      return { card: card, name: name, tag: tag, walls: walls, clock: clock };
     });
     var timerText = h('span', { 'class': 'turn-timer-text', 'aria-hidden': 'true' });
     var timerFill = h('span', { 'class': 'turn-timer-fill' });
     var timer = h('div', { 'class': 'turn-timer', hidden: '' }, [timerText, h('span', { 'class': 'turn-timer-bar', 'aria-hidden': 'true' }, [timerFill])]);
-    var players = h('ul', { 'class': 'players', 'aria-label': t('game.players') }, cards.map(function (c) { return c.card; }));
+    var vs = h('li', { 'class': 'vs-chip', 'aria-hidden': 'true', text: 'VS' });
+    var players = h('ul', { 'class': 'players' + (game.nPlayers === 2 ? '' : ' players--multi'), 'aria-label': t('game.players') },
+      game.nPlayers === 2 ? [cards[0].card, vs, cards[1].card] : cards.map(function (c) { return c.card; }));
+    // You are on the left when you play from one seat; in hot-seat the first player is.
+    if (game.nPlayers === 2 && seat === 1) { cards[1].card.style.order = '0'; vs.style.order = '1'; cards[0].card.style.order = '2'; }
+
+    // Wall tray: how many walls the player has, and one draggable wall of each type. Drag one onto the board
+    // (the nearest groove is previewed and it is placed on release), or tap it to pick a spot with taps instead.
+    var trayCount = h('span', { 'class': 'wall-tray-count' });
+    var trayInfo = h('span', { 'class': 'wall-tray-info', role: 'img' }, [trayCount]);
+    if (root.QuoridorIcons) trayInfo.insertAdjacentHTML('afterbegin', '<span class="wall-tray-icon" aria-hidden="true">' + root.QuoridorIcons.svg('wall') + '</span>');
+    var chips = ['h', 'v'].map(function (o) {
+      var b = h('button', { type: 'button', 'class': 'wall-chip', 'data-o': o, 'aria-pressed': 'false' }, [h('span', { 'class': 'wall-chip-bar', 'aria-hidden': 'true' })]);
+      b.__labelKey = o === 'h' ? 'game.horizontalWall' : 'game.verticalWall';
+      b.setAttribute('aria-label', t(b.__labelKey));
+      return b;
+    });
+    var tray = h('div', { 'class': 'wall-tray', role: 'group', 'aria-label': t('game.wallTray') }, [trayInfo, chips[0], chips[1]]);
 
     // Buttons are made from message keys, so a change of language can set their labels again (see relabel below).
-    var modeBtns = {
-      move: button('game.movePawn', 'btn--secondary btn--toggle', function () { board.setMode('move'); }, 'move'),
-      wall: button('game.placeWall', 'btn--secondary btn--toggle', function () { board.setMode('wall'); }, 'wall')
-    };
     var rotateBtn = button('game.rotateWall', 'btn--secondary', function () { board.rotate(); }, 'rotate');
     var confirmBtn = button('game.confirmWall', 'btn--primary', function () { board.confirm(); }, 'check');
     var cancelBtn = button('game.cancel', 'btn--secondary', function () { board.cancel(); }, 'x');
-    var actionRow = h('div', { 'class': 'btn-row', role: 'group', 'aria-label': t('game.chooseAction') }, [modeBtns.move, modeBtns.wall]);
     var wallRow = h('div', { 'class': 'btn-row wall-row', hidden: '' }, [rotateBtn, confirmBtn, cancelBtn]);
-    var hint = h('p', { 'class': 'game-hint small text-muted' });
+    var hint = h('p', { 'class': 'game-hint small text-muted', 'data-tip': t('game.tip') }); // shows the tip while it has nothing to say
     var keys = h('p', { 'class': 'small text-muted game-keys', text: t('game.keys') });
 
     var undoBtn = mode !== 'online' ? button('game.undo', 'btn--secondary', onUndo, 'undo') : null;
@@ -166,12 +198,14 @@
     if (window.matchMedia && window.matchMedia('(max-width: 899px)').matches) log.removeAttribute('open');
     var announcer = h('div', { 'class': 'sr-only', 'aria-live': 'polite', 'aria-atomic': 'true' });
 
-    var side = h('div', { 'class': 'game-side' }, [turn, timer, banner, players, result, actionRow, wallRow, hint, controls, keys, log, announcer]);
-    host.appendChild(h('div', { 'class': 'game-layout' }, [boardHost, side]));
+    var side = h('div', { 'class': 'game-side' }, [banner, players, turn, timer, result, tray, wallRow, hint, controls, keys, log, announcer]);
+    host.appendChild(h('div', { 'class': 'game-layout' }, [boardWrap, side]));
 
-    // ---- turn timer ---------------------------------------------------------------------
-    // Hot-seat and computer games count down here and play the fallback move at zero. Online the
-    // server is in charge (it sends turnLeft and plays the move itself); this only shows the clock.
+    // ---- clocks ---------------------------------------------------------------------------
+    // Two clocks run: the move clock (turnSeconds, the bar under the players) and each player's bank for the
+    // whole game, which drains only on their own turn. Hot-seat and computer games count down here: the move
+    // clock plays the fallback move at zero, an empty bank loses the game. Online the server is in charge (it
+    // sends turnLeft and clocks and acts itself); this only shows them.
     var deadline = null, timerKey = null, warned = false;
 
     function timerRunning() {
@@ -180,14 +214,35 @@
       if (mode === 'online') return deadline !== null;
       return mode === 'local' || (game.turn === seat && !thinking);
     }
+    // Seconds left in player i's bank, counting the time their current turn has used so far.
+    function liveBank(i) {
+      var left = banks[i];
+      if (i === game.turn && game.winner === null && !destroyed && (mode === 'online' || timerRunning())) left -= (Date.now() - turnMark) / 1000;
+      return Math.max(0, left);
+    }
+    function chargeBank(i) { if (bankOn && mode !== 'online') banks[i] = liveBank(i); }
+    // seconds: given online (the server's figure). Otherwise a new turn starts: the move limit, or less when the bank is lower.
     function resetTimer(seconds) {
-      deadline = Date.now() + (seconds === undefined ? turnSeconds : seconds) * 1000;
+      if (seconds === undefined) {
+        turnMark = Date.now();
+        seconds = bankOn ? Math.min(turnSeconds, liveBank(game.turn)) : turnSeconds;
+      }
+      deadline = Date.now() + seconds * 1000;
       warned = false;
+    }
+    function paintClocks() {
+      if (!bankOn) return;
+      cards.forEach(function (c, i) {
+        var left = liveBank(i), text = fmtClock(left);
+        if (c.clock.textContent !== text) c.clock.textContent = text;
+        c.clock.classList.toggle('is-low', left <= 30);
+      });
     }
     function tick() {
       if (deadline === null && mode !== 'online' && timerRunning()) resetTimer();
       var running = timerRunning();
       timer.hidden = !running;
+      paintClocks();
       if (!running) return;
       var left = Math.max(0, deadline - Date.now());
       var secs = Math.ceil(left / 1000);
@@ -195,7 +250,7 @@
       timerFill.style.width = Math.min(100, left / ((mode === 'online' ? TURN_SECONDS : turnSeconds) * 10)) + '%';
       timer.classList.toggle('is-low', secs <= 5);
       if (secs <= 5 && !warned && left > 0 && (mode === 'local' || game.turn === seat)) { warned = true; announce(t('game.secondsLeft', { n: secs })); }
-      if (left <= 0 && mode !== 'online') timeUp();
+      if (left <= 0 && mode !== 'online') { if (bankOn && liveBank(game.turn) <= 0.05) outOfTime(game.turn); else timeUp(); }
     }
     function timeUp() {
       var m = fallbackMove(game);
@@ -205,6 +260,14 @@
       commit(m);
       hint.textContent = (t('game.timeUp') + ' ' + describeMove(who, m) + ' ' + hint.textContent).trim();
       announce(hint.textContent);
+    }
+    // A player's bank ran dry: they lose the game.
+    function outOfTime(who) {
+      deadline = null;
+      banks[who] = 0;
+      game.resign(who);
+      meta.reason = 'timeout';
+      render();
     }
     var tickTimer = setInterval(tick, 250);
 
@@ -244,8 +307,19 @@
         c.walls.textContent = t('game.wallsCount', { n: game.wallsLeft[i] });
         c.card.classList.toggle('is-active', !over && game.turn === i);
         c.card.classList.toggle('is-winner', over && game.winner === i);
+        c.card.classList.toggle('is-me', i === seat);
         if (!over && game.turn === i) c.card.setAttribute('aria-current', 'true'); else c.card.removeAttribute('aria-current');
       });
+
+      // Names at the two ends of the board: the one at the bottom is the player whose goal is the top row (the other way round when the board is turned).
+      if (twoSided) {
+        var bottom = (game.goals[0] < game.goals[1] ? 0 : 1) ^ (cfg.flip ? 1 : 0);
+        [[tagTop, 1 - bottom, '\u25B2'], [tagBottom, bottom, '\u25BC']].forEach(function (x) {
+          x[0].hidden = false;
+          x[0].className = 'board-tag board-tag--p' + x[1];
+          x[0].firstChild.textContent = x[2] + ' ' + names[x[1]];
+        });
+      }
 
       // Turn bar
       var text;
@@ -287,23 +361,100 @@
 
     function syncControls(sel) {
       var act = actor() !== null, m = board.getMode();
-      modeBtns.move.setAttribute('aria-pressed', String(m === 'move'));
-      modeBtns.wall.setAttribute('aria-pressed', String(m === 'wall'));
+      var viewer = seat !== null ? seat : game.turn;
       var wallsLeft = act ? game.wallsLeft[actor()] : 0;
-      modeBtns.move.disabled = !act;
-      modeBtns.wall.disabled = !act || wallsLeft <= 0;
       if (act && wallsLeft <= 0 && m === 'wall') { board.setMode('move'); return; }
+      m = board.getMode();
+      tray.setAttribute('data-pawn', String(viewer));
+      trayCount.textContent = String(game.wallsLeft[viewer]);
+      trayInfo.setAttribute('aria-label', t('game.wallsCount', { n: game.wallsLeft[viewer] }));
+      chips.forEach(function (b) {
+        b.disabled = !act || wallsLeft <= 0;
+        b.setAttribute('aria-pressed', String(m === 'wall' && board.getOrient() === b.getAttribute('data-o')));
+      });
       wallRow.hidden = !(act && m === 'wall');
       rotateBtn.disabled = !act;
       confirmBtn.disabled = !(sel && sel.legal);
       cancelBtn.disabled = !sel;
       if (act && m === 'wall' && sel && !sel.legal) hint.textContent = sel.reason;
       var over = game.winner !== null;
-      actionRow.hidden = over;
+      tray.hidden = over;
       if (undoBtn) undoBtn.disabled = over || thinking || game.moves.length < (mode === 'computer' ? 2 : 1) || (mode === 'computer' && game.turn !== seat);
       if (resignBtn) resignBtn.disabled = over || (mode === 'computer' && thinking);
       if (mode === 'online' && banner) renderBanner();
     }
+
+    // ---- carrying a wall from the tray ------------------------------------------------------
+    // Press and drag: the wall follows the pointer, the nearest groove on the board is previewed (red when it is
+    // not allowed), and letting go places it. A press that barely moves is a tap: it picks that wall type for the
+    // tap-then-confirm way of placing (and a second tap puts it back). The keyboard gets the same through Enter.
+    var ghost = null, carrying = null;
+    function toggleWallType(o) {
+      if (board.getMode() === 'wall' && board.getOrient() === o) board.setMode('move');
+      else { board.setMode('wall'); board.setOrient(o); }
+    }
+    function moveGhost(x, y, pointerType, onBoard) {
+      if (!ghost) {
+        ghost = h('div', { 'class': 'wall-ghost', 'aria-hidden': 'true' });
+        // The wall as long as two squares and a groove, in the size the board is drawn at.
+        var scale = board.svg.getBoundingClientRect().width / board.svg.viewBox.baseVal.width;
+        var len = (2 * B.CELL + B.GAP) * scale, thick = B.GAP * scale;
+        ghost.style.width = (carrying.o === 'h' ? len : thick) + 'px';
+        ghost.style.height = (carrying.o === 'h' ? thick : len) + 'px';
+        document.body.appendChild(ghost);
+      }
+      ghost.className = 'wall-ghost wall-ghost--p' + (seat !== null ? seat : game.turn);
+      ghost.style.opacity = onBoard ? '0' : '1';
+      ghost.style.transform = 'translate(' + x + 'px,' + (y - (pointerType !== 'mouse' ? B.TOUCH_LIFT : 0)) + 'px) translate(-50%,-50%)';
+    }
+    function endCarry() {
+      if (carrying && carrying.stop) carrying.stop();
+      if (ghost && ghost.parentNode) ghost.parentNode.removeChild(ghost);
+      ghost = null; carrying = null;
+      host.classList.remove('is-carrying');
+    }
+    chips.forEach(function (b) {
+      var o = b.getAttribute('data-o');
+      // The moves and the release are listened for on the document for as long as the press lasts, so the drag keeps
+      // working wherever the pointer goes (capturing the pointer as well is only a help).
+      function onMove(e) {
+        if (!carrying || e.pointerId !== carrying.id) return;
+        if (!carrying.moved) {
+          if (Math.hypot(e.clientX - carrying.x0, e.clientY - carrying.y0) < 8) return;
+          carrying.moved = true;
+          if (board.getMode() !== 'move') board.setMode('move');
+          host.classList.add('is-carrying');
+        }
+        var st = board.dragTo(e.clientX, e.clientY, o, carrying.type);
+        hint.textContent = st && !st.legal ? st.reason : '';
+        moveGhost(e.clientX, e.clientY, carrying.type, !!st);
+        e.preventDefault();
+      }
+      function onEnd(e) {
+        if (!carrying || e.pointerId !== carrying.id) return;
+        var c = carrying, cancelled = e.type === 'pointercancel';
+        try { b.releasePointerCapture(e.pointerId); } catch (err) { /* not captured */ }
+        endCarry();
+        if (!c.moved) { if (!cancelled) toggleWallType(o); return; }
+        if (cancelled) board.dragCancel(); else board.dragDrop();
+      }
+      b.addEventListener('pointerdown', function (e) {
+        if (b.disabled || carrying || (e.pointerType === 'mouse' && e.button !== 0)) return;
+        carrying = { o: o, id: e.pointerId, x0: e.clientX, y0: e.clientY, moved: false, type: e.pointerType || 'mouse', chip: b };
+        try { b.setPointerCapture(e.pointerId); } catch (err) { /* the document listeners below carry the drag */ }
+        document.addEventListener('pointermove', onMove);
+        document.addEventListener('pointerup', onEnd);
+        document.addEventListener('pointercancel', onEnd);
+        carrying.stop = function () {
+          document.removeEventListener('pointermove', onMove);
+          document.removeEventListener('pointerup', onEnd);
+          document.removeEventListener('pointercancel', onEnd);
+        };
+        e.preventDefault();
+      });
+      // Enter / Space on the focused chip (a pointer tap is handled above).
+      b.addEventListener('click', function (e) { if (e.detail === 0 && !b.disabled) toggleWallType(o); });
+    });
 
     function renderBanner() {
       var opp = seat === null ? null : 1 - seat;
@@ -322,6 +473,7 @@
       resultTitle.textContent = seat === null ? t('game.nameWins', { name: names[game.winner] }) : (youWon ? t('game.youWon') : t('game.nameWon', { name: names[game.winner] }));
       var why = meta.reason === 'resign' ? t(youWon ? 'game.resignedOpp' : 'game.resignedSelf')
         : meta.reason === 'disconnect' ? t(youWon ? 'game.leftOpp' : 'game.disconnectedSelf')
+        : meta.reason === 'timeout' ? (seat !== null && !youWon ? t('game.timedOutSelf') : t('game.timedOutName', { name: names[(game.winner + game.nPlayers - 1) % game.nPlayers] }))
         : '';
       var lastMove = game.moves[game.moves.length - 1];
       var byMove = !why && lastMove && lastMove.type === 'move' ? t(game.goalCell ? 'game.reachedCenter' : 'game.reachedEdge', { n: Math.ceil(game.moves.length / game.nPlayers) }) : '';
@@ -361,6 +513,7 @@
         });
         return;
       }
+      chargeBank(who);
       var err = game.apply(move);
       if (err) { hint.textContent = t('game.moveNotAllowed'); announce(hint.textContent); return; }
       board.setMode('move');
@@ -429,11 +582,13 @@
       // Names the site made up ("You", "Medium robot", "Player 2") follow the language; names people typed do not.
       if (cfg.nameKeys) cfg.nameKeys.forEach(function (k, i) { if (k) names[i] = t(k); });
       botName = names[1 - (seat === null ? 0 : seat)];
-      [modeBtns.move, modeBtns.wall, rotateBtn, confirmBtn, cancelBtn, undoBtn, resignBtn, restartBtn, leaveBtn].forEach(function (b) {
+      [rotateBtn, confirmBtn, cancelBtn, undoBtn, resignBtn, restartBtn, leaveBtn].forEach(function (b) {
         if (b) setLabel(b, b.__labelKey);
       });
+      chips.forEach(function (b) { b.setAttribute('aria-label', t(b.__labelKey)); });
+      tray.setAttribute('aria-label', t('game.wallTray'));
+      hint.setAttribute('data-tip', t('game.tip'));
       players.setAttribute('aria-label', t('game.players'));
-      actionRow.setAttribute('aria-label', t('game.chooseAction'));
       keys.textContent = t('game.keys');
       log.firstChild.textContent = t('game.moveList');
       logList.textContent = '';
@@ -456,6 +611,7 @@
           announce(describeMove((game.moves.length - 1) % game.nPlayers, mv));
         }
         busy = false;
+        if (meta.clocks) { banks = meta.clocks.slice(); turnMark = Date.now() - (meta.clocksAge || 0) * 1000; }
         var key = game.moves.length + ':' + game.winner;
         if (meta.turnLeft != null && key !== timerKey) { timerKey = key; resetTimer(meta.turnLeft); }
         else if (meta.turnLeft == null) deadline = null;
@@ -467,6 +623,7 @@
         destroyed = true;
         if (offLanguage) offLanguage();
         clearInterval(tickTimer);
+        endCarry();
         if (thinker) thinker.destroy();
         board.destroy();
         host.textContent = '';

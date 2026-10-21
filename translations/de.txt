@@ -241,7 +241,7 @@ eacc83|<strong>Öffne eine Partie.</strong>Wähle auf der Seite <a href="/play/"
 e64544|In deinem Zug tust du <strong>eine</strong> Sache: Figur ziehen <em>oder</em> Mauer setzen. Dieser Abschnitt behandelt das Ziehen.
 a891a4|Ein Feld weiterziehen
 4d3102|<strong>Warte, bis du dran bist.</strong>Die Zuganzeige zeigt, wer an der Reihe ist.
-2e2f5d|<strong>Bleib im Modus Figur ziehen.</strong>Die Felder, die du erlaubterweise erreichen kannst, sind hervorgehoben.
+d588c3|<strong>Achte auf die hervorgehobenen Felder.</strong>Die Felder, die du erlaubterweise erreichen kannst, sind hervorgehoben.
 0966be|<strong>Klicke oder tippe auf ein hervorgehobenes Feld.</strong>Deine Figur zieht ein Feld weiter und der Zug geht weiter.
 403a59|Eine Figur bewegt sich nach oben, unten, links oder rechts, jeweils ein Feld. Sie darf nicht diagonal ziehen (außer im besonderen Fall weiter unten), nicht durch eine Mauer und nicht vom Spielbrett herunter.
 f92d5c|Felder, auf die die cyanfarbene Figur ziehen kann. Die Mauer darüber blockiert den Zug nach oben.
@@ -252,10 +252,10 @@ d69fee|Diagonal ziehen, wenn der Sprung blockiert ist
 4f82f7|Liegt direkt hinter der anderen Figur eine Mauer oder der Rand des Spielbretts, kannst du nicht springen. Stattdessen darfst du auf ein Feld <strong>neben</strong> der Figur des Gegners ziehen, sofern keine Mauer diesen Schritt blockiert.
 0180a1|Die Mauer hinter der weißen Figur verhindert den Sprung, daher darf die cyanfarbene Figur stattdessen auf A oder B ziehen.
 8737b8|Statt zu ziehen, kannst du eine Mauer setzen. Eine Mauer verlängert den Weg deines Gegners, was genauso gut ist, wie dich dem Ziel zu nähern.
-9164b8|<strong>Drücke Mauer setzen.</strong>Das Spielbrett wechselt in den Mauermodus. Drücke Figur ziehen, um zurückzukehren.
-a27725|<strong>Wähle eine Rille.</strong>Zeige mit dem Zeiger auf das Spielbrett, und die nächstgelegene Rille zeigt eine Vorschau. Drücke Mauer drehen, um zwischen waagerecht und senkrecht zu wechseln.
-a977dd|<strong>Prüfe, ob es erlaubt ist.</strong>Eine Mauer darf eine andere weder überlappen noch kreuzen und darf einem Spieler nie den letzten Weg zu seinem Ziel nehmen. Ist die Vorschau nicht erlaubt, erklärt eine Meldung unter den Schaltflächen, warum, und die Mauer kann nicht gesetzt werden.
-fdb4bf|<strong>Setze sie.</strong>Mit der Maus klickst du auf die Rille. Auf einem Touchscreen tippst du sie an, um sie auszuwählen, und drückst dann Ausgewählte Mauer setzen. Dein Mauerzähler sinkt um eins.
+489b12|<strong>Wähle eine Mauer.</strong>Unter dem Spielbrett liegt deine Mauerablage mit einer waagerechten und einer senkrechten Mauer. Ziehe die gewünschte auf das Spielbrett.
+7461b0|<strong>Wähle die Stelle.</strong>Während du ziehst, zeigt die nächstgelegene Rille eine Vorschau. Auf einem Touchscreen wird die Mauer knapp über deinem Finger gehalten, damit du sie sehen kannst.
+9a9973|<strong>Prüfe, ob es erlaubt ist.</strong>Eine Mauer darf eine andere weder überlappen noch kreuzen und darf einem Spieler nie den letzten Weg zu seinem Ziel nehmen. Ist die Vorschau nicht erlaubt, erklärt eine Meldung unter dem Spielbrett, warum, und die Mauer kann nicht gesetzt werden.
+beb868|<strong>Lass los, um sie zu setzen.</strong>Lass die Mauer über der gewünschten Rille los, und dein Mauerzähler sinkt um eins. Du kannst auch auf eine Mauer in der Ablage tippen, um ihre Art zu wählen, dann auf eine Rille auf dem Spielbrett tippen und Ausgewählte Mauer setzen drücken.
 1c006e|Mauern sind endgültig. Sie lassen sich weder verschieben noch wieder aufnehmen, und eine Online-Partie hat kein Rückgängig, wirf also vorher noch einen zweiten Blick auf die Vorschau.
 4c9013|Zwei Mauern nebeneinander. Die weiße Figur brauchte 6 Schritte bis zur untersten Reihe, jetzt braucht sie 8, wobei nur die Mauern gezählt werden.
 ea7cda|Eine unerlaubte Mauer
@@ -268,7 +268,7 @@ e240af|<strong>Zähle beide Wege.</strong>Rechne vor jedem Zug aus, wie viele Sc
 3f3c73|<strong>Denke einen Schritt weiter.</strong>Frage dich, was dein Gegner darauf antworten kann, bevor du dich auf einen Zug oder eine Mauer festlegst.
 db8d6f|<strong>Setze Mauern dort, wo sie am meisten wehtun.</strong>Eine Mauer, die nur einen Schritt hinzufügt, kostet dich einen Zug und eine Mauer. Suche Mauern, die mehrere Schritte Umweg erzwingen.
 547aca|<strong>Halte Ziehen und Blockieren im Gleichgewicht.</strong>Wer nur zieht, wird von einem guten Blockierer ausgetrickst, und wer nur Mauern setzt, kommt dem Ziel nicht näher.
-c33f50|<strong>Behalte den Timer im Blick.</strong>Jeder Zug hat einen Timer von 15 Sekunden.
+e69dc5|<strong>Behalte den Timer im Blick.</strong>Jeder Zug hat einen Timer von 32 Sekunden, und jeder Spieler hat insgesamt 5 Minuten.
 339960|<strong>Übe zuerst.</strong><a href="/play/computer/">Spiele auf Leicht gegen den Computer</a>, um dich an die Bedienung zu gewöhnen, bevor du gegen eine Person antrittst.
 5960a6|Wenn du mehr willst, lies den <a href="/quoridor-strategy/">Quoridor-Strategieleitfaden</a>.
 74f5a4|Du weißt genug, um loszulegen.
@@ -812,11 +812,11 @@ ef4284|<strong>Warte auf den ersten Zug.</strong>Der Server wählt zufällig, we
 a422b6|Mit einem bestimmten Freund spielen
 2d767f|Wähle <a href="/play/create-room/">Raum erstellen</a> und schick deinem Freund dann den Einladungslink oder den kurzen Kopplungscode. Er öffnet den Link oder gibt den Code unter <a href="/play/join-room/">Raum beitreten</a> ein, wählt einen Benutzernamen, und die Partie beginnt, sobald er da ist. Ein Raum, dem niemand beigetreten ist, läuft nach 30 Minuten ab.
 e1ddf0|<strong>Warte auf <em>Du bist dran</em>.</strong>Züge von dir werden nur angenommen, wenn die Zuganzeige sagt, dass du an der Reihe bist.
-500b8a|<strong>Bleib im Modus Figur ziehen.</strong>Die Felder, die du erlaubterweise erreichen kannst, sind hervorgehoben. Mauern und Spielbrettrand sind bereits berücksichtigt.
+279952|<strong>Achte auf die hervorgehobenen Felder.</strong>Die Felder, die du erlaubterweise erreichen kannst, sind hervorgehoben. Mauern und Spielbrettrand sind bereits berücksichtigt.
 b7c889|<strong>Klicke oder tippe auf ein hervorgehobenes Feld.</strong>Deine Figur zieht ein Feld weiter und der Zug geht an deinen Gegner. Mit der Tastatur nutzt du die Pfeiltasten und die Eingabetaste.
-efb98a|<strong>Behalte die Uhr im Blick.</strong> Jeder Zug hat einen Timer von 15 Sekunden, der über den Spielern angezeigt wird. Läuft er ab, spielt der Server für dich einen Figurenschritt entlang deines kürzesten Wegs, sodass du in diesem Zug die Chance verlierst, eine Mauer zu setzen.
+10cb75|<strong>Behalte die Uhr im Blick.</strong> Jeder Zug hat einen Timer von 32 Sekunden, und jeder Spieler hat 5 Minuten für die ganze Partie; beide Uhren werden über dem Spielbrett angezeigt. Läuft ein Zug ab, spielt der Server für dich einen Figurenschritt entlang deines kürzesten Wegs, sodass du in diesem Zug die Chance verlierst, eine Mauer zu setzen. Sind deine 5 Minuten aufgebraucht, hast du verloren.
 7fe311|Eine Online-Partie kann auch enden, wenn ein Spieler <em>Aufgeben</em> drückt, die Partie verlässt oder länger als eine Minute getrennt bleibt. In jedem Fall gewinnt der andere Spieler. Danach kannst du ein Rückspiel anfragen.
-da6a8e|<strong>Behalte den Timer im Blick.</strong>Online-Züge dauern 15 Sekunden. Entscheide früh und lass den Tab geöffnet, damit du nicht durch Verbindungsverlust aufgibst.
+b302d2|<strong>Behalte den Timer im Blick.</strong>Online-Züge dauern 32 Sekunden, und jeder Spieler hat insgesamt 5 Minuten. Entscheide früh und lass den Tab geöffnet, damit du nicht durch Verbindungsverlust aufgibst.
 79f8cd|Wähle einen Benutzernamen, drücke Gegner suchen und lerne beim Spielen. Das Spielbrett hebt deine erlaubten Züge hervor und erklärt, warum eine Mauer nicht erlaubt ist.
 87967e|Gegner suchen <svg/>
 43a212|Gegen den Computer üben
@@ -825,7 +825,7 @@ d47dde|Nicht in einer Online-Partie: Ein Zug oder eine Mauer ist endgültig, sob
 c1fd2f|Was passiert, wenn meine Verbindung während einer Partie abbricht?
 2a79c6|Das Spiel zeigt deinem Gegner, dass du dich gerade wieder verbindest, und dein Browser versucht automatisch, deinen Platz zurückzuholen. Kommst du nicht innerhalb einer Minute zurück, zählt die Partie als Aufgabe.
 d34c00|Kann ich auf dem Handy spielen?
-53b12a|Ja. Online-Partien laufen in einem mobilen Browser, ohne dass etwas installiert werden muss. Tippe im Mauermodus auf eine Rille, um eine Mauer auszuwählen, und drücke dann Ausgewählte Mauer setzen, um zu bestätigen.
+91650b|Ja. Online-Partien laufen in einem mobilen Browser, ohne dass etwas installiert werden muss. Ziehe eine Mauer aus der Ablage auf das Spielbrett, um sie zu setzen, oder tippe auf eine Mauer in der Ablage, tippe auf eine Rille und drücke dann Ausgewählte Mauer setzen, um zu bestätigen.
 3211c6|Kann ich mit jemandem spielen, der eine andere Sprache benutzt?
 2eb17f|Ja. Jeder wählt seine eigene Sprache mit der Übersetzungsschaltfläche in der Kopfzeile der Seite (Englisch, Spanisch, Französisch, Deutsch oder Arabisch). Sie ändert nur, wie die Seite für dich aussieht. Spiel, Matchmaking und Räume sind für alle gleich, und es gibt keinen Chat, sodass du und dein Gegner jeweils in der eigenen Sprache spielen könnt. Namen können in jedem Alphabet geschrieben werden.
 bb7107|Kann ich noch einmal gegen denselben Gegner spielen?
@@ -870,9 +870,10 @@ game.disconnectedTag|(getrennt)
 game.wallsCount|Mauern: {n}
 game.keys|Tastatur: Spielbrett fokussieren, Pfeiltasten zum Auswählen, Eingabetaste zum Bestätigen, W für Mauern, R zum Drehen, M für die Figur, Esc zum Abbrechen.
 game.players|Spieler
-game.chooseAction|Wähle eine Aktion
-game.movePawn|Figur ziehen
-game.placeWall|Mauer setzen
+game.tip|Tippe auf ein Feld, um zu ziehen · ziehe eine Mauer auf das Brett
+game.wallTray|Mauern
+game.horizontalWall|Waagerechte Mauer
+game.verticalWall|Senkrechte Mauer
 game.rotateWall|Mauer drehen
 game.confirmWall|Ausgewählte Mauer setzen
 game.cancel|Abbrechen
@@ -905,6 +906,8 @@ game.resignedOpp|Dein Gegner hat aufgegeben.
 game.resignedSelf|Aufgabe.
 game.leftOpp|Dein Gegner hat die Partie verlassen.
 game.disconnectedSelf|Du warst zu lange getrennt.
+game.timedOutSelf|Deine Zeit ist abgelaufen.
+game.timedOutName|Bei {name} ist die Zeit abgelaufen.
 game.reachedEdge|Gegenüberliegende Kante in {n} Zügen erreicht.
 game.reachedCenter|Mitte in {n} Zügen erreicht.
 game.rematchRequested|Rückspiel angefragt
@@ -1034,14 +1037,11 @@ d5325f|Quoridor-Strategiediagramm. Eine Reihe indigofarbener Mauern, in der Mitt
 60f904|Quoridor-Strategiediagramm. Eine Reihe indigofarbener Mauern mit einer Lücke in der Mitte und einer senkrechten, weiß umrandeten Mauer mitten in dieser Lücke. Eine gestrichelte rote Mauer mit Kreuz markiert die einzige waagerechte Mauer, die die Lücke hätte schließen können. Eine cyanfarbene Figur steht unter der Lücke und eine weiße Ringfigur oben rechts.
 26bd49|Quoridor-Figur von Mauern blockiert. Eine cyanfarbene Figur, von indigofarbenen Barrieren eingeschlossen, die nicht vorwärtskommt.
 87f0a1|Varianten
-e9aacf|Quoridor-Varianten
 9bf84e|Wallrush
 e50dd0|Pointrush
 aa0174|Probiere eine Quoridor-Variante aus
 809cd7|Dieselben Figuren und Mauern, ein neues Rennen. Beginne mit Wallrush, bei dem beide Figuren auf derselben Linie eines höheren Spielbretts starten.
 d3aeae|Varianten entdecken <svg/>
-042dd0|Quoridor-Varianten – Neue Arten, Quoridor zu spielen
-ae34d5|Das klassische Spiel ist nicht die einzige Art, mit Figuren und Mauern zu spielen. Probiere eine Variante aus: dieselben Ideen, ein neues Spielbrett und ein anderes Rennen.
 4b7db1|Wähle eine Variante
 c6eb8a|Ein Rennen auf einem höheren Spielbrett. Beide Figuren starten nebeneinander auf derselben Linie und laufen zur selben Zielkante; mit Mauern bremsen sie einander aus.
 77c03f|Wallrush spielen <svg/>
@@ -1052,9 +1052,6 @@ c31ec3|Eine Variante behält den Kern von Quoridor: Du ziehst entweder deine Fig
 fc63b4|Wenn Mauern und Figuren neu für dich sind, beginne mit dem klassischen Spiel. Die Varianten machen mehr Spaß, wenn du weißt, wie eine Mauer einen Weg umlenkt.
 9af05b|Klassisches Quoridor spielen
 996e6d|Mit der Zeit kommen hier weitere Varianten dazu.
-457555|Wallrush – Ein Quoridor-Rennen auf einem hohen Spielbrett
-a3b96d|Spiele Wallrush kostenlos im Browser: eine Quoridor-Variante, bei der beide Figuren auf derselben Linie eines 9×13-Spielbretts starten und zur selben Kante laufen, mit je 10 Mauern.
-37b36b|Eine Quoridor-Variante, bei der beide Figuren auf derselben Linie starten und zur selben Kante laufen.
 3c4e07|Teilt euch den Bildschirm und spielt abwechselnd. Beide Figuren laufen zur hervorgehobenen Reihe am oberen Rand des Spielbretts.
 ce61a3|Beide Figuren starten auf derselben Linie, mit vier Reihen hinter sich.
 c9abc2|Die Figur, die zuerst die oberste Reihe erreicht, gewinnt.
@@ -1067,14 +1064,11 @@ dbe02a|<strong>Eine Aktion pro Zug.</strong> Ziehe deine Figur ein Feld nach obe
 013dec|<strong>Begegnung mit der anderen Figur.</strong> Steht die andere Figur direkt vor deiner, springst du über sie. Blockiert eine Mauer oder die Kante den Sprung, ziehst du stattdessen seitlich daneben, genau wie im Quoridor.
 586f9f|<strong>Geliehene Züge.</strong> Solange deine Figur direkt neben der anderen Figur steht, ohne Mauer dazwischen, darfst du auch auf jedes Feld ziehen, auf das die andere Figur von ihrem Standort aus ziehen könnte, einschließlich Sprüngen und Seitwärtsschritten.
 f69960|<strong>Gewinnen.</strong> Die Figur, die zuerst irgendein Feld der obersten Reihe erreicht, gewinnt.
-36de14|Jeder Zug hat eine Uhr von 15 Sekunden. Läuft sie ab, zieht das Spiel deine Figur einen Schritt entlang ihres kürzesten Wegs.
+9d4243|Jeder Zug hat eine Uhr von 32 Sekunden, und jeder Spieler hat 5 Minuten für die ganze Partie. Läuft die Zeit eines Zugs ab, zieht das Spiel deine Figur einen Schritt entlang ihres kürzesten Wegs. Sind deine 5 Minuten aufgebraucht, hast du verloren.
 ba26fa|Dinge zum Nachdenken
 7f513f|Da beide Figuren dasselbe Ziel haben, läufst du auf derselben Bahn wie dein Gegner. Eine Mauer, die ihn bremst, kann auch dich bremsen, wenn sich eure Wege überschneiden – schau dir also beide Wege an, bevor du eine setzt. Der Platz hinter der Startlinie gehört dir: Seitlich auf eine freie Spalte auszuweichen kann besser sein, als geradewegs gegen eine Mauer zu laufen.
 0f22ff|Alle Regeln zu Mauern, Sprüngen und Seitwärtsschritten findest du in den Quoridor-Regeln. Wallrush verwendet sie, dazu die geliehenen Züge von oben.
 54eb20|Alle Varianten
-24b78a|Pointrush – Ein Quoridor-Rennen zur Mitte für 2 bis 4 Spieler
-dd39c3|Spiele Pointrush kostenlos im Browser: eine Quoridor-Variante für 2 bis 4 Spieler auf einem 11×11-Spielbrett, bei der jede Figur zum mittleren Feld läuft.
-933ab8|Eine Quoridor-Variante für zwei, drei oder vier Spieler, bei der jede Figur zum selben Feld in der Mitte läuft.
 787a3f|Zwei bis vier Spieler, ein Gerät
 b4ca34|Teilt euch den Bildschirm und spielt abwechselnd. Jede Figur läuft zum hervorgehobenen Feld in der Mitte des Spielbretts.
 90ac30|Die Figuren starten in der Mitte der Kanten, fünf Felder vom Zentrum entfernt.
@@ -1100,9 +1094,6 @@ a2da36|<strong>Gewinnen.</strong> Die Figur, die zuerst das mittlere Feld betrit
 e6b00a|Eigenes Spiel
 e0547d|Klassisches Quoridor, nach deinen Wünschen eingestellt. Wähle die Größe des Spielbretts, wie viele Mauern jeder Spieler bekommt, geliehene Züge und die Dauer eines Zugs, und spiele dann mit einem Freund am selben Gerät.
 b251a1|Eigenes Spiel einrichten <svg/>
-cf6622|Eigenes Quoridor – Wähle Spielbrettgröße, Mauern und Regeln
-d72e97|Spiele eigenes Quoridor kostenlos in deinem Browser mit einem Freund am selben Gerät. Wähle die Größe des Spielbretts, wie viele Mauern jeder Spieler bekommt, geliehene Züge und die Zeit pro Zug.
-ecd22e|Klassisches Quoridor mit Regeln nach deiner Wahl: Spielbrettgröße, Mauern, geliehene Züge und Uhr.
 e92343|Richte dein Spiel ein
 e15160|Wähle die Regeln, teile dann den Bildschirm mit einem Freund und spielt abwechselnd. Die Voreinstellungen entsprechen dem klassischen Quoridor.
 348a57|Größe des Spielbretts
@@ -1117,10 +1108,10 @@ dadb5d|Die Figuren starten in der Mitte gegenüberliegender Ränder. Ein größe
 395f50|Zeit pro Zug
 d26be3|Kein Zeitlimit
 a1f99f|15 Sekunden pro Zug
-0e30c6|30 Sekunden pro Zug
+231b3e|32 Sekunden pro Zug
 3cb8d1|1 Minute pro Zug
 ebd40d|2 Minuten pro Zug
-7a3a3e|Läuft die Zeit ab, zieht das Spiel die Figur einen Schritt entlang ihres kürzesten Wegs.
+29dd6c|Läuft die Zeit ab, zieht das Spiel die Figur einen Schritt entlang ihres kürzesten Wegs. Mit Uhr hat außerdem jeder Spieler insgesamt 5 Minuten.
 5c6b8a|Geliehene Züge
 a74abc|(an)
 9a4248|Neben der anderen Figur darfst du auch dorthin ziehen, wohin sie ziehen könnte.
@@ -1131,9 +1122,60 @@ c895ba|<strong>Größe des Spielbretts.</strong> Spiele auf einem Spielbrett mit
 4034cf|<strong>Mauern pro Spieler.</strong> Gib jedem Spieler zwischen 0 und 30 Mauern. Ohne Mauern ist das Spiel ein reines Rennen. Mit vielen wird es ein Labyrinth-Kampf. Eine Mauer ist zwei Felder lang, und Mauern dürfen sich weder überlappen noch kreuzen.
 90373e|<strong>Halte einen Weg offen.</strong> Egal wie das Spiel eingerichtet ist, du darfst keine Mauer setzen, die einer Figur keinen Weg zu ihrem Ziel mehr lässt.
 d43ac9|<strong>Geliehene Züge.</strong> Wenn du das einschaltest, darf eine Figur, die direkt neben der anderen Figur steht, ohne Mauer dazwischen, auch auf jedes Feld ziehen, auf das die andere Figur von ihrem Standort aus ziehen könnte.
-c8018f|<strong>Zeit pro Zug.</strong> Spiele ohne Uhr oder wähle 15 Sekunden, 30 Sekunden, 1 Minute oder 2 Minuten. Läuft die Uhr ab, zieht das Spiel deine Figur einen Schritt entlang ihres kürzesten Wegs.
+9ab22e|<strong>Zeit pro Zug.</strong> Spiele ohne Uhr oder wähle 15 Sekunden, 32 Sekunden, 1 Minute oder 2 Minuten. Läuft die Uhr ab, zieht das Spiel deine Figur einen Schritt entlang ihres kürzesten Wegs. Mit Uhr hat außerdem jeder Spieler 5 Minuten für die ganze Partie.
 778aaf|Ideen zum Ausprobieren
 e3327f|Probiere ein Spielbrett mit 5 × 5 Feldern und je 3 Mauern für ein Spiel, das in Minuten vorbei ist, oder ein Spielbrett mit 13 × 13 Feldern und je 20 Mauern für eine lange Schlacht der Umwege. Beide Spieler bekommen immer gleich viele Mauern. Wenn ihr noch einmal spielt, bleiben eure Einstellungen erhalten.
 4bc4b3|Dieses Spiel wird an einem Gerät gespielt. Für ein Spiel mit einem Freund an einem anderen Gerät nutze einen privaten Raum, in dem die klassischen Regeln gelten.
 459fae|Privaten Raum erstellen
-00a9e8|Quoridor-Varianten, die du kostenlos in deinem Browser spielen kannst. Probiere Wallrush, Pointrush oder ein eigenes Spiel mit Regeln deiner Wahl.
+0172b3|Quoridor-Varianten online – Wallrush, Pointrush und eigene Regeln
+746a90|Spiele Quoridor-Varianten kostenlos online: Wallrush, Pointrush für 2 bis 4 Spieler und Quoridor mit eigenen Regeln, bei dem du Brettgröße und Mauern selbst wählst. Ohne Download und ohne Anmeldung.
+cb591b|Quoridor-Varianten online
+d487b4|Spiele Quoridor-Varianten kostenlos im Browser: Wallrush, Pointrush für 2 bis 4 Spieler und ein eigenes Quoridor-Spiel mit eigener Brettgröße, eigenen Mauern und Regeln.
+427964|Quoridor-Varianten: häufige Fragen
+4094ac|Was sind Quoridor-Varianten?
+7832da|Quoridor-Varianten sind andere Arten, das Brettspiel Quoridor zu spielen: eine andere Brettgröße, eine andere Startposition, mehr Spieler oder eigene Regeln. Wallrush, Pointrush und das eigene Quoridor-Spiel behalten die Figuren, die Mauern und die Wegregel des klassischen Spiels.
+1814e6|Kann ich Quoridor zu dritt oder zu viert spielen?
+a13d34|Ja. <a href="/variants/pointrush/">Pointrush</a> ist eine Quoridor-Variante für zwei, drei oder vier Spieler an einem Gerät, bei der alle Figuren zum Feld in der Mitte des Bretts laufen.
+cfad3b|Kann ich bei Quoridor die Brettgröße oder die Anzahl der Mauern ändern?
+58caf4|Ja. Beim <a href="/variants/custom/">eigenen Quoridor-Spiel</a> wählst du ein Brett von 5 × 5 bis 13 × 13, 0 bis 30 Mauern pro Spieler, geliehene Züge und die Zeit pro Zug.
+6d930c|Sind die Quoridor-Varianten kostenlos?
+353858|Ja. Alle Varianten sind kostenlos in deinem Browser, ohne Download und ohne Konto.
+1cd31b|Wallrush – Kostenlose Online-Quoridor-Variante als Rennspiel
+06dc4e|Spiele Wallrush kostenlos online: eine Quoridor-Variante für zwei Spieler auf einem hohen 9×13-Brett, bei der beide Figuren auf derselben Linie starten und zur selben Kante laufen, mit je 10 Mauern.
+5b080a|Wallrush: eine Quoridor-Variante
+c50845|Spiele Wallrush kostenlos online, ein Quoridor-Rennspiel für zwei Spieler, bei dem beide Figuren auf derselben Linie eines 9×13-Bretts starten und zur selben Kante laufen.
+e265ae|Wallrush: häufige Fragen
+fdc1b3|Was ist Wallrush?
+ce8e49|Wallrush ist eine kostenlose Quoridor-Variante für zwei Spieler auf einem hohen 9×13-Brett. Beide Figuren starten nebeneinander auf derselben Linie und laufen zur selben Zielreihe, wobei sie Mauern setzen, um sich gegenseitig zu bremsen.
+383867|Wie unterscheidet sich Wallrush vom klassischen Quoridor?
+d2cfce|Beim klassischen Quoridor starten die Figuren an gegenüberliegenden Kanten und laufen aufeinander zu. Bei Wallrush laufen sie in dieselbe Richtung, und eine Figur neben der anderen darf auch deren Züge nutzen (geliehene Züge). Die Mauer- und Wegregeln entsprechen den <a href="/quoridor-rules/">Quoridor-Regeln</a>.
+797502|Wie viele Mauern hat jeder Spieler bei Wallrush?
+2bff49|Jeder Spieler hat 10 Mauern. Eine Mauer ist zwei Felder lang, und du darfst nie alle Wege zur obersten Reihe versperren.
+a32748|Kann ich Wallrush kostenlos online spielen?
+3b2568|Ja. Wallrush ist kostenlos in deinem Browser, ohne Download und ohne Konto. Zwei Spieler sind abwechselnd an einem Gerät am Zug.
+d9d0d7|Pointrush – Quoridor-Variante für 4 Spieler, kostenlos online spielen
+e8d26a|Spiele Pointrush kostenlos online: eine Mehrspieler-Variante von Quoridor für 2, 3 oder 4 Spieler auf einem 11×11-Brett, bei der jede Figur zum Feld in der Mitte läuft. Ohne Download.
+3af493|Pointrush: eine Quoridor-Variante für 2 bis 4 Spieler
+5dc2a4|Spiele Pointrush kostenlos online, eine Mehrspieler-Variante von Quoridor, bei der zwei, drei oder vier Figuren zum selben Feld in der Mitte eines 11×11-Bretts laufen.
+0ed326|Pointrush: häufige Fragen
+e8a006|Was ist Pointrush?
+cad06f|Pointrush ist eine kostenlose Quoridor-Variante für zwei, drei oder vier Spieler auf einem 11×11-Brett. Jede Figur startet in der Mitte einer Kante und läuft zum selben Ziel: dem Feld in der Mitte.
+3075db|Kann man Quoridor zu viert spielen?
+3ea68c|Ja. Bei Pointrush teilen sich vier Spieler ein Gerät und sind abwechselnd am Zug, jeder von einer anderen Kante aus. Bei drei Spielern hat jeder 8 Mauern, bei vier Spielern 6.
+cecd4b|Wie gewinnt man bei Pointrush?
+3518b3|Es gewinnt die erste Figur, die das Feld in der Mitte betritt. Du kannst Mauern setzen, um die anderen Figuren aufzuhalten, darfst aber nie eine Figur ohne Weg zur Mitte zurücklassen.
+4abf29|Ist Pointrush online kostenlos?
+6993e8|Ja. Pointrush ist kostenlos in deinem Browser, ohne Download und ohne Konto.
+24ebc6|Eigenes Quoridor – Brettgröße, Mauern und Regeln online wählen
+d358f4|Spiele ein eigenes Quoridor-Spiel kostenlos online mit einem Freund an einem Gerät. Wähle die Brettgröße von 5×5 bis 13×13, die Anzahl der Mauern, geliehene Züge und die Zeit pro Zug.
+c6a5be|Eigenes Quoridor-Spiel
+d6ce13|Spiele Quoridor mit eigenen Regeln: Wähle die Brettgröße, die Anzahl der Mauern, geliehene Züge und die Zeit pro Zug.
+fceccb|Eigenes Quoridor: häufige Fragen
+100d7a|Kann ich bei Quoridor die Brettgröße ändern?
+ff8fc2|Ja. In einem eigenen Quoridor-Spiel kannst du auf einem Brett von 5 × 5, 7 × 7, 9 × 9, 11 × 11 oder 13 × 13 spielen. Das klassische Brett ist 9 × 9 groß.
+dce2da|Wie viele Mauern kann jeder Spieler in einem eigenen Spiel haben?
+3523d1|0 bis 30 Mauern pro Spieler, für beide gleich viele. Das klassische Quoridor gibt jedem Spieler 10 Mauern.
+18f1f7|Kann ich Quoridor mit Zeitlimit spielen?
+f39515|Ja. Wähle keine Uhr oder 15 Sekunden, 32 Sekunden, 1 Minute oder 2 Minuten pro Zug. Läuft die Zeit ab, setzt das Spiel deine Figur einen Schritt auf ihrem kürzesten Weg weiter.
+37098b|Kann ich ein eigenes Quoridor-Spiel mit einem Freund spielen?
+0ee7f8|Ja, am selben Gerät: Teilt den Bildschirm und spielt abwechselnd. Für ein Spiel auf zwei Geräten nutze einen <a href="/play/create-room/">privaten Raum</a>, der die klassischen Regeln verwendet.

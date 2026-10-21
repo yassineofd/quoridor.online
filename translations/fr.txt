@@ -241,7 +241,7 @@ eacc83|<strong>Ouvrez une partie.</strong>Choisissez un mode sur la page <a href
 e64544|À votre tour, vous faites <strong>une</strong> seule chose : déplacer votre pion <em>ou</em> poser un mur. Cette section traite du déplacement.
 a891a4|Avancer d'une case
 4d3102|<strong>Attendez votre tour.</strong>La barre de tour indique à qui c'est le tour.
-2e2f5d|<strong>Restez en mode Déplacer le pion.</strong>Les cases que vous pouvez atteindre légalement sont mises en évidence.
+d588c3|<strong>Repérez les cases en surbrillance.</strong>Les cases que vous pouvez atteindre légalement sont mises en évidence.
 0966be|<strong>Cliquez ou touchez une case en surbrillance.</strong>Votre pion avance d'une case et le tour passe.
 403a59|Un pion se déplace vers le haut, le bas, la gauche ou la droite, d'une case à la fois. Il ne peut pas se déplacer en diagonale (sauf dans le cas particulier ci-dessous), à travers un mur, ni sortir du plateau.
 f92d5c|Cases où le pion cyan peut aller. Le mur au-dessus de lui bloque le déplacement vers le haut.
@@ -252,10 +252,10 @@ d69fee|Avancer en diagonale quand le saut est bloqué
 4f82f7|Si un mur ou le bord du plateau se trouve juste derrière l'autre pion, vous ne pouvez pas sauter. Vous pouvez alors vous placer sur une case <strong>à côté</strong> du pion de l'adversaire, tant qu'aucun mur ne bloque ce pas.
 0180a1|Le mur derrière le pion blanc empêche le saut, le pion cyan peut donc aller en A ou en B.
 8737b8|Au lieu de vous déplacer, vous pouvez poser un mur. Un mur allonge le trajet de votre adversaire, ce qui vaut autant que de vous rapprocher de l'objectif.
-9164b8|<strong>Appuyez sur Poser un mur.</strong>Le plateau passe en mode mur. Appuyez sur Déplacer le pion pour revenir.
-a27725|<strong>Choisissez une rainure.</strong>Pointez le plateau et la rainure la plus proche affiche un aperçu. Appuyez sur Pivoter le mur pour basculer entre horizontal et vertical.
-a977dd|<strong>Vérifiez que c'est autorisé.</strong>Un mur ne peut ni chevaucher ni croiser un autre mur, et il ne peut jamais retirer à un joueur son dernier chemin vers son objectif. Si l'aperçu n'est pas légal, un message sous les boutons en donne la raison et le mur ne peut pas être posé.
-fdb4bf|<strong>Posez-le.</strong>Avec une souris, cliquez sur la rainure. Sur un écran tactile, touchez-la pour la sélectionner, puis appuyez sur Poser le mur sélectionné. Votre compteur de murs diminue de un.
+489b12|<strong>Choisissez un mur.</strong>Sous le plateau se trouve votre bac à murs, avec un mur horizontal et un mur vertical. Faites glisser celui que vous voulez sur le plateau.
+7461b0|<strong>Choisissez l'emplacement.</strong>Pendant que vous faites glisser, la rainure la plus proche affiche un aperçu. Sur un écran tactile, le mur est tenu juste au-dessus de votre doigt pour que vous le voyiez.
+9a9973|<strong>Vérifiez que c'est autorisé.</strong>Un mur ne peut ni chevaucher ni croiser un autre mur, et il ne peut jamais retirer à un joueur son dernier chemin vers son objectif. Si l'aperçu n'est pas légal, un message sous le plateau en donne la raison et le mur ne peut pas être posé.
+beb868|<strong>Relâchez pour le poser.</strong>Relâchez le mur au-dessus de la rainure voulue et votre compteur de murs diminue de un. Vous pouvez aussi toucher un mur du bac pour choisir son type, toucher une rainure du plateau, puis appuyer sur Poser le mur sélectionné.
 1c006e|Les murs sont définitifs. On ne peut ni les déplacer ni les reprendre, et une partie en ligne n'a pas d'annulation : regardez donc bien l'aperçu d'abord.
 4c9013|Deux murs côte à côte. Le pion blanc avait besoin de 6 pas pour atteindre la rangée du bas ; il lui en faut maintenant 8, en ne comptant que les murs.
 ea7cda|Un mur illégal
@@ -268,7 +268,7 @@ e240af|<strong>Comptez les deux itinéraires.</strong>Avant chaque tour, calcule
 3f3c73|<strong>Planifiez un coup de plus.</strong>Demandez-vous ce que votre adversaire peut faire en réponse avant de vous engager dans un déplacement ou un mur.
 db8d6f|<strong>Dépensez vos murs là où ils font le plus mal.</strong>Un mur qui n'ajoute qu'une case vous coûte un tour et un mur. Cherchez les murs qui imposent plusieurs cases de détour.
 547aca|<strong>Équilibrez déplacement et blocage.</strong>Ne faire que se déplacer laisse un bon bloqueur vous piéger, et ne faire que poser des murs ne vous rapproche pas de l'objectif.
-c33f50|<strong>Gardez un œil sur le chronomètre.</strong>Chaque tour dure 15 secondes.
+e69dc5|<strong>Gardez un œil sur le chronomètre.</strong>Chaque tour a un chronomètre de 32 secondes, et chaque joueur dispose de 5 minutes au total.
 339960|<strong>Entraînez-vous d'abord.</strong><a href="/play/computer/">Jouez contre l'ordinateur en Facile</a> pour vous habituer aux commandes avant d'affronter une personne.
 5960a6|Quand vous en voudrez plus, lisez le <a href="/quoridor-strategy/">guide de stratégie de Quoridor</a>.
 74f5a4|Vous en savez assez pour commencer.
@@ -812,11 +812,11 @@ ef4284|<strong>Attendez le premier tour.</strong>Le serveur choisit au hasard qu
 a422b6|Jouer avec un ami précis
 2d767f|Choisissez <a href="/play/create-room/">Créer une salle</a>, puis envoyez à votre ami le lien d'invitation ou le code d'association court. Il ouvre le lien, ou saisit le code sur <a href="/play/join-room/">Rejoindre une salle</a>, choisit un nom d'utilisateur, et la partie commence dès son arrivée. Une salle que personne n'a rejointe expire après 30 minutes.
 e1ddf0|<strong>Attendez <em>À vous de jouer</em>.</strong>Les coups ne sont acceptés de votre part que lorsque la barre de tour indique que c'est à vous.
-500b8a|<strong>Restez en mode Déplacer le pion.</strong>Les cases que vous pouvez atteindre légalement sont mises en évidence. Les murs et le bord du plateau sont déjà pris en compte.
+279952|<strong>Repérez les cases en surbrillance.</strong>Les cases que vous pouvez atteindre légalement sont mises en évidence. Les murs et le bord du plateau sont déjà pris en compte.
 b7c889|<strong>Cliquez ou touchez une case en surbrillance.</strong>Votre pion avance d'une case et le tour passe à votre adversaire. Au clavier, utilisez les touches fléchées et Entrée.
-efb98a|<strong>Surveillez l'horloge.</strong> Chaque tour a un chronomètre de 15 secondes, affiché au-dessus des joueurs. S'il expire, le serveur joue à votre place un pas de pion sur votre itinéraire le plus court : vous perdez donc la possibilité de poser un mur à ce tour.
+10cb75|<strong>Surveillez l'horloge.</strong> Chaque tour a un chronomètre de 32 secondes et chaque joueur dispose de 5 minutes pour toute la partie ; les deux horloges sont affichées au-dessus du plateau. Si un tour expire, le serveur joue à votre place un pas de pion sur votre itinéraire le plus court : vous perdez donc la possibilité de poser un mur à ce tour. Si vos 5 minutes s'écoulent, vous perdez.
 7fe311|Une partie en ligne peut aussi se terminer si un joueur appuie sur <em>Abandonner</em>, quitte la partie ou reste déconnecté plus d'une minute. Dans chaque cas, l'autre joueur gagne. Ensuite, vous pouvez demander une revanche.
-da6a8e|<strong>Gardez un œil sur le chronomètre.</strong>Les tours en ligne durent 15 secondes. Décidez tôt et gardez l'onglet ouvert pour ne pas perdre par forfait en vous déconnectant.
+b302d2|<strong>Gardez un œil sur le chronomètre.</strong>Les tours en ligne durent 32 secondes et chaque joueur dispose de 5 minutes au total. Décidez tôt et gardez l'onglet ouvert pour ne pas perdre par forfait en vous déconnectant.
 79f8cd|Choisissez un nom d'utilisateur, appuyez sur Trouver un adversaire et apprenez en jouant. Le plateau met en évidence vos coups légaux et explique pourquoi un mur n'est pas autorisé.
 87967e|Trouver un adversaire <svg/>
 43a212|S'entraîner contre l'ordinateur
@@ -825,7 +825,7 @@ d47dde|Pas dans une partie en ligne : un coup ou un mur est définitif dès que 
 c1fd2f|Que se passe-t-il si ma connexion coupe pendant une partie ?
 2a79c6|Le jeu indique à votre adversaire que vous êtes en train de vous reconnecter, et votre navigateur essaie de retrouver automatiquement votre place. Si vous ne parvenez pas à revenir en une minute, la partie compte comme un forfait.
 d34c00|Puis-je jouer sur mon téléphone ?
-53b12a|Oui. Les parties en ligne fonctionnent dans un navigateur mobile, sans rien installer. En mode mur, touchez une rainure pour sélectionner un mur, puis appuyez sur Poser le mur sélectionné pour confirmer.
+91650b|Oui. Les parties en ligne fonctionnent dans un navigateur mobile, sans rien installer. Faites glisser un mur du bac vers le plateau pour le poser, ou touchez un mur du bac, touchez une rainure, puis appuyez sur Poser le mur sélectionné pour confirmer.
 3211c6|Puis-je jouer avec quelqu'un qui utilise une autre langue ?
 2eb17f|Oui. Chacun choisit sa propre langue avec le bouton de traduction dans l'en-tête de la page (anglais, espagnol, français, allemand ou arabe). Cela ne change que l'aspect de la page pour vous. Le jeu, la mise en relation et les salles sont les mêmes pour tout le monde, et il n'y a pas de chat : vous et votre adversaire pouvez donc jouer chacun dans votre langue. Les noms peuvent s'écrire dans n'importe quel alphabet.
 bb7107|Puis-je rejouer contre le même adversaire ?
@@ -870,9 +870,10 @@ game.disconnectedTag|(déconnecté)
 game.wallsCount|Murs : {n}
 game.keys|Clavier : placez le focus sur le plateau, flèches pour choisir, Entrée pour confirmer, W pour les murs, R pour pivoter, M pour le pion, Échap pour annuler.
 game.players|Joueurs
-game.chooseAction|Choisissez une action
-game.movePawn|Déplacer le pion
-game.placeWall|Poser un mur
+game.tip|Touchez une case pour avancer · faites glisser un mur sur le plateau
+game.wallTray|Murs
+game.horizontalWall|Mur horizontal
+game.verticalWall|Mur vertical
 game.rotateWall|Pivoter le mur
 game.confirmWall|Poser le mur sélectionné
 game.cancel|Annuler
@@ -905,6 +906,8 @@ game.resignedOpp|Votre adversaire a abandonné.
 game.resignedSelf|Abandon.
 game.leftOpp|Votre adversaire a quitté la partie.
 game.disconnectedSelf|Vous avez été déconnecté trop longtemps.
+game.timedOutSelf|Vous n'avez plus de temps.
+game.timedOutName|{name} n'a plus de temps.
 game.reachedEdge|Bord opposé atteint en {n} tours.
 game.reachedCenter|Centre atteint en {n} tours.
 game.rematchRequested|Revanche demandée
@@ -1034,14 +1037,11 @@ d5325f|Schéma de stratégie de Quoridor. Une rangée de murs indigo fermée au 
 60f904|Schéma de stratégie de Quoridor. Une rangée de murs indigo avec une ouverture au milieu, et un mur vertical entouré de blanc au beau milieu de cette ouverture. Un mur rouge en pointillés marqué d'une croix indique le seul mur horizontal qui aurait pu fermer l'ouverture. Un pion cyan se trouve sous l'ouverture et un pion blanc en anneau en haut à droite.
 26bd49|Pion de Quoridor bloqué par des murs. Un pion cyan encerclé par des barrières indigo, incapable d'avancer.
 87f0a1|Variantes
-e9aacf|Variantes de Quoridor
 9bf84e|Wallrush
 e50dd0|Pointrush
 aa0174|Essayez une variante de Quoridor
 809cd7|Les mêmes pions et les mêmes murs, une nouvelle façon de courir. Commencez par Wallrush, où les deux pions partent de la même ligne d'un plateau plus haut.
 d3aeae|Découvrir les variantes <svg/>
-042dd0|Variantes de Quoridor – De nouvelles façons de jouer à Quoridor
-ae34d5|Le jeu classique n'est pas la seule façon de jouer avec des pions et des murs. Essayez une variante : les mêmes idées, un nouveau plateau et une course différente.
 4b7db1|Choisissez une variante
 c6eb8a|Une course sur un plateau plus haut. Les deux pions partent côte à côte sur la même ligne et foncent vers le même bord d'arrivée, en posant des murs pour se ralentir l'un l'autre.
 77c03f|Jouer à Wallrush <svg/>
@@ -1052,9 +1052,6 @@ c31ec3|Une variante garde le cœur de Quoridor : à votre tour, vous déplacez v
 fc63b4|Si les murs et les pions sont nouveaux pour vous, commencez par le jeu classique. Les variantes se savourent mieux quand on sait comment un mur détourne un chemin.
 9af05b|Jouer au Quoridor classique
 996e6d|D'autres variantes seront ajoutées ici au fil du temps.
-457555|Wallrush – Une course de Quoridor sur un plateau en hauteur
-a3b96d|Jouez à Wallrush gratuitement dans votre navigateur : une variante de Quoridor où les deux pions partent de la même ligne d'un plateau de 9 sur 13 et courent vers le même bord, avec 10 murs chacun.
-37b36b|Une variante de Quoridor où les deux pions partent de la même ligne et courent vers le même bord.
 3c4e07|Partagez l'écran et jouez chacun votre tour. Les deux pions courent vers la rangée en surbrillance en haut du plateau.
 ce61a3|Les deux pions partent de la même ligne, avec quatre rangées derrière eux.
 c9abc2|Le premier pion à atteindre la rangée du haut gagne.
@@ -1067,14 +1064,11 @@ dbe02a|<strong>Une action par tour.</strong> Déplacez votre pion d'une case ver
 013dec|<strong>Rencontrer l'autre pion.</strong> Si l'autre pion se trouve juste devant le vôtre, sautez par-dessus. Si un mur ou le bord bloque le saut, passez sur l'un de ses côtés, exactement comme au Quoridor.
 586f9f|<strong>Mouvements empruntés.</strong> Tant que votre pion se trouve juste à côté de l'autre pion, sans mur entre eux, vous pouvez aussi aller sur n'importe quelle case que l'autre pion pourrait atteindre depuis sa position, sauts et pas de côté compris.
 f69960|<strong>Gagner.</strong> Le premier pion à atteindre n'importe quelle case de la rangée du haut gagne.
-36de14|Chaque tour est limité à 15 secondes. Si le temps s'écoule, le jeu avance votre pion d'un pas sur son plus court chemin.
+9d4243|Chaque tour est limité à 32 secondes, et chaque joueur dispose de 5 minutes pour toute la partie. Si le temps d'un tour s'écoule, le jeu avance votre pion d'un pas sur son plus court chemin. Si vos 5 minutes s'écoulent, vous perdez.
 ba26fa|Points à méditer
 7f513f|Comme les deux pions partagent un même but, vous courez dans le même couloir que votre adversaire. Un mur qui le ralentit peut aussi vous ralentir si vos routes se recoupent ; regardez donc les deux routes avant d'en poser un. L'espace derrière la ligne de départ est à vous : se décaler vers une colonne libre peut valoir mieux que de foncer droit dans un mur.
 0f22ff|Pour toutes les règles des murs, des sauts et des pas de côté, lisez les règles du Quoridor. Wallrush les utilise, avec en plus les mouvements empruntés ci-dessus.
 54eb20|Toutes les variantes
-24b78a|Pointrush – Une course de Quoridor vers le centre pour 2 à 4 joueurs
-dd39c3|Jouez à Pointrush gratuitement dans votre navigateur : une variante de Quoridor pour 2 à 4 joueurs sur un plateau de 11 sur 11 où chaque pion court vers la case centrale.
-933ab8|Une variante de Quoridor pour deux, trois ou quatre joueurs où chaque pion court vers la même case au centre.
 787a3f|De deux à quatre joueurs, un appareil
 b4ca34|Partagez l'écran et jouez chacun votre tour. Chaque pion court vers la case en surbrillance au centre du plateau.
 90ac30|Les pions partent du milieu des bords, à cinq cases du centre.
@@ -1100,9 +1094,6 @@ a2da36|<strong>Gagner.</strong> Le premier pion à poser le pied sur la case cen
 e6b00a|Partie personnalisée
 e0547d|Le Quoridor classique, réglé à votre façon. Choisissez la taille du plateau, le nombre de murs de chaque joueur, les mouvements empruntés et la durée d'un tour, puis jouez avec un ami sur le même appareil.
 b251a1|Créer une partie personnalisée <svg/>
-cf6622|Quoridor personnalisé – Choisissez la taille du plateau, les murs et les règles
-d72e97|Jouez gratuitement à Quoridor personnalisé dans votre navigateur avec un ami sur le même appareil. Choisissez la taille du plateau, le nombre de murs de chaque joueur, les mouvements empruntés et le temps par coup.
-ecd22e|Le Quoridor classique avec les règles que vous choisissez : taille du plateau, murs, mouvements empruntés et chronomètre.
 e92343|Préparez votre partie
 e15160|Choisissez les règles, puis partagez l'écran avec un ami et jouez chacun votre tour. Les réglages par défaut sont ceux du Quoridor classique.
 348a57|Taille du plateau
@@ -1117,10 +1108,10 @@ dadb5d|Les pions partent du milieu de bords opposés. Un plateau plus grand rend
 395f50|Temps par coup
 d26be3|Pas de limite de temps
 a1f99f|15 secondes par coup
-0e30c6|30 secondes par coup
+231b3e|32 secondes par coup
 3cb8d1|1 minute par coup
 ebd40d|2 minutes par coup
-7a3a3e|Quand le temps s'écoule, le jeu avance le pion d'un pas sur son plus court chemin.
+29dd6c|Quand le temps s'écoule, le jeu avance le pion d'un pas sur son plus court chemin. Avec un chronomètre, chaque joueur dispose aussi de 5 minutes au total.
 5c6b8a|Mouvements empruntés
 a74abc|(activé)
 9a4248|À côté de l'autre pion, vous pouvez aussi aller où il pourrait aller.
@@ -1131,9 +1122,60 @@ c895ba|<strong>Taille du plateau.</strong> Jouez sur un plateau de 5 × 5, 7 × 
 4034cf|<strong>Murs par joueur.</strong> Donnez à chaque joueur de 0 à 30 murs. Sans mur, la partie est une pure course. Avec beaucoup, elle devient un combat de labyrinthe. Un mur mesure deux cases de long, et les murs ne peuvent ni se chevaucher ni se croiser.
 90373e|<strong>Gardez un chemin ouvert.</strong> Quels que soient les réglages, vous ne pouvez pas poser un mur qui ne laisse à l'un des pions aucun chemin vers son but.
 d43ac9|<strong>Mouvements empruntés.</strong> Si vous activez cette option, un pion juste à côté de l'autre pion, sans mur entre eux, peut aussi aller sur n'importe quelle case que l'autre pion pourrait atteindre depuis sa position.
-c8018f|<strong>Temps par coup.</strong> Jouez sans chronomètre, ou choisissez 15 secondes, 30 secondes, 1 minute ou 2 minutes. Quand le temps s'écoule, le jeu avance votre pion d'un pas sur son plus court chemin.
+9ab22e|<strong>Temps par coup.</strong> Jouez sans chronomètre, ou choisissez 15 secondes, 32 secondes, 1 minute ou 2 minutes. Quand le temps s'écoule, le jeu avance votre pion d'un pas sur son plus court chemin. Avec un chronomètre, chaque joueur dispose aussi de 5 minutes pour toute la partie.
 778aaf|Idées à essayer
 e3327f|Essayez un plateau de 5 × 5 avec 3 murs chacun pour une partie terminée en quelques minutes, ou un plateau de 13 × 13 avec 20 murs chacun pour une longue bataille de détours. Les deux joueurs ont toujours le même nombre de murs. Quand vous rejouez, vos réglages restent en place.
 4bc4b3|Cette partie se joue sur un seul appareil. Pour jouer avec un ami sur un autre appareil, utilisez une salle privée, qui suit les règles classiques.
 459fae|Créer une salle privée
-00a9e8|Variantes de Quoridor à jouer gratuitement dans votre navigateur. Essayez Wallrush, Pointrush ou une partie personnalisée avec les règles de votre choix.
+0172b3|Variantes de Quoridor en ligne – Wallrush, Pointrush et personnalisé
+746a90|Jouez gratuitement à des variantes de Quoridor en ligne : Wallrush, Pointrush pour 2 à 4 joueurs et Quoridor personnalisé avec la taille de plateau, les murs et les règles de votre choix. Sans téléchargement ni inscription.
+cb591b|Variantes de Quoridor en ligne
+d487b4|Jouez gratuitement à des variantes de Quoridor dans votre navigateur : Wallrush, Pointrush pour 2 à 4 joueurs et Quoridor personnalisé avec votre propre taille de plateau, vos murs et vos règles.
+427964|Variantes de Quoridor : questions fréquentes
+4094ac|Que sont les variantes de Quoridor ?
+7832da|Les variantes de Quoridor sont des façons différentes de jouer au jeu de société Quoridor : une autre taille de plateau, une autre position de départ, plus de joueurs ou des règles personnalisées. Wallrush, Pointrush et le Quoridor personnalisé conservent les pions, les murs et la règle du chemin du jeu classique.
+1814e6|Peut-on jouer à Quoridor à 3 ou 4 joueurs ?
+a13d34|Oui. <a href="/variants/pointrush/">Pointrush</a> est une variante de Quoridor pour deux, trois ou quatre joueurs sur un même appareil, où tous les pions courent vers la case au centre du plateau.
+cfad3b|Peut-on changer la taille du plateau ou le nombre de murs à Quoridor ?
+58caf4|Oui. Le <a href="/variants/custom/">Quoridor personnalisé</a> vous permet de choisir un plateau de 5 × 5 à 13 × 13, de 0 à 30 murs par joueur, les coups empruntés et le temps par coup.
+6d930c|Les variantes de Quoridor sont-elles gratuites ?
+353858|Oui. Toutes les variantes sont gratuites dans votre navigateur, sans téléchargement et sans compte.
+1cd31b|Wallrush – Variante de Quoridor gratuite en ligne, un jeu de course
+06dc4e|Jouez gratuitement à Wallrush en ligne : une variante de Quoridor à deux joueurs sur un grand plateau de 9 sur 13 où les deux pions partent de la même ligne et courent vers le même bord, avec 10 murs chacun.
+5b080a|Wallrush : une variante de Quoridor
+c50845|Jouez gratuitement à Wallrush en ligne, un jeu de course Quoridor à deux joueurs où les deux pions partent de la même ligne d'un plateau de 9 sur 13 et courent vers le même bord.
+e265ae|Wallrush : questions fréquentes
+fdc1b3|Qu'est-ce que Wallrush ?
+ce8e49|Wallrush est une variante gratuite de Quoridor à deux joueurs, jouée sur un grand plateau de 9 sur 13. Les deux pions partent côte à côte sur la même ligne et courent vers la même rangée d'arrivée, en posant des murs pour se ralentir.
+383867|En quoi Wallrush diffère-t-il du Quoridor classique ?
+d2cfce|Au Quoridor classique, les pions partent de bords opposés et traversent le plateau l'un vers l'autre. À Wallrush, ils courent dans le même sens, et un pion placé à côté de l'autre peut aussi utiliser ses coups (coups empruntés). Les règles des murs et du chemin sont celles des <a href="/quoridor-rules/">règles du Quoridor</a>.
+797502|Combien de murs chaque joueur a-t-il à Wallrush ?
+2bff49|Chaque joueur a 10 murs. Un mur mesure deux cases, et vous ne pouvez jamais bloquer tous les chemins vers la rangée du haut.
+a32748|Peut-on jouer gratuitement à Wallrush en ligne ?
+3b2568|Oui. Wallrush est gratuit dans votre navigateur, sans téléchargement et sans compte. Deux joueurs jouent à tour de rôle sur un même appareil.
+d9d0d7|Pointrush – Variante de Quoridor à 4 joueurs, jouez gratuitement en ligne
+e8d26a|Jouez gratuitement à Pointrush en ligne : une variante multijoueur de Quoridor pour 2, 3 ou 4 joueurs sur un plateau de 11 sur 11 où chaque pion court vers la case centrale. Sans téléchargement.
+3af493|Pointrush : une variante de Quoridor pour 2 à 4 joueurs
+5dc2a4|Jouez gratuitement à Pointrush en ligne, une variante multijoueur de Quoridor où deux, trois ou quatre pions courent vers la même case au centre d'un plateau de 11 sur 11.
+0ed326|Pointrush : questions fréquentes
+e8a006|Qu'est-ce que Pointrush ?
+cad06f|Pointrush est une variante gratuite de Quoridor pour deux, trois ou quatre joueurs sur un plateau de 11 sur 11. Chaque pion part du milieu d'un bord et court vers le même but : la case du centre.
+3075db|Peut-on jouer à Quoridor à 4 joueurs ?
+3ea68c|Oui. À Pointrush, quatre joueurs partagent un appareil et jouent à tour de rôle, chacun depuis un bord différent. À trois joueurs, chacun a 8 murs, et à quatre, 6.
+cecd4b|Comment gagne-t-on à Pointrush ?
+3518b3|Le premier pion qui atteint la case centrale gagne. Vous pouvez poser des murs pour retenir les autres pions, mais vous ne pouvez jamais laisser un pion sans chemin vers le centre.
+4abf29|Est-il gratuit de jouer à Pointrush en ligne ?
+6993e8|Oui. Pointrush est gratuit dans votre navigateur, sans téléchargement et sans compte.
+24ebc6|Quoridor personnalisé – Choisissez la taille du plateau, les murs et les règles en ligne
+d358f4|Jouez gratuitement au Quoridor personnalisé en ligne avec un ami sur le même appareil. Choisissez la taille du plateau de 5×5 à 13×13, le nombre de murs, les coups empruntés et le temps par coup.
+c6a5be|Partie personnalisée de Quoridor
+d6ce13|Jouez à Quoridor avec vos propres règles : choisissez la taille du plateau, le nombre de murs, les coups empruntés et le temps par coup.
+fceccb|Quoridor personnalisé : questions fréquentes
+100d7a|Peut-on changer la taille du plateau à Quoridor ?
+ff8fc2|Oui. Dans une partie de Quoridor personnalisé, vous pouvez jouer sur un plateau de 5 × 5, 7 × 7, 9 × 9, 11 × 11 ou 13 × 13. Le plateau classique est de 9 × 9.
+dce2da|Combien de murs chaque joueur peut-il avoir dans une partie personnalisée ?
+3523d1|De 0 à 30 murs par joueur, le même nombre pour les deux. Le Quoridor classique donne 10 murs à chaque joueur.
+18f1f7|Peut-on jouer à Quoridor avec une limite de temps ?
+f39515|Oui. Choisissez sans horloge, ou 15 secondes, 32 secondes, 1 minute ou 2 minutes par coup. Quand le temps est écoulé, le jeu déplace votre pion d'une case le long de son chemin le plus court.
+37098b|Peut-on jouer une partie personnalisée de Quoridor avec un ami ?
+0ee7f8|Oui, sur le même appareil : partagez l'écran et jouez à tour de rôle. Pour jouer sur deux appareils, utilisez un <a href="/play/create-room/">salon privé</a>, qui applique les règles classiques.

@@ -136,6 +136,17 @@ class UI(unittest.TestCase):
     def walls_left(self, p):
         return p.js("Array.from(document.querySelectorAll('.player-walls')).map(function(e){return e.textContent})")
 
+    def pick_wall(self, p, o):
+        """Tap the wall of this type in the tray (the tap-then-place way of placing a wall)."""
+        p.click(f'.wall-chip[data-o="{o}"]')
+
+    def chip_xy(self, p, o):
+        x, y, _, _ = p.center(f'.wall-chip[data-o="{o}"]')
+        return x, y
+
+    def clocks(self, p):
+        return p.js("Array.from(document.querySelectorAll('.player-clock')).map(function(e){return e.textContent})")
+
     def start_local(self, p, n1="Alice", n2="Bob"):
         p.goto(self.base + "/play/local/")
         p.type_text("#name1", n1)
@@ -165,8 +176,8 @@ class UI(unittest.TestCase):
         p = self.page()
         self.start_local(p)
         self.shot(p, "local-start.png")
-        p.click(".btn--toggle:nth-of-type(2)")
-        self.assertEqual(p.js("document.querySelectorAll('.btn--toggle')[1].getAttribute('aria-pressed')"), "true")
+        self.pick_wall(p, "h")
+        self.assertEqual(p.js("document.querySelector('.wall-chip[data-o=h]').getAttribute('aria-pressed')"), "true")
         p.move_to(*self.wall_xy(p, "h", 6, 4))
         self.shot(p, "local-wall-preview.png")
         p.click_at(*self.wall_xy(p, "h", 6, 4))
@@ -175,11 +186,12 @@ class UI(unittest.TestCase):
         self.assertIn("placed wall e2h", p.js("document.querySelector('.move-log li').textContent"))
         # the wall now blocks Bob's... no: Alice's pawn can no longer step up? (wall is at rows 6/7, cols 4-5)
         # Bob tries the same slot: overlap
-        p.click(".btn--toggle:nth-of-type(2)")
+        self.pick_wall(p, "h")
         p.click_at(*self.wall_xy(p, "h", 6, 4))
         self.assertIn("overlaps", self.hint(p))
         self.assertEqual(self.moves(p), 1)
         # a crossing wall is refused too
+        self.pick_wall(p, "v")
         p.click_at(*self.wall_xy(p, "v", 6, 4))
         self.assertIn("cross", self.hint(p))
         self.shot(p, "local-after-wall.png")
@@ -227,7 +239,7 @@ class UI(unittest.TestCase):
     def test_wallrush_walls_can_be_placed_in_the_lowest_row(self):
         p = self.page(height=1400)
         self.start_wallrush(p)
-        p.click(".btn--toggle:nth-of-type(2)")
+        self.pick_wall(p, "h")
         # the lowest wall slot: below row 11, across columns 3 and 4
         p.click_at(*self.wr_xy(p, PAD + 3 * PITCH + CELL + 7 + 30, PAD + 11 * PITCH + CELL + 7))
         self.assertEqual(self.walls_left(p), ["Walls: 9", "Walls: 10"])
@@ -333,29 +345,114 @@ class UI(unittest.TestCase):
         p.wait_for("document.querySelector('svg.board')")
         self.assertEqual(self.walls_left(p), ["Walls: 0", "Walls: 0"])
         self.assertTrue(p.js("document.querySelector('.turn-timer').hidden"))
-        self.assertTrue(p.js("document.querySelector('.btn--toggle:nth-of-type(2)').disabled"))  # no walls: only pawn moves
+        self.assertTrue(p.js("Array.from(document.querySelectorAll('.wall-chip')).every(function(b){return b.disabled})"))  # no walls: only pawn moves
+        self.assertEqual(self.clocks(p), ["", ""])        # no clock at all, so no bank either
         self.no_errors(p)
 
     def test_walls_use_the_colour_of_the_player_who_placed_them(self):
         p = self.page()
         self.start_local(p)
-        p.click(".btn--toggle:nth-of-type(2)")
+        self.pick_wall(p, "h")
         p.click_at(*self.wall_xy(p, "h", 6, 4))   # Alice (cyan pawn)
-        p.click(".btn--toggle:nth-of-type(2)")
+        self.pick_wall(p, "h")
         p.click_at(*self.wall_xy(p, "h", 2, 1))   # Bob (orange pawn)
         fills = p.js("Array.from(document.querySelectorAll('svg.board g')).filter(function(g){return g.children.length===2 && g.children[0].getAttribute('rx')==='6'}).map(function(g){return Array.from(g.children).map(function(r){return r.getAttribute('fill')})})[0]")
         self.assertEqual(fills, ["#42d9f5", "#ff9f43"])
         self.no_errors(p)
 
-    def test_local_turn_timer_counts_down_and_plays_when_time_is_up(self):
+    def test_local_move_clock_is_32_seconds_and_each_player_has_five_minutes(self):
         p = self.page()
         self.start_local(p)
+        self.assertRegex(p.js("document.querySelector('.turn-timer').textContent"), r"Alice: 3[12]s left")
+        c = self.clocks(p)
+        self.assertRegex(c[0], r"^(5:00|4:5\d)$")     # Alice's has started to run
+        self.assertEqual(c[1], "5:00")                 # Bob's waits for his turn
+        self.click_cell(p, 7, 4)
+        p.wait_for("document.querySelector('.turn-bar').textContent === \"Bob's turn\"")
+        c = self.clocks(p)
+        self.assertRegex(c[0], r"^(5:00|4:5\d)$")     # Alice keeps what she used: it is not given back
+        self.assertRegex(c[1], r"^(5:00|4:5\d)$")
+        self.no_errors(p)
+
+    def test_local_turn_timer_counts_down_and_plays_when_time_is_up(self):
+        p = self.page()
+        p.goto(self.base + "/variants/custom/")
+        self.set_field(p, "#clock", "15")
+        p.type_text("#name1", "Alice")
+        p.type_text("#name2", "Bob")
+        p.click("button[type=submit]")
+        p.wait_for("document.querySelector('svg.board')")
         self.assertRegex(p.js("document.querySelector('.turn-timer').textContent"), r"Alice: 1[45]s left")
         self.assertEqual(self.moves(p), 0)
         p.wait_for("document.querySelectorAll('.move-log li').length === 1", timeout=20)
         self.assertEqual(self.turn(p), "Bob's turn")
         self.assertIn("Time ran out. Alice moved to e2.", self.hint(p))
         self.assertRegex(p.js("document.querySelector('.turn-timer').textContent"), r"Bob: 1[45]s left")
+        self.no_errors(p)
+
+    def test_a_player_whose_five_minutes_run_out_loses(self):
+        p = self.page()
+        self.start_local(p)
+        # a second, short game on the same page: 1 s per move and 2 s in the bank
+        p.js("(function(){var d=document.createElement('div');d.id='quick';document.body.appendChild(d);"
+             "QuoridorGame.mount(d,{mode:'local',turnSeconds:1,bankSeconds:2,names:['Al','Bo']});})()")
+        p.wait_for("document.querySelector('#quick .result h2').textContent", timeout=12)
+        self.assertEqual(p.js("document.querySelector('#quick .result h2').textContent"), "Bo wins")
+        self.assertEqual(p.js("document.querySelector('#quick .result p').textContent"), "Al ran out of time.")
+        self.no_errors(p)
+
+    # ---- dragging a wall from the tray ----------------------------------------------------
+    def anchor_xy(self, p, r, c):
+        return self.board_xy(p, PAD + c * PITCH + CELL + 7, PAD + r * PITCH + CELL + 7)
+
+    def test_a_wall_dragged_from_the_tray_is_placed_where_it_is_dropped(self):
+        p = self.page()
+        self.start_local(p)
+        self.assertEqual(p.js("document.querySelector('.wall-tray-count').textContent"), "10")
+        x, y = self.chip_xy(p, "v")
+        ax, ay = self.anchor_xy(p, 6, 4)
+        p.drag(x, y, ax, ay, release=False)
+        self.assertTrue(p.js("document.querySelector('.game').classList.contains('is-carrying')"))
+        self.assertEqual(self.moves(p), 0)                       # nothing is placed until it is let go
+        self.shot(p, "drag-preview.png")
+        p.send("Input.dispatchMouseEvent", type="mouseReleased", x=ax, y=ay, button="left", clickCount=1)
+        p.pump(0.2)
+        self.assertEqual(self.moves(p), 1)
+        self.assertIn("placed wall e2v", p.js("document.querySelector('.move-log li').textContent"))
+        self.assertEqual(self.walls_left(p), ["Walls: 9", "Walls: 10"])
+        self.assertEqual(self.turn(p), "Bob's turn")
+        self.assertEqual(p.js("document.querySelector('.wall-tray-count').textContent"), "10")   # Bob's tray now
+        self.assertFalse(p.js("document.querySelector('.game').classList.contains('is-carrying')"))
+        self.assertIsNone(p.js("document.querySelector('.wall-ghost')"))
+        self.no_errors(p)
+
+    def test_a_wall_dropped_on_a_forbidden_groove_or_off_the_board_is_not_placed(self):
+        p = self.page()
+        self.start_local(p)
+        x, y = self.chip_xy(p, "h")
+        p.drag(x, y, *self.anchor_xy(p, 6, 4))                   # a legal wall first
+        self.assertEqual(self.moves(p), 1)
+        x, y = self.chip_xy(p, "h")
+        p.drag(x, y, *self.anchor_xy(p, 6, 4))                   # the same place again: overlaps
+        self.assertEqual(self.moves(p), 1)
+        self.assertIn("overlaps", self.hint(p))
+        p.drag(x, y, x, y - 80)                                  # dropped between the board and the tray: off the board
+        self.assertEqual(self.moves(p), 1)
+        self.assertEqual(self.turn(p), "Bob's turn")
+        self.no_errors(p)
+
+    def test_phone_wall_drag_is_lifted_above_the_finger(self):
+        p = self.page(width=390, height=844, mobile=True, touch=True)
+        self.start_local(p)
+        self.assertFalse(p.js("document.documentElement.scrollWidth > document.documentElement.clientWidth"))
+        self.shot(p, "phone-game.png")
+        # the board, both player cards and the tray are on screen together
+        self.assertTrue(p.js("(function(){var r=document.querySelector('.wall-tray').getBoundingClientRect();return r.bottom <= innerHeight && document.querySelector('.players').getBoundingClientRect().top >= 0})()"))
+        x, y = self.chip_xy(p, "h")
+        ax, ay = self.anchor_xy(p, 6, 4)
+        p.drag(x, y, ax, ay + 56)                                # the finger is 56 px below where the wall lands
+        self.assertEqual(self.moves(p), 1)
+        self.assertIn("placed wall e2h", p.js("document.querySelector('.move-log li').textContent"))
         self.no_errors(p)
 
     def test_local_keyboard_play(self):
@@ -367,7 +464,7 @@ class UI(unittest.TestCase):
         self.assertEqual(self.moves(p), 1)
         self.assertEqual(self.turn(p), "Bob's turn")
         p.key("w")
-        self.assertEqual(p.js("document.querySelectorAll('.btn--toggle')[1].getAttribute('aria-pressed')"), "true")
+        self.assertFalse(p.js("document.querySelector('.wall-row').hidden"))     # W switched to wall mode
         for _ in range(3):
             p.key("ArrowDown")
         p.key("r")  # rotate to vertical
@@ -447,7 +544,7 @@ class UI(unittest.TestCase):
         self.start_local(p)
         self.assertFalse(p.js("document.documentElement.scrollWidth > document.documentElement.clientWidth"))
         self.shot(p, "phone-local.png")
-        p.click(".btn--toggle:nth-of-type(2)")
+        self.pick_wall(p, "h")
         p.click_at(*self.wall_xy(p, "h", 6, 3))   # tap selects, does not place
         self.assertEqual(self.moves(p), 0)
         self.assertFalse(p.js("document.querySelector('.wall-row .btn--primary').disabled"))
@@ -500,7 +597,7 @@ class UI(unittest.TestCase):
         waiter.wait_for("document.querySelector('.turn-bar').textContent === 'Your turn'", timeout=10)
         self.assertEqual(self.moves(mover), 1)
         # waiter replies with a wall, using the rotated board
-        waiter.click(".btn--toggle:nth-of-type(2)")
+        self.pick_wall(waiter, "h")
         waiter.click_at(*self.wall_xy(waiter, "h", 6, 3))
         mover.wait_for("document.querySelectorAll('.move-log li').length === 2", timeout=10)
         self.assertEqual(self.moves(waiter), 2)
@@ -801,15 +898,15 @@ class UI(unittest.TestCase):
         p.wait_for("document.querySelector('.turn-bar').textContent === 'À vous de jouer'")
         self.assertIn("Robot moyen", p.js("document.querySelector('.players').textContent"))
         self.assertEqual(self.walls_left(p), ["Murs : 10", "Murs : 10"])
-        self.assertEqual(p.js("document.querySelector('.btn--toggle').textContent.trim()"), "Déplacer le pion")
+        self.assertEqual(p.js("document.querySelector('.wall-chip').getAttribute('aria-label')"), "Mur horizontal")
         self.assertIn("Plateau de Quoridor", p.js("document.querySelector('svg.board').getAttribute('aria-label')"))
         self.assertEqual(self.moves(p), 2)                                                   # the game itself is untouched
         self.assertIn("déplacement en", p.js("document.querySelector('.move-log li').textContent"))
         # a refused wall explains itself in the current language
-        p.click(".btn--toggle:nth-of-type(2)")
+        self.pick_wall(p, "h")
         p.click_at(*self.wall_xy(p, "h", 6, 4))      # a legal wall is placed ...
         p.wait_for("document.querySelector('.turn-bar').textContent === 'À vous de jouer'", timeout=15)
-        p.click(".btn--toggle:nth-of-type(2)")
+        self.pick_wall(p, "h")
         p.click_at(*self.wall_xy(p, "h", 6, 4))      # ... and the same slot is refused
         self.assertIn("chevauche", self.hint(p))
         p.click("#lang-toggle")

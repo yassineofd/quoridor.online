@@ -241,7 +241,7 @@ eacc83|<strong>Abre una partida.</strong>Elige un modo en la página de <a href=
 e64544|En tu turno haces <strong>una</strong> sola cosa: mover tu peón <em>o</em> colocar un muro. Esta sección trata del movimiento.
 a891a4|Avanzar una casilla
 4d3102|<strong>Espera tu turno.</strong>La barra de turno indica a quién le toca.
-2e2f5d|<strong>Quédate en el modo Mover peón.</strong>Las casillas a las que puedes llegar legalmente aparecen resaltadas.
+d588c3|<strong>Fíjate en las casillas resaltadas.</strong>Las casillas a las que puedes llegar legalmente aparecen resaltadas.
 0966be|<strong>Haz clic o toca una casilla resaltada.</strong>Tu peón avanza una casilla y el turno pasa.
 403a59|Un peón se mueve hacia arriba, abajo, izquierda o derecha, una casilla cada vez. No puede moverse en diagonal (salvo en el caso especial que se explica abajo), ni atravesar un muro, ni salir del tablero.
 f92d5c|Casillas a las que puede ir el peón cian. El muro que tiene encima bloquea el movimiento hacia arriba.
@@ -252,10 +252,10 @@ d69fee|Avanzar en diagonal cuando el salto está bloqueado
 4f82f7|Si un muro o el borde del tablero está justo detrás del otro peón, no puedes saltar. En su lugar puedes moverte a una casilla <strong>junto</strong> al peón del oponente, siempre que ningún muro bloquee ese paso.
 0180a1|El muro detrás del peón blanco impide el salto, así que el peón cian puede ir a A o a B.
 8737b8|En lugar de mover, puedes colocar un muro. Un muro alarga el camino de tu oponente, lo cual es tan bueno como acercarte a la meta.
-9164b8|<strong>Pulsa Colocar muro.</strong>El tablero cambia al modo de muros. Pulsa Mover peón para volver.
-a27725|<strong>Elige una ranura.</strong>Apunta al tablero y la ranura más cercana muestra una vista previa. Pulsa Girar muro para alternar entre horizontal y vertical.
-a977dd|<strong>Comprueba que esté permitido.</strong>Un muro no puede solaparse ni cruzarse con otro muro, y nunca puede quitar a un jugador su último camino hacia la meta. Si la vista previa no es legal, un mensaje bajo los botones explica por qué y el muro no se puede colocar.
-fdb4bf|<strong>Colócalo.</strong>Con el ratón, haz clic en la ranura. En una pantalla táctil, tócala para seleccionarla y luego pulsa Colocar el muro seleccionado. Tu contador de muros baja en uno.
+489b12|<strong>Elige un muro.</strong>Debajo del tablero está tu bandeja de muros, con un muro horizontal y uno vertical. Arrastra el que quieras al tablero.
+7461b0|<strong>Elige el lugar.</strong>Mientras arrastras, la ranura más cercana muestra una vista previa. En una pantalla táctil el muro se mantiene justo encima de tu dedo para que puedas verlo.
+9a9973|<strong>Comprueba que esté permitido.</strong>Un muro no puede solaparse ni cruzarse con otro muro, y nunca puede quitar a un jugador su último camino hacia la meta. Si la vista previa no es legal, un mensaje bajo el tablero explica por qué y el muro no se puede colocar.
+beb868|<strong>Suéltalo para colocarlo.</strong>Suelta el muro sobre la ranura que quieras y tu contador de muros baja en uno. También puedes tocar un muro de la bandeja para elegir su tipo, tocar una ranura del tablero y luego pulsar Colocar el muro seleccionado.
 1c006e|Los muros son definitivos. No se pueden mover ni recoger de nuevo, y una partida en línea no tiene deshacer, así que mira bien la vista previa antes.
 4c9013|Dos muros uno junto al otro. El peón blanco necesitaba 6 pasos para llegar a la fila inferior; ahora necesita 8, contando solo los muros.
 ea7cda|Un muro ilegal
@@ -268,7 +268,7 @@ e240af|<strong>Cuenta ambas rutas.</strong>Antes de cada turno, calcula cuántos
 3f3c73|<strong>Planifica un paso más allá.</strong>Pregúntate qué puede hacer tu oponente en respuesta antes de comprometerte con un movimiento o un muro.
 db8d6f|<strong>Gasta los muros donde más duelen.</strong>Un muro que añade un solo paso te cuesta un turno y un muro. Busca muros que obliguen a varios pasos de rodeo.
 547aca|<strong>Equilibra mover y bloquear.</strong>Solo mover permite que un buen bloqueador te sorprenda, y solo colocar muros no te acerca a la meta.
-c33f50|<strong>Vigila el temporizador.</strong>Cada turno tiene un temporizador de 15 segundos.
+e69dc5|<strong>Vigila el temporizador.</strong>Cada turno tiene un temporizador de 32 segundos, y cada jugador tiene 5 minutos en total.
 339960|<strong>Practica primero.</strong><a href="/play/computer/">Juega contra el ordenador en Fácil</a> para familiarizarte con los controles antes de enfrentarte a una persona.
 5960a6|Cuando quieras más, lee la <a href="/quoridor-strategy/">guía de estrategia de Quoridor</a>.
 74f5a4|Ya sabes lo suficiente para empezar.
@@ -812,11 +812,11 @@ ef4284|<strong>Espera el primer turno.</strong>El servidor elige al azar quién 
 a422b6|Jugar con un amigo concreto
 2d767f|Elige <a href="/play/create-room/">Crear una sala</a> y luego envía a tu amigo el enlace de invitación o el código de emparejamiento corto. Tu amigo abre el enlace, o introduce el código en <a href="/play/join-room/">Unirse a una sala</a>, elige un nombre de usuario, y la partida empieza en cuanto llega. Una sala a la que nadie se une caduca a los 30 minutos.
 e1ddf0|<strong>Espera <em>Tu turno</em>.</strong>Solo se aceptan movimientos tuyos cuando la barra de turno indica que te toca.
-500b8a|<strong>Quédate en el modo Mover peón.</strong>Las casillas a las que puedes llegar legalmente aparecen resaltadas. Los muros y el borde del tablero ya se tienen en cuenta.
+279952|<strong>Fíjate en las casillas resaltadas.</strong>Las casillas a las que puedes llegar legalmente aparecen resaltadas. Los muros y el borde del tablero ya se tienen en cuenta.
 b7c889|<strong>Haz clic o toca una casilla resaltada.</strong>Tu peón avanza una casilla y el turno pasa a tu oponente. Con el teclado, usa las teclas de flecha y Intro.
-efb98a|<strong>Vigila el reloj.</strong> Cada turno tiene un temporizador de 15 segundos, que se muestra encima de los jugadores. Si se agota, el servidor juega por ti un paso de peón por tu ruta más corta, así que pierdes la oportunidad de colocar un muro ese turno.
+10cb75|<strong>Vigila el reloj.</strong> Cada turno tiene un temporizador de 32 segundos y cada jugador tiene 5 minutos para toda la partida; ambos relojes se muestran encima del tablero. Si se agota un turno, el servidor juega por ti un paso de peón por tu ruta más corta, así que pierdes la oportunidad de colocar un muro ese turno. Si se agotan tus 5 minutos, pierdes.
 7fe311|Una partida en línea también puede terminar si un jugador pulsa <em>Rendirse</em>, abandona la partida o permanece desconectado más de un minuto. En cada caso gana el otro jugador. Después puedes pedir una revancha.
-da6a8e|<strong>Vigila el temporizador.</strong>Los turnos en línea duran 15 segundos. Decide pronto y mantén la pestaña abierta para no perder por abandono al desconectarte.
+b302d2|<strong>Vigila el temporizador.</strong>Los turnos en línea duran 32 segundos y cada jugador tiene 5 minutos en total. Decide pronto y mantén la pestaña abierta para no perder por abandono al desconectarte.
 79f8cd|Elige un nombre de usuario, pulsa Buscar un oponente y aprende mientras juegas. El tablero resalta tus movimientos legales y explica por qué no se permite un muro.
 87967e|Buscar un oponente <svg/>
 43a212|Practicar contra el ordenador
@@ -825,7 +825,7 @@ d47dde|No en una partida en línea: un movimiento o un muro es definitivo en cua
 c1fd2f|¿Qué pasa si se corta mi conexión durante una partida?
 2a79c6|El juego le muestra a tu oponente que estás reconectando, y tu navegador intenta recuperar tu asiento automáticamente. Si no puedes volver en un minuto, la partida cuenta como abandono.
 d34c00|¿Puedo jugar en el móvil?
-53b12a|Sí. Las partidas en línea funcionan en un navegador móvil sin instalar nada. En el modo de muros, toca una ranura para seleccionar un muro y luego pulsa Colocar el muro seleccionado para confirmar.
+91650b|Sí. Las partidas en línea funcionan en un navegador móvil sin instalar nada. Arrastra un muro de la bandeja al tablero para colocarlo, o toca un muro de la bandeja, toca una ranura y pulsa Colocar el muro seleccionado para confirmar.
 3211c6|¿Puedo jugar con alguien que usa otro idioma?
 2eb17f|Sí. Cada persona elige su propio idioma con el botón de traducción del encabezado de la página (inglés, español, francés, alemán o árabe). Solo cambia el aspecto de la página para ti. El juego, el emparejamiento y las salas son iguales para todos, y no hay chat, así que tú y tu oponente podéis jugar cada uno en vuestro idioma. Los nombres pueden escribirse en cualquier alfabeto.
 bb7107|¿Puedo volver a jugar contra el mismo oponente?
@@ -870,9 +870,10 @@ game.disconnectedTag|(desconectado)
 game.wallsCount|Muros: {n}
 game.keys|Teclado: enfoca el tablero, flechas para elegir, Intro para confirmar, W para muros, R para girar, M para el peón, Esc para cancelar.
 game.players|Jugadores
-game.chooseAction|Elige una acción
-game.movePawn|Mover peón
-game.placeWall|Colocar muro
+game.tip|Toca una casilla para mover · arrastra un muro al tablero
+game.wallTray|Muros
+game.horizontalWall|Muro horizontal
+game.verticalWall|Muro vertical
 game.rotateWall|Girar muro
 game.confirmWall|Colocar el muro seleccionado
 game.cancel|Cancelar
@@ -905,6 +906,8 @@ game.resignedOpp|Tu oponente se rindió.
 game.resignedSelf|Rendición.
 game.leftOpp|Tu oponente salió de la partida.
 game.disconnectedSelf|Estuviste desconectado demasiado tiempo.
+game.timedOutSelf|Se te acabó el tiempo.
+game.timedOutName|A {name} se le acabó el tiempo.
 game.reachedEdge|Llegó al borde opuesto en {n} turnos.
 game.reachedCenter|Llegó al centro en {n} turnos.
 game.rematchRequested|Revancha solicitada
@@ -1034,14 +1037,11 @@ d5325f|Diagrama de estrategia de Quoridor. Una fila de muros índigo cerrada en 
 60f904|Diagrama de estrategia de Quoridor. Una fila de muros índigo con un hueco en el centro, y un muro vertical con contorno blanco en medio de ese hueco. Un muro rojo punteado con una cruz marca el único muro horizontal que habría podido cerrar el hueco. Un peón cian está debajo del hueco y un peón blanco en forma de anillo está arriba a la derecha.
 26bd49|Peón de Quoridor bloqueado por muros. Un peón cian rodeado de barreras índigo, incapaz de avanzar.
 87f0a1|Variantes
-e9aacf|Variantes de Quoridor
 9bf84e|Wallrush
 e50dd0|Pointrush
 aa0174|Prueba una variante de Quoridor
 809cd7|Los mismos peones y muros, una nueva forma de carrera. Empieza con Wallrush, donde ambos peones comienzan en la misma línea de un tablero más alto.
 d3aeae|Explorar variantes <svg/>
-042dd0|Variantes de Quoridor – Nuevas formas de jugar a Quoridor
-ae34d5|El juego clásico no es la única forma de jugar con peones y muros. Prueba una variante: las mismas ideas, un tablero nuevo y una carrera distinta.
 4b7db1|Elige una variante
 c6eb8a|Una carrera en un tablero más alto. Ambos peones empiezan uno junto al otro en la misma línea y corren hacia el mismo borde de meta, colocando muros para frenarse mutuamente.
 77c03f|Jugar a Wallrush <svg/>
@@ -1052,9 +1052,6 @@ c31ec3|Una variante conserva el corazón de Quoridor: en tu turno mueves tu peó
 fc63b4|Si eres nuevo con los muros y los peones, empieza con el juego clásico. Las variantes se disfrutan más cuando sabes cómo un muro desvía un camino.
 9af05b|Jugar a Quoridor clásico
 996e6d|Con el tiempo se añadirán más variantes aquí.
-457555|Wallrush – Una carrera de Quoridor en un tablero alto
-a3b96d|Juega a Wallrush gratis en tu navegador: una variante de Quoridor en la que ambos peones empiezan en la misma línea de un tablero de 9 por 13 y corren hacia el mismo borde, con 10 muros cada uno.
-37b36b|Una variante de Quoridor en la que ambos peones empiezan en la misma línea y corren hacia el mismo borde.
 3c4e07|Compartan la pantalla y jueguen por turnos. Ambos peones corren hacia la fila resaltada en la parte superior del tablero.
 ce61a3|Ambos peones empiezan en la misma línea, con cuatro filas detrás.
 c9abc2|Gana el primer peón que llegue a la fila superior.
@@ -1067,14 +1064,11 @@ dbe02a|<strong>Una acción por turno.</strong> Mueve tu peón una casilla hacia 
 013dec|<strong>Encontrarse con el otro peón.</strong> Si el otro peón está justo delante del tuyo, sáltalo. Si un muro o el borde bloquea el salto, muévete a uno de sus lados, exactamente como en Quoridor.
 586f9f|<strong>Movimientos prestados.</strong> Mientras tu peón esté justo al lado del otro peón, sin ningún muro entre ellos, también puedes moverte a cualquier casilla a la que el otro peón podría moverse desde donde está, incluidos saltos y pasos laterales.
 f69960|<strong>Ganar.</strong> Gana el primer peón que llegue a cualquier casilla de la fila superior.
-36de14|Cada turno tiene un reloj de 15 segundos. Si se agota, el juego mueve tu peón un paso por su ruta más corta.
+9d4243|Cada turno tiene un reloj de 32 segundos, y cada jugador tiene 5 minutos para toda la partida. Si se agota el tiempo de un turno, el juego mueve tu peón un paso por su ruta más corta. Si se agotan tus 5 minutos, pierdes.
 ba26fa|Cosas en las que pensar
 7f513f|Como ambos peones comparten una meta, corres por el mismo carril que tu rival. Un muro que lo frena a él también puede frenarte a ti si las rutas de ambos se solapan, así que mira ambas rutas antes de colocarlo. El espacio detrás de la línea de salida es tuyo para usarlo: moverte de lado hacia una columna libre puede ser mejor que chocar de frente contra un muro.
 0f22ff|Para conocer todas las reglas de muros, saltos y pasos laterales, lee las reglas de Quoridor. Wallrush las usa, además de los movimientos prestados de arriba.
 54eb20|Todas las variantes
-24b78a|Pointrush – Una carrera de Quoridor hacia el centro para 2 a 4 jugadores
-dd39c3|Juega a Pointrush gratis en tu navegador: una variante de Quoridor para 2 a 4 jugadores en un tablero de 11 por 11 donde cada peón corre hacia la casilla central.
-933ab8|Una variante de Quoridor para dos, tres o cuatro jugadores en la que todos los peones corren hacia la misma casilla del centro.
 787a3f|De dos a cuatro jugadores, un dispositivo
 b4ca34|Compartan la pantalla y jueguen por turnos. Todos los peones corren hacia la casilla resaltada en el centro del tablero.
 90ac30|Los peones empiezan en el medio de los bordes, a cinco casillas del centro.
@@ -1100,9 +1094,6 @@ a2da36|<strong>Ganar.</strong> Gana el primer peón que pise la casilla central.
 e6b00a|Partida personalizada
 e0547d|Quoridor clásico, configurado a tu manera. Elige el tamaño del tablero, cuántos muros recibe cada jugador, los movimientos prestados y cuánto dura un turno, y juega con un amigo en el mismo dispositivo.
 b251a1|Crear una partida personalizada <svg/>
-cf6622|Quoridor personalizado – Elige el tamaño del tablero, los muros y las reglas
-d72e97|Juega gratis a Quoridor personalizado en tu navegador con un amigo en el mismo dispositivo. Elige el tamaño del tablero, cuántos muros recibe cada jugador, los movimientos prestados y el tiempo por jugada.
-ecd22e|Quoridor clásico con las reglas que tú decides: tamaño del tablero, muros, movimientos prestados y reloj.
 e92343|Configura tu partida
 e15160|Elige las reglas, comparte la pantalla con un amigo y jueguen por turnos. Los valores predeterminados son los del Quoridor clásico.
 348a57|Tamaño del tablero
@@ -1117,10 +1108,10 @@ dadb5d|Los peones empiezan en el centro de los bordes opuestos. Un tablero más 
 395f50|Tiempo por jugada
 d26be3|Sin límite de tiempo
 a1f99f|15 segundos por jugada
-0e30c6|30 segundos por jugada
+231b3e|32 segundos por jugada
 3cb8d1|1 minuto por jugada
 ebd40d|2 minutos por jugada
-7a3a3e|Cuando se agota el tiempo, el juego mueve el peón un paso por su ruta más corta.
+29dd6c|Cuando se agota el tiempo, el juego mueve el peón un paso por su ruta más corta. Con reloj, cada jugador también tiene 5 minutos en total.
 5c6b8a|Movimientos prestados
 a74abc|(activado)
 9a4248|Junto al otro peón, también puedes moverte adonde él podría moverse.
@@ -1131,9 +1122,60 @@ c895ba|<strong>Tamaño del tablero.</strong> Juega en un tablero de 5 × 5, 7 ×
 4034cf|<strong>Muros por jugador.</strong> Da a cada jugador de 0 a 30 muros. Sin muros, la partida es una carrera pura. Con muchos, se convierte en una lucha de laberinto. Un muro mide dos casillas de largo y los muros no pueden solaparse ni cruzarse.
 90373e|<strong>Deja un camino abierto.</strong> Sea cual sea la configuración, no puedes colocar un muro que deje a alguno de los peones sin ruta hacia su meta.
 d43ac9|<strong>Movimientos prestados.</strong> Si activas esta opción, un peón que esté justo al lado del otro, sin ningún muro entre ellos, también puede moverse a cualquier casilla a la que el otro peón podría moverse desde donde está.
-c8018f|<strong>Tiempo por jugada.</strong> Juega sin reloj o elige 15 segundos, 30 segundos, 1 minuto o 2 minutos. Cuando se agota el tiempo, el juego mueve tu peón un paso por su ruta más corta.
+9ab22e|<strong>Tiempo por jugada.</strong> Juega sin reloj o elige 15 segundos, 32 segundos, 1 minuto o 2 minutos. Cuando se agota el tiempo, el juego mueve tu peón un paso por su ruta más corta. Con reloj, cada jugador también tiene 5 minutos para toda la partida.
 778aaf|Ideas para probar
 e3327f|Prueba un tablero de 5 × 5 con 3 muros cada uno para una partida que termina en minutos, o un tablero de 13 × 13 con 20 muros cada uno para una larga batalla de rodeos. Los dos jugadores siempre tienen el mismo número de muros. Al volver a jugar, tu configuración se mantiene.
 4bc4b3|Esta partida se juega en un solo dispositivo. Para jugar con un amigo en otro dispositivo, usa una sala privada, que sigue las reglas clásicas.
 459fae|Crear una sala privada
-00a9e8|Variantes de Quoridor que puedes jugar gratis en tu navegador. Prueba Wallrush, Pointrush o una partida personalizada con las reglas que elijas.
+0172b3|Variantes de Quoridor en línea – Wallrush, Pointrush y personalizado
+746a90|Juega gratis a variantes de Quoridor en línea: Wallrush, Pointrush para 2 a 4 jugadores y Quoridor personalizado con el tamaño de tablero, los muros y las reglas que elijas. Sin descargas ni registro.
+cb591b|Variantes de Quoridor en línea
+d487b4|Juega gratis a variantes de Quoridor en tu navegador: Wallrush, Pointrush para 2 a 4 jugadores y Quoridor personalizado con tu propio tamaño de tablero, muros y reglas.
+427964|Variantes de Quoridor: preguntas frecuentes
+4094ac|¿Qué son las variantes de Quoridor?
+7832da|Las variantes de Quoridor son formas distintas de jugar al juego de mesa Quoridor: otro tamaño de tablero, otra posición inicial, más jugadores o reglas personalizadas. Wallrush, Pointrush y Quoridor personalizado conservan los peones, los muros y la regla del camino del juego clásico.
+1814e6|¿Puedo jugar a Quoridor con 3 o 4 jugadores?
+a13d34|Sí. <a href="/variants/pointrush/">Pointrush</a> es una variante de Quoridor para dos, tres o cuatro jugadores en un mismo dispositivo, en la que todos los peones corren hacia la casilla del centro del tablero.
+cfad3b|¿Puedo cambiar el tamaño del tablero o el número de muros en Quoridor?
+58caf4|Sí. <a href="/variants/custom/">Quoridor personalizado</a> te permite elegir un tablero de 5 × 5 a 13 × 13, de 0 a 30 muros por jugador, movimientos prestados y el tiempo por jugada.
+6d930c|¿Son gratuitas las variantes de Quoridor?
+353858|Sí. Todas las variantes son gratuitas en tu navegador, sin descargas y sin cuenta.
+1cd31b|Wallrush – Variante de Quoridor gratis en línea, un juego de carreras
+06dc4e|Juega a Wallrush gratis en línea: una variante de Quoridor para dos jugadores en un tablero alto de 9 por 13 en la que ambos peones empiezan en la misma línea y corren hacia el mismo borde, con 10 muros cada uno.
+5b080a|Wallrush: una variante de Quoridor
+c50845|Juega a Wallrush gratis en línea, un juego de carreras de Quoridor para dos jugadores en el que ambos peones empiezan en la misma línea de un tablero de 9 por 13 y corren hacia el mismo borde.
+e265ae|Wallrush: preguntas frecuentes
+fdc1b3|¿Qué es Wallrush?
+ce8e49|Wallrush es una variante gratuita de Quoridor para dos jugadores que se juega en un tablero alto de 9 por 13. Ambos peones empiezan uno junto al otro en la misma línea y corren hacia la misma fila de meta, colocando muros para frenarse.
+383867|¿En qué se diferencia Wallrush del Quoridor clásico?
+d2cfce|En el Quoridor clásico los peones empiezan en bordes opuestos y cruzan el tablero uno hacia el otro. En Wallrush corren en la misma dirección, y un peón que está junto al otro también puede usar sus movimientos (movimientos prestados). Las reglas de muros y de camino son las de las <a href="/quoridor-rules/">reglas de Quoridor</a>.
+797502|¿Cuántos muros tiene cada jugador en Wallrush?
+2bff49|Cada jugador tiene 10 muros. Un muro mide dos casillas y nunca puedes bloquear todos los caminos hacia la fila superior.
+a32748|¿Puedo jugar a Wallrush en línea gratis?
+3b2568|Sí. Wallrush es gratis en tu navegador, sin descargas y sin cuenta. Dos jugadores se turnan en un mismo dispositivo.
+d9d0d7|Pointrush – Variante de Quoridor para 4 jugadores, juega gratis en línea
+e8d26a|Juega a Pointrush gratis en línea: una variante multijugador de Quoridor para 2, 3 o 4 jugadores en un tablero de 11 por 11 donde cada peón corre hacia la casilla central. Sin descargas.
+3af493|Pointrush: una variante de Quoridor para 2 a 4 jugadores
+5dc2a4|Juega a Pointrush gratis en línea, una variante multijugador de Quoridor en la que dos, tres o cuatro peones corren hacia la misma casilla del centro de un tablero de 11 por 11.
+0ed326|Pointrush: preguntas frecuentes
+e8a006|¿Qué es Pointrush?
+cad06f|Pointrush es una variante gratuita de Quoridor para dos, tres o cuatro jugadores en un tablero de 11 por 11. Cada peón empieza en medio de un borde y corre hacia la misma meta: la casilla del centro.
+3075db|¿Se puede jugar a Quoridor con 4 jugadores?
+3ea68c|Sí. En Pointrush cuatro jugadores comparten un dispositivo y se turnan, cada uno desde un borde distinto. Con tres jugadores cada uno tiene 8 muros, y con cuatro, 6.
+cecd4b|¿Cómo se gana en Pointrush?
+3518b3|Gana el primer peón que pise la casilla central. Puedes colocar muros para frenar a los demás peones, pero nunca puedes dejar a un peón sin camino hacia el centro.
+4abf29|¿Es gratis jugar a Pointrush en línea?
+6993e8|Sí. Pointrush es gratis en tu navegador, sin descargas y sin cuenta.
+24ebc6|Quoridor personalizado – Elige tamaño de tablero, muros y reglas en línea
+d358f4|Juega gratis a Quoridor personalizado en línea con un amigo en el mismo dispositivo. Elige el tamaño del tablero de 5×5 a 13×13, el número de muros, los movimientos prestados y el tiempo por jugada.
+c6a5be|Partida personalizada de Quoridor
+d6ce13|Juega a Quoridor con tus propias reglas: elige el tamaño del tablero, el número de muros, los movimientos prestados y el tiempo por jugada.
+fceccb|Quoridor personalizado: preguntas frecuentes
+100d7a|¿Puedo cambiar el tamaño del tablero en Quoridor?
+ff8fc2|Sí. En una partida de Quoridor personalizado puedes jugar en un tablero de 5 × 5, 7 × 7, 9 × 9, 11 × 11 o 13 × 13. El tablero clásico es de 9 × 9.
+dce2da|¿Cuántos muros puede tener cada jugador en una partida personalizada?
+3523d1|De 0 a 30 muros por jugador, los mismos para ambos. El Quoridor clásico da 10 muros a cada jugador.
+18f1f7|¿Puedo jugar a Quoridor con límite de tiempo?
+f39515|Sí. Elige sin reloj, o 15 segundos, 32 segundos, 1 minuto o 2 minutos por jugada. Cuando se agota el tiempo, el juego mueve tu peón un paso por su ruta más corta.
+37098b|¿Puedo jugar una partida personalizada de Quoridor con un amigo?
+0ee7f8|Sí, en el mismo dispositivo: comparte la pantalla y túrnate. Para jugar en dos dispositivos, usa una <a href="/play/create-room/">sala privada</a>, que usa las reglas clásicas.

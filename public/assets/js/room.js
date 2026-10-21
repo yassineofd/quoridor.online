@@ -123,7 +123,8 @@
       connected: [snap.players[0].connected, snap.players[1].connected],
       forfeitIn: snap.forfeitIn, rematch: snap.rematch, reason: snap.reason,
       // The snapshot may have waited out the "both players are in" screen, so take that time off.
-      turnLeft: snap.turnLeft == null ? null : Math.max(0, snap.turnLeft - (Date.now() - (snap.receivedAt || Date.now())) / 1000)
+      turnLeft: snap.turnLeft == null ? null : Math.max(0, snap.turnLeft - (Date.now() - (snap.receivedAt || Date.now())) / 1000),
+      clocks: snap.clocks, clocksAge: (Date.now() - (snap.receivedAt || Date.now())) / 1000
     };
     if (!ui || ui.seat !== snap.you) {
       if (ui) ui.destroy();
@@ -158,7 +159,8 @@
       names: [latest.players[0].name, latest.players[1].name],
       connected: [latest.players[0].connected, latest.players[1].connected],
       forfeitIn: latest.forfeitIn, rematch: latest.rematch, reason: latest.reason,
-      turnLeft: latest.turnLeft
+      turnLeft: latest.turnLeft,
+      clocks: latest.clocks, clocksAge: (Date.now() - (latest.receivedAt || Date.now())) / 1000
     });
   }, 1000);
 

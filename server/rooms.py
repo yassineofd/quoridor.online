@@ -30,7 +30,8 @@ FINISHED_TTL = 10 * 60   # finished rooms are kept this long so players can ask 
 ABANDONED_TTL = 5 * 60   # both players gone
 QUEUE_STALE = 20         # a matchmaking ticket not polled for this long is dropped
 OFFER_SECONDS = 20       # a player searching in the background has this long to accept a match
-TURN_SECONDS = 15        # time to make a move; then the server plays one for the player
+TURN_SECONDS = 32        # time to make a move; then the server plays one for the player
+BANK_SECONDS = 300       # each player's time for the whole game (5 min); it only runs on their own turn
 TURN_GRACE = 1.0         # extra time for a move that was sent just before the limit
 LONG_POLL = 25           # max time a state request waits for news
 
@@ -94,6 +95,7 @@ class Room:
         self.presence = (True, True)
         self.finished_at = None
         self.turn_started = now           # when the player to move got the turn
+        self.bank = [float(BANK_SECONDS)] * 2   # seconds left per seat, as of the start of the current turn
 
 
 class Hub:
@@ -141,6 +143,7 @@ class Hub:
         room.rematch = [False, False]
         room.finished_at = None
         room.turn_started = time.monotonic()
+        room.bank = [float(BANK_SECONDS)] * 2
         for s in room.seats:
             s.lost_at = None
         self.codes.pop(room.code, None)
@@ -152,6 +155,10 @@ class Hub:
         room.finished_at = time.monotonic()
         room.rematch = [False, False]
         self._bump(room)
+
+    def _charge(self, room, seat, now):
+        """Take the time the player to move has used this turn off their bank."""
+        room.bank[seat] = max(0.0, room.bank[seat] - (now - room.turn_started))
 
     def _seat_of(self, room, token):
         if isinstance(token, str):
@@ -175,6 +182,13 @@ class Hub:
         forfeit_in = None
         if room.status == "playing" and other is not None and not other.connected(now) and other.lost_at is not None:
             forfeit_in = max(0.0, FORFEIT_GRACE - (now - other.lost_at))
+        playing = room.status == "playing"
+        elapsed = now - room.turn_started
+        clocks = list(room.bank)
+        turn_left = None
+        if playing:
+            clocks[room.game.turn] = max(0.0, clocks[room.game.turn] - elapsed)
+            turn_left = max(0.0, min(TURN_SECONDS - elapsed, clocks[room.game.turn]))
         out = {
             "version": room.version,
             "status": room.status,
@@ -184,7 +198,8 @@ class Hub:
             "reason": room.reason,
             "rematch": list(room.rematch),
             "forfeitIn": forfeit_in,
-            "turnLeft": max(0.0, TURN_SECONDS - (now - room.turn_started)) if room.status == "playing" else None,
+            "turnLeft": turn_left,
+            "clocks": clocks,
         }
         if room.status == "waiting" and seat_index == room.host:
             out["code"] = room.code
@@ -274,7 +289,9 @@ class Hub:
             err = room.game.apply(move)
             if err:
                 raise ApiError(422, err, "That move is not allowed.")
-            room.turn_started = time.monotonic()
+            now = time.monotonic()
+            self._charge(room, idx, now)
+            room.turn_started = now
             if room.game.winner is not None:
                 self._finish(room)
             else:
@@ -570,8 +587,15 @@ class Hub:
                     # disconnected keeps their clock stopped (the forfeit timer deals with them).
                     if not presence[room.game.turn]:
                         room.turn_started = now
+                    elif room.bank[room.game.turn] - (now - room.turn_started) < -TURN_GRACE:
+                        # The player's whole 5 minutes are gone: they lose on time.
+                        room.bank[room.game.turn] = 0.0
+                        room.game.resign(room.game.turn)
+                        self._finish(room, "timeout")
                     elif now - room.turn_started > TURN_SECONDS + TURN_GRACE:
+                        mover = room.game.turn
                         room.game.apply(room.game.timeout_move())
+                        self._charge(room, mover, now)
                         room.turn_started = now
                         if room.game.winner is not None:
                             self._finish(room)

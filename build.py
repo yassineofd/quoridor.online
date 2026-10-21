@@ -253,24 +253,16 @@ def render(page, units=None):
 
 
 def localize_urls(html, page):
-    """Make internal URLs independent of the domain and of any sub-folder.
+    """Write internal URLs as root-relative links ("/play", "/assets/css/..."), without the trailing slash.
 
-    Pages are written with root-relative URLs ("/play/"). Each page rewrites them relative to its
-    own location ("play"), so the same files work on any host, domain or sub-folder with no
-    configuration. Page URLs have no trailing slash ("/play/online" is served from the folder
-    "/play/"), so a page at depth n resolves relative URLs against n-1 folders. The 404 page is the
-    exception: a host serves it at whatever URL was missing, so it has no stable depth and uses
-    site.json's base_path instead.
+    Pages are authored with root-relative URLs ("/play/"); this drops the trailing slash and adds
+    site.json's base_path in front, so a site served from a sub-folder still resolves ("/me/quoridor/play").
+    The home page stays "/" (or the base_path plus "/").
     """
-    if page.http_status == 404:
-        prefix = BASE_PATH + "/"
-    else:
-        depth = len([s for s in page.path.split("/") if s])
-        prefix = "../" * (depth - 1) if depth > 1 else "./"
-
     def rewrite(m):
         path, tail = re.match(r"([^?#]*)(.*)", m.group(2)).groups()
-        return f'{m.group(1)}="{prefix}{path.rstrip("/")}{tail}"'
+        path = path.rstrip("/")
+        return f'{m.group(1)}="{BASE_PATH}{"/" + path if path else "/"}{tail}"'
 
     return re.sub(r'\b(href|src|action)="/(?!/)([^"]*)"', rewrite, html)
 
