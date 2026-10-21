@@ -622,7 +622,7 @@ e6c555|<a href="/how-to-play-quoridor/">Comment jouer à Quoridor</a> : un pas-�
 d06cd5|<strong>Accessible.</strong> Le jeu fonctionne dans votre navigateur, sans rien installer et sans compte, sur téléphones, tablettes et ordinateurs.
 7be372|<strong>Clair.</strong> Un plateau épuré, des mots simples et des règles expliquées en détail plutôt que supposées connues.
 0912f3|<strong>Direct.</strong> Vous choisissez comment jouer et vous commencez. Nous ne présentons une fonctionnalité comme disponible qu'une fois qu'elle fonctionne.
-723d66|<strong>Pour tous.</strong> Le site et le jeu peuvent être affichés en anglais, espagnol, français, allemand ou arabe grâce au bouton de traduction.
+54ead7|<strong>Pour tous.</strong> Le site et le jeu peuvent être affichés en anglais, espagnol, français, allemand, arabe, russe ou chinois grâce au bouton de traduction.
 1e4761|Un projet indépendant
 3009f0|Quoridor.online est un site indépendant. Il n'est ni affilié, ni sponsorisé, ni cautionné par le concepteur ou l'éditeur du jeu de plateau Quoridor. Quoridor a été conçu par Mirko Marchesi et édité par Gigamic, et nous les créditons comme la source du jeu. Les règles décrites ici sont celles du jeu standard à deux joueurs, et les guides et le logiciel de ce site sont notre propre travail.
 ad810b|Si vous aimez le jeu et souhaitez un jeu physique, il est disponible auprès de son éditeur et chez les revendeurs de jeux.
@@ -654,7 +654,7 @@ c9d622|Vos informations
 d07068|Nous n'utilisons votre message et votre adresse e-mail que pour vous répondre. Le formulaire n'envoie rien lui-même : il ouvre un brouillon dans votre propre application de messagerie, et rien n'est envoyé tant que vous ne l'envoyez pas. Consultez la <a href="/privacy-policy/">Politique de confidentialité</a> pour savoir comment le site traite les informations.
 7c0489|Politique de confidentialité – Quoridor.online
 9451bc|Comment Quoridor.online traite vos informations : ce que nous collectons, cookies et stockage du navigateur, salles en ligne et noms d'utilisateur, conservation et vos droits.
-bfbe6f|Ce que nous collectons, ce que nous ne collectons pas et combien de temps nous le conservons. En vigueur depuis le 17 octobre 2026.
+6a1456|Ce que nous collectons, ce que nous ne collectons pas et combien de temps nous le conservons. En vigueur depuis le 21 octobre 2026.
 433a5f|Cette page peut être lue dans d'autres langues grâce au bouton de traduction. Les traductions sont fournies à titre indicatif ; en cas de différence avec le texte anglais, c'est le texte anglais qui prévaut.
 57a0f5|Cette politique explique quelles informations Quoridor.online (&laquo;&nbsp;nous&nbsp;&raquo;) traite lorsque vous visitez le site, jouez à Quoridor ou nous contactez. Nous la gardons courte parce que nous collectons très peu : il n'y a ni comptes ni publicité, et la seule mesure d'audience est Google Analytics sur nos pages publiques.
 7ed24b|<strong>En bref :</strong> les parties contre l'ordinateur et sur un seul appareil restent dans votre navigateur ; Google Analytics dépose des cookies pour compter les visites (jamais sur les pages de salles en ligne) ; et le peu dont le jeu en ligne a besoin n'est conservé qu'en mémoire, pendant quelques minutes.
@@ -710,7 +710,7 @@ d49505|déposer une plainte auprès de votre autorité locale de protection des 
 9ef148|9. Coordonnées
 3094c6|Pour toute question sur cette politique ou pour faire une demande relative à la vie privée, écrivez à <a href="mailto:lahssanyassine1@gmail.com">lahssanyassine1@gmail.com</a> ou utilisez la <a href="/contact/">page de contact</a>. Merci de ne pas inclure de mots de passe ni d'autres données sensibles dans votre message.
 c45803|10. Date d'entrée en vigueur et historique des mises à jour
-b3653c|Cette politique est en vigueur à compter du <time datetime="2026-10-17">17 octobre 2026</time>. Lorsque nous la modifions, nous mettons à jour la date et ajoutons une entrée ci-dessous. Si une modification a une incidence importante sur l'utilisation de vos informations, nous l'indiquerons sur le site avant son entrée en vigueur.
+1834cb|Cette politique est en vigueur à compter du <time datetime="2026-10-21">21 octobre 2026</time>. Lorsque nous la modifions, nous mettons à jour la date et ajoutons une entrée ci-dessous. Si une modification a une incidence importante sur l'utilisation de vos informations, nous l'indiquerons sur le site avant son entrée en vigueur.
 96cdba|<time datetime="2026-10-17">17 octobre 2026</time> : première version complète de cette Politique de confidentialité. Elle remplace l'ancien brouillon provisoire.
 63a90b|<time datetime="2026-10-17">17 octobre 2026</time> : explication du fait qu'une recherche en ligne peut se poursuivre pendant que vous jouez ailleurs sur le site, et de l'entrée de stockage de session qui le permet.
 d355e5|<time datetime="2026-10-17">17 octobre 2026</time> : ajout de Google Analytics (balise Google) sur les pages publiques, avec ses cookies et son traitement de données. Il n'est pas chargé sur les pages de salles en ligne.
@@ -827,7 +827,7 @@ c1fd2f|Que se passe-t-il si ma connexion coupe pendant une partie ?
 d34c00|Puis-je jouer sur mon téléphone ?
 91650b|Oui. Les parties en ligne fonctionnent dans un navigateur mobile, sans rien installer. Faites glisser un mur du bac vers le plateau pour le poser, ou touchez un mur du bac, touchez une rainure, puis appuyez sur Poser le mur sélectionné pour confirmer.
 3211c6|Puis-je jouer avec quelqu'un qui utilise une autre langue ?
-2eb17f|Oui. Chacun choisit sa propre langue avec le bouton de traduction dans l'en-tête de la page (anglais, espagnol, français, allemand ou arabe). Cela ne change que l'aspect de la page pour vous. Le jeu, la mise en relation et les salles sont les mêmes pour tout le monde, et il n'y a pas de chat : vous et votre adversaire pouvez donc jouer chacun dans votre langue. Les noms peuvent s'écrire dans n'importe quel alphabet.
+35f8b1|Oui. Chacun choisit sa propre langue avec le bouton de traduction dans l'en-tête de la page (anglais, espagnol, français, allemand, arabe, russe ou chinois). Cela ne change que l'aspect de la page pour vous. Le jeu, la mise en relation et les salles sont les mêmes pour tout le monde, et il n'y a pas de chat : vous et votre adversaire pouvez donc jouer chacun dans votre langue. Les noms peuvent s'écrire dans n'importe quel alphabet.
 bb7107|Puis-je rejouer contre le même adversaire ?
 9aa3fb|Oui. Quand une partie se termine, appuyez sur Demander une revanche. La partie recommence dès que votre adversaire accepte, avec les places de départ inversées.
 9f48a1|Jouer avec un ami sur le <a href="/play/local/">même appareil</a> est une bonne façon de commenter les décomptes à voix haute. Les adversaires en ligne vous montreront aussi des styles que l'ordinateur n'a pas : certains posent des murs tôt, d'autres font la course.
@@ -835,7 +835,7 @@ ebc1aa|En ligne contre une autre personne, contre l'ordinateur ou avec un ami su
 9d983f|Oui. Vous pouvez jouer en ligne contre une autre personne, contre l'ordinateur ou avec un ami sur le même appareil dans votre navigateur, gratuitement et sans compte. Consultez la <a href="/play/">page Jouer</a> pour voir ce qui est disponible. Les règles sont les règles standard à deux joueurs décrites dans les <a href="/quoridor-rules/">règles de Quoridor</a>.
 348bf2|<strong><a href="/play/online/">Jouer en ligne</a>.</strong> Jouez contre une autre personne après avoir choisi un nom affiché. Aucune inscription n'est nécessaire.
 405028|<strong><a href="/play/create-room/">Salles privées</a>.</strong> Invitez un ami précis avec un lien ou un code d'association court.
-122d3e|<strong>Pour tous.</strong> Le site et le jeu peuvent être affichés en anglais, espagnol, français, allemand ou arabe grâce au bouton de traduction. Les joueurs qui utilisent des langues différentes peuvent jouer les uns contre les autres en ligne, car la langue ne change que ce que chacun voit.
+dbf4a8|<strong>Pour tous.</strong> Le site et le jeu peuvent être affichés en anglais, espagnol, français, allemand, arabe, russe ou chinois grâce au bouton de traduction. Les joueurs qui utilisent des langues différentes peuvent jouer les uns contre les autres en ligne, car la langue ne change que ce que chacun voit.
 5a3f6e|<strong>Jeu en ligne.</strong> Pour jouer en ligne ou dans une salle privée, vous saisissez un nom affiché. Notre serveur de jeu conserve ce nom, un jeton de place aléatoire qui identifie votre place, vos coups et l'heure de votre dernière connexion, tant que la partie ou la salle existe. Aucun compte, aucune adresse e-mail ni aucun mot de passe n'est impliqué.
 e50442|<strong>Adresse réseau.</strong> Votre adresse IP parvient à notre serveur avec chaque requête. Le serveur de jeu la conserve en mémoire pendant environ une minute afin de pouvoir limiter les abus, comme la création trop rapide de salles.
 bac18f|Lorsque vous créez ou rejoignez une salle en ligne, votre navigateur conserve une petite entrée nommée <em>quoridor.seat.</em> suivie de l'identifiant de la salle. Elle contient votre jeton de place, votre numéro de place et le nom affiché que vous avez choisi. Elle vous permet de recharger la page ou de vous remettre d'une connexion interrompue en gardant votre place. L'entrée est supprimée lorsque vous quittez la salle. Si vous fermez l'onglet sans quitter, elle reste jusqu'à ce que vous l'effaciez, mais elle cesse de fonctionner une fois la salle expirée.
@@ -1179,3 +1179,7 @@ dce2da|Combien de murs chaque joueur peut-il avoir dans une partie personnalisé
 f39515|Oui. Choisissez sans horloge, ou 15 secondes, 32 secondes, 1 minute ou 2 minutes par coup. Quand le temps est écoulé, le jeu déplace votre pion d'une case le long de son chemin le plus court.
 37098b|Peut-on jouer une partie personnalisée de Quoridor avec un ami ?
 0ee7f8|Oui, sur le même appareil : partagez l'écran et jouez à tour de rôle. Pour jouer sur deux appareils, utilisez un <a href="/play/create-room/">salon privé</a>, qui applique les règles classiques.
+7eb334|Thème clair
+4a45c9|Thème clair
+feda4b|Si vous choisissez un thème avec l'interrupteur de thème du menu, votre navigateur conserve votre choix (<em>light</em> ou <em>dark</em>) dans une entrée nommée <em>quoridor.theme</em>, afin que le site s'ouvre avec ce thème la prochaine fois. Il ne nous est jamais envoyé.
+9ad599|<time datetime="2026-10-21">21 octobre 2026</time> : description du choix de thème clair ou sombre que l'interrupteur de thème conserve dans votre navigateur.

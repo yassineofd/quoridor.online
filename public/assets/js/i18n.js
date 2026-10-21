@@ -13,7 +13,7 @@
 
   var STORAGE_KEY = 'quoridor.lang';
   var RTL = { ar: true };
-  var NAMES = { en: 'English', es: 'Español', fr: 'Français', de: 'Deutsch', ar: 'العربية' };
+  var NAMES = { en: 'English', es: 'Español', fr: 'Français', de: 'Deutsch', ar: 'العربية', ru: 'Русский', zh: '中文' };
   var EN = root.QuoridorI18nEn || {};
   var doc = root.document;
 

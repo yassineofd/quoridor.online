@@ -1,3 +1,26 @@
+/* Light / dark theme switch. head.js applies the saved choice before the first paint; this only handles the clicks. */
+(function () {
+  var root = document.documentElement;
+  var buttons = document.querySelectorAll('[data-theme-toggle]');
+  if (!buttons.length) return;
+  var meta = document.querySelector('meta[name="theme-color"]');
+
+  function sync() {
+    var light = root.getAttribute('data-theme') === 'light';
+    Array.prototype.forEach.call(buttons, function (b) { b.setAttribute('aria-pressed', String(light)); });
+    if (meta) meta.setAttribute('content', light ? '#F4F7FB' : '#0B1220');
+  }
+  Array.prototype.forEach.call(buttons, function (b) {
+    b.addEventListener('click', function () {
+      var light = root.getAttribute('data-theme') !== 'light';
+      if (light) root.setAttribute('data-theme', 'light'); else root.removeAttribute('data-theme');
+      try { localStorage.setItem('quoridor.theme', light ? 'light' : 'dark'); } catch (e) { /* storage blocked */ }
+      sync();
+    });
+  });
+  sync();
+})();
+
 /* Accessible mobile menu: aria-expanded toggle, Esc to close, focus returns to the toggle. */
 (function () {
   var toggle = document.getElementById('menu-toggle');
@@ -34,8 +57,8 @@
   var toc = document.querySelector('.toc');
   if (toc && !window.matchMedia('(min-width: 1024px)').matches) toc.removeAttribute('open');
 
-  // Close when the viewport grows to the desktop layout.
-  var mq = window.matchMedia('(min-width: 1024px)');
+  // Close when the viewport grows to the desktop layout (the same width as the header breakpoint in styles.css).
+  var mq = window.matchMedia('(min-width: 1200px)');
   var onChange = function () { if (mq.matches) setOpen(false, false); };
   if (mq.addEventListener) mq.addEventListener('change', onChange);
 })();

@@ -25,13 +25,11 @@ OUT = Path(CUSTOM_OUT).resolve() if CUSTOM_OUT else ROOT / "public"
 STATIC = ROOT / "static"
 
 NAV = [
-    ("home", "/", "Home"),
     ("play", "/play/", "Play"),
     ("how", "/how-to-play-quoridor/", "How to Play"),
     ("rules", "/quoridor-rules/", "Rules"),
     ("strategy", "/quoridor-strategy/", "Strategy"),
     ("variants", "/variants/", "Variants"),
-    ("about", "/about/", "About Us"),
 ]
 
 FOOTER_PLAY = [
@@ -122,6 +120,15 @@ def lang_switch_html():
     )
 
 
+def theme_toggle_html(extra_class, label_html):
+    """Light/dark switch (wired up by site.js). Both suns and moons are in the markup; CSS shows the one for the current theme."""
+    name = "" if label_html else ' aria-label="Light theme"'  # the icon-only button needs a name; the row button has visible text
+    return (
+        f'<button class="theme-toggle {extra_class}" type="button" data-theme-toggle aria-pressed="false"{name}>'
+        f'{icon("moon")}{icon("sun")}{label_html}</button>'
+    )
+
+
 def header_html(page):
     items = []
     for key, href, label in NAV:
@@ -136,8 +143,10 @@ def header_html(page):
     </a>
     <nav class="site-nav" id="site-nav" aria-label="Main">
       <ul>{''.join(items)}</ul>
+      <div class="nav-tools">{theme_toggle_html("theme-toggle--row", '<span class="theme-label">Light theme</span><span class="theme-switch" aria-hidden="true"></span>')}</div>
     </nav>
     <div class="header-actions">
+      {theme_toggle_html("theme-toggle--icon", "")}
       {lang_switch_html()}
       <a class="btn btn--primary" href="/play/">Play Now</a>
       <button class="btn btn--secondary menu-toggle" id="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">{icon('menu')} Menu</button>

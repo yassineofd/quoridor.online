@@ -11,7 +11,7 @@ python serve.py     # open http://localhost:8000
 
 Run `python check.py` to verify status codes, SEO metadata, links, headings, sitemap, robots rules and that every language is fully translated (17 pages).
 
-The whole site and the game can be read in English, Spanish, French, German and Arabic (the globe button in the header). The language is only a display choice of each browser: the game server never sees it, so people using different languages play each other in the same queue and rooms. See [docs/i18n.md](docs/i18n.md) for how to change text or add a language (`python i18n.py status`).
+The whole site and the game can be read in English, Spanish, French, German, Arabic, Russian and Chinese (the globe button in the header). The language is only a display choice of each browser: the game server never sees it, so people using different languages play each other in the same queue and rooms. See [docs/i18n.md](docs/i18n.md) for how to change text or add a language (`python i18n.py status`).
 
 Run the game tests with `python -m unittest tests.test_engine tests.test_rooms tests.test_http tests.test_i18n` (fast), plus `tests.test_parity` and
 `tests.test_ui` (drive real pages in headless Edge/Chrome; slower).
@@ -85,7 +85,7 @@ always on; `online` and `rooms` follow `online_server` in `site.json`, so a stat
 - `build.py` layout, metadata, sitemap, robots, headers
 - `serve.py` local server with production-like 404 and room routing, plus the online-play API
 - `server/` authoritative rules engine, rooms, matchmaking (Python, standard library only)
-- `i18n.py`, `translations/` the languages (English, Spanish, French, German, Arabic) and their checks; see [docs/i18n.md](docs/i18n.md)
+- `i18n.py`, `translations/` the languages (English, Spanish, French, German, Arabic, Russian, Chinese) and their checks; see [docs/i18n.md](docs/i18n.md)
 - `static/` CSS, JS (game engine, computer opponent, board, game screen, online client), logo, favicon (copied as is)
 - `tests/` rules, server, browser play-through and engine-parity tests; `docs/game-engine.md` explains the design
 

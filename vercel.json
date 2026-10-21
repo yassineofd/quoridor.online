@@ -15,7 +15,7 @@
       "headers": [
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'sha256-TBGpz6HPU8WFwCgVOPHXJGqKkejlZmPcdqJ9uQ3e+lU=' https://www.googletagmanager.com; style-src 'self' 'sha256-RWOTik2OFydpvXcKMMuHKdJn9lAhDKiUPc6+crggCR0='; img-src 'self' data: https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'"
+          "value": "default-src 'self'; script-src 'self' 'sha256-x0C2mZtxu1E0S/3qfzdWgK29YfxkMK7IHRPtgUS8GYw=' https://www.googletagmanager.com; style-src 'self' 'sha256-M8dzQFkqx4wEQ8cqblQQKGk4RG9+vP8NLTT53BeF/1g='; img-src 'self' data: https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'"
         },
         {
           "key": "X-Content-Type-Options",

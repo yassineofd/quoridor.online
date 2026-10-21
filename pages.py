@@ -1075,7 +1075,7 @@ def how_to_play_faq():
             ("Can I play on my phone?",
              "Yes. Online games run in a mobile browser with nothing to install. Drag a wall from the tray onto the board to place it, or tap a wall in the tray, tap a groove and press Place selected wall to confirm."),
             ("Can I play someone who uses a different language?",
-             "Yes. Everyone picks their own language with the translate button in the page header (English, Spanish, French, German or Arabic). It only changes how the page looks to you. The game, the matchmaking and the rooms are the same for everyone, and there is no chat, so you and your opponent can each play in your own language. Names can be written in any alphabet."),
+             "Yes. Everyone picks their own language with the translate button in the page header (English, Spanish, French, German, Arabic, Russian or Chinese). It only changes how the page looks to you. The game, the matchmaking and the rooms are the same for everyone, and there is no chat, so you and your opponent can each play in your own language. Names can be written in any alphabet."),
             ("Can I play the same opponent again?",
              "Yes. When a game ends, press Request rematch. The game restarts once your opponent accepts, with the starting seats swapped."),
         ]
@@ -1711,7 +1711,7 @@ def about():
 <li><strong>Accessible.</strong> The game runs in your browser with nothing to install and no account, on phones, tablets and computers.</li>
 <li><strong>Clear.</strong> A clean board, plain wording and rules that are explained in full rather than assumed.</li>
 <li><strong>Straightforward.</strong> You choose how to play and start. We only describe a feature as available once it works.</li>
-<li><strong>For everyone.</strong> The site and the game can be shown in English, Spanish, French, German or Arabic with the translate button{online_languages}</li>
+<li><strong>For everyone.</strong> The site and the game can be shown in English, Spanish, French, German, Arabic, Russian or Chinese with the translate button{online_languages}</li>
 </ul>
 <h2>An independent project</h2>
 <p>Quoridor.online is an independent website. It is not affiliated with, sponsored by or endorsed by the designer or publisher of the Quoridor board game. Quoridor was designed by Mirko Marchesi and published by Gigamic, and we credit them as the source of the game. The game rules described here are those of the standard two-player game, and the guides and software on this site are our own work.</p>
@@ -1779,15 +1779,18 @@ def contact():
                        scripts=["/assets/js/contact.js"])
 
 
-PRIVACY_EFFECTIVE = ("2026-10-17", "17 October 2026")
+PRIVACY_EFFECTIVE = ("2026-10-21", "21 October 2026")
 PRIVACY_HISTORY = (
     ("2026-10-17", "17 October 2026", "First full version of this Privacy Policy. It replaces the earlier draft placeholder."),
     ("2026-10-17", "17 October 2026", "Explained that an online search can keep running while you play elsewhere on the site, and the session-storage entry that makes this possible."),
     ("2026-10-17", "17 October 2026", "Added Google Analytics (Google tag) on public pages, with its cookies and data processing. It is not loaded on online-room pages."),
     ("2026-10-17", "17 October 2026", "Described the language choice that the translate button keeps in your browser, and added translated versions of the site."),
+    ("2026-10-21", "21 October 2026", "Described the light or dark theme choice that the theme switch keeps in your browser."),
 )
 
 LANGUAGE_STORAGE = """<p>If you pick a language with the translate button, your browser keeps the language code (for example <em>es</em>) in an entry named <em>quoridor.lang</em>, so the site opens in that language next time. It is never sent to us, and the game server never learns which language you use. Until you choose, the site reads your browser's language list to pick a first language; that stays in your browser too.</p>"""
+
+THEME_STORAGE = "<p>If you choose a theme with the theme switch in the menu, your browser keeps your choice (<em>light</em> or <em>dark</em>) in an entry named <em>quoridor.theme</em>, so the site opens in that theme next time. It is never sent to us.</p>"
 
 TRANSLATION_NOTE = '<p class="small text-muted">This page can be read in other languages with the translate button. The translations are provided for convenience; if they differ from the English text, the English text applies.</p>'
 
@@ -1807,7 +1810,7 @@ def privacy():
     if online:
         info_online = """<li><strong>Online play.</strong> To play online or in a private room you type a display name. Our game server holds that name, a random seat token that identifies your seat, your moves, and the time you were last connected, for as long as the game or room exists. No account, email address or password is involved.</li>
 <li><strong>Network address.</strong> Your IP address reaches our server with every request. The game server keeps it in memory for about a minute so it can limit abuse, such as creating rooms too fast.</li>"""
-        storage_online = LANGUAGE_STORAGE + """<p>When you create or join an online room, your browser stores a small entry under the name <em>quoridor.seat.</em> followed by the room's identifier. It contains your seat token, your seat number and the display name you chose. It lets you reload the page or recover from a dropped connection and keep your seat. The entry is removed when you leave the room. If you close the tab without leaving, it stays until you clear it, but it stops working once the room has expired.</p>
+        storage_online = LANGUAGE_STORAGE + THEME_STORAGE + """<p>When you create or join an online room, your browser stores a small entry under the name <em>quoridor.seat.</em> followed by the room's identifier. It contains your seat token, your seat number and the display name you chose. It lets you reload the page or recover from a dropped connection and keep your seat. The entry is removed when you leave the room. If you close the tab without leaving, it stays until you clear it, but it stops working once the room has expired.</p>
 <p>While you search for an opponent, your browser also keeps the search ticket and your display name in <em>session storage</em> (an entry named <em>quoridor.search</em>) for that tab only. It lets the search carry on while you play the computer or open a private room, and lets the search page pick it up again after a reload. It is removed when the search ends and disappears when you close the tab.</p>"""
         rooms_html = """<h2 id="rooms">5. Multiplayer rooms, usernames and shared links</h2>
 <ul>
@@ -1825,7 +1828,7 @@ def privacy():
         rights_extra = "The data our game server holds about a game (a display name, a seat token and an IP address in memory) is deleted within minutes, so there is usually nothing left to give you, correct or erase by the time a request could be answered. "
     else:
         info_online = "<li><strong>Online play.</strong> Online play and private rooms are not available on this site at the moment, so no display names or seat tokens are collected. This policy will be updated before they are offered.</li>"
-        storage_online = LANGUAGE_STORAGE + "<p>Nothing else is stored in your browser's local storage. If online play is added later, this section will describe what it stores.</p>"
+        storage_online = LANGUAGE_STORAGE + THEME_STORAGE + "<p>Nothing else is stored in your browser's local storage. If online play is added later, this section will describe what it stores.</p>"
         rooms_html = """<h2 id="rooms">5. Multiplayer rooms, usernames and shared links</h2>
 <p>Online play and private rooms are not available on this site at the moment, so no display names, rooms or invitation links exist. This policy will be updated before they are offered.</p>"""
         retention_online = ""

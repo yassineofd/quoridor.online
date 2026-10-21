@@ -47,7 +47,7 @@ class Tagging(unittest.TestCase):
 
 
 class Completeness(unittest.TestCase):
-    """Every text of the site (with online play on and off) and every script message has all four translations."""
+    """Every text of the site (with online play on and off) and every script message has every translation."""
 
     @classmethod
     def setUpClass(cls):
@@ -62,12 +62,13 @@ class Completeness(unittest.TestCase):
         self.assertEqual(i18n.lint(self.units), [])
 
     def test_translations_are_really_in_the_language(self):
-        arabic = re.compile(r"[؀-ۿ]")
-        for key, text in i18n.load("ar").items():
-            if key in self.units and self.units[key][0] == "h" and re.search(r"[A-Za-z]{4,}", re.sub(r"<[^>]+>|&\w+;", "", self.units[key][1])):
-                body = re.sub(r"<[^>]+>|&\w+;|\{\w+\}", "", text)
-                if len(body) > 40:  # a long English sentence must not have been left as it was
-                    self.assertRegex(body, arabic, f"ar {key}: no Arabic in {text[:60]!r}")
+        scripts = {"ar": ("Arabic", re.compile(r"[؀-ۿ]")), "ru": ("Cyrillic", re.compile(r"[Ѐ-ӿ]")), "zh": ("Chinese", re.compile(r"[一-鿿]"))}
+        for lang, (name, pattern) in scripts.items():
+            for key, text in i18n.load(lang).items():
+                if key in self.units and self.units[key][0] == "h" and re.search(r"[A-Za-z]{4,}", re.sub(r"<[^>]+>|&\w+;", "", self.units[key][1])):
+                    body = re.sub(r"<[^>]+>|&\w+;|\{\w+\}", "", text)
+                    if len(body) > 40:  # a long English sentence must not have been left as it was
+                        self.assertRegex(body, pattern, f"{lang} {key}: no {name} in {text[:60]!r}")
 
     def test_lint_catches_what_a_translator_can_break(self):
         units = {"aaaaaa": ("h", 'Go <a href="/play/">there</a> <svg/>'), "bbbbbb": ("a", "Close")}

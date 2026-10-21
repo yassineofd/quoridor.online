@@ -622,7 +622,7 @@ e6c555|<a href="/how-to-play-quoridor/">So spielst du Quoridor</a>: eine Anleitu
 d06cd5|<strong>Zugänglich.</strong> Das Spiel läuft in deinem Browser, ohne Installation und ohne Konto, auf Handys, Tablets und Computern.
 7be372|<strong>Klar.</strong> Ein aufgeräumtes Spielbrett, einfache Worte und Regeln, die vollständig erklärt statt vorausgesetzt werden.
 0912f3|<strong>Unkompliziert.</strong> Du wählst, wie du spielen willst, und legst los. Wir beschreiben eine Funktion erst dann als verfügbar, wenn sie funktioniert.
-723d66|<strong>Für alle.</strong> Die Website und das Spiel lassen sich mit der Übersetzungsschaltfläche auf Englisch, Spanisch, Französisch, Deutsch oder Arabisch anzeigen.
+54ead7|<strong>Für alle.</strong> Die Website und das Spiel lassen sich mit der Übersetzungsschaltfläche auf Englisch, Spanisch, Französisch, Deutsch, Arabisch, Russisch oder Chinesisch anzeigen.
 1e4761|Ein unabhängiges Projekt
 3009f0|Quoridor.online ist eine unabhängige Website. Sie ist weder mit dem Autor oder dem Verlag des Brettspiels Quoridor verbunden noch von ihnen gesponsert oder empfohlen. Quoridor wurde von Mirko Marchesi entworfen und von Gigamic veröffentlicht, und wir nennen sie als Ursprung des Spiels. Die hier beschriebenen Regeln sind die des Standardspiels für zwei Spieler, und die Leitfäden und die Software dieser Website sind unsere eigene Arbeit.
 ad810b|Wenn dir das Spiel gefällt und du ein physisches Set möchtest, ist es beim Verlag und im Spielwarenhandel erhältlich.
@@ -654,7 +654,7 @@ c9d622|Deine Daten
 d07068|Wir verwenden deine Nachricht und deine E-Mail-Adresse nur, um dir zu antworten. Das Formular sendet nichts von selbst: Es öffnet einen Entwurf in deiner eigenen E-Mail-App, und es wird nichts gesendet, bis du es abschickst. In der <a href="/privacy-policy/">Datenschutzerklärung</a> steht, wie die Website mit Informationen umgeht.
 7c0489|Datenschutzerklärung – Quoridor.online
 9451bc|Wie Quoridor.online mit Ihren Daten umgeht: was wir erfassen, Cookies und Browser-Speicher, Online-Räume und Benutzernamen, Speicherdauer und Ihre Rechte.
-bfbe6f|Was wir erfassen, was nicht und wie lange wir es aufbewahren. Gültig ab 17. Oktober 2026.
+6a1456|Was wir erfassen, was nicht und wie lange wir es aufbewahren. Gültig ab 21. Oktober 2026.
 433a5f|Diese Seite kann mit der Übersetzungsschaltfläche in anderen Sprachen gelesen werden. Die Übersetzungen dienen nur der Bequemlichkeit; weichen sie vom englischen Text ab, gilt der englische Text.
 57a0f5|Diese Erklärung beschreibt, welche Daten Quoridor.online („wir“, „uns“) verarbeitet, wenn Sie die Website besuchen, Quoridor spielen oder uns kontaktieren. Wir halten sie kurz, weil wir sehr wenig erfassen: Es gibt keine Konten und keine Werbung, und die einzige Analyse ist Google Analytics auf unseren öffentlichen Seiten.
 7ed24b|<strong>Kurz gesagt:</strong> Partien gegen den Computer und an einem Gerät bleiben in Ihrem Browser; Google Analytics setzt Cookies, um Besuche zu zählen (nie auf Seiten von Online-Räumen); und das Wenige, was das Online-Spiel braucht, wird nur im Arbeitsspeicher gehalten, für wenige Minuten.
@@ -710,7 +710,7 @@ d49505|sich bei Ihrer örtlichen Datenschutzbehörde zu beschweren.
 9ef148|9. Kontaktinformationen
 3094c6|Bei Fragen zu dieser Erklärung oder für eine Datenschutzanfrage schreiben Sie an <a href="mailto:lahssanyassine1@gmail.com">lahssanyassine1@gmail.com</a> oder nutzen Sie die <a href="/contact/">Kontaktseite</a>. Bitte nehmen Sie keine Passwörter oder andere sensible Angaben in Ihre Nachricht auf.
 c45803|10. Gültigkeitsdatum und Änderungsverlauf
-b3653c|Diese Erklärung gilt ab dem <time datetime="2026-10-17">17. Oktober 2026</time>. Wenn wir sie ändern, aktualisieren wir das Datum und fügen unten einen Eintrag hinzu. Wenn eine Änderung die Verwendung Ihrer Daten wesentlich betrifft, weisen wir vor ihrem Inkrafttreten auf der Website darauf hin.
+1834cb|Diese Erklärung gilt ab dem <time datetime="2026-10-21">21. Oktober 2026</time>. Wenn wir sie ändern, aktualisieren wir das Datum und fügen unten einen Eintrag hinzu. Wenn eine Änderung die Verwendung Ihrer Daten wesentlich betrifft, weisen wir vor ihrem Inkrafttreten auf der Website darauf hin.
 96cdba|<time datetime="2026-10-17">17. Oktober 2026</time>: erste vollständige Fassung dieser Datenschutzerklärung. Sie ersetzt den früheren vorläufigen Entwurf.
 63a90b|<time datetime="2026-10-17">17. Oktober 2026</time>: Es wurde erklärt, dass eine Online-Suche weiterlaufen kann, während Sie an anderer Stelle der Website spielen, sowie der Sitzungsspeicher-Eintrag, der dies ermöglicht.
 d355e5|<time datetime="2026-10-17">17. Oktober 2026</time>: Google Analytics (Google-Tag) wurde auf öffentlichen Seiten hinzugefügt, mit seinen Cookies und seiner Datenverarbeitung. Es wird auf Seiten von Online-Räumen nicht geladen.
@@ -827,7 +827,7 @@ c1fd2f|Was passiert, wenn meine Verbindung während einer Partie abbricht?
 d34c00|Kann ich auf dem Handy spielen?
 91650b|Ja. Online-Partien laufen in einem mobilen Browser, ohne dass etwas installiert werden muss. Ziehe eine Mauer aus der Ablage auf das Spielbrett, um sie zu setzen, oder tippe auf eine Mauer in der Ablage, tippe auf eine Rille und drücke dann Ausgewählte Mauer setzen, um zu bestätigen.
 3211c6|Kann ich mit jemandem spielen, der eine andere Sprache benutzt?
-2eb17f|Ja. Jeder wählt seine eigene Sprache mit der Übersetzungsschaltfläche in der Kopfzeile der Seite (Englisch, Spanisch, Französisch, Deutsch oder Arabisch). Sie ändert nur, wie die Seite für dich aussieht. Spiel, Matchmaking und Räume sind für alle gleich, und es gibt keinen Chat, sodass du und dein Gegner jeweils in der eigenen Sprache spielen könnt. Namen können in jedem Alphabet geschrieben werden.
+35f8b1|Ja. Jeder wählt seine eigene Sprache mit der Übersetzungsschaltfläche in der Kopfzeile der Seite (Englisch, Spanisch, Französisch, Deutsch, Arabisch, Russisch oder Chinesisch). Sie ändert nur, wie die Seite für dich aussieht. Spiel, Matchmaking und Räume sind für alle gleich, und es gibt keinen Chat, sodass du und dein Gegner jeweils in der eigenen Sprache spielen könnt. Namen können in jedem Alphabet geschrieben werden.
 bb7107|Kann ich noch einmal gegen denselben Gegner spielen?
 9aa3fb|Ja. Wenn eine Partie endet, drücke Rückspiel anfragen. Die Partie startet neu, sobald dein Gegner annimmt, mit vertauschten Startplätzen.
 9f48a1|Mit einem Freund am <a href="/play/local/">selben Gerät</a> zu spielen ist eine gute Möglichkeit, Zählungen laut durchzusprechen. Online-Gegner zeigen dir außerdem Spielstile, die der Computer nicht hat: Manche mauern früh, manche rennen.
@@ -835,7 +835,7 @@ ebc1aa|Online gegen eine andere Person, gegen den Computer oder mit einem Freund
 9d983f|Ja. Du kannst in deinem Browser online gegen eine andere Person, gegen den Computer oder mit einem Freund am selben Gerät spielen, kostenlos und ohne Konto. Auf der <a href="/play/">Seite Spielen</a> siehst du, was verfügbar ist. Es gelten die Standardregeln für zwei Spieler, die in den <a href="/quoridor-rules/">Quoridor-Regeln</a> beschrieben sind.
 348bf2|<strong><a href="/play/online/">Online spielen</a>.</strong> Spiele gegen eine andere Person, nachdem du einen Anzeigenamen gewählt hast. Keine Registrierung nötig.
 405028|<strong><a href="/play/create-room/">Private Räume</a>.</strong> Lade einen bestimmten Freund mit einem Link oder einem kurzen Kopplungscode ein.
-122d3e|<strong>Für alle.</strong> Die Website und das Spiel lassen sich mit der Übersetzungsschaltfläche auf Englisch, Spanisch, Französisch, Deutsch oder Arabisch anzeigen. Spieler, die unterschiedliche Sprachen nutzen, können online gegeneinander spielen, denn die Sprache ändert nur, was jeder Einzelne sieht.
+dbf4a8|<strong>Für alle.</strong> Die Website und das Spiel lassen sich mit der Übersetzungsschaltfläche auf Englisch, Spanisch, Französisch, Deutsch, Arabisch, Russisch oder Chinesisch anzeigen. Spieler, die unterschiedliche Sprachen nutzen, können online gegeneinander spielen, denn die Sprache ändert nur, was jeder Einzelne sieht.
 5a3f6e|<strong>Online-Spiel.</strong> Um online oder in einem privaten Raum zu spielen, geben Sie einen Anzeigenamen ein. Unser Spielserver speichert diesen Namen, ein zufälliges Sitz-Token, das Ihren Sitz kennzeichnet, Ihre Züge und den Zeitpunkt Ihrer letzten Verbindung, solange die Partie oder der Raum existiert. Es sind weder Konto noch E-Mail-Adresse noch Passwort beteiligt.
 e50442|<strong>Netzwerkadresse.</strong> Ihre IP-Adresse erreicht unseren Server mit jeder Anfrage. Der Spielserver hält sie etwa eine Minute lang im Arbeitsspeicher, um Missbrauch begrenzen zu können, etwa das zu schnelle Erstellen von Räumen.
 bac18f|Wenn Sie einen Online-Raum erstellen oder ihm beitreten, legt Ihr Browser einen kleinen Eintrag mit dem Namen <em>quoridor.seat.</em> gefolgt von der Raumkennung ab. Er enthält Ihr Sitz-Token, Ihre Sitznummer und den von Ihnen gewählten Anzeigenamen. Er ermöglicht es Ihnen, die Seite neu zu laden oder eine unterbrochene Verbindung zu überstehen und Ihren Sitz zu behalten. Der Eintrag wird entfernt, wenn Sie den Raum verlassen. Schließen Sie den Tab, ohne den Raum zu verlassen, bleibt er bestehen, bis Sie ihn löschen, funktioniert aber nicht mehr, sobald der Raum abgelaufen ist.
@@ -1179,3 +1179,7 @@ dce2da|Wie viele Mauern kann jeder Spieler in einem eigenen Spiel haben?
 f39515|Ja. Wähle keine Uhr oder 15 Sekunden, 32 Sekunden, 1 Minute oder 2 Minuten pro Zug. Läuft die Zeit ab, setzt das Spiel deine Figur einen Schritt auf ihrem kürzesten Weg weiter.
 37098b|Kann ich ein eigenes Quoridor-Spiel mit einem Freund spielen?
 0ee7f8|Ja, am selben Gerät: Teilt den Bildschirm und spielt abwechselnd. Für ein Spiel auf zwei Geräten nutze einen <a href="/play/create-room/">privaten Raum</a>, der die klassischen Regeln verwendet.
+7eb334|Helles Design
+4a45c9|Helles Design
+feda4b|Wenn Sie mit dem Design-Schalter im Menü ein Design wählen, speichert Ihr Browser Ihre Wahl (<em>light</em> oder <em>dark</em>) in einem Eintrag namens <em>quoridor.theme</em>, damit sich die Website beim nächsten Mal mit diesem Design öffnet. Er wird nie an uns gesendet.
+9ad599|<time datetime="2026-10-21">21. Oktober 2026</time>: Die Wahl zwischen hellem und dunklem Design, die der Design-Schalter in Ihrem Browser speichert, wurde beschrieben.

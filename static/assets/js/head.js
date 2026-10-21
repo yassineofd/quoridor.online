@@ -8,7 +8,7 @@
   var root = document.documentElement;
   root.classList.add('js');
 
-  var LANGS = ['en', 'es', 'fr', 'de', 'ar'];
+  var LANGS = ['en', 'es', 'fr', 'de', 'ar', 'ru', 'zh'];
   var KEY = 'quoridor.lang';
   var lang = 'en';
   try {
@@ -28,6 +28,11 @@
       }
     }
   } catch (e) { lang = 'en'; }
+
+  // Theme: dark unless the visitor chose light with the theme switch (kept in the 'quoridor.theme' entry).
+  try {
+    if (localStorage.getItem('quoridor.theme') === 'light') root.setAttribute('data-theme', 'light');
+  } catch (e) { /* storage blocked */ }
 
   window.QUORIDOR_LANG = lang;
   if (lang !== 'en') {

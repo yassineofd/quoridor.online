@@ -38,6 +38,8 @@ LANGUAGES = [
     ("fr", "Français", "ltr"),
     ("de", "Deutsch", "ltr"),
     ("ar", "العربية", "rtl"),
+    ("ru", "Русский", "ltr"),
+    ("zh", "中文", "ltr"),
 ]
 TRANSLATED = [code for code, _, _ in LANGUAGES if code != "en"]
 
