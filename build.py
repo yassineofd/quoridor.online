@@ -41,7 +41,6 @@ FOOTER_PLAY = [
     ("/play/local/", "Play Locally"),
 ]
 FOOTER_VARIANTS = [
-    ("/variants/", "Quoridor Variants"),
     ("/variants/wallrush/", "Wallrush"),
     ("/variants/pointrush/", "Pointrush"),
     ("/variants/custom/", "Custom Game"),
