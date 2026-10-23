@@ -62,6 +62,10 @@ game itself:
 | Private rooms (create / join by link or code) | Working with `serve.py` |
 | Online matchmaking | Working with `serve.py` |
 
+Each browser remembers the display name last used (the name fields come filled in) and keeps a score of wins between two friends, for
+private rooms and for one-device games where both players typed a name. It is stored only in that browser's `localStorage`; see
+[docs/game-engine.md](docs/game-engine.md#remembered-name-and-scores).
+
 Feature flags in `lib.py` (`FEATURES`) control the "Coming soon" badges and which features the pages claim. `local` and `computer` are
 always on; `online` and `rooms` follow `online_server` in `site.json`, so a static deployment never advertises a mode it can't run.
 

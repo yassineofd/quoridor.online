@@ -992,6 +992,156 @@ class UI(unittest.TestCase):
         self.no_errors(host)
         self.no_errors(guest)
 
+    # ---- the name this device remembers, and the score between friends -------------------------
+    def test_the_username_is_remembered_on_this_device(self):
+        p = self.page()
+        p.goto(self.base + "/play/create-room/")
+        self.assertEqual(p.js("document.querySelector('#username').value"), "")
+        p.type_text("#username", "x")                    # not a valid name: nothing is remembered
+        p.click("button[type=submit]")
+        self.assertFalse(p.js("document.querySelector('#username-error').hidden"))
+        self.assertIsNone(p.js("localStorage.getItem('quoridor.username')"))
+        p.js("document.querySelector('#username').value = ''")
+        p.type_text("#username", "Hana")
+        p.click("button[type=submit]")
+        p.wait_for("location.pathname.indexOf('/room/') === 0")
+        self.assertEqual(p.js("localStorage.getItem('quoridor.username')"), "Hana")
+        # every form that asks for a name has it filled in, and the one-device pages offer it as the first player
+        for path in ("/play/join-room/", "/play/online/", "/play/create-room/"):
+            p.goto(self.base + path)
+            self.assertEqual(p.js("document.querySelector('#username').value"), "Hana", path)
+        for path in ("/play/local/", "/variants/custom/"):
+            p.goto(self.base + path)
+            self.assertEqual(p.js("document.querySelector('#name1').value"), "Hana", path)
+            self.assertEqual(p.js("document.querySelector('#name2').value"), "", path)
+        # a guest who follows an invitation link is asked for a name too, and it is remembered
+        link = self.page()
+        link.goto(self.base + "/play/create-room/")
+        link.type_text("#username", "Hana")
+        link.click("button[type=submit]")
+        link.wait_for("location.pathname.indexOf('/room/') === 0 && document.getElementById('invite-link').textContent.length > 10")
+        invite = link.js("document.getElementById('invite-link').textContent")
+        guest = self.page()
+        guest.goto(invite)
+        guest.wait_for("!document.querySelector('[data-state=join]').hidden")
+        self.assertEqual(guest.js("document.querySelector('#username').value"), "")
+        guest.type_text("#username", "Gus")
+        guest.click("[data-state=join] button[type=submit]")
+        guest.wait_for("document.querySelector('svg.board')", timeout=15)
+        self.assertEqual(guest.js("localStorage.getItem('quoridor.username')"), "Gus")
+        self.no_errors(p)
+        self.no_errors(guest)
+
+    def score(self, p):
+        return p.js("document.querySelector('.score-line').hidden ? '' : document.querySelector('.score-line').textContent")
+
+    def test_private_room_keeps_a_score_between_friends(self):
+        host, guest = self.page(), self.page()
+        self.make_room(host, guest)                      # Hana hosts, Gus joins
+        for p in (host, guest):
+            self.assertEqual(self.score(p), "")          # no game finished yet: nothing to show
+
+        def finish(loser, host_score, guest_score):
+            loser.js("window.confirm = function () { return true; }")
+            loser.click(".game-controls .btn:nth-child(1)")   # Resign
+            for p, text in ((host, host_score), (guest, guest_score)):
+                p.wait_for("document.querySelector('.result') && !document.querySelector('.result').hidden", timeout=10)
+                p.wait_for(f"document.querySelector('.score-line').textContent === {text!r}", timeout=5)
+
+        def rematch():
+            for p in (host, guest):
+                p.click(".result .btn--primary")
+            for p in (host, guest):
+                p.wait_for("document.querySelectorAll('.move-log li').length === 0 && document.querySelector('.result').hidden", timeout=10)
+
+        finish(host, "Score: Hana 0 – 1 Gus", "Score: Gus 1 – 0 Hana")   # each sees their own name on the left
+        self.shot(host, "room-score.png")
+        rematch()                                        # the seats swap, so the pages build the board again
+        self.assertEqual(self.score(host), "Score: Hana 0 – 1 Gus")   # and the score is there from the first move
+        finish(guest, "Score: Hana 1 – 1 Gus", "Score: Gus 1 – 1 Hana")
+        rematch()
+        finish(host, "Score: Hana 1 – 2 Gus", "Score: Gus 2 – 1 Hana")
+        # showing a finished game again (a reload) does not count it twice
+        host.goto(host.js("location.href"))
+        host.wait_for("document.querySelector('.result') && !document.querySelector('.result').hidden", timeout=10)
+        self.assertEqual(self.score(host), "Score: Hana 1 – 2 Gus")
+        stored = host.js("JSON.parse(localStorage.getItem('quoridor.scores')).pairs.map(function (p) { return p.names.join('+') + ':' + p.wins.join('-') })")
+        self.assertEqual(len(stored), 1)
+        self.assertIn(stored[0], ("Gus+Hana:2-1", "Hana+Gus:1-2"))
+        self.no_errors(host)
+        self.no_errors(guest)
+
+    def test_leaving_a_game_in_progress_counts_for_the_one_who_stays(self):
+        host, guest = self.page(), self.page()
+        self.make_room(host, guest)
+        host.js("window.confirm = function () { return true; }")
+        host.click(".game-controls .btn:nth-child(2)")   # Leave game: a forfeit
+        host.wait_for("!document.querySelector('[data-state=left]').hidden")
+        guest.wait_for("document.querySelector('.result') && !document.querySelector('.result').hidden", timeout=10)
+        guest.wait_for("document.querySelector('.score-line').textContent === 'Score: Gus 1 – 0 Hana'", timeout=5)
+        # the one who left has the loss on their own device too
+        wins = host.js("(function () { var p = JSON.parse(localStorage.getItem('quoridor.scores')).pairs[0], o = {}; o[p.names[0]] = p.wins[0]; o[p.names[1]] = p.wins[1]; return o })()")
+        self.assertEqual(wins, {"Gus": 1, "Hana": 0})
+
+    def test_local_friends_who_typed_both_names_keep_a_score(self):
+        p = self.page()
+        self.start_local(p)                              # Alice and Bob
+        alice = [(7, 4), (6, 4), (5, 4), (4, 4), (3, 4), (2, 4), (1, 4), (0, 4)]
+        shuffle = [(0, 3), (0, 2), (0, 1), (0, 0), (1, 0), (2, 0), (3, 0)]
+
+        def player_one_wins():                           # the first player walks straight up while the second wanders
+            for i, move in enumerate(alice):
+                self.click_cell(p, *move)
+                if i < len(shuffle):
+                    self.click_cell(p, *shuffle[i])
+
+        player_one_wins()
+        self.assertEqual(self.turn(p), "Alice wins!")
+        self.assertEqual(self.score(p), "Score: Alice 1 – 0 Bob")
+        self.shot(p, "local-score.png")
+        p.click(".result .btn--primary")                 # Play again: the names are still in the form
+        p.click("button[type=submit]")
+        p.wait_for("document.querySelector('svg.board')")
+        self.assertEqual(self.score(p), "Score: Alice 1 – 0 Bob")     # shown from the start of the next game
+        for i in range(8):                               # Alice paces along her edge; Bob walks down his column
+            self.click_cell(p, 8, (3, 2, 1, 0, 1, 0, 1, 0)[i])
+            self.click_cell(p, i + 1, 4)
+        self.assertEqual(self.turn(p), "Bob wins!")
+        self.assertEqual(self.score(p), "Score: Alice 1 – 1 Bob")
+        # a game where a name was left empty is not a game between two friends: no score
+        p.click(".result .btn--primary")
+        p.js("document.querySelector('#name2').value = ''")
+        p.click("button[type=submit]")
+        p.wait_for("document.querySelector('svg.board')")
+        player_one_wins()
+        self.assertEqual(self.turn(p), "Alice wins!")
+        self.assertEqual(self.score(p), "")
+        # the tally is still there after the page is closed and opened again
+        p.goto(self.base + "/play/local/")
+        self.assertEqual(p.js("JSON.parse(localStorage.getItem('quoridor.scores')).pairs[0].wins.join()"), "1,1")
+        self.no_errors(p)
+
+    def test_games_against_strangers_keep_no_score(self):
+        a, b = self.page(), self.page()
+        a.goto(self.base + "/play/online/")
+        a.type_text("#username", "Cy")
+        a.click("button[type=submit]")
+        a.wait_for("!document.querySelector('[data-searching]').hidden")
+        b.goto(self.base + "/play/online/")
+        b.type_text("#username", "Di")
+        b.click("button[type=submit]")
+        for p in (a, b):
+            p.wait_for("document.querySelector('svg.board')", timeout=20)
+        a.js("window.confirm = function () { return true; }")
+        a.click(".game-controls .btn:nth-child(1)")      # Resign
+        for p in (a, b):
+            p.wait_for("document.querySelector('.result') && !document.querySelector('.result').hidden", timeout=10)
+            self.assertEqual(self.score(p), "")
+            self.assertIsNone(p.js("localStorage.getItem('quoridor.scores')"))
+        self.assertEqual(a.js("localStorage.getItem('quoridor.username')"), "Cy")   # the name is still remembered
+        self.no_errors(a)
+        self.no_errors(b)
+
 
 if __name__ == "__main__":
     unittest.main()

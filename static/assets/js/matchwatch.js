@@ -102,7 +102,7 @@
 
   // ---- joining ----------------------------------------------------------------------------
   function joinMatch(res) {
-    Online.saveSeat(res.roomId, { token: res.token, seat: res.seat, name: saved.name });
+    Online.saveSeat(res.roomId, { token: res.token, seat: res.seat, name: saved.name, via: 'match' });
     Online.clearSearch();
     search = null;
     var go = function () { root.location.href = Online.roomUrl(res.roomId); };

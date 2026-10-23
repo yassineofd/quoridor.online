@@ -154,8 +154,6 @@ dddce3|Spieler 1 benutzt die ausgefüllte cyanfarbene Figur und zieht zuerst, vo
 64d690|Reicht das Gerät nach jedem Zug weiter.
 3fe725|Name von Spieler 1 (optional)
 2467f7|Name von Spieler 2 (optional)
-311dec|Einen privaten Quoridor-Raum erstellen
-732df9|Erstelle einen privaten Quoridor-Raum und teile den Einladungslink oder den Kopplungscode mit einem Freund.
 17319d|Raum erstellen
 c2fab0|Einen privaten Raum erstellen
 81b35f|Erstelle einen Raum und teile dann den Einladungslink oder den Kopplungscode mit deinem Freund.
@@ -174,6 +172,7 @@ c82edf|Einem privaten Quoridor-Raum beitreten
 9351be|Einem privaten Raum beitreten
 8afba4|Gib den Kopplungscode ein, den dein Freund dir geschickt hat, oder öffne seinen Einladungslink.
 79bd7f|2 bis 20 Zeichen. Dein Gegner sieht diesen Namen.
+118cc9|Gib in einer Partie für zwei Spieler beide Namen ein, um zu zählen, wer von euch gewinnt. Der Spielstand bleibt auf diesem Gerät.
 7c82d0|Kopplungscode
 bf8aef|6 Zeichen. Hast du stattdessen einen Einladungslink? Öffne ihn einfach.
 859667|<svg/> Raum beitreten
@@ -654,7 +653,7 @@ c9d622|Deine Daten
 d07068|Wir verwenden deine Nachricht und deine E-Mail-Adresse nur, um dir zu antworten. Das Formular sendet nichts von selbst: Es öffnet einen Entwurf in deiner eigenen E-Mail-App, und es wird nichts gesendet, bis du es abschickst. In der <a href="/privacy-policy/">Datenschutzerklärung</a> steht, wie die Website mit Informationen umgeht.
 7c0489|Datenschutzerklärung – Quoridor.online
 9451bc|Wie Quoridor.online mit Ihren Daten umgeht: was wir erfassen, Cookies und Browser-Speicher, Online-Räume und Benutzernamen, Speicherdauer und Ihre Rechte.
-6a1456|Was wir erfassen, was nicht und wie lange wir es aufbewahren. Gültig ab 21. Oktober 2026.
+d7762c|Was wir erfassen, was nicht und wie lange wir es aufbewahren. Gültig ab 23. Oktober 2026.
 433a5f|Diese Seite kann mit der Übersetzungsschaltfläche in anderen Sprachen gelesen werden. Die Übersetzungen dienen nur der Bequemlichkeit; weichen sie vom englischen Text ab, gilt der englische Text.
 57a0f5|Diese Erklärung beschreibt, welche Daten Quoridor.online („wir“, „uns“) verarbeitet, wenn Sie die Website besuchen, Quoridor spielen oder uns kontaktieren. Wir halten sie kurz, weil wir sehr wenig erfassen: Es gibt keine Konten und keine Werbung, und die einzige Analyse ist Google Analytics auf unseren öffentlichen Seiten.
 7ed24b|<strong>Kurz gesagt:</strong> Partien gegen den Computer und an einem Gerät bleiben in Ihrem Browser; Google Analytics setzt Cookies, um Besuche zu zählen (nie auf Seiten von Online-Räumen); und das Wenige, was das Online-Spiel braucht, wird nur im Arbeitsspeicher gehalten, für wenige Minuten.
@@ -683,7 +682,7 @@ c4bdad|3. Lokaler Speicher in Ihrem Browser
 0a1ad0|Der lokale Speicher ist ein kleiner Bereich Ihres Browsers, in dem eine Website Daten auf Ihrem Gerät ablegen kann. Er wird bei Seitenanfragen nicht an uns gesendet.
 490524|Wenn Sie mit der Übersetzungsschaltfläche eine Sprache wählen, speichert Ihr Browser den Sprachcode (zum Beispiel <em>es</em>) in einem Eintrag namens <em>quoridor.lang</em>, damit sich die Website beim nächsten Mal in dieser Sprache öffnet. Er wird nie an uns gesendet, und der Spielserver erfährt nie, welche Sprache Sie verwenden. Bis Sie eine Wahl treffen, liest die Website die Sprachliste Ihres Browsers, um eine erste Sprache zu wählen; auch das bleibt in Ihrem Browser.
 b3adf2|Darüber hinaus wird nichts im lokalen Speicher Ihres Browsers abgelegt. Falls das Online-Spiel später hinzukommt, wird dieser Abschnitt beschreiben, was es speichert.
-2288a1|Der lokale Speicher wird nur verwendet, damit die Website so funktioniert, wie Sie es gewünscht haben, nie zum Tracking. Wenn Sie ihn blockieren oder löschen, funktioniert die Website weiterhin; Sie müssen nur Ihre Sprache erneut wählen.
+4a289b|Der lokale Speicher wird nur verwendet, damit die Website so funktioniert, wie Sie es gewünscht haben, nie zum Tracking. Wenn Sie ihn blockieren oder löschen, funktioniert die Website weiterhin; Sie müssen nur Ihre Sprache erneut wählen, Ihren Namen noch einmal eingeben und Ihre Spielstände von vorn beginnen.
 dbfc51|4. Dienste Dritter und eingebettete Inhalte
 30d716|<strong>Google Analytics.</strong> Öffentliche Seiten laden das Analyse-Skript von Google von Google-Servern, und Google verarbeitet die in Abschnitt 2 beschriebenen Besuchsdaten nach seiner eigenen <a href="https://policies.google.com/privacy" rel="noopener noreferrer">Datenschutzerklärung</a>. Dies kann eine Übermittlung von Daten außerhalb Ihres Landes beinhalten. Seiten von Online-Räumen laden nichts von anderen Unternehmen.
 cb98b4|<strong>Sonst wird nichts von anderen Unternehmen geladen.</strong> Abgesehen von Google Analytics laden die Seiten Skripte, Stile, Schriften und Bilder nur von Quoridor.online selbst, und die Sicherheits-Header der Website blockieren alles andere. Es gibt keine eingebetteten Videos, Social-Media-Schaltflächen oder Werbeskripte.
@@ -695,7 +694,7 @@ d123bb|Online-Spiel und private Räume sind auf dieser Website derzeit nicht ver
 0d18df|6. Aufbewahrung und Löschung von Daten
 6f3852|<strong>Server-Logs:</strong> werden nur so lange aufbewahrt, wie es für Sicherheit und Fehlersuche nötig ist, und danach gelöscht.
 d5a426|<strong>E-Mails an uns:</strong> werden so lange aufbewahrt, wie es nötig ist, um Ihnen zu antworten und den Schriftverkehr zu dokumentieren, und danach gelöscht. Bitten Sie uns jederzeit, Ihre zu löschen.
-cd0846|<strong>Partien gegen den Computer und an einem Gerät:</strong> Es wird nichts gespeichert, also gibt es nichts zu löschen.
+c56b04|<strong>Partien gegen den Computer und an einem Gerät:</strong> Es wird nichts an uns gesendet. Nur der Name und die in Abschnitt 3 beschriebenen Zählungen bleiben in Ihrem Browser, bis Sie sie in den Website-Daten-Einstellungen Ihres Browsers löschen.
 3b4019|Da die Website keine Konten hat, können wir Daten nicht nach Namen suchen. Um Informationen früher entfernen zu lassen, kontaktieren Sie uns (Abschnitt 9) und teilen Sie uns so genau wie möglich mit, was entfernt werden soll.
 0fcb30|7. Datenschutz für Kinder
 568d4a|Quoridor ist ein Familienspiel, und die Website braucht kein Konto und keine persönlichen Angaben. Wir erfassen wissentlich keine personenbezogenen Daten von Kindern und richten Werbung an niemanden. Das Online-Spiel verlangt nur einen Anzeigenamen. Kinder sollten einen Spitznamen statt ihres echten Namens wählen und vor dem Online-Spielen einen Elternteil oder Erziehungsberechtigten fragen. Wenn Sie glauben, dass ein Kind uns personenbezogene Daten mitgeteilt hat, kontaktieren Sie uns, und wir löschen sie.
@@ -710,7 +709,7 @@ d49505|sich bei Ihrer örtlichen Datenschutzbehörde zu beschweren.
 9ef148|9. Kontaktinformationen
 3094c6|Bei Fragen zu dieser Erklärung oder für eine Datenschutzanfrage schreiben Sie an <a href="mailto:lahssanyassine1@gmail.com">lahssanyassine1@gmail.com</a> oder nutzen Sie die <a href="/contact/">Kontaktseite</a>. Bitte nehmen Sie keine Passwörter oder andere sensible Angaben in Ihre Nachricht auf.
 c45803|10. Gültigkeitsdatum und Änderungsverlauf
-1834cb|Diese Erklärung gilt ab dem <time datetime="2026-10-21">21. Oktober 2026</time>. Wenn wir sie ändern, aktualisieren wir das Datum und fügen unten einen Eintrag hinzu. Wenn eine Änderung die Verwendung Ihrer Daten wesentlich betrifft, weisen wir vor ihrem Inkrafttreten auf der Website darauf hin.
+b6beae|Diese Erklärung gilt ab dem <time datetime="2026-10-23">23. Oktober 2026</time>. Wenn wir sie ändern, aktualisieren wir das Datum und fügen unten einen Eintrag hinzu. Wenn eine Änderung die Verwendung Ihrer Daten wesentlich betrifft, weisen wir vor ihrem Inkrafttreten auf der Website darauf hin.
 96cdba|<time datetime="2026-10-17">17. Oktober 2026</time>: erste vollständige Fassung dieser Datenschutzerklärung. Sie ersetzt den früheren vorläufigen Entwurf.
 63a90b|<time datetime="2026-10-17">17. Oktober 2026</time>: Es wurde erklärt, dass eine Online-Suche weiterlaufen kann, während Sie an anderer Stelle der Website spielen, sowie der Sitzungsspeicher-Eintrag, der dies ermöglicht.
 d355e5|<time datetime="2026-10-17">17. Oktober 2026</time>: Google Analytics (Google-Tag) wurde auf öffentlichen Seiten hinzugefügt, mit seinen Cookies und seiner Datenverarbeitung. Es wird auf Seiten von Online-Räumen nicht geladen.
@@ -840,7 +839,7 @@ dbf4a8|<strong>Für alle.</strong> Die Website und das Spiel lassen sich mit der
 e50442|<strong>Netzwerkadresse.</strong> Ihre IP-Adresse erreicht unseren Server mit jeder Anfrage. Der Spielserver hält sie etwa eine Minute lang im Arbeitsspeicher, um Missbrauch begrenzen zu können, etwa das zu schnelle Erstellen von Räumen.
 bac18f|Wenn Sie einen Online-Raum erstellen oder ihm beitreten, legt Ihr Browser einen kleinen Eintrag mit dem Namen <em>quoridor.seat.</em> gefolgt von der Raumkennung ab. Er enthält Ihr Sitz-Token, Ihre Sitznummer und den von Ihnen gewählten Anzeigenamen. Er ermöglicht es Ihnen, die Seite neu zu laden oder eine unterbrochene Verbindung zu überstehen und Ihren Sitz zu behalten. Der Eintrag wird entfernt, wenn Sie den Raum verlassen. Schließen Sie den Tab, ohne den Raum zu verlassen, bleibt er bestehen, bis Sie ihn löschen, funktioniert aber nicht mehr, sobald der Raum abgelaufen ist.
 b4fc90|Während Sie nach einem Gegner suchen, legt Ihr Browser außerdem das Such-Ticket und Ihren Anzeigenamen im <em>Sitzungsspeicher</em> ab (ein Eintrag namens <em>quoridor.search</em>), nur für diesen Tab. Er ermöglicht es der Suche, weiterzulaufen, während Sie gegen den Computer spielen oder einen privaten Raum öffnen, und der Suchseite, sie nach einem Neuladen wieder aufzugreifen. Er wird entfernt, wenn die Suche endet, und verschwindet, wenn Sie den Tab schließen.
-4ad7a6|Der lokale Speicher wird nur verwendet, damit die Website so funktioniert, wie Sie es gewünscht haben, nie zum Tracking. Wenn Sie ihn blockieren oder löschen, funktioniert die Website weiterhin; Sie müssen nur Ihre Sprache erneut wählen, und Sie können einen Online-Sitz nach einem Neuladen nicht fortsetzen.
+30c9cd|Der lokale Speicher wird nur verwendet, damit die Website so funktioniert, wie Sie es gewünscht haben, nie zum Tracking. Wenn Sie ihn blockieren oder löschen, funktioniert die Website weiterhin; Sie müssen nur Ihre Sprache erneut wählen, Ihren Namen noch einmal eingeben und Ihre Spielstände von vorn beginnen, und Sie können einen Online-Sitz nach einem Neuladen nicht fortsetzen.
 95fcb9|<strong>Benutzernamen sind Anzeigenamen, keine Konten.</strong> Sie bestehen aus 2 bis 20 Zeichen. Bitte verwenden Sie nicht Ihren echten Namen, Ihre E-Mail-Adresse oder irgendetwas anderes, das Sie identifiziert. Zwei Spieler können denselben Namen wählen.
 064cce|<strong>Wer Ihren Namen sieht.</strong> Ihr Gegner sieht Ihren Anzeigenamen. Wer eine Einladung zu einem privaten Raum öffnet, bevor er voll ist, kann auch den Anzeigenamen des Gastgebers sehen.
 770992|<strong>Geteilte Links und Codes wirken wie Schlüssel.</strong> Ein privater Raum wird über einen langen zufälligen Link und einen kurzen Kopplungscode erreicht. Wer den Link oder Code besitzt, während ein Sitz frei ist, kann diesen Sitz einnehmen, teilen Sie ihn daher nur mit der Person, mit der Sie spielen möchten. Raumseiten bitten Suchmaschinen, sie nicht zu indexieren, und werden so ausgeliefert, dass die Seitenadresse nicht an andere Websites weitergegeben wird.
@@ -922,6 +921,7 @@ game.confirmRestart|Partie neu starten? Die aktuelle Partie geht verloren.
 game.confirmResign|Diese Partie aufgeben? Dein Gegner gewinnt.
 game.confirmLeaveOnline|Diese Partie verlassen? Das Verlassen zählt als Aufgabe.
 game.confirmLeave|Diese Partie verlassen?
+game.score|Spielstand: {name} {x} – {y} {other}
 board.title|Quoridor-Spielbrett
 board.label|Quoridor-Spielbrett. {desc}
 board.pawnOn|Figur von {name} auf {square}, verbleibende Mauern: {n}.
@@ -1182,4 +1182,133 @@ f39515|Ja. Wähle keine Uhr oder 15 Sekunden, 32 Sekunden, 1 Minute oder 2 Minut
 7eb334|Helles Design
 4a45c9|Helles Design
 feda4b|Wenn Sie mit dem Design-Schalter im Menü ein Design wählen, speichert Ihr Browser Ihre Wahl (<em>light</em> oder <em>dark</em>) in einem Eintrag namens <em>quoridor.theme</em>, damit sich die Website beim nächsten Mal mit diesem Design öffnet. Er wird nie an uns gesendet.
+a08cd9|Damit Sie Ihren Namen nicht jedes Mal neu eingeben müssen, speichert Ihr Browser den zuletzt eingegebenen Anzeigenamen (in einem Eintrag namens <em>quoridor.username</em>) und trägt ihn beim nächsten Mal wieder ein. Das Speichern sendet nichts an uns.
+d8b17d|Partien zwischen zwei benannten Spielern (an einem Gerät, wenn beide Spieler einen Namen eingegeben haben) werden außerdem in Ihrem Browser gezählt, in einem Eintrag namens <em>quoridor.scores</em>. Diese Zählung enthält die beiden Namen, wie viele Partien jeder gegen den anderen gewonnen hat, wann Sie zuletzt gespielt haben und die Kennungen der letzten Partien, damit keine doppelt gezählt wird. Sie dient nur dazu, den Spielstand zwischen Ihnen und einem Freund anzuzeigen. Sie verlässt nie Ihr Gerät, und der Browser Ihres Freundes führt eine eigene Zählung.
+d7d7d1|Partien zwischen zwei benannten Spielern (in einem privaten Online-Raum oder an einem Gerät, wenn beide Spieler einen Namen eingegeben haben) werden außerdem in Ihrem Browser gezählt, in einem Eintrag namens <em>quoridor.scores</em>. Diese Zählung enthält die beiden Namen, wie viele Partien jeder gegen den anderen gewonnen hat, wann Sie zuletzt gespielt haben und die Kennungen der letzten Partien, damit keine doppelt gezählt wird. Sie dient nur dazu, den Spielstand zwischen Ihnen und einem Freund anzuzeigen. Sie verlässt nie Ihr Gerät, und der Browser Ihres Freundes führt eine eigene Zählung.
 9ad599|<time datetime="2026-10-21">21. Oktober 2026</time>: Die Wahl zwischen hellem und dunklem Design, die der Design-Schalter in Ihrem Browser speichert, wurde beschrieben.
+dedc2e|<time datetime="2026-10-23">23. Oktober 2026</time>: Der Anzeigename und die Siegzählung zwischen zwei Spielern, die Ihr Browser sich jetzt merkt, wurden beschrieben, in Einträgen namens quoridor.username und quoridor.scores.
+ach.rank.0|Neuling
+ach.rank.1|Mauerbauer
+ach.rank.2|Wegfinder
+ach.rank.3|Taktiker
+ach.rank.4|Stratege
+ach.rank.5|Mauermeister
+ach.rank.6|Großmeister
+ach.cat.start|Erste Schritte
+ach.cat.robots|Roboter
+ach.cat.skill|Geschick
+ach.cat.milestones|Meilensteine
+ach.cat.streaks|Serien
+ach.cat.together|Online, Freunde und Varianten
+ach.gain|+{n} Pkt.
+ach.score|Punktestand: {n}
+ach.newTitle|Neue Erfolge
+ach.rankUp|Neuer Rang: {name}!
+ach.nextRank|Nächster Rang: {name} (noch {n} Pkt.)
+ach.topRank|Du hast den höchsten Rang erreicht.
+ach.streakKeep|Tage-Serie: {n}. Komm morgen wieder, um sie fortzusetzen.
+ach.streakStart|Komm morgen wieder, um eine Tage-Serie zu beginnen.
+ach.streakToday|Tage-Serie: {n}. Beende heute eine Partie, um sie fortzusetzen.
+ach.notSaved|Dein Browser erlaubt dieser Seite nicht, deinen Fortschritt zu speichern. Er geht verloren, sobald du die Seite schließt.
+ach.viewAll|Alle Erfolge ansehen
+ach.nextGoal|Nächstes Ziel: {name}
+ach.rankLabel|Dein Rang
+ach.unlockedCount|Freigeschaltet: {done} / {total}
+ach.unlockedOn|Freigeschaltet am {date}
+ach.unlocked|Freigeschaltet
+ach.locked|Gesperrt
+ach.stat.games|Partien
+ach.stat.wins|Siege
+ach.stat.walls|Gesetzte Mauern
+ach.stat.bestWins|Beste Siegesserie
+ach.stat.days|Tage-Serie
+ach.reset|Fortschritt zurücksetzen
+ach.resetConfirm|Punktestand, Rang und Erfolge auf diesem Gerät löschen? Das lässt sich nicht rückgängig machen.
+ach.resetDone|Dein Fortschritt wurde gelöscht.
+ach.localOnly|Dein Fortschritt wird nur in diesem Browser gespeichert. Er wird nie an uns gesendet, und wenn du die Website-Daten löschst, beginnt er von vorn.
+ach.firstGame.name|Erste Schritte
+ach.firstGame.desc|Beende deine erste Partie.
+ach.firstWall.name|Erste Mauer
+ach.firstWall.desc|Setze deine erste Mauer in einer Partie, die du beendest.
+ach.firstWin.name|Erster Sieg
+ach.firstWin.desc|Gewinne eine Partie gegen den Roboter oder einen Online-Gegner.
+ach.learn.name|Lernkurve
+ach.learn.desc|Verliere eine Partie gegen den Roboter oder einen Online-Gegner. Das ist jedem Champion schon passiert.
+ach.beatEasy.name|Roboter-Neuling
+ach.beatEasy.desc|Schlage den leichten Roboter.
+ach.beatMedium.name|Roboter-Rivale
+ach.beatMedium.desc|Schlage den mittleren Roboter.
+ach.beatHard.name|Roboter-Bezwinger
+ach.beatHard.desc|Schlage den schweren Roboter.
+ach.beatExpert.name|Roboter-Champion
+ach.beatExpert.desc|Schlage den Experten-Roboter.
+ach.speed.name|Direkt zum Ziel
+ach.speed.desc|Gewinne eine Partie in 12 Zügen oder weniger.
+ach.noWalls.name|Reiner Läufer
+ach.noWalls.desc|Gewinne ohne eine einzige Mauer gegen den mittleren, schweren oder Experten-Roboter oder gegen einen Online-Gegner.
+ach.allWalls.name|Festung
+ach.allWalls.desc|Gewinne eine Partie, nachdem du alle deine Mauern gesetzt hast.
+ach.jump.name|Bockspringen
+ach.jump.desc|Springe über die Figur deines Gegners oder weiche ihr seitlich aus.
+ach.detour.name|Umwegbauer
+ach.detour.desc|Setze eine Mauer, die den Weg deines Gegners um mindestens 4 Schritte verlängert.
+ach.comeback.name|Aufholjagd
+ach.comeback.desc|Gewinne, nachdem du im Rennen 5 oder mehr Schritte zurücklagst.
+ach.games10.name|Stammspieler
+ach.games10.desc|Beende 10 Partien.
+ach.games50.name|Hingebungsvoll
+ach.games50.desc|Beende 50 Partien.
+ach.wins5.name|Siegesgewohnheit
+ach.wins5.desc|Gewinne 5 Partien.
+ach.wins25.name|Erfahrener Spieler
+ach.wins25.desc|Gewinne 25 Partien.
+ach.wins100.name|Zenturio
+ach.wins100.desc|Gewinne 100 Partien.
+ach.walls100.name|Baumeister
+ach.walls100.desc|Setze 100 Mauern.
+ach.hunter10.name|Trophäenjäger
+ach.hunter10.desc|Schalte 10 Erfolge frei.
+ach.hunter20.name|Trophäensammler
+ach.hunter20.desc|Schalte 20 Erfolge frei.
+ach.winStreak3.name|Heiße Serie
+ach.winStreak3.desc|Gewinne 3 Partien in Folge.
+ach.winStreak7.name|Unaufhaltsam
+ach.winStreak7.desc|Gewinne 7 Partien in Folge.
+ach.days3.name|Wieder da
+ach.days3.desc|Spiele an 3 Tagen in Folge.
+ach.days7.name|Wöchentlicher Stammgast
+ach.days7.desc|Spiele an 7 Tagen in Folge.
+ach.days30.name|Teil der Routine
+ach.days30.desc|Spiele an 30 Tagen in Folge.
+ach.onlineGame.name|Rein in die Arena
+ach.onlineGame.desc|Beende eine Online-Partie.
+ach.onlineWin.name|Online-Sieger
+ach.onlineWin.desc|Gewinne eine Online-Partie.
+ach.online10.name|Online-Veteran
+ach.online10.desc|Gewinne 10 Online-Partien.
+ach.friend.name|Gerät weiterreichen
+ach.friend.desc|Beende eine Partie mit einem Freund an einem Gerät.
+ach.explorer.name|Entdecker
+ach.explorer.desc|Beende je eine Partie Wallrush, Pointrush und Eigenes Spiel.
+7c3201|Erfolge
+e70da8|Erfolge sammeln und im Rang aufsteigen
+80ed8e|Jede beendete Partie bringt Punkte. Schlage die Roboter, baue eine Serie auf und schalte Erfolge frei. Dein Fortschritt bleibt in deinem Browser, ganz ohne Konto.
+e11a01|Deine Erfolge ansehen <svg/>
+94d879|Erfolge und Rang – Quoridor.online
+1a12ef|Sieh dir deinen Quoridor-Punktestand, deinen Rang und deine Erfolge an. Dein Fortschritt wird nur in deinem Browser gespeichert.
+380e41|Sammle beim Spielen Punkte und Ränge: gewinne Partien, baue Serien auf und probiere alle Spielarten aus. Dein Fortschritt wird in diesem Browser gespeichert.
+7e9f89|Deine Erfolge werden in deinem Browser gespeichert und brauchen JavaScript, um angezeigt zu werden.
+09aba9|Spielt Seite an Seite an einem Bildschirm
+1a7dbb|Es gelten die üblichen Quoridor-Regeln. In jedem Zug bewegst du deine Figur oder setzt eine Mauer, und eine Mauer darf nie alle Wege zum Ziel versperren. Möchtest du lieber gegen jemanden spielen, den du kennst? <a href="/play/create-room/">Erstelle einen privaten Raum</a> und schicke deinem Freund den Einladungslink, oder wärme dich vorher <a href="/play/computer/">gegen den Computer</a> auf.
+47f79e|Räume nutzen die klassischen Regeln auf einem 9×9-Spielbrett, mit je 10 Mauern. Dein Freund kann den Link öffnen oder den Code auf der Seite <a href="/play/join-room/">Raum beitreten</a> eingeben. Du willst lieber schnell gegen einen Fremden spielen? Probiere das <a href="/play/online/">Online-Matchmaking</a>.
+7e381f|So funktioniert das Online-Matchmaking
+8151c7|Quoridor gegen den Computer üben
+81adfa|Gib einen Benutzernamen ein und drücke auf Gegner suchen. Die Website bringt dich mit der nächsten suchenden Person zusammen, und das Spiel beginnt, sobald ein Gegner gefunden ist. Es gibt nichts zu installieren und kein Konto anzulegen: Dein Benutzername ist nur ein Anzeigename im Spiel.
+9eb02d|So spielst du Quoridor online mit einem Freund
+a77241|Quoridor online mit Freunden spielen – Privater Raum
+ae9081|Spiele Quoridor online mit Freunden. Erstelle einen privaten Raum, teile den Einladungslink oder den Kopplungscode, und das Spiel beginnt, sobald dein Freund beitritt.
+b24a80|Lokales Spielen ist der schnellste Weg, mit einem Freund zu spielen: Setzt euch zusammen, teilt euch einen Bildschirm und gebt das Gerät nach jedem Zug weiter. Gib beide Namen ein, wenn die Website mitzählen soll, wer von euch gewinnt. Der Spielstand bleibt auf diesem Gerät. Zu zweit ist es das klassische Spiel. Für drei oder vier Spieler, eine andere Spielbrettgröße oder eigene Regeln probiere die <a href="/variants/">Quoridor-Varianten</a>.
+bfc57f|Der Computergegner läuft in deinem Browser, ein Spiel startet also sofort und funktioniert ohne Konto. Beginne auf Leicht, um zu sehen, wie Figuren und Mauern zusammenspielen, und steige eine Stufe auf, sobald du bequem gewinnst. Neu im Spiel? Lies, <a href="/how-to-play-quoridor/">wie man Quoridor spielt</a>, oder schau dir den <a href="/quoridor-strategy/">Strategie-Leitfaden</a> an, um mehr aus deinen Mauern herauszuholen.
+cebb15|Ein privater Raum ist dafür da, mit einer bestimmten Person zu spielen, egal wo sie ist. Wähle einen Benutzernamen und erstelle einen Raum: Du erhältst einen Einladungslink und einen kurzen Kopplungscode. Schicke einen von beiden an deinen Freund, und das Spiel beginnt, sobald er beitritt. Keiner von euch braucht ein Konto.
+7fc164|Damit Ihr Punktestand, Ihr Rang und Ihre Erfolge erhalten bleiben, speichert Ihr Browser eine Zählung der Partien, die Sie beenden, in einem Eintrag namens <em>quoridor.progress</em>. Er enthält, wie viele Partien Sie gespielt und gewonnen haben, wie viele Mauern Sie gesetzt haben, Ihre besten Serien, den letzten Tag, an dem Sie gespielt haben, die erhaltenen Punkte und die freigeschalteten Erfolge samt dem Tag der Freischaltung. Er enthält nie Ihre Züge oder Ihren Anzeigenamen und wird nie an uns gesendet. Wenn Sie die Website-Daten löschen oder auf der Seite „Erfolge“ auf „Fortschritt zurücksetzen“ klicken, beginnen Punktestand, Rang und Erfolge von vorn.
+7e79c7|<time datetime="2026-10-23">23. Oktober 2026</time>: Der Punktestand, der Rang und die Erfolge, die Ihr Browser jetzt speichert, wurden beschrieben, in einem Eintrag namens quoridor.progress.

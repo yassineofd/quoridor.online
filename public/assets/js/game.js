@@ -13,6 +13,8 @@
      cfg.flip     draw the board rotated so that `seat` is at the bottom
      cfg.level    computer difficulty
      cfg.remote   online only: { send(move) -> Promise, resign(), leave(), rematch() }
+     cfg.scoreId  two named players who count their wins against each other (see profile.js): an id for this game (local) or room (online);
+                  the finished game is counted once and the score shows under the players. Left out: no score is kept
      cfg.leaveHref where "Leave" goes (local and computer games): drawn as a link to this address
      cfg.onExit   called with 'again' or 'leave' when the player finishes
    For online games the owner pushes server state in with controller.setState(json, meta).      */
@@ -123,6 +125,7 @@
     var thinker = mode === 'computer' ? createThinker(cfg.level || 'medium') : null;
     var thinking = false, busy = false, destroyed = false, lastTurn = -1, lastCount = 0;
     var botName = names[1 - (seat === null ? 0 : seat)];
+    var counted = null, scoreText = ''; // the finished game already added to the score, and the score as shown
 
     host.textContent = '';
     host.classList.add('game');
@@ -149,6 +152,7 @@
     var timerText = h('span', { 'class': 'turn-timer-text', 'aria-hidden': 'true' });
     var timerFill = h('span', { 'class': 'turn-timer-fill' });
     var timer = h('div', { 'class': 'turn-timer', hidden: '' }, [timerText, h('span', { 'class': 'turn-timer-bar', 'aria-hidden': 'true' }, [timerFill])]);
+    var scoreEl = h('p', { 'class': 'score-line', hidden: '' });
     var vs = h('li', { 'class': 'vs-chip', 'aria-hidden': 'true', text: 'VS' });
     var players = h('ul', { 'class': 'players' + (game.nPlayers === 2 ? '' : ' players--multi'), 'aria-label': t('game.players') },
       game.nPlayers === 2 ? [cards[0].card, vs, cards[1].card] : cards.map(function (c) { return c.card; }));
@@ -190,7 +194,10 @@
     var resultTitle = h('h2', { 'class': 'h-sm', tabindex: '-1' });
     var resultText = h('p', { 'class': 'text-muted' });
     var resultActions = h('div', { 'class': 'btn-row' });
-    var result = h('div', { 'class': 'card result', hidden: '' }, [resultTitle, resultText, resultActions]);
+    // What the finished game earned (achievements.js). seenLive: this page saw the game being played, so a finished room opened again is not counted.
+    var rewardHost = h('div', { 'class': 'reward', hidden: '' });
+    var seenLive = false, recorded = false, reward = null;
+    var result = h('div', { 'class': 'card result', hidden: '' }, [resultTitle, resultText, rewardHost, resultActions]);
 
     var logList = h('ol', { 'class': 'move-log' });
     var log = h('details', { 'class': 'move-log-wrap', open: '' }, [h('summary', { text: t('game.moveList') }), logList]);
@@ -198,7 +205,7 @@
     if (window.matchMedia && window.matchMedia('(max-width: 899px)').matches) log.removeAttribute('open');
     var announcer = h('div', { 'class': 'sr-only', 'aria-live': 'polite', 'aria-atomic': 'true' });
 
-    var side = h('div', { 'class': 'game-side' }, [banner, players, turn, timer, result, tray, wallRow, hint, controls, keys, log, announcer]);
+    var side = h('div', { 'class': 'game-side' }, [banner, players, scoreEl, turn, timer, result, tray, wallRow, hint, controls, keys, log, announcer]);
     host.appendChild(h('div', { 'class': 'game-layout' }, [boardWrap, side]));
 
     // ---- clocks ---------------------------------------------------------------------------
@@ -294,6 +301,27 @@
 
     function sayWho(i) { return i === seat && seat !== null ? t('game.you') : names[i]; }
 
+    // ---- score between two named players (profile.js) ----------------------------------
+    function scoring() { return !!cfg.scoreId && !!root.QuoridorProfile && game.nPlayers === 2; }
+
+    // The finished game goes into the tally once. An online room plays several games, told apart by meta.round.
+    function countGame() {
+      if (!scoring()) return;
+      var id = cfg.scoreId + (meta.round ? '#' + meta.round : '');
+      if (id === counted) return;
+      counted = id;
+      root.QuoridorProfile.record(names[0], names[1], game.winner, id);
+    }
+
+    // "Ana 3 – 2 Ben", with you on the left online like on the player cards. Nothing shows before they have a score.
+    function paintScore() {
+      var wins = scoring() ? root.QuoridorProfile.tally(names[0], names[1]) : null;
+      var left = seat === null ? 0 : seat;
+      scoreText = wins && wins[0] + wins[1] > 0 ? t('game.score', { name: names[left], x: wins[left], y: wins[1 - left], other: names[1 - left] }) : '';
+      scoreEl.textContent = scoreText;
+      scoreEl.hidden = !scoreText;
+    }
+
     function render() {
       board.setGame(game);
       board.setActor(actor());
@@ -301,6 +329,7 @@
       board.refresh();
 
       var over = game.winner !== null;
+      if (!over) { seenLive = true; recorded = false; reward = null; rewardHost.textContent = ''; } // a game in progress (a rematch starts here too)
       cards.forEach(function (c, i) {
         c.name.textContent = names[i];
         c.tag.textContent = (i === seat ? ' ' + t('game.youTag') : '') + (meta.connected[i] === false && mode === 'online' ? ' ' + t('game.disconnectedTag') : '');
@@ -340,6 +369,9 @@
         logList.appendChild(h('li', { text: t(m.type === 'move' ? 'game.logMoved' : 'game.logWall', { name: names[who], move: game.moveName(m) }) }));
       }
       logList.scrollTop = logList.scrollHeight;
+
+      if (over) countGame();
+      paintScore();
 
       // Result panel
       result.hidden = !over;
@@ -468,6 +500,20 @@
       }
     }
 
+    // Score the finished game once and show what it earned. The score is a bonus: a fault in it must never get in the way of the result.
+    function showReward() {
+      var A = root.QuoridorAchievements, UI = root.QuoridorAchievementsUI;
+      if (!A || !UI) return;
+      try {
+        if (seenLive && !recorded) {
+          recorded = true;
+          reward = A.recordGame({ mode: mode, variant: game.variant, players: game.nPlayers, options: game.options, level: cfg.level, seat: seat, winner: game.winner, reason: meta.reason, moves: game.moves });
+        }
+        if (reward && !rewardHost.firstChild) rewardHost.appendChild(UI.reward(reward));
+      } catch (e) { reward = null; rewardHost.textContent = ''; }
+      rewardHost.hidden = !rewardHost.firstChild;
+    }
+
     function showResult() {
       var youWon = seat !== null && game.winner === seat;
       resultTitle.textContent = seat === null ? t('game.nameWins', { name: names[game.winner] }) : (youWon ? t('game.youWon') : t('game.nameWon', { name: names[game.winner] }));
@@ -490,9 +536,10 @@
         resultActions.appendChild(button('game.playAgain', 'btn--primary', function () { exit('again'); }, 'restart'));
       }
       resultActions.appendChild(leaveControl('game.leave', 'btn--secondary', function () { exit('leave'); }));
+      showReward();
       if (!result.dataset.announced || result.dataset.announced !== String(game.winner) + game.moves.length) {
         result.dataset.announced = String(game.winner) + game.moves.length;
-        announce(resultTitle.textContent + '. ' + resultText.textContent);
+        announce(resultTitle.textContent + '. ' + resultText.textContent + (scoreText ? ' ' + scoreText : '') + (reward ? ' ' + root.QuoridorAchievementsUI.sentence(reward) : ''));
         resultTitle.focus();
       }
     }
@@ -592,6 +639,7 @@
       keys.textContent = t('game.keys');
       log.firstChild.textContent = t('game.moveList');
       logList.textContent = '';
+      rewardHost.textContent = '';   // drawn again in the new language by render()
       hint.textContent = '';
       render();
     }

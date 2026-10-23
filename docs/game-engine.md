@@ -142,6 +142,30 @@ intent (a move) and receive the resulting state; the server validates everything
   `QUORIDOR_TRUST_PROXY=1` makes the server read the client address from `X-Forwarded-For` (set it only behind a proxy
   you control).
 * **Storage.** Everything is in memory. Restarting the server ends all games.
+* **Rounds.** `snapshot.round` counts the games started in a room (1, then 2 after the first rematch ...). Together with the
+  room id it names one game, which is how a browser counts a finished game once (see "Remembered name and scores").
+
+## Remembered name and scores
+
+`static/assets/js/profile.js` (`QuoridorProfile`) keeps two things in the browser's `localStorage`. Nothing in it is sent to the server.
+
+| Entry | Holds | Used by |
+|---|---|---|
+| `quoridor.username` | the display name last used | `play.js` and `room.js` fill it into the name fields (on the one-device pages into Player 1) and save it when a valid name is submitted |
+| `quoridor.scores` | `{pairs: [{id, names, wins, at}], seen: [game ids]}`: for each pair of names, the wins of each against the other | `game.js` counts a finished game and shows the line "Score: Ana 3 – 2 Ben" under the players |
+
+A tally is by name (case-insensitive), not by account: a friend who plays under another name starts a new tally, and each browser tallies
+the games it saw. A score is kept only for games between friends:
+
+* a **private room** (the seat is saved with `via: 'private'` by `play.js`/`room.js`; matchmaking saves `via: 'match'` and keeps no score,
+  because two strangers with the same name cannot be told apart), and
+* a **one-device game of two** in which both players typed a name (`play.js` passes `scoreId` to `game.js`).
+
+`game.js` counts a finished game once: `seen` holds the last 40 game ids (`<roomId>#<round>` online), so showing a result again (a reload, a
+language change) never adds a second win. A player who leaves an online game in progress forfeits it; the opponent counts the win when the
+result arrives, and `room.js` records the loss on the leaver's device before the seat is released. Storage that is blocked or full is
+tolerated: the name is not remembered, and the tally then lives in memory until the page is closed. The Privacy Policy describes both entries
+(`PROFILE_STORAGE_*` in `pages.py`); change it, and add an entry to `PRIVACY_HISTORY`, when this storage changes.
 
 Timing constants live at the top of `server/rooms.py`.
 

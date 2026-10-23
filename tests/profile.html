@@ -1,0 +1,47 @@
+<!doctype html>
+<meta charset="utf-8">
+<pre id="result"></pre>
+<script src="../static/assets/js/profile.js"></script>
+<script>
+  var P = QuoridorProfile, out = {};
+  function stored() { return JSON.parse(localStorage.getItem('quoridor.scores')); }
+
+  out.nameStart = P.name();
+  P.setName('Hana');
+  out.nameSaved = P.name();
+
+  out.none = P.tally('Ana', 'Ben');
+  out.first = P.record('Ana', 'Ben', 0, 'g1');           // Ana wins
+  out.sameGameAgain = P.record('Ana', 'Ben', 0, 'g1');   // a result shown again is not counted again
+  out.otherWay = P.tally('Ben', 'Ana');                  // the same tally seen from the other side
+  out.swapped = P.record('Ben', 'Ana', 0, 'g2');         // the arguments in the other order: Ben wins
+  out.caseless = P.record('ana', 'BEN', 0, 'g3');        // spelling in capitals makes no difference
+  out.pairs = stored().pairs.length;
+  out.spelling = stored().pairs[0].names.join('+');      // the latest spelling is kept
+  out.sameName = P.record('Ana', 'ana', 0, 'g4');
+  out.badWinner = P.record('Ana', 'Ben', 2, 'g5');
+  out.after = P.tally('Ana', 'Ben');
+
+  // more tallies than are kept: the oldest go, the newest stays
+  for (var i = 0; i < 60; i++) P.record('Friend' + i, 'Me', 0, 'many' + i);
+  out.kept = stored().pairs.length;
+  out.newest = P.tally('Friend59', 'Me');
+  out.oldest = P.tally('Friend0', 'Me');
+  out.seen = stored().seen.length;
+
+  // damaged entries are ignored rather than breaking the page
+  localStorage.setItem('quoridor.scores', '{"pairs":[null,{"id":3},{"id":"a\nb","names":["a","b"],"wins":["x",2]}],"seen":[]}');
+  out.damaged = P.tally('a', 'b');
+  localStorage.setItem('quoridor.scores', 'not json');
+  out.garbage = P.tally('a', 'b');
+
+  // storage that refuses to save: the tally still counts until the page is closed
+  localStorage.removeItem('quoridor.scores');
+  Storage.prototype.setItem = function () { throw new Error('full'); };
+  P.record('Zed', 'Yan', 1, 'z1');
+  out.memory = P.tally('Zed', 'Yan');
+  P.setName('Lost');
+  out.nameWhenBlocked = P.name();
+
+  document.getElementById('result').textContent = JSON.stringify(out);
+</script>

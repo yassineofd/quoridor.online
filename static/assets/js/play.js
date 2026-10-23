@@ -52,6 +52,12 @@
   var serverError = $('[data-error]', form);
   var submitBtn = $('button[type="submit"]', form);
 
+  // The display name used last time is already in the field (on the one-device pages, in the first player's).
+  var Profile = window.QuoridorProfile;
+  var remembered = Profile ? Profile.name() : '';
+  var firstName = nameInput || $('#name1', form);
+  if (remembered && firstName && !firstName.value) firstName.value = remembered;
+
   if (nameInput) nameInput.addEventListener('input', function () { clearError(nameInput, nameError); });
   if (codeInput) {
     codeInput.addEventListener('input', function () {
@@ -145,7 +151,12 @@
         if (names[j].toLowerCase() === names[i].toLowerCase()) { names[i] += ' (' + (i + 1) + ')'; nameKeys[i] = null; break; }
       }
     }
-    openGame({ mode: 'local', variant: variant, players: count, names: names, nameKeys: nameKeys, options: custom.options, turnSeconds: custom.turnSeconds });
+    // Two friends who both typed a name keep a score of their wins against each other.
+    var named = count === 2 && typed[0] && typed[1] && typed[0].toLowerCase() !== typed[1].toLowerCase();
+    openGame({
+      mode: 'local', variant: variant, players: count, names: names, nameKeys: nameKeys, options: custom.options, turnSeconds: custom.turnSeconds,
+      scoreId: named ? 'local-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8) : undefined
+    });
   }
 
   var LEVEL_NAMES = { easy: 'play.robotEasy', medium: 'play.robotMedium', hard: 'play.robotHard', expert: 'play.robotExpert' };
@@ -171,7 +182,8 @@
   function hideServerError() { if (serverError) serverError.hidden = true; }
 
   function enter(res, name) {
-    QuoridorOnline.saveSeat(res.roomId, { token: res.token, seat: res.seat, name: name });
+    // via: how the seat was found. Only a private room is a game between friends, so only there a score is kept (room.js).
+    QuoridorOnline.saveSeat(res.roomId, { token: res.token, seat: res.seat, name: name, via: kind === 'online' ? 'match' : 'private' });
     window.location.href = QuoridorOnline.roomUrl(res.roomId);
   }
 
@@ -279,6 +291,7 @@
 
     var name = nameInput && checkUsername(nameInput, nameError);
     if (nameInput && !name) return;
+    if (name && Profile) Profile.setName(name);
     if (kind === 'join-room' && codeInput && !CODE_RE.test(codeInput.value)) {
       showError(codeInput, codeError, t('play.codeRule'));
       return;

@@ -587,6 +587,7 @@ background: var(--color-surface); border: 2px solid var(--control-border); borde
 .game-side > * { order: 5; margin: 0; }
 .game-side > .game-banner { order: 0; }
 .game-side > .players { order: 1; }
+.game-side > .score-line { order: 1; }
 .game-side > .turn-bar { order: 2; }
 .game-side > .turn-timer { order: 2; }
 .game-side > .result { order: 4; }
@@ -610,6 +611,7 @@ background: var(--color-surface); border: 2px solid var(--control-border); borde
 .turn-bar:focus-visible { outline: 3px solid var(--color-accent); outline-offset: 2px; }
 .players { list-style: none; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: stretch; gap: var(--space-2); }
 .players--multi { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.score-line { padding: var(--space-2) var(--space-4); border: 1px dashed var(--control-border); border-radius: var(--radius-card); text-align: center; font-weight: 600; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
 .vs-chip { align-self: center; padding: 10px 8px; border: 1px solid var(--color-border); border-radius: 12px; background: var(--color-surface); color: var(--color-text-muted); font-size: 0.8125rem; font-weight: 700; letter-spacing: 0.08em; }
 .player-card { --pc: var(--color-accent); display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-areas: "glyph text" "meta meta"; align-items: center; gap: 6px var(--space-2); margin: 0; padding: 10px; border: 2px solid rgba(255, 255, 255, 0.14); border: 2px solid color-mix(in srgb, var(--pc) 45%, transparent); border-radius: 16px; background: var(--color-surface); background: color-mix(in srgb, var(--pc) 14%, var(--color-surface)); min-width: 0; transition: box-shadow 0.2s, border-color 0.2s; }
 .player-card--1 { --pc: var(--color-player-2); }
@@ -724,7 +726,70 @@ select.input { cursor: pointer; }
 .check-line input { width: 20px; height: 20px; margin-top: 2px; flex: none; accent-color: var(--color-accent); }
 .contact-form { margin: var(--space-5) 0 var(--space-6); }
 .contact-form .btn { margin-top: var(--space-2); }
-.contact-status { margin-top: var(--space-4); }</style>
+.contact-status { margin-top: var(--space-4); }
+.ach-icon { flex: none; display: inline-grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--gradient-selected); border: 1px solid var(--color-border); color: var(--color-accent); }
+.ach-icon svg { width: 22px; height: 22px; }
+.ach-pts { flex: none; align-self: flex-start; padding: 2px 10px; border: 1px solid var(--control-border); border-radius: 999px; font-size: 0.8125rem; font-weight: 600; white-space: nowrap; color: var(--color-text-muted); font-variant-numeric: tabular-nums; }
+.meter { display: block; height: 8px; border-radius: 4px; background: var(--color-border); overflow: hidden; }
+.meter-fill { display: block; height: 100%; width: 0; border-radius: 4px; background: var(--color-accent); }
+.reward { margin-block: var(--space-4); padding: var(--space-4); border: 1px solid var(--color-border); border-radius: var(--radius-card); background: var(--gradient-selected), var(--color-surface); }
+.reward-points { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-1) var(--space-3); margin: 0 0 var(--space-3); }
+.reward-gain { font-size: 1.5rem; font-weight: 700; color: var(--color-accent); font-variant-numeric: tabular-nums; }
+.reward-total { color: var(--color-text-muted); font-weight: 600; }
+.reward-rankup { display: flex; align-items: center; gap: var(--space-3); margin: 0 0 var(--space-3); font-weight: 700; }
+.reward-title { margin: var(--space-3) 0 var(--space-2); font-size: 1rem; }
+.reward-list { list-style: none; margin: 0 0 var(--space-3); padding: 0; display: grid; gap: var(--space-3); }
+.reward-list li { display: flex; align-items: center; gap: var(--space-3); margin: 0; }
+.reward-item { flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.35; }
+.reward-next { margin: 0 0 var(--space-2); }
+.reward-inner > .meter { margin-bottom: var(--space-3); }
+.reward-inner > p:last-of-type { margin-bottom: var(--space-2); }
+.reward-link { font-weight: 600; }
+.progress-teaser { margin-top: var(--space-5); padding: var(--space-4); border: 1px solid var(--color-border); border-radius: var(--radius-card); background: var(--color-surface); }
+.progress-teaser > * { margin: 0 0 var(--space-2); }
+.progress-teaser > :last-child { margin-bottom: 0; }
+.teaser-head { display: flex; align-items: center; gap: var(--space-3); }
+.teaser-goal { display: flex; justify-content: space-between; gap: var(--space-3); }
+.teaser-count { flex: none; color: var(--color-text-muted); font-variant-numeric: tabular-nums; }
+.teaser-link { display: inline-block; padding-block: var(--space-1); }
+.ach-summary { display: grid; gap: var(--space-2); margin-bottom: var(--space-6); }
+.ach-summary > * { margin: 0; }
+.ach-label { color: var(--color-text-muted); font-size: 0.875rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+[dir="rtl"] .ach-label { letter-spacing: 0; }
+.ach-rank { display: flex; align-items: center; gap: var(--space-3); font-size: clamp(1.75rem, 1.3rem + 2vw, 2.5rem); }
+.ach-rank .ach-icon { width: 52px; height: 52px; }
+.ach-rank .ach-icon svg { width: 28px; height: 28px; }
+.ach-score { font-size: 1.25rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+.ach-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: var(--space-3); margin: var(--space-3) 0; padding: 0; }
+.ach-stats > div { padding: var(--space-3); border: 1px solid var(--color-border); border-radius: var(--radius-control); background: var(--color-bg); }
+.ach-stats dt { color: var(--color-text-muted); font-size: 0.875rem; }
+.ach-stats dd { margin: 0; font-size: 1.5rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.ach-count { font-weight: 600; }
+.ach-group + .ach-group { margin-top: var(--space-6); }
+.ach-group h2 { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); font-size: 1.5rem; }
+.ach-group-count { font-size: 1rem; font-weight: 600; color: var(--color-text-muted); font-variant-numeric: tabular-nums; }
+.ach-grid { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3); grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 768px) { .ach-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.ach-card { display: flex; align-items: flex-start; gap: var(--space-3); margin: 0; padding: var(--space-4); border: 1px solid var(--color-border); border-radius: var(--radius-card); background: var(--color-surface); }
+.ach-card.is-unlocked { border-color: var(--color-accent); background: var(--gradient-selected), var(--color-surface); }
+.ach-card.is-locked .ach-icon { color: var(--color-text-muted); background: var(--overlay-faint); }
+.ach-body { flex: 1; min-width: 0; }
+.ach-body > * { margin: 0 0 var(--space-2); }
+.ach-body > :last-child { margin-bottom: 0; }
+.ach-name { font-size: 1.0625rem; }
+.ach-desc { color: var(--color-text-muted); font-size: 0.9375rem; line-height: 1.45; }
+.ach-state { display: flex; align-items: center; gap: var(--space-2); color: var(--color-text-muted); font-variant-numeric: tabular-nums; }
+.ach-state .ach-icon { width: 20px; height: 20px; border: 0; background: none; }
+.ach-state .ach-icon svg { width: 16px; height: 16px; }
+.ach-card.is-unlocked .ach-state { color: var(--color-success); }
+.ach-footer { margin-top: var(--space-7); padding-top: var(--space-5); border-top: 1px solid var(--color-border); }
+@media (prefers-reduced-motion: no-preference) {
+.reward-list li { animation: reward-pop 0.5s ease-out both; }
+.reward-list li:nth-child(2) { animation-delay: 0.12s; }
+.reward-list li:nth-child(3) { animation-delay: 0.24s; }
+.reward-list li:nth-child(n+4) { animation-delay: 0.36s; }
+@keyframes reward-pop { from { opacity: 0; transform: translateY(8px) scale(0.98); } to { opacity: 1; transform: none; } }
+}</style>
 <script>(function () {
 var root = document.documentElement;
 root.classList.add('js');
@@ -786,7 +851,7 @@ setTimeout(function () { root.classList.remove('i18n-pending'); }, 3000);
   </div>
 </header>
 <main id="main" tabindex="-1">
-<div class="page-head"><div class="container"><nav class="breadcrumbs" aria-label="Breadcrumb" data-i18n-attr="aria-label:85d36d"><ol><li><a href="/" data-i18n="56dee6">Home</a></li><li><span aria-current="page" data-i18n="8dbcdd">Privacy Policy</span></li></ol></nav><h1 data-i18n="8dbcdd">Privacy Policy</h1><p class="lead" data-i18n="6a1456">What we collect, what we don't, and how long we keep it. Effective 21 October 2026.</p></div></div><div class="container pad-page"><div class="article prose"><p class="small text-muted" data-i18n="433a5f">This page can be read in other languages with the translate button. The translations are provided for convenience; if they differ from the English text, the English text applies.</p>
+<div class="page-head"><div class="container"><nav class="breadcrumbs" aria-label="Breadcrumb" data-i18n-attr="aria-label:85d36d"><ol><li><a href="/" data-i18n="56dee6">Home</a></li><li><span aria-current="page" data-i18n="8dbcdd">Privacy Policy</span></li></ol></nav><h1 data-i18n="8dbcdd">Privacy Policy</h1><p class="lead" data-i18n="d7762c">What we collect, what we don't, and how long we keep it. Effective 23 October 2026.</p></div></div><div class="container pad-page"><div class="article prose"><p class="small text-muted" data-i18n="433a5f">This page can be read in other languages with the translate button. The translations are provided for convenience; if they differ from the English text, the English text applies.</p>
 <p data-i18n="57a0f5">This policy explains what information Quoridor.online (&ldquo;we&rdquo;, &ldquo;us&rdquo;) handles when you visit the site, play Quoridor, or contact us. We keep it short because we collect very little: there are no accounts and no advertising, and the only analytics is Google Analytics on our public pages.</p>
 <p data-i18n="7ed24b"><strong>In short:</strong> games against the computer and on one device stay in your browser; Google Analytics sets cookies to count visits (never on online-room pages); and the little that online play needs is kept in memory only, for minutes.</p>
 <nav aria-label="On this page" data-i18n-attr="aria-label:7ef25d"><p><strong data-i18n="cb1c51">On this page</strong></p>
@@ -823,9 +888,9 @@ setTimeout(function () { root.classList.remove('i18n-pending'); }, 3000);
 
 <h2 id="storage" data-i18n="c4bdad">3. Local storage in your browser</h2>
 <p data-i18n="0a1ad0">Local storage is a small area of your browser where a site can keep data on your device. It is not sent to us with page requests.</p>
-<p data-i18n="490524">If you pick a language with the translate button, your browser keeps the language code (for example <em>es</em>) in an entry named <em>quoridor.lang</em>, so the site opens in that language next time. It is never sent to us, and the game server never learns which language you use. Until you choose, the site reads your browser's language list to pick a first language; that stays in your browser too.</p><p data-i18n="feda4b">If you choose a theme with the theme switch in the menu, your browser keeps your choice (<em>light</em> or <em>dark</em>) in an entry named <em>quoridor.theme</em>, so the site opens in that theme next time. It is never sent to us.</p><p data-i18n="bac18f">When you create or join an online room, your browser stores a small entry under the name <em>quoridor.seat.</em> followed by the room's identifier. It contains your seat token, your seat number and the display name you chose. It lets you reload the page or recover from a dropped connection and keep your seat. The entry is removed when you leave the room. If you close the tab without leaving, it stays until you clear it, but it stops working once the room has expired.</p>
+<p data-i18n="490524">If you pick a language with the translate button, your browser keeps the language code (for example <em>es</em>) in an entry named <em>quoridor.lang</em>, so the site opens in that language next time. It is never sent to us, and the game server never learns which language you use. Until you choose, the site reads your browser's language list to pick a first language; that stays in your browser too.</p><p data-i18n="feda4b">If you choose a theme with the theme switch in the menu, your browser keeps your choice (<em>light</em> or <em>dark</em>) in an entry named <em>quoridor.theme</em>, so the site opens in that theme next time. It is never sent to us.</p><p data-i18n="a08cd9">So that you do not have to type your name again, your browser keeps the last display name you entered (an entry named <em>quoridor.username</em>) and fills it in the next time. Saving it sends nothing to us.</p><p data-i18n="d7d7d1">Games between two named players (in a private online room, or on one device when both players typed a name) are also counted in your browser, in an entry named <em>quoridor.scores</em>. This tally holds the two names, how many games each has won against the other, when you last played, and the identifiers of the last few games so that none is counted twice. It is used only to show the score between you and a friend. It never leaves your device, and your friend's browser keeps a tally of its own.</p><p data-i18n="bac18f">When you create or join an online room, your browser stores a small entry under the name <em>quoridor.seat.</em> followed by the room's identifier. It contains your seat token, your seat number and the display name you chose. It lets you reload the page or recover from a dropped connection and keep your seat. The entry is removed when you leave the room. If you close the tab without leaving, it stays until you clear it, but it stops working once the room has expired.</p>
 <p data-i18n="b4fc90">While you search for an opponent, your browser also keeps the search ticket and your display name in <em>session storage</em> (an entry named <em>quoridor.search</em>) for that tab only. It lets the search carry on while you play the computer or open a private room, and lets the search page pick it up again after a reload. It is removed when the search ends and disappears when you close the tab.</p>
-<p data-i18n="4ad7a6">Local storage is used only to make the site work as you asked, never for tracking. If you block or clear it, the site still works; you just have to choose your language again, and you cannot resume an online seat after a reload.</p>
+<p data-i18n="30c9cd">Local storage is used only to make the site work as you asked, never for tracking. If you block or clear it, the site still works; you just have to choose your language again, type your name again and start your scores over, and you cannot resume an online seat after a reload.</p>
 
 <h2 id="third-parties" data-i18n="dbfc51">4. Third-party services and embedded content</h2>
 <ul>
@@ -854,7 +919,7 @@ setTimeout(function () { root.classList.remove('i18n-pending'); }, 3000);
 <li data-i18n="31af1c"><strong>Seat token in your browser:</strong> removed when you leave the room. You can also delete it at any time through your browser's site-data settings.</li>
 <li data-i18n="6f3852"><strong>Server logs:</strong> kept only as long as needed for security and fault-finding, then deleted.</li>
 <li data-i18n="d5a426"><strong>Emails to us:</strong> kept for as long as needed to answer you and keep a record of the conversation, then deleted. Ask us at any time to delete yours.</li>
-<li data-i18n="cd0846"><strong>Games against the computer and on one device:</strong> nothing is stored, so there is nothing to delete.</li>
+<li data-i18n="c56b04"><strong>Games against the computer and on one device:</strong> nothing is sent to us. Only the name and the tallies described in section 3 stay in your browser, until you clear them in your browser's site-data settings.</li>
 </ul>
 <p data-i18n="3b4019">Because the site has no accounts, we cannot look up data by name. To have information removed sooner, contact us (section 9) and tell us what you want removed, as precisely as you can.</p>
 
@@ -876,9 +941,9 @@ setTimeout(function () { root.classList.remove('i18n-pending'); }, 3000);
 <p data-i18n="3094c6">For questions about this policy or to make a privacy request, email <a href="mailto:lahssanyassine1@gmail.com">lahssanyassine1@gmail.com</a> or use the <a href="/contact">contact page</a>. Please do not include passwords or other sensitive details in your message.</p>
 
 <h2 id="updates" data-i18n="c45803">10. Effective date and update history</h2>
-<p data-i18n="1834cb">This policy is effective from <time datetime="2026-10-21">21 October 2026</time>. When we change it, we update the date and add an entry below. If a change materially affects how your information is used, we will say so on the site before it takes effect.</p>
+<p data-i18n="b6beae">This policy is effective from <time datetime="2026-10-23">23 October 2026</time>. When we change it, we update the date and add an entry below. If a change materially affects how your information is used, we will say so on the site before it takes effect.</p>
 <ul>
-<li data-i18n="96cdba"><time datetime="2026-10-17">17 October 2026</time>: First full version of this Privacy Policy. It replaces the earlier draft placeholder.</li><li data-i18n="63a90b"><time datetime="2026-10-17">17 October 2026</time>: Explained that an online search can keep running while you play elsewhere on the site, and the session-storage entry that makes this possible.</li><li data-i18n="d355e5"><time datetime="2026-10-17">17 October 2026</time>: Added Google Analytics (Google tag) on public pages, with its cookies and data processing. It is not loaded on online-room pages.</li><li data-i18n="1756ed"><time datetime="2026-10-17">17 October 2026</time>: Described the language choice that the translate button keeps in your browser, and added translated versions of the site.</li><li data-i18n="9ad599"><time datetime="2026-10-21">21 October 2026</time>: Described the light or dark theme choice that the theme switch keeps in your browser.</li>
+<li data-i18n="96cdba"><time datetime="2026-10-17">17 October 2026</time>: First full version of this Privacy Policy. It replaces the earlier draft placeholder.</li><li data-i18n="63a90b"><time datetime="2026-10-17">17 October 2026</time>: Explained that an online search can keep running while you play elsewhere on the site, and the session-storage entry that makes this possible.</li><li data-i18n="d355e5"><time datetime="2026-10-17">17 October 2026</time>: Added Google Analytics (Google tag) on public pages, with its cookies and data processing. It is not loaded on online-room pages.</li><li data-i18n="1756ed"><time datetime="2026-10-17">17 October 2026</time>: Described the language choice that the translate button keeps in your browser, and added translated versions of the site.</li><li data-i18n="9ad599"><time datetime="2026-10-21">21 October 2026</time>: Described the light or dark theme choice that the theme switch keeps in your browser.</li><li data-i18n="dedc2e"><time datetime="2026-10-23">23 October 2026</time>: Described the display name and the win counts between two players that your browser now remembers, in entries named quoridor.username and quoridor.scores.</li>
 </ul></div></div>
 </main>
 
@@ -889,7 +954,7 @@ setTimeout(function () { root.classList.remove('i18n-pending'); }, 3000);
         <a class="brand" href="/" aria-label="Quoridor Online home" data-i18n-attr="aria-label:e416b9"><img src="/assets/img/logo-mark.png" alt="Quoridor Online logo" width="32" height="32" data-i18n-attr="alt:334588"><span data-i18n-skip>Quoridor <span class="tld">Online</span></span></a>
         <p data-i18n="1b196f">A simple place to play and learn the Quoridor strategy game in your browser.</p>
       </div>
-      <div><h2 data-i18n="70c9aa">Play</h2><ul><li><a href="/play" data-i18n="40af30">Play Quoridor</a></li><li><a href="/play/online" data-i18n="e531b2">Play Online</a></li><li><a href="/play/computer" data-i18n="ade3a8">Play vs Computer</a></li><li><a href="/play/local" data-i18n="dcf544">Play Locally</a></li></ul></div>
+      <div><h2 data-i18n="70c9aa">Play</h2><ul><li><a href="/play" data-i18n="40af30">Play Quoridor</a></li><li><a href="/play/online" data-i18n="e531b2">Play Online</a></li><li><a href="/play/computer" data-i18n="ade3a8">Play vs Computer</a></li><li><a href="/play/local" data-i18n="dcf544">Play Locally</a></li><li><a href="/achievements" data-i18n="7c3201">Achievements</a></li></ul></div>
       <div><h2 data-i18n="87f0a1">Variants</h2><ul><li><a href="/variants/wallrush" data-i18n="9bf84e">Wallrush</a></li><li><a href="/variants/pointrush" data-i18n="e50dd0">Pointrush</a></li><li><a href="/variants/custom" data-i18n="e6b00a">Custom Game</a></li></ul></div>
       <div><h2 data-i18n="e138be">Learn</h2><ul><li><a href="/how-to-play-quoridor" data-i18n="f66e3b">How to Play</a></li><li><a href="/quoridor-rules" data-i18n="a57a64">Quoridor Rules</a></li><li><a href="/quoridor-strategy" data-i18n="4994f9">Quoridor Strategy</a></li><li><a href="/quoridor-board-game" data-i18n="bcaa86">Board Game Guide</a></li></ul></div>
       <div><h2 data-i18n="3658f9">Site</h2><ul><li><a href="/about" data-i18n="1a3c0a">About Us</a></li><li><a href="/contact" data-i18n="5250a4">Contact Us</a></li><li><a href="/privacy-policy" data-i18n="8dbcdd">Privacy Policy</a></li><li><a href="/terms" data-i18n="0a95a1">Terms of Use</a></li></ul></div>

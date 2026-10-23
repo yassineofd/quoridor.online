@@ -1,0 +1,189 @@
+<!doctype html>
+<meta charset="utf-8">
+<pre id="result"></pre>
+<script src="../static/assets/js/engine.js"></script>
+<script src="../static/assets/js/achievements.js"></script>
+<script>
+  var A = QuoridorAchievements, Q = Quoridor, out = {};
+  var KEY = 'quoridor.progress';
+  function mv(r, c) { return { type: 'move', r: r, c: c }; }
+  function wall(o, r, c) { return { type: 'wall', o: o, r: r, c: c }; }
+  function mem() {
+    var d = {};
+    return { d: d, getItem: function (k) { return k in d ? d[k] : null; }, setItem: function (k, v) { d[k] = String(v); }, removeItem: function (k) { delete d[k]; } };
+  }
+  var BROKEN = { getItem: function () { throw new Error('blocked'); }, setItem: function () { throw new Error('blocked'); }, removeItem: function () { throw new Error('blocked'); } };
+  function fresh() { var s = mem(); A.configure({ storage: s }); return s; }
+  function day(n) { return new Date(2026, 0, n, 12).getTime(); }   // noon on January n, 2026, local time
+  function ids(r) { return r.unlocked.map(function (u) { return u.id; }).sort().join(','); }
+  function play(list) {   // apply moves to a fresh classic game; returns the game
+    var g = new Q.Game();
+    list.forEach(function (m, i) { var e = g.apply(m); if (e) throw new Error('move ' + i + ' refused: ' + e); });
+    return g;
+  }
+  function info(g, o) {
+    var base = { mode: 'computer', level: 'medium', players: 2, seat: 0, winner: g.winner, reason: null, moves: g.moves };
+    for (var k in o || {}) base[k] = o[k];
+    return base;
+  }
+  // The pawn step that leaves the shortest route.
+  function bestStep(g, p) {
+    var from = g.pawns[p], best = null, bestD = Infinity;
+    g.pawnMoves(p).forEach(function (to) { g.pawns[p] = to; var d = g.distance(p); if (d < bestD) { bestD = d; best = to; } });
+    g.pawns[p] = from;
+    return mv(best[0], best[1]);
+  }
+  // The pawn step that keeps a player as far from the goal as the board allows (a player who is only wasting time).
+  function dawdle(g, p) {
+    var from = g.pawns[p], best = null, bestD = -1;
+    g.pawnMoves(p).forEach(function (to) { g.pawns[p] = to; var d = g.distance(p); if (d > bestD) { bestD = d; best = to; } });
+    g.pawns[p] = from;
+    return mv(best[0], best[1]);
+  }
+  function runUp() {   // player 0 walks straight up the middle while player 1 dawdles on its back row: 8 turns, 15 moves
+    var g = new Q.Game();
+    while (g.winner === null) g.apply(g.turn === 0 ? bestStep(g, 0) : dawdle(g, 1));
+    return g;
+  }
+
+  // ---- the list of achievements ----------------------------------------------------------------
+  var cat = A.catalog(), seen = {};
+  cat.forEach(function (a) { seen[a.id] = (seen[a.id] || 0) + 1; });
+  var keys = A.ranks().map(function (r, i) { return 'ach.rank.' + i; })
+    .concat(A.categories().map(function (c) { return 'ach.cat.' + c; }))
+    .concat(cat.reduce(function (list, a) { return list.concat(['ach.' + a.id + '.name', 'ach.' + a.id + '.desc']); }, []));
+  out.catalog = {
+    count: cat.length,
+    unique: Object.keys(seen).every(function (k) { return seen[k] === 1; }),
+    allInACategory: cat.every(function (a) { return A.categories().indexOf(a.cat) >= 0; }),
+    allPositive: cat.every(function (a) { return a.points > 0 && !!a.icon; }),
+    points: cat.reduce(function (sum, a) { return sum + a.points; }, 0),
+    ranks: A.ranks().join(','),
+    keys: keys
+  };
+
+  // ---- a game that is too short is worth nothing -------------------------------------------------
+  var store = fresh();
+  out.short = [A.recordGame(info(play([mv(7, 4), mv(1, 4), mv(6, 4), mv(2, 4), mv(5, 4)]), { winner: 0 }), day(1)), Object.keys(store.d).length].join(' ');
+
+  // ---- a first win ---------------------------------------------------------------------------------
+  store = fresh();
+  var g = runUp(), r = A.recordGame(info(g), day(1));
+  out.firstWin = { won: r.won, gained: r.gained, bonus: r.bonus, total: r.total, ids: ids(r), score: r.score, rank: r.rank, rankedUp: r.rankedUp, saved: r.saved, turns: g.moves.length };
+  out.stored = JSON.parse(store.d[KEY]).stats.wins + ' ' + JSON.parse(store.d[KEY]).stats.beat.medium;
+  out.goal = A.summary(day(1)).goal.id;   // the furthest along, and never a trophy hunter (those count the others)
+  var again = A.recordGame(info(runUp()), day(1));
+  out.second = { ids: ids(again), gained: again.gained, score: again.score, days: again.streak.days };
+
+  // ---- a loss, then the wins in a row ------------------------------------------------------------------
+  store = fresh();
+  var lostGame = runUp();
+  var loss = A.recordGame(info(lostGame, { winner: 1, reason: 'resign', moves: lostGame.moves.slice(0, 8) }), day(1));
+  out.loss = { won: loss.won, gained: loss.gained, ids: ids(loss) };
+  [2, 3, 4].forEach(function (n) { A.recordGame(info(runUp(), { level: 'easy' }), day(1)); });
+  out.afterThree = JSON.stringify([A.summary(day(1)).stats.bestWinStreak, A.summary(day(1)).items.filter(function (i) { return i.unlockedAt; }).map(function (i) { return i.id; }).filter(function (id) { return /winStreak/.test(id); })]);
+  A.recordGame(info(lostGame, { winner: 1, reason: 'resign', moves: lostGame.moves.slice(0, 8) }), day(1));
+  A.recordGame(info(runUp()), day(1));
+  out.streakReset = A.summary(day(1)).stats.bestWinStreak + ' wins ' + A.summary(day(1)).stats.wins;
+
+  // ---- days in a row -------------------------------------------------------------------------------------
+  store = fresh();
+  var daysSeen = [];
+  [1, 2, 3].forEach(function (n) { var x = A.recordGame(info(runUp()), day(n)); daysSeen.push(x.streak.days); });
+  out.days = { counted: daysSeen.join(','), unlockedDays3: A.summary(day(3)).items.filter(function (i) { return i.id === 'days3'; })[0].unlockedAt !== null };
+  A.recordGame(info(runUp()), day(3));   // the same day again: no change
+  out.sameDay = A.summary(day(3)).streak.days;
+  var miss = A.recordGame(info(runUp()), day(5));   // a day was skipped: starts again, the best one is kept
+  out.skipped = [miss.streak.days, A.summary(day(5)).streak.best, A.summary(day(6)).streak.days, A.summary(day(7)).streak.days, A.summary(day(7)).streak.best].join(',');
+  out.playedToday = [A.summary(day(5)).streak.playedToday, A.summary(day(6)).streak.playedToday].join(',');
+
+  // ---- one device and the variants ---------------------------------------------------------------------------
+  store = fresh();
+  var lg = runUp();
+  var local = A.recordGame({ mode: 'local', players: 2, seat: null, winner: 0, reason: null, moves: lg.moves }, day(1));
+  out.local = { won: local.won, gained: local.gained, ids: ids(local), wins: A.summary(day(1)).stats.wins };
+  function fake(n) { var m = []; for (var i = 0; i < n; i++) m.push(mv(0, 0)); return m; }
+  var v1 = A.recordGame({ mode: 'local', variant: 'wallrush', players: 2, seat: null, winner: 0, moves: fake(8) }, day(1));
+  var v2 = A.recordGame({ mode: 'local', variant: 'pointrush', players: 3, seat: null, winner: 1, moves: fake(9) }, day(1));
+  var v3 = A.recordGame({ mode: 'local', variant: 'custom', players: 2, options: { size: 5, walls: 0, borrow: false }, seat: null, winner: 0, moves: fake(8) }, day(1));
+  out.variants = [ids(v1), ids(v2), ids(v3)].join(' | ');
+  out.explorerProgress = JSON.stringify(A.summary(day(1)).items.filter(function (i) { return i.id === 'explorer'; })[0].progress);
+
+  // ---- online --------------------------------------------------------------------------------------------------
+  store = fresh();
+  var og = runUp();
+  var online = A.recordGame({ mode: 'online', players: 2, seat: 0, winner: 0, reason: null, moves: og.moves }, day(1));
+  out.online = { ids: ids(online), gained: online.gained };
+  var lostOnline = A.recordGame({ mode: 'online', players: 2, seat: 1, winner: 0, reason: null, moves: og.moves }, day(1));
+  out.onlineLoss = { won: lostOnline.won, gained: lostOnline.gained };
+  store = fresh();
+  var gaveUp = A.recordGame({ mode: 'online', players: 2, seat: 0, winner: 0, reason: 'resign', moves: og.moves.slice(0, 10) }, day(1));
+  out.onlineResign = { won: gaveUp.won, ids: ids(gaveUp), gained: gaveUp.gained };   // a win, but not one the skill achievements read (speed, noWalls ...)
+
+  // ---- what a replay finds -----------------------------------------------------------------------------------------
+  // jump: player 0 waits with a wall, player 1 walks up to it and player 0 jumps over
+  var jumpMoves = [mv(7, 4), mv(1, 4), mv(6, 4), mv(2, 4), mv(5, 4), mv(3, 4), wall('h', 7, 0), mv(4, 4), mv(3, 4)];
+  play(jumpMoves);
+  var j0 = A.analyze({ moves: jumpMoves, players: 2, seat: 0 }), j1 = A.analyze({ moves: jumpMoves, players: 2, seat: 1 });
+  out.jump = [j0.jumped, j1.jumped, j0.turns, j0.walls, j1.turns, j1.walls, j0.detour].join(' ');
+  // detour: a corridor around column 4 and a wall that closes its far end behind player 1
+  var trapMoves = [wall('v', 2, 3), mv(1, 4), wall('v', 4, 3), mv(2, 4), wall('v', 2, 4), mv(3, 4), wall('v', 4, 4), mv(4, 4), wall('h', 5, 4)];
+  play(trapMoves);
+  var t0 = A.analyze({ moves: trapMoves, players: 2, seat: 0 }), t1 = A.analyze({ moves: trapMoves, players: 2, seat: 1 });
+  out.detour = [t0.detour, t0.behind, t0.walls, t0.wallsLeft, t1.detour, t1.walls].join(' ');
+  store = fresh();
+  var detourRun = A.recordGame({ mode: 'online', players: 2, seat: 0, winner: 1, reason: 'resign', moves: trapMoves }, day(1));
+  out.detourAchievement = ids(detourRun);
+  // one device: nobody is "you", so nothing is replayed, but every turn and wall is counted
+  var lc = A.analyze({ moves: trapMoves, players: 2, seat: null });
+  out.deviceCounts = [lc.turns, lc.walls, lc.jumped, lc.detour].join(' ');
+
+  // comeback: player 0 spends five turns on walls in a far corner while player 1 walks five steps (player 0 is 5 steps behind), then player 1 dawdles and player 0 still gets there first
+  var cg = new Q.Game();
+  [wall('h', 7, 0), wall('h', 7, 2), wall('h', 7, 6), wall('h', 6, 0), wall('h', 6, 6)].forEach(function (w) { cg.apply(w); cg.apply(bestStep(cg, 1)); });
+  while (cg.winner === null && cg.moves.length < 400) cg.apply(cg.turn === 0 ? bestStep(cg, 0) : dawdle(cg, 1));
+  var c0 = A.analyze({ moves: cg.moves, players: 2, seat: 0 }), c1 = A.analyze({ moves: cg.moves, players: 2, seat: 1 });
+  store = fresh();
+  var cr = A.recordGame(info(cg, { level: 'hard' }), day(1)), crIds = ids(cr).split(',');
+  out.comeback = { winner: cg.winner, behind: c0.behind, walls: c0.walls, achievement: crIds.indexOf('comeback') >= 0, noWalls: crIds.indexOf('noWalls') >= 0, speed: crIds.indexOf('speed') >= 0, otherWins: c1.behind };
+
+  // all of the player's walls
+  var wg = new Q.Game();
+  // player 0 places ten walls (each at a different spot, on the far side from both pawns' route) while player 1 stays put, then walks
+  var spots = [['h', 3, 0], ['h', 3, 2], ['h', 3, 4], ['h', 3, 6], ['h', 5, 0], ['h', 5, 2], ['h', 5, 4], ['h', 5, 6], ['v', 0, 0], ['v', 0, 7]];
+  spots.forEach(function (s) {
+    var e = wg.apply(wall(s[0], s[1], s[2]));
+    if (e) throw new Error('wall refused ' + s + ' ' + e);
+    wg.apply(dawdle(wg, 1));
+  });
+  while (wg.winner === null && wg.moves.length < 300) wg.apply(wg.turn === 0 ? bestStep(wg, 0) : dawdle(wg, 1));
+  store = fresh();
+  var wr = A.recordGame(info(wg, { level: 'easy' }), day(1));
+  out.allWalls = { winner: wg.winner, left: wg.wallsLeft[0], ids: ids(wr) };
+
+  // ---- the data in storage ---------------------------------------------------------------------------------------
+  store = fresh();
+  store.d[KEY] = '{nonsense';
+  out.damaged = A.summary(day(1)).score + ' ' + A.summary(day(1)).stats.games;
+  store.d[KEY] = JSON.stringify({ xp: -5, stats: { games: 'x', wins: 3.7 }, unlocked: { bogus: 1, firstGame: 5 } });
+  var sane = A.summary(day(1));
+  out.sane = [sane.score, sane.stats.games, sane.stats.wins, sane.unlocked].join(' ');
+  [74, 75, 199, 200, 1699, 1700, 99999].forEach(function (xp) { store.d[KEY] = JSON.stringify({ xp: xp }); });
+  out.ranks = [0, 74, 75, 199, 200, 1699, 1700, 99999].map(function (xp) { store.d[KEY] = JSON.stringify({ xp: xp }); var s = A.summary(day(1)); return s.rank + (s.next ? '>' + s.next.remaining : '>-'); }).join(' ');
+  store.d[KEY] = JSON.stringify({ xp: 100 });
+  out.nextRank = JSON.stringify(A.summary(day(1)).next);
+
+  // storage that refuses to save: the score still works until the page closes
+  A.configure({ storage: BROKEN });
+  var blocked = A.recordGame(info(runUp()), day(1));
+  out.blocked = { saved: blocked.saved, score: A.summary(day(1)).score === blocked.score, works: A.storageWorks() };
+  A.reset();
+  out.afterReset = A.summary(day(1)).score;
+
+  store = fresh();
+  A.recordGame(info(runUp()), day(1));
+  out.works = A.storageWorks();
+  A.reset();
+  out.resetKey = KEY in store.d;
+  document.getElementById('result').textContent = JSON.stringify(out);
+</script>

@@ -154,8 +154,6 @@ dddce3|El jugador 1 usa el peón cian relleno y mueve primero, desde el borde in
 64d690|Pasen el dispositivo después de cada movimiento.
 3fe725|Nombre del jugador 1 (opcional)
 2467f7|Nombre del jugador 2 (opcional)
-311dec|Crear una sala privada de Quoridor
-732df9|Crea una sala privada de Quoridor y comparte el enlace de invitación o el código de emparejamiento con un amigo.
 17319d|Crear una sala
 c2fab0|Crear una sala privada
 81b35f|Crea una sala y luego comparte el enlace de invitación o el código de emparejamiento con tu amigo.
@@ -174,6 +172,7 @@ c82edf|Unirse a una sala privada de Quoridor
 9351be|Únete a una sala privada
 8afba4|Introduce el código de emparejamiento que te envió tu amigo, o abre su enlace de invitación.
 79bd7f|De 2 a 20 caracteres. Tu oponente verá este nombre.
+118cc9|En una partida de dos jugadores, escribe ambos nombres para llevar la cuenta de quién gana entre los dos. El marcador se queda en este dispositivo.
 7c82d0|Código de emparejamiento
 bf8aef|6 caracteres. ¿Tienes un enlace de invitación? Simplemente ábrelo.
 859667|<svg/> Unirse a la sala
@@ -654,7 +653,7 @@ c9d622|Tu información
 d07068|Usamos tu mensaje y tu dirección de correo únicamente para responderte. El formulario no envía nada por sí mismo: abre un borrador en tu propia aplicación de correo y no se envía nada hasta que tú lo envíes. Consulta la <a href="/privacy-policy/">Política de privacidad</a> para saber cómo trata el sitio la información.
 7c0489|Política de privacidad – Quoridor.online
 9451bc|Cómo trata Quoridor.online tu información: qué recopilamos, cookies y almacenamiento del navegador, salas en línea y nombres de usuario, conservación y tus derechos.
-6a1456|Qué recopilamos, qué no recopilamos y cuánto tiempo lo conservamos. En vigor desde el 21 de octubre de 2026.
+d7762c|Qué recopilamos, qué no recopilamos y cuánto tiempo lo conservamos. En vigor desde el 23 de octubre de 2026.
 433a5f|Esta página puede leerse en otros idiomas con el botón de traducción. Las traducciones se ofrecen por comodidad; si difieren del texto en inglés, prevalece el texto en inglés.
 57a0f5|Esta política explica qué información trata Quoridor.online (&laquo;nosotros&raquo;) cuando visitas el sitio, juegas a Quoridor o nos contactas. La mantenemos breve porque recopilamos muy poco: no hay cuentas ni publicidad, y la única analítica es Google Analytics en nuestras páginas públicas.
 7ed24b|<strong>En resumen:</strong> las partidas contra el ordenador y en un solo dispositivo se quedan en tu navegador; Google Analytics instala cookies para contar visitas (nunca en las páginas de salas en línea); y lo poco que necesita el juego en línea se guarda solo en memoria, durante minutos.
@@ -683,7 +682,7 @@ c4bdad|3. Almacenamiento local en tu navegador
 0a1ad0|El almacenamiento local es una pequeña zona de tu navegador donde un sitio puede guardar datos en tu dispositivo. No se nos envía con las solicitudes de página.
 490524|Si eliges un idioma con el botón de traducción, tu navegador guarda el código del idioma (por ejemplo <em>es</em>) en una entrada llamada <em>quoridor.lang</em>, para que el sitio se abra en ese idioma la próxima vez. Nunca se nos envía, y el servidor del juego nunca sabe qué idioma usas. Hasta que elijas, el sitio lee la lista de idiomas de tu navegador para escoger un primer idioma; eso también se queda en tu navegador.
 b3adf2|No se almacena nada más en el almacenamiento local de tu navegador. Si más adelante se añade el juego en línea, esta sección describirá lo que almacena.
-2288a1|El almacenamiento local se usa solo para que el sitio funcione como pediste, nunca para el seguimiento. Si lo bloqueas o lo borras, el sitio sigue funcionando; solo tendrás que elegir de nuevo tu idioma.
+4a289b|El almacenamiento local se usa solo para que el sitio funcione como pediste, nunca para el seguimiento. Si lo bloqueas o lo borras, el sitio sigue funcionando; solo tendrás que elegir de nuevo tu idioma, escribir otra vez tu nombre y empezar de cero tus marcadores.
 dbfc51|4. Servicios de terceros y contenido incrustado
 30d716|<strong>Google Analytics.</strong> Las páginas públicas cargan el script de analítica de Google desde servidores de Google, y Google trata los datos de la visita descritos en la sección 2 conforme a su propia <a href="https://policies.google.com/privacy" rel="noopener noreferrer">política de privacidad</a>. Esto puede implicar la transferencia de datos fuera de tu país. Las páginas de salas en línea no cargan nada de otras empresas.
 cb98b4|<strong>No se carga nada más de otras empresas.</strong> Aparte de Google Analytics, las páginas cargan scripts, estilos, fuentes e imágenes solo desde el propio Quoridor.online, y las cabeceras de seguridad del sitio bloquean cualquier otra cosa. No hay vídeos incrustados, botones de redes sociales ni scripts de publicidad.
@@ -695,7 +694,7 @@ d123bb|El juego en línea y las salas privadas no están disponibles en este sit
 0d18df|6. Conservación y eliminación de datos
 6f3852|<strong>Registros del servidor:</strong> se conservan solo el tiempo necesario para la seguridad y la detección de fallos, y luego se eliminan.
 d5a426|<strong>Correos que nos envías:</strong> se conservan el tiempo necesario para responderte y mantener un registro de la conversación, y luego se eliminan. Pídenos en cualquier momento que eliminemos los tuyos.
-cd0846|<strong>Partidas contra el ordenador y en un solo dispositivo:</strong> no se almacena nada, así que no hay nada que eliminar.
+c56b04|<strong>Partidas contra el ordenador y en un solo dispositivo:</strong> no se nos envía nada. Solo el nombre y los recuentos descritos en la sección 3 se quedan en tu navegador, hasta que los borres en los ajustes de datos del sitio de tu navegador.
 3b4019|Como el sitio no tiene cuentas, no podemos buscar datos por nombre. Para que se eliminen información antes, contáctanos (sección 9) e indícanos lo que quieres que se elimine, con la mayor precisión posible.
 0fcb30|7. Privacidad de los menores
 568d4a|Quoridor es un juego familiar, y el sitio no necesita cuenta ni datos personales. No recopilamos a sabiendas información personal de menores, y no dirigimos publicidad a nadie. El juego en línea solo pide un nombre visible. Los menores deben elegir un apodo en lugar de su nombre real y pedir permiso a un progenitor o tutor antes de jugar en línea. Si crees que un menor nos ha dado información personal, contáctanos y la eliminaremos.
@@ -710,7 +709,7 @@ d49505|presentar una reclamación ante tu autoridad local de protección de dato
 9ef148|9. Información de contacto
 3094c6|Para preguntas sobre esta política o para hacer una solicitud de privacidad, escribe a <a href="mailto:lahssanyassine1@gmail.com">lahssanyassine1@gmail.com</a> o usa la <a href="/contact/">página de contacto</a>. Por favor, no incluyas contraseñas ni otros datos sensibles en tu mensaje.
 c45803|10. Fecha de entrada en vigor e historial de actualizaciones
-1834cb|Esta política entra en vigor el <time datetime="2026-10-21">21 de octubre de 2026</time>. Cuando la modifiquemos, actualizaremos la fecha y añadiremos una entrada más abajo. Si un cambio afecta de forma sustancial al uso de tu información, lo indicaremos en el sitio antes de que entre en vigor.
+b6beae|Esta política entra en vigor el <time datetime="2026-10-23">23 de octubre de 2026</time>. Cuando la modifiquemos, actualizaremos la fecha y añadiremos una entrada más abajo. Si un cambio afecta de forma sustancial al uso de tu información, lo indicaremos en el sitio antes de que entre en vigor.
 96cdba|<time datetime="2026-10-17">17 de octubre de 2026</time>: primera versión completa de esta Política de privacidad. Sustituye al borrador provisional anterior.
 63a90b|<time datetime="2026-10-17">17 de octubre de 2026</time>: se explicó que una búsqueda en línea puede seguir ejecutándose mientras juegas en otra parte del sitio, y la entrada de almacenamiento de sesión que lo hace posible.
 d355e5|<time datetime="2026-10-17">17 de octubre de 2026</time>: se añadió Google Analytics (etiqueta de Google) en las páginas públicas, con sus cookies y su tratamiento de datos. No se carga en las páginas de salas en línea.
@@ -840,7 +839,7 @@ dbf4a8|<strong>Para todos.</strong> El sitio y el juego pueden mostrarse en ingl
 e50442|<strong>Dirección de red.</strong> Tu dirección IP llega a nuestro servidor con cada solicitud. El servidor de juego la guarda en memoria durante aproximadamente un minuto para poder limitar abusos, como crear salas demasiado rápido.
 bac18f|Cuando creas o te unes a una sala en línea, tu navegador guarda una pequeña entrada con el nombre <em>quoridor.seat.</em> seguido del identificador de la sala. Contiene tu token de asiento, tu número de asiento y el nombre visible que elegiste. Te permite recargar la página o recuperarte de una conexión interrumpida y conservar tu asiento. La entrada se elimina cuando sales de la sala. Si cierras la pestaña sin salir, permanece hasta que la borres, pero deja de funcionar cuando la sala haya caducado.
 b4fc90|Mientras buscas un oponente, tu navegador también guarda el ticket de búsqueda y tu nombre visible en el <em>almacenamiento de sesión</em> (una entrada llamada <em>quoridor.search</em>) solo para esa pestaña. Permite que la búsqueda continúe mientras juegas contra el ordenador o abres una sala privada, y que la página de búsqueda la retome tras una recarga. Se elimina cuando termina la búsqueda y desaparece al cerrar la pestaña.
-4ad7a6|El almacenamiento local se usa solo para que el sitio funcione como pediste, nunca para el seguimiento. Si lo bloqueas o lo borras, el sitio sigue funcionando; solo tendrás que elegir de nuevo tu idioma, y no podrás retomar un asiento en línea tras una recarga.
+30c9cd|El almacenamiento local se usa solo para que el sitio funcione como pediste, nunca para el seguimiento. Si lo bloqueas o lo borras, el sitio sigue funcionando; solo tendrás que elegir de nuevo tu idioma, escribir otra vez tu nombre y empezar de cero tus marcadores, y no podrás retomar un asiento en línea tras una recarga.
 95fcb9|<strong>Los nombres de usuario son nombres visibles, no cuentas.</strong> Tienen de 2 a 20 caracteres. Por favor, no uses tu nombre real, tu dirección de correo ni nada que te identifique. Dos jugadores pueden elegir el mismo nombre.
 064cce|<strong>Quién ve tu nombre.</strong> Tu oponente ve tu nombre visible. Cualquiera que abra la invitación a una sala privada antes de que esté llena también puede ver el nombre visible del anfitrión.
 770992|<strong>Los enlaces y códigos compartidos actúan como llaves.</strong> A una sala privada se accede mediante un enlace largo y aleatorio y un código de emparejamiento corto. Cualquiera que tenga el enlace o el código mientras haya un asiento libre puede ocupar ese asiento, así que compártelo solo con la persona con quien quieres jugar. Las páginas de sala piden a los motores de búsqueda que no las indexen y se sirven de modo que la dirección de la página no se transmita a otros sitios.
@@ -922,6 +921,7 @@ game.confirmRestart|¿Reiniciar la partida? Se perderá la partida actual.
 game.confirmResign|¿Rendirte en esta partida? Tu oponente será el ganador.
 game.confirmLeaveOnline|¿Salir de esta partida? Salir cuenta como abandono.
 game.confirmLeave|¿Salir de esta partida?
+game.score|Marcador: {name} {x} – {y} {other}
 board.title|Tablero de Quoridor
 board.label|Tablero de Quoridor. {desc}
 board.pawnOn|Peón de {name} en {square}, muros restantes: {n}.
@@ -1182,4 +1182,133 @@ f39515|Sí. Elige sin reloj, o 15 segundos, 32 segundos, 1 minuto o 2 minutos po
 7eb334|Tema claro
 4a45c9|Tema claro
 feda4b|Si eliges un tema con el interruptor de tema del menú, tu navegador guarda tu elección (<em>light</em> o <em>dark</em>) en una entrada llamada <em>quoridor.theme</em>, para que el sitio se abra con ese tema la próxima vez. Nunca se nos envía.
+a08cd9|Para que no tengas que volver a escribir tu nombre, tu navegador guarda el último nombre visible que introdujiste (en una entrada llamada <em>quoridor.username</em>) y lo rellena la próxima vez. Guardarlo no nos envía nada.
+d8b17d|Las partidas entre dos jugadores con nombre (en un solo dispositivo, cuando ambos jugadores escribieron un nombre) también se cuentan en tu navegador, en una entrada llamada <em>quoridor.scores</em>. Este recuento contiene los dos nombres, cuántas partidas ha ganado cada uno contra el otro, cuándo se jugó por última vez y los identificadores de las últimas partidas, para que ninguna se cuente dos veces. Solo se usa para mostrar el marcador entre tú y un amigo. Nunca sale de tu dispositivo, y el navegador de tu amigo lleva su propio recuento.
+d7d7d1|Las partidas entre dos jugadores con nombre (en una sala privada en línea, o en un solo dispositivo cuando ambos jugadores escribieron un nombre) también se cuentan en tu navegador, en una entrada llamada <em>quoridor.scores</em>. Este recuento contiene los dos nombres, cuántas partidas ha ganado cada uno contra el otro, cuándo se jugó por última vez y los identificadores de las últimas partidas, para que ninguna se cuente dos veces. Solo se usa para mostrar el marcador entre tú y un amigo. Nunca sale de tu dispositivo, y el navegador de tu amigo lleva su propio recuento.
 9ad599|<time datetime="2026-10-21">21 de octubre de 2026</time>: se describió la elección de tema claro u oscuro que el interruptor de tema guarda en tu navegador.
+dedc2e|<time datetime="2026-10-23">23 de octubre de 2026</time>: se describieron el nombre visible y los recuentos de victorias entre dos jugadores que ahora recuerda tu navegador, en entradas llamadas quoridor.username y quoridor.scores.
+ach.rank.0|Peón novato
+ach.rank.1|Constructor de muros
+ach.rank.2|Buscacaminos
+ach.rank.3|Táctico
+ach.rank.4|Estratega
+ach.rank.5|Maestro de muros
+ach.rank.6|Gran maestro
+ach.cat.start|Primeros pasos
+ach.cat.robots|Robots
+ach.cat.skill|Habilidad
+ach.cat.milestones|Hitos
+ach.cat.streaks|Rachas
+ach.cat.together|En línea, amigos y variantes
+ach.gain|+{n} pts
+ach.score|Puntuación: {n}
+ach.newTitle|Nuevos logros
+ach.rankUp|¡Nuevo rango: {name}!
+ach.nextRank|Siguiente rango: {name} (faltan {n} pts)
+ach.topRank|Has alcanzado el rango más alto.
+ach.streakKeep|Racha de días: {n}. Vuelve mañana para mantenerla.
+ach.streakStart|Vuelve mañana para empezar una racha de días.
+ach.streakToday|Racha de días: {n}. Termina una partida hoy para mantenerla.
+ach.notSaved|Tu navegador no permite que este sitio guarde tu progreso, así que se perderá al cerrar la página.
+ach.viewAll|Ver todos los logros
+ach.nextGoal|Próximo objetivo: {name}
+ach.rankLabel|Tu rango
+ach.unlockedCount|Desbloqueados: {done} / {total}
+ach.unlockedOn|Desbloqueado el {date}
+ach.unlocked|Desbloqueado
+ach.locked|Bloqueado
+ach.stat.games|Partidas
+ach.stat.wins|Victorias
+ach.stat.walls|Muros colocados
+ach.stat.bestWins|Mejor racha de victorias
+ach.stat.days|Racha de días
+ach.reset|Reiniciar progreso
+ach.resetConfirm|¿Borrar tu puntuación, rango y logros en este dispositivo? No se puede deshacer.
+ach.resetDone|Tu progreso se ha borrado.
+ach.localOnly|Tu progreso se guarda solo en este navegador. Nunca se nos envía, y al borrar los datos del sitio vuelve a empezar.
+ach.firstGame.name|Primeros pasos
+ach.firstGame.desc|Termina tu primera partida.
+ach.firstWall.name|Primer muro
+ach.firstWall.desc|Coloca tu primer muro en una partida que termines.
+ach.firstWin.name|Primera victoria
+ach.firstWin.desc|Gana una partida contra el robot o un rival en línea.
+ach.learn.name|Curva de aprendizaje
+ach.learn.desc|Pierde una partida contra el robot o un rival en línea. Todos los campeones lo han hecho.
+ach.beatEasy.name|Novato de los robots
+ach.beatEasy.desc|Vence al robot fácil.
+ach.beatMedium.name|Rival de los robots
+ach.beatMedium.desc|Vence al robot medio.
+ach.beatHard.name|Rompe-robots
+ach.beatHard.desc|Vence al robot difícil.
+ach.beatExpert.name|Campeón de los robots
+ach.beatExpert.desc|Vence al robot experto.
+ach.speed.name|Directo a la meta
+ach.speed.desc|Gana una partida en 12 turnos o menos.
+ach.noWalls.name|Corredor puro
+ach.noWalls.desc|Gana sin colocar ningún muro contra el robot medio, difícil o experto, o contra un rival en línea.
+ach.allWalls.name|Fortaleza
+ach.allWalls.desc|Gana una partida después de colocar todos tus muros.
+ach.jump.name|Salto de rana
+ach.jump.desc|Salta por encima del peón de tu rival o rodéalo.
+ach.detour.name|Maestro del desvío
+ach.detour.desc|Coloca un muro que alargue al menos 4 pasos el camino de tu rival.
+ach.comeback.name|Remontada
+ach.comeback.desc|Gana después de ir 5 o más pasos por detrás en la carrera.
+ach.games10.name|Habitual
+ach.games10.desc|Termina 10 partidas.
+ach.games50.name|Dedicado
+ach.games50.desc|Termina 50 partidas.
+ach.wins5.name|Hábito ganador
+ach.wins5.desc|Gana 5 partidas.
+ach.wins25.name|Jugador curtido
+ach.wins25.desc|Gana 25 partidas.
+ach.wins100.name|Centurión
+ach.wins100.desc|Gana 100 partidas.
+ach.walls100.name|Maestro constructor
+ach.walls100.desc|Coloca 100 muros.
+ach.hunter10.name|Cazador de trofeos
+ach.hunter10.desc|Desbloquea 10 logros.
+ach.hunter20.name|Coleccionista de trofeos
+ach.hunter20.desc|Desbloquea 20 logros.
+ach.winStreak3.name|Racha caliente
+ach.winStreak3.desc|Gana 3 partidas seguidas.
+ach.winStreak7.name|Imparable
+ach.winStreak7.desc|Gana 7 partidas seguidas.
+ach.days3.name|Volviendo
+ach.days3.desc|Juega 3 días seguidos.
+ach.days7.name|Fiel cada semana
+ach.days7.desc|Juega 7 días seguidos.
+ach.days30.name|Parte de la rutina
+ach.days30.desc|Juega 30 días seguidos.
+ach.onlineGame.name|A la arena
+ach.onlineGame.desc|Termina una partida en línea.
+ach.onlineWin.name|Vencedor en línea
+ach.onlineWin.desc|Gana una partida en línea.
+ach.online10.name|Veterano en línea
+ach.online10.desc|Gana 10 partidas en línea.
+ach.friend.name|Pasa el dispositivo
+ach.friend.desc|Termina una partida con un amigo en un solo dispositivo.
+ach.explorer.name|Explorador
+ach.explorer.desc|Termina una partida de Wallrush, de Pointrush y de Partida personalizada.
+7c3201|Logros
+e70da8|Consigue logros y sube de rango
+80ed8e|Cada partida que termines suma puntos. Vence a los robots, mantén una racha y desbloquea logros. Tu progreso se queda en tu navegador, sin cuenta.
+e11a01|Ver tus logros <svg/>
+94d879|Logros y rango – Quoridor.online
+1a12ef|Consulta tu puntuación, rango y logros de Quoridor. Tu progreso se guarda solo en tu navegador.
+380e41|Gana puntos y rangos mientras juegas: gana partidas, mantén rachas y prueba todas las formas de jugar. Tu progreso se guarda en este navegador.
+7e9f89|Tus logros se guardan en tu navegador y necesitan JavaScript para mostrarse.
+09aba9|Juega codo con codo en una sola pantalla
+1a7dbb|Se aplican las reglas habituales de Quoridor. En cada turno mueves tu peón o colocas un muro, y un muro nunca puede cortar todos los caminos hacia la meta. ¿Prefieres jugar con alguien que conoces? <a href="/play/create-room/">Crea una sala privada</a> y envía a tu amigo el enlace de invitación, o entrena antes <a href="/play/computer/">contra el ordenador</a>.
+47f79e|Las salas usan las reglas clásicas en un tablero de 9×9, con 10 muros para cada jugador. Tu amigo puede abrir el enlace o escribir el código en la página para <a href="/play/join-room/">unirse a una sala</a>. ¿Prefieres una partida rápida contra un desconocido? Prueba el <a href="/play/online/">emparejamiento en línea</a>.
+7e381f|Cómo funciona el emparejamiento en línea
+8151c7|Practica Quoridor contra el ordenador
+81adfa|Escribe un nombre de usuario y pulsa Buscar un oponente. El sitio te empareja con la siguiente persona que esté buscando partida, y el juego empieza en cuanto se encuentra un oponente. No hay nada que instalar ni cuenta que crear: tu nombre de usuario es solo un nombre visible en la partida.
+9eb02d|Cómo jugar a Quoridor en línea con un amigo
+a77241|Juega a Quoridor en línea con amigos – Sala privada
+ae9081|Juega a Quoridor en línea con amigos. Crea una sala privada, comparte el enlace de invitación o el código de emparejamiento y la partida empieza en cuanto tu amigo se une.
+b24a80|Jugar en local es la forma más rápida de jugar con un amigo: sentaos juntos, compartid una pantalla y pasaos el dispositivo después de cada movimiento. Escribe los dos nombres si quieres que el sitio lleve la cuenta de quién gana entre vosotros. La puntuación se queda en este dispositivo. Dos jugadores es el juego clásico. Para tres o cuatro jugadores, otro tamaño de tablero o tus propias reglas, prueba las <a href="/variants/">variantes de Quoridor</a>.
+bfc57f|El oponente informático se ejecuta en tu navegador, así que la partida empieza al instante y funciona sin cuenta. Empieza en Fácil para ver cómo interactúan los peones y los muros, y sube de nivel cuando ganes con comodidad. ¿Es tu primera vez con el juego? Lee <a href="/how-to-play-quoridor/">cómo jugar a Quoridor</a> o estudia la <a href="/quoridor-strategy/">guía de estrategia</a> para sacar más partido a tus muros.
+cebb15|Una sala privada sirve para jugar con una persona concreta, esté donde esté. Elige un nombre de usuario y crea una sala: recibes un enlace de invitación y un código de emparejamiento corto. Envía cualquiera de los dos a tu amigo y la partida empieza en cuanto se una. Ninguno de los dos necesita una cuenta.
+7fc164|Para guardar tu puntuación, rango y logros, tu navegador conserva un recuento de las partidas que terminas, en una entrada llamada <em>quoridor.progress</em>. Contiene cuántas partidas has jugado y ganado, cuántos muros has colocado, tus mejores rachas, el último día que jugaste, los puntos que has conseguido y los logros que has desbloqueado, con el día en que desbloqueaste cada uno. Nunca contiene tus movimientos ni tu nombre visible, y nunca se nos envía. Si borras los datos del sitio, o pulsas Reiniciar progreso en la página de Logros, tu puntuación, rango y logros vuelven a empezar.
+7e79c7|<time datetime="2026-10-23">23 de octubre de 2026</time>: se describieron la puntuación, el rango y los logros que ahora guarda tu navegador, en una entrada llamada quoridor.progress.

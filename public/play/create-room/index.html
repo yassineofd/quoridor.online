@@ -5,9 +5,9 @@
 <script src="/assets/js/gtag-init.js" defer></script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title data-i18n-attr="text:311dec">Create a Private Quoridor Room</title>
-<meta name="description" content="Create a private Quoridor room and share the invitation link or pairing code with a friend." data-i18n-attr="content:732df9">
-<meta name="robots" content="noindex, follow">
+<title data-i18n-attr="text:a77241">Play Quoridor Online With Friends – Private Room</title>
+<meta name="description" content="Play Quoridor online with friends. Create a private room, share the invitation link or pairing code, and the game starts as soon as your friend joins." data-i18n-attr="content:ae9081">
+<meta name="robots" content="index, follow">
 <meta name="theme-color" content="#0B1220">
 <meta name="color-scheme" content="dark">
 <link rel="canonical" href="https://quoridor.online/play/create-room">
@@ -18,8 +18,8 @@
 <link rel="manifest" href="/site.webmanifest">
 <meta property="og:site_name" content="Quoridor Online">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Create a Private Quoridor Room" data-i18n-attr="content:311dec">
-<meta property="og:description" content="Create a private Quoridor room and share the invitation link or pairing code with a friend." data-i18n-attr="content:732df9">
+<meta property="og:title" content="Play Quoridor Online With Friends – Private Room" data-i18n-attr="content:a77241">
+<meta property="og:description" content="Play Quoridor online with friends. Create a private room, share the invitation link or pairing code, and the game starts as soon as your friend joins." data-i18n-attr="content:ae9081">
 <meta name="twitter:card" content="summary_large_image">
 <meta property="og:url" content="https://quoridor.online/play/create-room">
 <meta property="og:image" content="https://quoridor.online/assets/img/og-image.svg">
@@ -587,6 +587,7 @@ background: var(--color-surface); border: 2px solid var(--control-border); borde
 .game-side > * { order: 5; margin: 0; }
 .game-side > .game-banner { order: 0; }
 .game-side > .players { order: 1; }
+.game-side > .score-line { order: 1; }
 .game-side > .turn-bar { order: 2; }
 .game-side > .turn-timer { order: 2; }
 .game-side > .result { order: 4; }
@@ -610,6 +611,7 @@ background: var(--color-surface); border: 2px solid var(--control-border); borde
 .turn-bar:focus-visible { outline: 3px solid var(--color-accent); outline-offset: 2px; }
 .players { list-style: none; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: stretch; gap: var(--space-2); }
 .players--multi { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.score-line { padding: var(--space-2) var(--space-4); border: 1px dashed var(--control-border); border-radius: var(--radius-card); text-align: center; font-weight: 600; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
 .vs-chip { align-self: center; padding: 10px 8px; border: 1px solid var(--color-border); border-radius: 12px; background: var(--color-surface); color: var(--color-text-muted); font-size: 0.8125rem; font-weight: 700; letter-spacing: 0.08em; }
 .player-card { --pc: var(--color-accent); display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-areas: "glyph text" "meta meta"; align-items: center; gap: 6px var(--space-2); margin: 0; padding: 10px; border: 2px solid rgba(255, 255, 255, 0.14); border: 2px solid color-mix(in srgb, var(--pc) 45%, transparent); border-radius: 16px; background: var(--color-surface); background: color-mix(in srgb, var(--pc) 14%, var(--color-surface)); min-width: 0; transition: box-shadow 0.2s, border-color 0.2s; }
 .player-card--1 { --pc: var(--color-player-2); }
@@ -724,7 +726,70 @@ select.input { cursor: pointer; }
 .check-line input { width: 20px; height: 20px; margin-top: 2px; flex: none; accent-color: var(--color-accent); }
 .contact-form { margin: var(--space-5) 0 var(--space-6); }
 .contact-form .btn { margin-top: var(--space-2); }
-.contact-status { margin-top: var(--space-4); }</style>
+.contact-status { margin-top: var(--space-4); }
+.ach-icon { flex: none; display: inline-grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--gradient-selected); border: 1px solid var(--color-border); color: var(--color-accent); }
+.ach-icon svg { width: 22px; height: 22px; }
+.ach-pts { flex: none; align-self: flex-start; padding: 2px 10px; border: 1px solid var(--control-border); border-radius: 999px; font-size: 0.8125rem; font-weight: 600; white-space: nowrap; color: var(--color-text-muted); font-variant-numeric: tabular-nums; }
+.meter { display: block; height: 8px; border-radius: 4px; background: var(--color-border); overflow: hidden; }
+.meter-fill { display: block; height: 100%; width: 0; border-radius: 4px; background: var(--color-accent); }
+.reward { margin-block: var(--space-4); padding: var(--space-4); border: 1px solid var(--color-border); border-radius: var(--radius-card); background: var(--gradient-selected), var(--color-surface); }
+.reward-points { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-1) var(--space-3); margin: 0 0 var(--space-3); }
+.reward-gain { font-size: 1.5rem; font-weight: 700; color: var(--color-accent); font-variant-numeric: tabular-nums; }
+.reward-total { color: var(--color-text-muted); font-weight: 600; }
+.reward-rankup { display: flex; align-items: center; gap: var(--space-3); margin: 0 0 var(--space-3); font-weight: 700; }
+.reward-title { margin: var(--space-3) 0 var(--space-2); font-size: 1rem; }
+.reward-list { list-style: none; margin: 0 0 var(--space-3); padding: 0; display: grid; gap: var(--space-3); }
+.reward-list li { display: flex; align-items: center; gap: var(--space-3); margin: 0; }
+.reward-item { flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.35; }
+.reward-next { margin: 0 0 var(--space-2); }
+.reward-inner > .meter { margin-bottom: var(--space-3); }
+.reward-inner > p:last-of-type { margin-bottom: var(--space-2); }
+.reward-link { font-weight: 600; }
+.progress-teaser { margin-top: var(--space-5); padding: var(--space-4); border: 1px solid var(--color-border); border-radius: var(--radius-card); background: var(--color-surface); }
+.progress-teaser > * { margin: 0 0 var(--space-2); }
+.progress-teaser > :last-child { margin-bottom: 0; }
+.teaser-head { display: flex; align-items: center; gap: var(--space-3); }
+.teaser-goal { display: flex; justify-content: space-between; gap: var(--space-3); }
+.teaser-count { flex: none; color: var(--color-text-muted); font-variant-numeric: tabular-nums; }
+.teaser-link { display: inline-block; padding-block: var(--space-1); }
+.ach-summary { display: grid; gap: var(--space-2); margin-bottom: var(--space-6); }
+.ach-summary > * { margin: 0; }
+.ach-label { color: var(--color-text-muted); font-size: 0.875rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+[dir="rtl"] .ach-label { letter-spacing: 0; }
+.ach-rank { display: flex; align-items: center; gap: var(--space-3); font-size: clamp(1.75rem, 1.3rem + 2vw, 2.5rem); }
+.ach-rank .ach-icon { width: 52px; height: 52px; }
+.ach-rank .ach-icon svg { width: 28px; height: 28px; }
+.ach-score { font-size: 1.25rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+.ach-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: var(--space-3); margin: var(--space-3) 0; padding: 0; }
+.ach-stats > div { padding: var(--space-3); border: 1px solid var(--color-border); border-radius: var(--radius-control); background: var(--color-bg); }
+.ach-stats dt { color: var(--color-text-muted); font-size: 0.875rem; }
+.ach-stats dd { margin: 0; font-size: 1.5rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.ach-count { font-weight: 600; }
+.ach-group + .ach-group { margin-top: var(--space-6); }
+.ach-group h2 { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); font-size: 1.5rem; }
+.ach-group-count { font-size: 1rem; font-weight: 600; color: var(--color-text-muted); font-variant-numeric: tabular-nums; }
+.ach-grid { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3); grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 768px) { .ach-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.ach-card { display: flex; align-items: flex-start; gap: var(--space-3); margin: 0; padding: var(--space-4); border: 1px solid var(--color-border); border-radius: var(--radius-card); background: var(--color-surface); }
+.ach-card.is-unlocked { border-color: var(--color-accent); background: var(--gradient-selected), var(--color-surface); }
+.ach-card.is-locked .ach-icon { color: var(--color-text-muted); background: var(--overlay-faint); }
+.ach-body { flex: 1; min-width: 0; }
+.ach-body > * { margin: 0 0 var(--space-2); }
+.ach-body > :last-child { margin-bottom: 0; }
+.ach-name { font-size: 1.0625rem; }
+.ach-desc { color: var(--color-text-muted); font-size: 0.9375rem; line-height: 1.45; }
+.ach-state { display: flex; align-items: center; gap: var(--space-2); color: var(--color-text-muted); font-variant-numeric: tabular-nums; }
+.ach-state .ach-icon { width: 20px; height: 20px; border: 0; background: none; }
+.ach-state .ach-icon svg { width: 16px; height: 16px; }
+.ach-card.is-unlocked .ach-state { color: var(--color-success); }
+.ach-footer { margin-top: var(--space-7); padding-top: var(--space-5); border-top: 1px solid var(--color-border); }
+@media (prefers-reduced-motion: no-preference) {
+.reward-list li { animation: reward-pop 0.5s ease-out both; }
+.reward-list li:nth-child(2) { animation-delay: 0.12s; }
+.reward-list li:nth-child(3) { animation-delay: 0.24s; }
+.reward-list li:nth-child(n+4) { animation-delay: 0.36s; }
+@keyframes reward-pop { from { opacity: 0; transform: translateY(8px) scale(0.98); } to { opacity: 1; transform: none; } }
+}</style>
 <script>(function () {
 var root = document.documentElement;
 root.classList.add('js');
@@ -761,6 +826,8 @@ root.classList.add('i18n-pending');
 setTimeout(function () { root.classList.remove('i18n-pending'); }, 3000);
 }
 })();</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://quoridor.online"}, {"@type": "ListItem", "position": 2, "name": "Play", "item": "https://quoridor.online/play"}, {"@type": "ListItem", "position": 3, "name": "Create a room", "item": "https://quoridor.online/play/create-room"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "Play Quoridor Online With Friends – Private Room", "url": "https://quoridor.online/play/create-room", "description": "Play Quoridor online with friends. Create a private room, share the invitation link or pairing code, and the game starts as soon as your friend joins."}</script>
 </head>
 <body>
 <a class="skip-link" href="#main" data-i18n="20f159">Skip to main content</a>
@@ -799,10 +866,11 @@ setTimeout(function () { root.classList.remove('i18n-pending'); }, 3000);
   <div><h2 data-i18n="993f68">That didn't work</h2><p data-error-text></p><button class="btn btn--secondary" type="button" data-retry data-i18n="e5cefc">Try again</button></div>
 </div><h2 class="h-sm mt-6" data-i18n="f8f921">What happens next</h2>
 <ol class="text-muted"><li data-i18n="f51d4d">You get an invitation link and a short pairing code.</li><li data-i18n="388bb6">Copy either one and send it to your friend.</li><li data-i18n="2857e6">The match starts as soon as your friend joins.</li></ol></form>
+    <div class="progress-teaser" data-progress-teaser hidden></div>
   </div>
   <div class="stage-board"><svg class="board-art" viewBox="0 0 900 900" width="900" height="900" role="img" aria-label="Create a private Quoridor room: board game preview with two pawns and walls." xmlns="http://www.w3.org/2000/svg" data-i18n-attr="aria-label:4ee0ad"><rect width="900" height="900" rx="40" fill="#0B1220"/><rect x="50" y="50" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="50" y="50" width="80" height="80" rx="10" fill="#42D9F5" fill-opacity="0.13"/><rect x="140" y="50" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="140" y="50" width="80" height="80" rx="10" fill="#42D9F5" fill-opacity="0.13"/><rect x="230" y="50" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="230" y="50" width="80" height="80" rx="10" fill="#42D9F5" fill-opacity="0.13"/><rect x="320" y="50" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="320" y="50" width="80" height="80" rx="10" fill="#42D9F5" fill-opacity="0.13"/><rect x="410" y="50" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="410" y="50" width="80" height="80" rx="10" fill="#42D9F5" fill-opacity="0.13"/><rect x="500" y="50" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="500" y="50" width="80" height="80" rx="10" fill="#42D9F5" fill-opacity="0.13"/><rect x="590" y="50" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="590" y="50" width="80" height="80" rx="10" fill="#42D9F5" fill-opacity="0.13"/><rect x="680" y="50" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="680" y="50" width="80" height="80" rx="10" fill="#42D9F5" fill-opacity="0.13"/><rect x="770" y="50" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="770" y="50" width="80" height="80" rx="10" fill="#42D9F5" fill-opacity="0.13"/><rect x="50" y="140" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="140" y="140" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="230" y="140" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="320" y="140" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="410" y="140" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="500" y="140" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="590" y="140" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="680" y="140" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="770" y="140" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="50" y="230" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="140" y="230" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="230" y="230" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="320" y="230" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="410" y="230" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="500" y="230" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="590" y="230" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="680" y="230" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="770" y="230" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="50" y="320" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="140" y="320" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="230" y="320" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="320" y="320" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="410" y="320" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="500" y="320" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="590" y="320" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="680" y="320" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="770" y="320" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="50" y="410" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="140" y="410" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="230" y="410" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="320" y="410" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="410" y="410" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="500" y="410" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="590" y="410" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="680" y="410" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="770" y="410" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="50" y="500" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="140" y="500" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="230" y="500" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="320" y="500" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="410" y="500" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="500" y="500" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="590" y="500" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="680" y="500" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="770" y="500" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="50" y="590" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="140" y="590" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="230" y="590" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="320" y="590" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="410" y="590" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="500" y="590" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="590" y="590" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="680" y="590" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="770" y="590" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="50" y="680" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="140" y="680" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="230" y="680" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="320" y="680" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="410" y="680" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="500" y="680" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="590" y="680" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="680" y="680" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="770" y="680" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="50" y="770" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="50" y="770" width="80" height="80" rx="10" fill="#FFFFFF" fill-opacity="0.08"/><rect x="140" y="770" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="140" y="770" width="80" height="80" rx="10" fill="#FFFFFF" fill-opacity="0.08"/><rect x="230" y="770" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="230" y="770" width="80" height="80" rx="10" fill="#FFFFFF" fill-opacity="0.08"/><rect x="320" y="770" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="320" y="770" width="80" height="80" rx="10" fill="#FFFFFF" fill-opacity="0.08"/><rect x="410" y="770" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="410" y="770" width="80" height="80" rx="10" fill="#FFFFFF" fill-opacity="0.08"/><rect x="500" y="770" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="500" y="770" width="80" height="80" rx="10" fill="#FFFFFF" fill-opacity="0.08"/><rect x="590" y="770" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="590" y="770" width="80" height="80" rx="10" fill="#FFFFFF" fill-opacity="0.08"/><rect x="680" y="770" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="680" y="770" width="80" height="80" rx="10" fill="#FFFFFF" fill-opacity="0.08"/><rect x="770" y="770" width="80" height="80" rx="10" fill="#111C30" stroke="#26364F" stroke-width="2"/><rect x="770" y="770" width="80" height="80" rx="10" fill="#FFFFFF" fill-opacity="0.08"/><rect x="320" y="398" width="170" height="14" rx="7" fill="#5267F2" stroke="#9aa8ff" stroke-width="1.5"/><rect x="578" y="500" width="14" height="170" rx="7" fill="#5267F2" stroke="#9aa8ff" stroke-width="1.5"/><rect x="140" y="668" width="170" height="14" rx="7" fill="#5267F2" stroke="#9aa8ff" stroke-width="1.5"/><circle cx="450.0" cy="810.0" r="27" fill="#42D9F5"/><circle cx="450.0" cy="90.0" r="24" fill="#0B1220" stroke="#FFFFFF" stroke-width="9"/></svg></div>
 </div>
-<div class="container game-wrap" data-game-wrap hidden><div data-game-host></div></div>
+<div class="container game-wrap" data-game-wrap hidden><div data-game-host></div></div><section class="section" aria-labelledby="room-how-h"><div class="container prose"><h2 id="room-how-h" data-i18n="9eb02d">How to Play Quoridor Online With a Friend</h2><p data-i18n="cebb15">A private room is for playing one specific person, wherever they are. Choose a username and create a room: you get an invitation link and a short pairing code. Send either one to your friend and the game starts as soon as they join. Neither of you needs an account.</p><p data-i18n="47f79e">Rooms use the classic rules on a 9×9 board, with 10 walls each. Your friend can open the link, or type the code on the <a href="/play/join-room">join a room</a> page. Want a quick game against a stranger instead? Try <a href="/play/online">online matchmaking</a>.</p></div></section>
 </main>
 
 <footer class="site-footer">
@@ -812,7 +880,7 @@ setTimeout(function () { root.classList.remove('i18n-pending'); }, 3000);
         <a class="brand" href="/" aria-label="Quoridor Online home" data-i18n-attr="aria-label:e416b9"><img src="/assets/img/logo-mark.png" alt="Quoridor Online logo" width="32" height="32" data-i18n-attr="alt:334588"><span data-i18n-skip>Quoridor <span class="tld">Online</span></span></a>
         <p data-i18n="1b196f">A simple place to play and learn the Quoridor strategy game in your browser.</p>
       </div>
-      <div><h2 data-i18n="70c9aa">Play</h2><ul><li><a href="/play" data-i18n="40af30">Play Quoridor</a></li><li><a href="/play/online" data-i18n="e531b2">Play Online</a></li><li><a href="/play/computer" data-i18n="ade3a8">Play vs Computer</a></li><li><a href="/play/local" data-i18n="dcf544">Play Locally</a></li></ul></div>
+      <div><h2 data-i18n="70c9aa">Play</h2><ul><li><a href="/play" data-i18n="40af30">Play Quoridor</a></li><li><a href="/play/online" data-i18n="e531b2">Play Online</a></li><li><a href="/play/computer" data-i18n="ade3a8">Play vs Computer</a></li><li><a href="/play/local" data-i18n="dcf544">Play Locally</a></li><li><a href="/achievements" data-i18n="7c3201">Achievements</a></li></ul></div>
       <div><h2 data-i18n="87f0a1">Variants</h2><ul><li><a href="/variants/wallrush" data-i18n="9bf84e">Wallrush</a></li><li><a href="/variants/pointrush" data-i18n="e50dd0">Pointrush</a></li><li><a href="/variants/custom" data-i18n="e6b00a">Custom Game</a></li></ul></div>
       <div><h2 data-i18n="e138be">Learn</h2><ul><li><a href="/how-to-play-quoridor" data-i18n="f66e3b">How to Play</a></li><li><a href="/quoridor-rules" data-i18n="a57a64">Quoridor Rules</a></li><li><a href="/quoridor-strategy" data-i18n="4994f9">Quoridor Strategy</a></li><li><a href="/quoridor-board-game" data-i18n="bcaa86">Board Game Guide</a></li></ul></div>
       <div><h2 data-i18n="3658f9">Site</h2><ul><li><a href="/about" data-i18n="1a3c0a">About Us</a></li><li><a href="/contact" data-i18n="5250a4">Contact Us</a></li><li><a href="/privacy-policy" data-i18n="8dbcdd">Privacy Policy</a></li><li><a href="/terms" data-i18n="0a95a1">Terms of Use</a></li></ul></div>
@@ -822,6 +890,6 @@ setTimeout(function () { root.classList.remove('i18n-pending'); }, 3000);
     </div>
   </div>
 </footer>
-<script src="/assets/js/i18n-en.js" defer></script><script src="/assets/js/i18n.js" defer></script><script src="/assets/js/site.js" defer></script><script src="/assets/js/online.js" defer></script><script src="/assets/js/matchwatch.js" defer></script><script src="/assets/js/play.js" defer></script>
+<script src="/assets/js/i18n-en.js" defer></script><script src="/assets/js/i18n.js" defer></script><script src="/assets/js/site.js" defer></script><script src="/assets/js/icons.js" defer></script><script src="/assets/js/achievements.js" defer></script><script src="/assets/js/achievements-ui.js" defer></script><script src="/assets/js/profile.js" defer></script><script src="/assets/js/online.js" defer></script><script src="/assets/js/matchwatch.js" defer></script><script src="/assets/js/play.js" defer></script>
 </body>
 </html>

@@ -125,6 +125,16 @@ class Playing(Setup):
         self.assertEqual(snap["you"], 0)
         self.assertEqual(code_of(self.hub.rematch, room.id, seats[0]["token"]), "not-finished")
 
+    def test_each_game_in_a_room_has_its_own_round_number(self):
+        room, seats = self.start_game()
+        self.assertEqual(self.hub.wait_state(room.id, seats[0]["token"], None)["round"], 1)
+        self.hub.resign(room.id, seats[0]["token"])
+        self.assertEqual(self.hub.wait_state(room.id, seats[1]["token"], None)["round"], 1)   # still the game that just ended
+        self.hub.rematch(room.id, seats[0]["token"])
+        snap = self.hub.rematch(room.id, seats[1]["token"])
+        self.assertEqual(snap["round"], 2)
+        self.assertEqual(self.hub.wait_state(room.id, seats[0]["token"], None)["round"], 2)   # both seats see the same number
+
     def test_leaving_mid_game_is_a_forfeit(self):
         room, seats = self.start_game()
         self.hub.leave(room.id, seats[1]["token"])

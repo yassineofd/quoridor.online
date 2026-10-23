@@ -588,6 +588,7 @@ background: var(--color-surface); border: 2px solid var(--control-border); borde
 .game-side > * { order: 5; margin: 0; }
 .game-side > .game-banner { order: 0; }
 .game-side > .players { order: 1; }
+.game-side > .score-line { order: 1; }
 .game-side > .turn-bar { order: 2; }
 .game-side > .turn-timer { order: 2; }
 .game-side > .result { order: 4; }
@@ -611,6 +612,7 @@ background: var(--color-surface); border: 2px solid var(--control-border); borde
 .turn-bar:focus-visible { outline: 3px solid var(--color-accent); outline-offset: 2px; }
 .players { list-style: none; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: stretch; gap: var(--space-2); }
 .players--multi { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.score-line { padding: var(--space-2) var(--space-4); border: 1px dashed var(--control-border); border-radius: var(--radius-card); text-align: center; font-weight: 600; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
 .vs-chip { align-self: center; padding: 10px 8px; border: 1px solid var(--color-border); border-radius: 12px; background: var(--color-surface); color: var(--color-text-muted); font-size: 0.8125rem; font-weight: 700; letter-spacing: 0.08em; }
 .player-card { --pc: var(--color-accent); display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-areas: "glyph text" "meta meta"; align-items: center; gap: 6px var(--space-2); margin: 0; padding: 10px; border: 2px solid rgba(255, 255, 255, 0.14); border: 2px solid color-mix(in srgb, var(--pc) 45%, transparent); border-radius: 16px; background: var(--color-surface); background: color-mix(in srgb, var(--pc) 14%, var(--color-surface)); min-width: 0; transition: box-shadow 0.2s, border-color 0.2s; }
 .player-card--1 { --pc: var(--color-player-2); }
@@ -725,7 +727,70 @@ select.input { cursor: pointer; }
 .check-line input { width: 20px; height: 20px; margin-top: 2px; flex: none; accent-color: var(--color-accent); }
 .contact-form { margin: var(--space-5) 0 var(--space-6); }
 .contact-form .btn { margin-top: var(--space-2); }
-.contact-status { margin-top: var(--space-4); }</style>
+.contact-status { margin-top: var(--space-4); }
+.ach-icon { flex: none; display: inline-grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--gradient-selected); border: 1px solid var(--color-border); color: var(--color-accent); }
+.ach-icon svg { width: 22px; height: 22px; }
+.ach-pts { flex: none; align-self: flex-start; padding: 2px 10px; border: 1px solid var(--control-border); border-radius: 999px; font-size: 0.8125rem; font-weight: 600; white-space: nowrap; color: var(--color-text-muted); font-variant-numeric: tabular-nums; }
+.meter { display: block; height: 8px; border-radius: 4px; background: var(--color-border); overflow: hidden; }
+.meter-fill { display: block; height: 100%; width: 0; border-radius: 4px; background: var(--color-accent); }
+.reward { margin-block: var(--space-4); padding: var(--space-4); border: 1px solid var(--color-border); border-radius: var(--radius-card); background: var(--gradient-selected), var(--color-surface); }
+.reward-points { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-1) var(--space-3); margin: 0 0 var(--space-3); }
+.reward-gain { font-size: 1.5rem; font-weight: 700; color: var(--color-accent); font-variant-numeric: tabular-nums; }
+.reward-total { color: var(--color-text-muted); font-weight: 600; }
+.reward-rankup { display: flex; align-items: center; gap: var(--space-3); margin: 0 0 var(--space-3); font-weight: 700; }
+.reward-title { margin: var(--space-3) 0 var(--space-2); font-size: 1rem; }
+.reward-list { list-style: none; margin: 0 0 var(--space-3); padding: 0; display: grid; gap: var(--space-3); }
+.reward-list li { display: flex; align-items: center; gap: var(--space-3); margin: 0; }
+.reward-item { flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.35; }
+.reward-next { margin: 0 0 var(--space-2); }
+.reward-inner > .meter { margin-bottom: var(--space-3); }
+.reward-inner > p:last-of-type { margin-bottom: var(--space-2); }
+.reward-link { font-weight: 600; }
+.progress-teaser { margin-top: var(--space-5); padding: var(--space-4); border: 1px solid var(--color-border); border-radius: var(--radius-card); background: var(--color-surface); }
+.progress-teaser > * { margin: 0 0 var(--space-2); }
+.progress-teaser > :last-child { margin-bottom: 0; }
+.teaser-head { display: flex; align-items: center; gap: var(--space-3); }
+.teaser-goal { display: flex; justify-content: space-between; gap: var(--space-3); }
+.teaser-count { flex: none; color: var(--color-text-muted); font-variant-numeric: tabular-nums; }
+.teaser-link { display: inline-block; padding-block: var(--space-1); }
+.ach-summary { display: grid; gap: var(--space-2); margin-bottom: var(--space-6); }
+.ach-summary > * { margin: 0; }
+.ach-label { color: var(--color-text-muted); font-size: 0.875rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+[dir="rtl"] .ach-label { letter-spacing: 0; }
+.ach-rank { display: flex; align-items: center; gap: var(--space-3); font-size: clamp(1.75rem, 1.3rem + 2vw, 2.5rem); }
+.ach-rank .ach-icon { width: 52px; height: 52px; }
+.ach-rank .ach-icon svg { width: 28px; height: 28px; }
+.ach-score { font-size: 1.25rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+.ach-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: var(--space-3); margin: var(--space-3) 0; padding: 0; }
+.ach-stats > div { padding: var(--space-3); border: 1px solid var(--color-border); border-radius: var(--radius-control); background: var(--color-bg); }
+.ach-stats dt { color: var(--color-text-muted); font-size: 0.875rem; }
+.ach-stats dd { margin: 0; font-size: 1.5rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.ach-count { font-weight: 600; }
+.ach-group + .ach-group { margin-top: var(--space-6); }
+.ach-group h2 { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); font-size: 1.5rem; }
+.ach-group-count { font-size: 1rem; font-weight: 600; color: var(--color-text-muted); font-variant-numeric: tabular-nums; }
+.ach-grid { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3); grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 768px) { .ach-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.ach-card { display: flex; align-items: flex-start; gap: var(--space-3); margin: 0; padding: var(--space-4); border: 1px solid var(--color-border); border-radius: var(--radius-card); background: var(--color-surface); }
+.ach-card.is-unlocked { border-color: var(--color-accent); background: var(--gradient-selected), var(--color-surface); }
+.ach-card.is-locked .ach-icon { color: var(--color-text-muted); background: var(--overlay-faint); }
+.ach-body { flex: 1; min-width: 0; }
+.ach-body > * { margin: 0 0 var(--space-2); }
+.ach-body > :last-child { margin-bottom: 0; }
+.ach-name { font-size: 1.0625rem; }
+.ach-desc { color: var(--color-text-muted); font-size: 0.9375rem; line-height: 1.45; }
+.ach-state { display: flex; align-items: center; gap: var(--space-2); color: var(--color-text-muted); font-variant-numeric: tabular-nums; }
+.ach-state .ach-icon { width: 20px; height: 20px; border: 0; background: none; }
+.ach-state .ach-icon svg { width: 16px; height: 16px; }
+.ach-card.is-unlocked .ach-state { color: var(--color-success); }
+.ach-footer { margin-top: var(--space-7); padding-top: var(--space-5); border-top: 1px solid var(--color-border); }
+@media (prefers-reduced-motion: no-preference) {
+.reward-list li { animation: reward-pop 0.5s ease-out both; }
+.reward-list li:nth-child(2) { animation-delay: 0.12s; }
+.reward-list li:nth-child(3) { animation-delay: 0.24s; }
+.reward-list li:nth-child(n+4) { animation-delay: 0.36s; }
+@keyframes reward-pop { from { opacity: 0; transform: translateY(8px) scale(0.98); } to { opacity: 1; transform: none; } }
+}</style>
 <script>(function () {
 var root = document.documentElement;
 root.classList.add('js');
@@ -912,7 +977,7 @@ setTimeout(function () { root.classList.remove('i18n-pending'); }, 3000);
         <a class="brand" href="/" aria-label="Quoridor Online home" data-i18n-attr="aria-label:e416b9"><img src="/assets/img/logo-mark.png" alt="Quoridor Online logo" width="32" height="32" data-i18n-attr="alt:334588"><span data-i18n-skip>Quoridor <span class="tld">Online</span></span></a>
         <p data-i18n="1b196f">A simple place to play and learn the Quoridor strategy game in your browser.</p>
       </div>
-      <div><h2 data-i18n="70c9aa">Play</h2><ul><li><a href="/play" data-i18n="40af30">Play Quoridor</a></li><li><a href="/play/online" data-i18n="e531b2">Play Online</a></li><li><a href="/play/computer" data-i18n="ade3a8">Play vs Computer</a></li><li><a href="/play/local" data-i18n="dcf544">Play Locally</a></li></ul></div>
+      <div><h2 data-i18n="70c9aa">Play</h2><ul><li><a href="/play" data-i18n="40af30">Play Quoridor</a></li><li><a href="/play/online" data-i18n="e531b2">Play Online</a></li><li><a href="/play/computer" data-i18n="ade3a8">Play vs Computer</a></li><li><a href="/play/local" data-i18n="dcf544">Play Locally</a></li><li><a href="/achievements" data-i18n="7c3201">Achievements</a></li></ul></div>
       <div><h2 data-i18n="87f0a1">Variants</h2><ul><li><a href="/variants/wallrush" data-i18n="9bf84e">Wallrush</a></li><li><a href="/variants/pointrush" data-i18n="e50dd0">Pointrush</a></li><li><a href="/variants/custom" data-i18n="e6b00a">Custom Game</a></li></ul></div>
       <div><h2 data-i18n="e138be">Learn</h2><ul><li><a href="/how-to-play-quoridor" data-i18n="f66e3b">How to Play</a></li><li><a href="/quoridor-rules" data-i18n="a57a64">Quoridor Rules</a></li><li><a href="/quoridor-strategy" data-i18n="4994f9">Quoridor Strategy</a></li><li><a href="/quoridor-board-game" data-i18n="bcaa86">Board Game Guide</a></li></ul></div>
       <div><h2 data-i18n="3658f9">Site</h2><ul><li><a href="/about" data-i18n="1a3c0a">About Us</a></li><li><a href="/contact" data-i18n="5250a4">Contact Us</a></li><li><a href="/privacy-policy" data-i18n="8dbcdd">Privacy Policy</a></li><li><a href="/terms" data-i18n="0a95a1">Terms of Use</a></li></ul></div>

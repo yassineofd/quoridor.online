@@ -89,6 +89,7 @@ class Room:
         self.host = random.randrange(2)   # seat index the host will occupy
         self.seats[self.host] = Seat(host_name)
         self.game = Game()
+        self.round = 0                    # games started in this room; a rematch makes the next one
         self.version = 1
         self.reason = None                # None (reached the edge) | resign | disconnect
         self.rematch = [False, False]
@@ -138,6 +139,7 @@ class Hub:
 
     def _start(self, room):
         room.status = "playing"
+        room.round += 1
         room.game = Game()
         room.reason = None
         room.rematch = [False, False]
@@ -192,6 +194,7 @@ class Hub:
         out = {
             "version": room.version,
             "status": room.status,
+            "round": room.round,
             "you": seat_index,
             "players": players,
             "game": room.game.to_dict(),

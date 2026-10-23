@@ -338,6 +338,13 @@ def play_hub():
     <a class="btn btn--secondary" href="/variants/">Explore Variants {icon('arrow')}</a>
   </div>
 </div></section>
+<section class="section--tight" aria-labelledby="achievements-cta-h"><div class="container">
+  <div class="card cta-panel">
+    <h2 id="achievements-cta-h">Earn Achievements and Climb the Ranks</h2>
+    <p>Every game you finish earns points. Beat the robots, build a streak and unlock achievements. Your progress stays in your browser, with no account.</p>
+    <a class="btn btn--secondary" href="/achievements/">See Your Achievements {icon('arrow')}</a>
+  </div>
+</div></section>
 <section class="section" aria-labelledby="how-h"><div class="container prose">
   <h2 id="how-h">How to Play Quoridor</h2>
   <p>Quoridor is a strategy board game built around two choices: move your pawn toward the goal or place a wall to slow your opponent down. Every wall uses a limited resource, so the best move is not always the most obvious one.</p>
@@ -402,7 +409,11 @@ def username_field(note="2 to 20 characters. This is a display name, not an acco
 </div>"""
 
 
-GAME_SCRIPTS = ["/assets/js/engine.js", "/assets/js/icons.js", "/assets/js/board.js", "/assets/js/game.js"]
+GAME_SCRIPTS = ["/assets/js/engine.js", "/assets/js/icons.js", "/assets/js/board.js", "/assets/js/achievements.js", "/assets/js/achievements-ui.js", "/assets/js/game.js"]
+# Score, rank and achievements (kept in the browser): the summary under every play form, the Achievements page, and the reward after a game.
+PROGRESS_SCRIPTS = ["/assets/js/icons.js", "/assets/js/achievements.js", "/assets/js/achievements-ui.js"]
+# The remembered name and scores (profile.js), then the client for the game server: loaded by every page with a play form or a room.
+PLAY_SCRIPTS = ["/assets/js/profile.js", "/assets/js/online.js"]
 
 
 def watch_scripts(path):
@@ -417,6 +428,7 @@ def stage(form_kind, panel_html, board_label, walls=(), pawns=(), live=False, ar
 <div class="container stage" data-stage>
   <div class="stage-panel">
     <form data-play-form="{form_kind}" {form_attrs}data-live="{'true' if live else 'false'}" novalidate>{panel_html}</form>
+    <div class="progress-teaser" data-progress-teaser hidden></div>
   </div>
   <div class="stage-board{' stage-board--tall' if tall else ''}">{art or board_svg(walls, pawns, board_label)}</div>
 </div>
@@ -427,7 +439,16 @@ MODE_WALLS = [("h", 3, 3), ("v", 5, 5), ("h", 6, 1)]
 MODE_PAWNS = [(8, 4, "p1"), (0, 4, "p2")]
 
 
-def mode_page(path, title, desc, h1, lead, crumb, form_kind, panel, label, indexable=None, scripts=(), live=False):
+def mode_intro(heading_id, heading, *paragraphs):
+    """The unique copy under a mode page's form: what the mode is and how it works (what makes the page worth indexing)."""
+    return (
+        f'<section class="section" aria-labelledby="{heading_id}"><div class="container prose">'
+        f'<h2 id="{heading_id}">{heading}</h2>' + "".join(f"<p>{p}</p>" for p in paragraphs)
+        + "</div></section>"
+    )
+
+
+def mode_page(path, title, desc, h1, lead, crumb, form_kind, panel, label, indexable=None, scripts=(), live=False, intro=""):
     idx = INDEX_MODE_PAGES if indexable is None else indexable
     parent = [("Play", "/play/")] if path.startswith("/play/") else []
     body = (
@@ -435,11 +456,12 @@ def mode_page(path, title, desc, h1, lead, crumb, form_kind, panel, label, index
         + crumbs(parent + [(crumb, None)])
         + f"<h1>{h1}</h1><p class=\"lead\">{lead}</p></div></div>"
         + stage(form_kind, panel, label, MODE_WALLS, MODE_PAWNS, live)
+        + intro
     )
     return Page(
         path=path, title=title, description=desc, body=body,
         indexable=idx, robots=None if idx else "noindex, follow",
-        breadcrumbs=parent + [(crumb, path)], scripts=list(scripts) + ["/assets/js/online.js"] + watch_scripts(path) + ["/assets/js/play.js"], nav_key="play",
+        breadcrumbs=parent + [(crumb, path)], scripts=list(dict.fromkeys(list(scripts) + PROGRESS_SCRIPTS + PLAY_SCRIPTS + watch_scripts(path) + ["/assets/js/play.js"])), nav_key="play",
     )
 
 
@@ -474,6 +496,12 @@ def play_online():
         "Play Quoridor online against another person. Pick a username, enter matchmaking and start a synchronized game.",
         "Play Quoridor online", "Pick a username, find an opponent, and play a live game against another person.",
         "Play online", "online", panel, "Play Quoridor online: board game preview with two pawns and walls.", live=live,
+        indexable=live,  # a page that says "not connected" has nothing to offer a search result
+        intro=mode_intro(
+            "online-how-h", "How Online Matchmaking Works",
+            "Enter a username and press Find an opponent. The site pairs you with the next person who is searching, and the game starts as soon as you are matched. There is nothing to install and no account to make: your username is only a display name for the game.",
+            'The usual Quoridor rules apply. On each turn you move your pawn or place a wall, and a wall may never close off every route to the goal. Would you rather play someone you know? <a href="/play/create-room/">Create a private room</a> and send your friend the invitation link, or warm up first <a href="/play/computer/">against the computer</a>.',
+        ) if live else "",
     )
 
 
@@ -510,14 +538,22 @@ def play_computer():
         "Play Quoridor against the computer", "Choose a difficulty and start a game. No registration needed.",
         "Play against robot", "computer", panel, "Play Quoridor against the computer: board game preview with two pawns and walls.",
         scripts=["/assets/js/engine.js", "/assets/js/ai.js"] + GAME_SCRIPTS[1:],
+        intro=mode_intro(
+            "computer-how-h", "Practice Quoridor Against the Computer",
+            'The computer opponent runs in your browser, so a game starts instantly and works without an account. Start on Easy to see how pawns and walls interact, then move up a level whenever you win comfortably. New to the game? Read <a href="/how-to-play-quoridor/">how to play Quoridor</a>, or study the <a href="/quoridor-strategy/">strategy guide</a> to get more out of your walls.',
+        ),
     )
 
 
 def name_field(n):
+    # Under the second name: how to get a score between two friends (game.js counts it when both names were typed).
+    hint = '<span class="hint" id="name2-hint">In a two-player game, type both names to keep score of who wins between you. The score stays on this device.</span>' if n == 2 else ""
+    described = f"name{n}-hint name{n}-error" if hint else f"name{n}-error"
     return f"""
 <div class="field">
   <label for="name{n}">Player {n} name (optional)</label>
-  <input class="input" id="name{n}" name="name{n}" type="text" maxlength="20" autocomplete="off" spellcheck="false" aria-describedby="name{n}-error">
+  <input class="input" id="name{n}" name="name{n}" type="text" maxlength="20" autocomplete="off" spellcheck="false" aria-describedby="{described}">
+  {hint}
   <div class="field-error" id="name{n}-error" role="alert" hidden></div>
 </div>"""
 
@@ -537,6 +573,10 @@ def play_local():
         "Play Quoridor with a friend", "Share one screen and take turns on the same board.",
         "Play with a friend", "local", panel, "Play Quoridor with a friend on one device: board game preview with two pawns and walls.",
         scripts=GAME_SCRIPTS,
+        intro=mode_intro(
+            "local-how-h", "Play Side by Side on One Screen",
+            'Local play is the quickest way to play with a friend: sit together, share one screen and pass the device after each move. Type both names if you want the site to keep score of who wins between you. The score stays on this device. Two players is the classic game. For three or four players, a different board size or your own rules, try the <a href="/variants/">Quoridor variants</a>.',
+        ),
     )
 
 
@@ -716,7 +756,7 @@ def wallrush():
         title="Wallrush – Free Online Quoridor Variant Race Game",
         description="Play Wallrush online free: a two-player Quoridor variant on a tall 9 by 13 board where both pawns start on one line and race to the same edge, with 10 walls each.",
         body=body, breadcrumbs=parent + [("Wallrush", "/variants/wallrush/")], nav_key="variants", schema=[faq_schema],
-        scripts=GAME_SCRIPTS + ["/assets/js/online.js"] + watch_scripts("/variants/wallrush/") + ["/assets/js/play.js"],
+        scripts=GAME_SCRIPTS + PLAY_SCRIPTS + watch_scripts("/variants/wallrush/") + ["/assets/js/play.js"],
     )
 
 
@@ -792,7 +832,7 @@ def pointrush():
         title="Pointrush – 4-Player Quoridor Variant, Play Free Online",
         description="Play Pointrush online free: a multiplayer Quoridor variant for 2 to 4 players on an 11 by 11 board where every pawn races to the center square. No download needed.",
         body=body, breadcrumbs=parent + [("Pointrush", "/variants/pointrush/")], nav_key="variants", schema=[faq_schema],
-        scripts=GAME_SCRIPTS + ["/assets/js/online.js"] + watch_scripts("/variants/pointrush/") + ["/assets/js/play.js"],
+        scripts=GAME_SCRIPTS + PLAY_SCRIPTS + watch_scripts("/variants/pointrush/") + ["/assets/js/play.js"],
     )
 
 
@@ -886,7 +926,7 @@ def custom_game():
         title="Custom Quoridor – Choose Board Size, Walls & Rules Online",
         description="Play custom Quoridor online free with a friend on one device. Choose the board size from 5×5 to 13×13, the number of walls, borrowed moves and the time per move.",
         body=body, breadcrumbs=parent + [("Custom Game", "/variants/custom/")], nav_key="variants", schema=[faq_schema],
-        scripts=GAME_SCRIPTS + ["/assets/js/online.js"] + watch_scripts("/variants/custom/") + ["/assets/js/play.js"],
+        scripts=GAME_SCRIPTS + PLAY_SCRIPTS + watch_scripts("/variants/custom/") + ["/assets/js/play.js"],
     )
 
 
@@ -902,10 +942,16 @@ def create_room():
         + ('' if live else '<p class="small"><a href="/room/EXAMPLE-ROOM-ID/?preview=waiting">Preview the waiting-room screen</a> (sample data)</p>')
     )
     return mode_page(
-        "/play/create-room/", "Create a Private Quoridor Room",
-        "Create a private Quoridor room and share the invitation link or pairing code with a friend.",
+        "/play/create-room/", "Play Quoridor Online With Friends – Private Room",
+        "Play Quoridor online with friends. Create a private room, share the invitation link or pairing code, and the game starts as soon as your friend joins.",
         "Create a private room", "Make a room, then share the invitation link or pairing code with your friend.",
-        "Create a room", "create-room", panel, "Create a private Quoridor room: board game preview with two pawns and walls.", indexable=False, live=live,
+        "Create a room", "create-room", panel, "Create a private Quoridor room: board game preview with two pawns and walls.", live=live,
+        indexable=live,  # the only room page worth finding in search; join-room and the rooms themselves stay noindex
+        intro=mode_intro(
+            "room-how-h", "How to Play Quoridor Online With a Friend",
+            "A private room is for playing one specific person, wherever they are. Choose a username and create a room: you get an invitation link and a short pairing code. Send either one to your friend and the game starts as soon as they join. Neither of you needs an account.",
+            'Rooms use the classic rules on a 9×9 board, with 10 walls each. Your friend can open the link, or type the code on the <a href="/play/join-room/">join a room</a> page. Want a quick game against a stranger instead? Try <a href="/play/online/">online matchmaking</a>.',
+        ) if live else "",
     )
 
 
@@ -1009,7 +1055,7 @@ def room():
         path="/room/_/", title="Private room | Quoridor Online",
         description="Private Quoridor room.",
         body=body, indexable=False, robots="noindex, nofollow, noarchive",
-        canonical=False, scripts=GAME_SCRIPTS + ["/assets/js/online.js"] + watch_scripts("/room/") + ["/assets/js/room.js"],
+        canonical=False, scripts=GAME_SCRIPTS + PLAY_SCRIPTS + watch_scripts("/room/") + ["/assets/js/room.js"],
         out_file="room/index.html", generic_social=True, nav_key="play",
     )
 
@@ -1779,16 +1825,27 @@ def contact():
                        scripts=["/assets/js/contact.js"])
 
 
-PRIVACY_EFFECTIVE = ("2026-10-21", "21 October 2026")
+PRIVACY_EFFECTIVE = ("2026-10-23", "23 October 2026")
 PRIVACY_HISTORY = (
     ("2026-10-17", "17 October 2026", "First full version of this Privacy Policy. It replaces the earlier draft placeholder."),
     ("2026-10-17", "17 October 2026", "Explained that an online search can keep running while you play elsewhere on the site, and the session-storage entry that makes this possible."),
     ("2026-10-17", "17 October 2026", "Added Google Analytics (Google tag) on public pages, with its cookies and data processing. It is not loaded on online-room pages."),
     ("2026-10-17", "17 October 2026", "Described the language choice that the translate button keeps in your browser, and added translated versions of the site."),
     ("2026-10-21", "21 October 2026", "Described the light or dark theme choice that the theme switch keeps in your browser."),
+    ("2026-10-23", "23 October 2026", "Described the display name and the win counts between two players that your browser now remembers, in entries named quoridor.username and quoridor.scores."),
+    ("2026-10-23", "23 October 2026", "Described the score, rank and achievements that your browser now keeps, in an entry named quoridor.progress."),
 )
 
 LANGUAGE_STORAGE = """<p>If you pick a language with the translate button, your browser keeps the language code (for example <em>es</em>) in an entry named <em>quoridor.lang</em>, so the site opens in that language next time. It is never sent to us, and the game server never learns which language you use. Until you choose, the site reads your browser's language list to pick a first language; that stays in your browser too.</p>"""
+
+PROFILE_STORAGE_NAME = "<p>So that you do not have to type your name again, your browser keeps the last display name you entered (an entry named <em>quoridor.username</em>) and fills it in the next time. Saving it sends nothing to us.</p>"
+
+# {where}: the games that keep a score. Private rooms exist only where online play is offered.
+PROFILE_STORAGE_SCORES = "<p>Games between two named players ({where}) are also counted in your browser, in an entry named <em>quoridor.scores</em>. This tally holds the two names, how many games each has won against the other, when you last played, and the identifiers of the last few games so that none is counted twice. It is used only to show the score between you and a friend. It never leaves your device, and your friend's browser keeps a tally of its own.</p>"
+SCORES_WHERE_ONLINE = "in a private online room, or on one device when both players typed a name"
+SCORES_WHERE_LOCAL = "on one device, when both players typed a name"
+
+PROGRESS_STORAGE = "<p>To keep your score, rank and achievements, your browser keeps a tally of the games you finish, in an entry named <em>quoridor.progress</em>. It holds how many games you have played and won, how many walls you have placed, your best streaks, the last day you played, the points you have earned, and the achievements you have unlocked with the day you unlocked each one. It never contains your moves or your display name, and it is never sent to us. If you clear your site data, or press Reset progress on the Achievements page, your score, rank and achievements start over.</p>"
 
 THEME_STORAGE = "<p>If you choose a theme with the theme switch in the menu, your browser keeps your choice (<em>light</em> or <em>dark</em>) in an entry named <em>quoridor.theme</em>, so the site opens in that theme next time. It is never sent to us.</p>"
 
@@ -1810,7 +1867,7 @@ def privacy():
     if online:
         info_online = """<li><strong>Online play.</strong> To play online or in a private room you type a display name. Our game server holds that name, a random seat token that identifies your seat, your moves, and the time you were last connected, for as long as the game or room exists. No account, email address or password is involved.</li>
 <li><strong>Network address.</strong> Your IP address reaches our server with every request. The game server keeps it in memory for about a minute so it can limit abuse, such as creating rooms too fast.</li>"""
-        storage_online = LANGUAGE_STORAGE + THEME_STORAGE + """<p>When you create or join an online room, your browser stores a small entry under the name <em>quoridor.seat.</em> followed by the room's identifier. It contains your seat token, your seat number and the display name you chose. It lets you reload the page or recover from a dropped connection and keep your seat. The entry is removed when you leave the room. If you close the tab without leaving, it stays until you clear it, but it stops working once the room has expired.</p>
+        storage_online = LANGUAGE_STORAGE + THEME_STORAGE + PROFILE_STORAGE_NAME + PROFILE_STORAGE_SCORES.format(where=SCORES_WHERE_ONLINE) + PROGRESS_STORAGE + """<p>When you create or join an online room, your browser stores a small entry under the name <em>quoridor.seat.</em> followed by the room's identifier. It contains your seat token, your seat number and the display name you chose. It lets you reload the page or recover from a dropped connection and keep your seat. The entry is removed when you leave the room. If you close the tab without leaving, it stays until you clear it, but it stops working once the room has expired.</p>
 <p>While you search for an opponent, your browser also keeps the search ticket and your display name in <em>session storage</em> (an entry named <em>quoridor.search</em>) for that tab only. It lets the search carry on while you play the computer or open a private room, and lets the search page pick it up again after a reload. It is removed when the search ends and disappears when you close the tab.</p>"""
         rooms_html = """<h2 id="rooms">5. Multiplayer rooms, usernames and shared links</h2>
 <ul>
@@ -1828,7 +1885,7 @@ def privacy():
         rights_extra = "The data our game server holds about a game (a display name, a seat token and an IP address in memory) is deleted within minutes, so there is usually nothing left to give you, correct or erase by the time a request could be answered. "
     else:
         info_online = "<li><strong>Online play.</strong> Online play and private rooms are not available on this site at the moment, so no display names or seat tokens are collected. This policy will be updated before they are offered.</li>"
-        storage_online = LANGUAGE_STORAGE + THEME_STORAGE + "<p>Nothing else is stored in your browser's local storage. If online play is added later, this section will describe what it stores.</p>"
+        storage_online = LANGUAGE_STORAGE + THEME_STORAGE + PROFILE_STORAGE_NAME + PROFILE_STORAGE_SCORES.format(where=SCORES_WHERE_LOCAL) + PROGRESS_STORAGE + "<p>Nothing else is stored in your browser's local storage. If online play is added later, this section will describe what it stores.</p>"
         rooms_html = """<h2 id="rooms">5. Multiplayer rooms, usernames and shared links</h2>
 <p>Online play and private rooms are not available on this site at the moment, so no display names, rooms or invitation links exist. This policy will be updated before they are offered.</p>"""
         retention_online = ""
@@ -1863,7 +1920,7 @@ def privacy():
 <h2 id="storage">3. Local storage in your browser</h2>
 <p>Local storage is a small area of your browser where a site can keep data on your device. It is not sent to us with page requests.</p>
 {storage_online}
-<p>Local storage is used only to make the site work as you asked, never for tracking. If you block or clear it, the site still works; you just have to choose your language again{storage_loss}.</p>
+<p>Local storage is used only to make the site work as you asked, never for tracking. If you block or clear it, the site still works; you just have to choose your language again, type your name again and start your scores over{storage_loss}.</p>
 
 <h2 id="third-parties">4. Third-party services and embedded content</h2>
 <ul>
@@ -1881,7 +1938,7 @@ def privacy():
 {retention_online}
 <li><strong>Server logs:</strong> kept only as long as needed for security and fault-finding, then deleted.</li>
 <li><strong>Emails to us:</strong> kept for as long as needed to answer you and keep a record of the conversation, then deleted. Ask us at any time to delete yours.</li>
-<li><strong>Games against the computer and on one device:</strong> nothing is stored, so there is nothing to delete.</li>
+<li><strong>Games against the computer and on one device:</strong> nothing is sent to us. Only the name and the tallies described in section 3 stay in your browser, until you clear them in your browser's site-data settings.</li>
 </ul>
 <p>Because the site has no accounts, we cannot look up data by name. To have information removed sooner, contact us (section 9) and tell us what you want removed, as precisely as you can.</p>
 
@@ -2020,6 +2077,30 @@ def terms():
                        "Terms of Use", f"The rules for using Quoridor.online. Effective {eff_text}.", content, "Terms of Use")
 
 
+def achievements():
+    """The player's score, rank and achievements. Drawn in the browser from what achievements.js keeps there, so the page has no
+    content of its own to index."""
+    body = (
+        page_head(
+            "Achievements",
+            "Earn points and ranks as you play: win games, build streaks and try every way to play. Your progress is kept in this browser.",
+            [("Achievements", None)],
+        )
+        + """
+<div class="container pad-page">
+  <div data-achievements></div>
+  <p class="visually-hidden" role="status" aria-live="polite" data-ach-status></p>
+  <noscript><p class="notice">Your achievements are kept in your browser and need JavaScript to be shown.</p></noscript>
+</div>"""
+    )
+    return Page(
+        path="/achievements/", title="Achievements and Rank – Quoridor.online",
+        description="See your Quoridor score, rank and achievements. Your progress is saved in your browser only.",
+        body=body, indexable=False, robots="noindex, follow", breadcrumbs=[("Achievements", "/achievements/")],
+        scripts=PROGRESS_SCRIPTS,
+    )
+
+
 def not_found():
     links = [("Home", "/", "Start from the beginning."),
              ("How to Play", "/how-to-play-quoridor/", "Learn the basics in a few minutes."),
@@ -2048,6 +2129,6 @@ def not_found():
 def all_pages():
     return [
         home(), play_hub(), play_online(), play_computer(), play_local(), create_room(), join_room(), room(),
-        variants_hub(), wallrush(), pointrush(), custom_game(),
+        variants_hub(), wallrush(), pointrush(), custom_game(), achievements(),
         how_to_play(), rules(), strategy(), board_game(), about(), contact(), privacy(), terms(), not_found(),
     ]

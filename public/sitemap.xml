@@ -2,6 +2,10 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://quoridor.online</loc></url>
   <url><loc>https://quoridor.online/play</loc></url>
+  <url><loc>https://quoridor.online/play/online</loc></url>
+  <url><loc>https://quoridor.online/play/computer</loc></url>
+  <url><loc>https://quoridor.online/play/local</loc></url>
+  <url><loc>https://quoridor.online/play/create-room</loc></url>
   <url><loc>https://quoridor.online/variants</loc></url>
   <url><loc>https://quoridor.online/variants/wallrush</loc></url>
   <url><loc>https://quoridor.online/variants/pointrush</loc></url>

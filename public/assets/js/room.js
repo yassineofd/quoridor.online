@@ -14,6 +14,7 @@
   var preview = params.get('preview');
   var isPreview = PREVIEWABLE.indexOf(preview) !== -1;
   var Online = window.QuoridorOnline;
+  var Profile = window.QuoridorProfile;
   var shell = document.querySelector('[data-room-shell]');
   var live = !!shell && shell.hasAttribute('data-live');
   var previewNote = document.querySelector('[data-preview-note]');
@@ -69,8 +70,22 @@
   var banner = document.querySelector('[data-connection]');
   var session = null, ui = null, seatInfo = null, lastStatus = null, startingTimer = null;
 
+  // Only a private room is a game between friends, so only there a score is kept (see profile.js). Seats saved
+  // by an older version of the page have no `via` and keep none.
+  function keepsScore() {
+    var seat = Online.loadSeat(roomId);
+    return !!(seat && seat.via === 'private' && Profile);
+  }
+
+  // Leaving a game in progress gives it to the opponent, who sees the win and counts it. Count the loss here too.
+  function countForfeit() {
+    if (lastStatus !== 'playing' || !latest || !keepsScore()) return;
+    Profile.record(latest.players[0].name, latest.players[1].name, 1 - latest.you, roomId + '#' + latest.round);
+  }
+
   function leaveFlow(confirmed) {
     if (confirmed !== true && !window.confirm(t(lastStatus === 'playing' ? 'room.confirmLeaveForfeit' : 'room.confirmLeave'))) return;
+    countForfeit();
     var done = function () {
       Online.forgetSeat(roomId);
       if (ui) { ui.destroy(); ui = null; }
@@ -121,7 +136,7 @@
     var meta = {
       names: names,
       connected: [snap.players[0].connected, snap.players[1].connected],
-      forfeitIn: snap.forfeitIn, rematch: snap.rematch, reason: snap.reason,
+      forfeitIn: snap.forfeitIn, rematch: snap.rematch, reason: snap.reason, round: snap.round,
       // The snapshot may have waited out the "both players are in" screen, so take that time off.
       turnLeft: snap.turnLeft == null ? null : Math.max(0, snap.turnLeft - (Date.now() - (snap.receivedAt || Date.now())) / 1000),
       clocks: snap.clocks, clocksAge: (Date.now() - (snap.receivedAt || Date.now())) / 1000
@@ -131,6 +146,7 @@
       show('game');
       ui = QuoridorGame.mount(gameHost, {
         mode: 'online', names: names, seat: snap.you, flip: snap.you === 1, remote: session,
+        scoreId: keepsScore() ? roomId : undefined,
         onExit: function (how) { if (how === 'leave') leaveFlow(true); }  // the game screen already asked
       });
       ui.seat = snap.you;
@@ -158,7 +174,7 @@
     ui.setState(latest.game, {
       names: [latest.players[0].name, latest.players[1].name],
       connected: [latest.players[0].connected, latest.players[1].connected],
-      forfeitIn: latest.forfeitIn, rematch: latest.rematch, reason: latest.reason,
+      forfeitIn: latest.forfeitIn, rematch: latest.rematch, reason: latest.reason, round: latest.round,
       turnLeft: latest.turnLeft,
       clocks: latest.clocks, clocksAge: (Date.now() - (latest.receivedAt || Date.now())) / 1000
     });
@@ -183,6 +199,7 @@
     var input = document.getElementById('username');
     var errEl = document.getElementById('username-error');
     var btn = form && form.querySelector('button[type="submit"]');
+    if (Profile && !input.value) input.value = Profile.name();  // the name used last time
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       var name = input.value.trim().normalize('NFC');
@@ -192,9 +209,10 @@
         return;
       }
       errEl.hidden = true; input.removeAttribute('aria-invalid');
+      if (Profile) Profile.setName(name);
       btn.disabled = true;
       Online.joinById(roomId, name).then(function (res) {
-        Online.saveSeat(roomId, { token: res.token, seat: res.seat, name: name });
+        Online.saveSeat(roomId, { token: res.token, seat: res.seat, name: name, via: 'private' });
         btn.disabled = false;
         begin(res.token);
       }, function (err) {

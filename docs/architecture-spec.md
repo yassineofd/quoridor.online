@@ -15,7 +15,7 @@ Out of scope: game engine, multiplayer server, matchmaking, final page copy.
 │   ├── /play/online/              Online matchmaking               indexable*, in sitemap
 │   ├── /play/computer/            Robot + difficulty               indexable*, in sitemap
 │   ├── /play/local/               Same-device game                 indexable*, in sitemap
-│   ├── /play/create-room/         Create private room              noindex, follow, NOT in sitemap
+│   ├── /play/create-room/         Create private room              indexable* (while rooms are live), in sitemap
 │   └── /play/join-room/           Join by code/link                noindex, follow, NOT in sitemap
 ├── /room/{roomId}/                Private room + game              noindex, nofollow, NOT in sitemap
 ├── /how-to-play-quoridor/         Beginner tutorial                indexable, in sitemap
@@ -29,7 +29,7 @@ Out of scope: game engine, multiplayer server, matchmaking, final page copy.
 └── (any other URL)                Branded 404, HTTP 404            noindex, NOT in sitemap
 ```
 
-\* The three mode pages are thin app shells. Index them **only if** each has at least ~150 words of unique intro copy (what the mode is, how it works) above or beside the app UI. Otherwise set `noindex, follow` and omit from the sitemap so they don't dilute `/play/`. Default recommendation: index `/play/` only at launch; add the others after they carry real copy.
+\* The mode pages (and create-room, the "play with friends online" page) are app shells. Index them **only if** each has at least ~150 words of unique intro copy (what the mode is, how it works) above or beside the app UI. Otherwise set `noindex, follow` and omit from the sitemap so they don't dilute `/play/`. Decided: they are indexed, each with an intro section (`mode_intro()` in `pages.py`) and in the sitemap, so search engines can offer them as sitelinks under the home page. `/play/online/` and `/play/create-room/` are indexable only while the game server is live (`FEATURES`); a page that says "not connected" stays `noindex`.
 
 ### Page purposes
 
@@ -409,9 +409,9 @@ Titles/descriptions are unique per page; templates inject them from per-route me
 | Rendering | All public informational pages and the homepage are static-generated (SSG) or server-rendered: full content, headings, links, and metadata in the initial HTML, no JS needed to read them. Game UIs are client-rendered islands within a server-rendered shell. |
 | Status codes | Unknown URLs → real **404**. Never serve the homepage (or a 200 "not found" shell) for unknown paths; configure the host's fallback accordingly and don't use SPA catch-all rewrites. Invalid `/room/{id}/` → app-level error state; respond with 404 (or 200 + `noindex` if the SPA must resolve it—prefer 404/410 for expired rooms). Retired URLs → 301 to the closest equivalent. |
 | Canonicals | Absolute `<link rel="canonical">` per indexable page, self-referencing. Pick one host (`https://quoridor.online`, no `www` or redirect it), HTTPS only (HSTS), consistent trailing slash (as listed above), lowercase paths. Redirect all variants (http, www, no-slash, query-string duplicates) with single 301 hops. |
-| Robots meta | Rooms, create/join-room, and 404: `noindex`. Room pages: `noindex, nofollow, noarchive`. Send the same via `X-Robots-Tag` header for `/room/*` so it holds even if HTML fails. |
+| Robots meta | Rooms, join-room, and 404: `noindex`. Room pages: `noindex, nofollow, noarchive`. Send the same via `X-Robots-Tag` header for `/room/*` so it holds even if HTML fails. |
 | robots.txt | Allow all public pages; `Disallow: /room/` (crawl-budget hygiene) and API/WebSocket paths; reference the sitemap. **Disallow does not protect privacy** (the file is public, and a blocked URL can still be indexed if linked), so protection comes from unguessable IDs, `noindex`, no public links to rooms, and server-enforced access. Caution: if `/room/` is disallowed, crawlers can't see its `noindex`; since room URLs are never linked publicly, either approach is acceptable. Decision: use `noindex` + `X-Robots-Tag` and also `Disallow` in robots.txt, accepting that `noindex` is a backstop. |
-| Sitemap | `/sitemap.xml`, canonical absolute URLs only, `200`-status and indexable only, `<lastmod>` from real content changes. Contains: `/`, `/play/`, the four informational pages, about, contact, privacy, terms (plus mode pages if indexed). **Never** contains rooms, create/join-room, 404, or any URL carrying a code/token. |
+| Sitemap | `/sitemap.xml`, canonical absolute URLs only, `200`-status and indexable only, `<lastmod>` from real content changes. Contains: `/`, `/play/`, the four informational pages, about, contact, privacy, terms plus the mode pages and create-room. **Never** contains rooms, join-room, 404, or any URL carrying a code/token. |
 | Structured data (JSON-LD) | `WebSite` (+ `Organization` only with real, non-invented facts) on home; `BreadcrumbList` on subpages; `Article`/`WebPage` on guides; `VideoGame`/`Game` markup only if accurate; `FAQPage` only if visible content matches. No fabricated ratings, reviews, or counts. |
 | Open Graph / Twitter | `og:title`, `og:description`, `og:type`, `og:url`, `og:image` (1200×630, with alt), `og:site_name`, `twitter:card=summary_large_image`. Rooms: generic OG only, with no room ID, code, or names in any metadata. |
 | Language & viewport | `<html lang="en">`; `<meta charset>`; viewport meta. Add `hreflang` only when translated versions exist. |
@@ -486,7 +486,7 @@ Privacy policy must be updated before any online data collection goes live.
 
 ## 11. Open decisions (need an owner)
 
-1. Indexing of `/play/online/`, `/play/computer/`, `/play/local/`: index at launch with unique copy, or `noindex` until polished. *(Recommendation: index only `/play/` at launch.)*
+1. ~~Indexing of `/play/online/`, `/play/computer/`, `/play/local/`~~ *(Decided: indexed, with unique intro copy, so they can appear as sitelinks. `/play/create-room/` is indexed too.)*
 2. Whether the computer mode asks for a username.
 3. Room start model: auto-start vs. both-ready.
 4. Disconnect/forfeit grace period and room TTL (affects Terms and Privacy).
