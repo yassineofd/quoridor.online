@@ -30,7 +30,7 @@
   out.seen = stored().seen.length;
 
   // damaged entries are ignored rather than breaking the page
-  localStorage.setItem('quoridor.scores', '{"pairs":[null,{"id":3},{"id":"a\nb","names":["a","b"],"wins":["x",2]}],"seen":[]}');
+  localStorage.setItem('quoridor.scores', '{"pairs":[null,{"id":3},{"id":"a\\nb","names":["a","b"],"wins":["x",2]}],"seen":[]}');
   out.damaged = P.tally('a', 'b');
   localStorage.setItem('quoridor.scores', 'not json');
   out.garbage = P.tally('a', 'b');

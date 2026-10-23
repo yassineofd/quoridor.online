@@ -39,6 +39,8 @@
   // cat groups them on the page (messages ach.cat.<cat>); icon is a name from icons.js.
   function counter(id, icon, points, cat, target, value) { return { id: id, icon: icon, points: points, cat: cat, target: target, value: value }; }
   function event(id, icon, points, cat, test) { return { id: id, icon: icon, points: points, cat: cat, test: test }; }
+  // A meta achievement counts the others, so it is never suggested as the next goal.
+  function meta(a) { a.meta = true; return a; }
   function beat(level) { return function (s) { return s.beat[level]; }; }
   function stat(name) { return function (s) { return s[name]; }; }
   function variantsPlayed(s) { return VARIANT_NAMES.filter(function (v) { return s.variants[v] > 0; }).length; }
@@ -69,8 +71,8 @@
     counter('wins25', 'star', 75, 'milestones', 25, stat('wins')),
     counter('wins100', 'star', 200, 'milestones', 100, stat('wins')),
     counter('walls100', 'wall', 40, 'milestones', 100, stat('walls')),
-    counter('hunter10', 'award', 50, 'milestones', 10, unlockedCount),
-    counter('hunter20', 'trophy', 100, 'milestones', 20, unlockedCount),
+    meta(counter('hunter10', 'award', 50, 'milestones', 10, unlockedCount)),
+    meta(counter('hunter20', 'trophy', 100, 'milestones', 20, unlockedCount)),
 
     counter('winStreak3', 'flame', 40, 'streaks', 3, stat('bestWinStreak')),
     counter('winStreak7', 'flame', 120, 'streaks', 7, stat('bestWinStreak')),
@@ -218,12 +220,12 @@
     var items = CATALOG.map(function (a) {
       var progress = null;
       if (a.value) progress = [Math.min(a.value(s, data), a.target), a.target];
-      return { id: a.id, icon: a.icon, points: a.points, cat: a.cat, unlockedAt: data.unlocked[a.id] || null, progress: progress };
+      return { id: a.id, icon: a.icon, points: a.points, cat: a.cat, meta: !!a.meta, unlockedAt: data.unlocked[a.id] || null, progress: progress };
     });
     // The goal to suggest: the locked counter that is the furthest along (the cheaper one when they tie).
     var goal = null;
     items.forEach(function (it) {
-      if (it.unlockedAt || !it.progress) return;
+      if (it.unlockedAt || !it.progress || it.meta) return;
       var f = it.progress[0] / it.progress[1];
       if (!goal || f > goal.f || (f === goal.f && it.points < goal.item.points)) goal = { f: f, item: it };
     });
