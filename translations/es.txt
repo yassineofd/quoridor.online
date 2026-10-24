@@ -845,7 +845,6 @@ b4fc90|Mientras buscas un oponente, tu navegador también guarda el ticket de b�
 6fb20f|<strong>Tickets de emparejamiento:</strong> se descartan tras unos 20 segundos sin aviso, y en cualquier caso a los 10 minutos.
 e4e550|<strong>Direcciones IP usadas para limitar abusos:</strong> se guardan en memoria durante aproximadamente un minuto.
 31af1c|<strong>Token de asiento en tu navegador:</strong> se elimina cuando sales de la sala. También puedes borrarlo en cualquier momento desde la configuración de datos del sitio de tu navegador.
-de3731|No vendemos ni compartimos información personal con fines publicitarios, y no te trataremos de forma distinta por ejercer tus derechos. Los datos que nuestro servidor de juego guarda sobre una partida (un nombre visible, un token de asiento y una dirección IP en memoria) se eliminan en cuestión de minutos, así que normalmente no queda nada que entregarte, corregir o borrar cuando una solicitud pueda responderse. Para hacer una solicitud, contáctanos como se describe en la sección 9. Es posible que necesitemos detalles que nos permitan encontrar los datos y confirmar que son tuyos, y responderemos dentro del plazo que exija la ley.
 f9f002|<strong>Juego en línea.</strong> Juega contra otra persona tras elegir un nombre visible. No hace falta cuenta.
 35be30|<strong>Salas privadas.</strong> Invita a un amigo concreto con un enlace o un código de emparejamiento corto.
 4af664|<strong>Nombres visibles.</strong> Un nombre tiene de 2 a 20 caracteres y no es una cuenta, así que no te da propiedad sobre él y dos jugadores pueden elegir el mismo. Elige un nombre que no te importe que se muestre a un desconocido. No uses un nombre ofensivo, de odio, sexualmente explícito o amenazante, que suplante a otra persona o al sitio, o que revele datos personales como tu nombre real o tu dirección de correo.
@@ -1364,3 +1363,106 @@ room.lobbyEmpty|Esperando a un jugador…
 room.hostTag|(anfitrión)
 room.allConnected|{names} están conectados.
 room.confirmLeaveGroup|¿Salir de esta sala? La partida terminará para todos.
+be3fed|Torneos
+659a0f|Juega en un torneo de Quoridor
+75c379|Cada 8 horas
+e1e24d|Juega en un torneo de Quoridor
+d94b34|Un torneo por eliminación para 8 o 16 jugadores empezará cada 8 horas. Los torneos llegarán pronto.
+2ab31e|Sobre los torneos
+a91ac8|<svg/> 8 o 16 jugadores
+784d1d|<svg/> Cuadro por eliminación
+571efb|<svg/> Cómo funcionan los torneos
+b92fd4|Torneos de Quoridor – Próximamente
+4b5b08|Los torneos de Quoridor por eliminación para 8 o 16 jugadores llegarán pronto. Uno nuevo empezará cada 8 horas.
+61fac1|Torneos de Quoridor
+80b371|Los torneos por eliminación para 8 o 16 jugadores, que empezarán cada 8 horas, llegarán pronto.
+3766cd|Los torneos aún no están disponibles
+07d846|Este sitio aún no tiene servidor de juego, así que nadie puede inscribirse y no empezará ningún torneo. No se envió nada a ninguna parte.
+8b11b4|Mientras tanto, <a href="/play/">elige otra forma de jugar</a>.
+988b87|<time datetime="2026-10-24">24 de octubre de 2026</time>: se añadieron los torneos. Se indicó que la inscripción guarda un nombre visible y un token de entrada, que los nombres, el cuadro y los resultados de un torneo son públicos hasta 24 horas después de que termine, y se describió la entrada del navegador llamada quoridor.tour. que permite al sitio llevarte a tu partida.
+d16754|Cada 8 horas empieza un torneo por eliminación para 8 o 16 jugadores. Inscríbete con un nombre visible, juega tus partidas en directo e intenta ser el campeón.
+70b0c6|<svg/> Inscribirme en un torneo
+7380e1|Torneos de Quoridor: un nuevo torneo por eliminación cada 8 horas
+df1568|Únete a un torneo gratuito de Quoridor que empieza cada 8 horas. Inscríbete en un cuadro por eliminación de 8 o 16 jugadores y juega partidas en directo. Sin cuenta.
+247e9a|Cada 8 horas empieza un nuevo torneo por eliminación para 8 o 16 jugadores. Inscríbete con un nombre visible, juega tus partidas en directo e intenta ser el campeón.
+055743|Próximos torneos
+294f02|Los dos tamaños empiezan a la vez. Puedes inscribirte hasta el comienzo y retirarte en cualquier momento antes. Las horas se muestran en tu zona horaria.
+dc96b2|Cargando los torneos&hellip;
+8658d9|Ahora mismo no hay ningún torneo abierto a inscripciones. Vuelve a mirar en un momento.
+fb9f51|En curso y terminados
+701439|Aún no ha empezado ningún torneo. Los torneos permanecen aquí 24 horas después de terminar.
+56f0c3|Cómo funcionan los torneos de Quoridor
+bfec76|<strong>Un torneo nuevo cada 8 horas.</strong> Empiezan a las 00:00, 08:00 y 16:00 UTC, y esta página muestra cada comienzo en tu propia zona horaria. Hay dos abiertos a la vez: uno para 8 jugadores y otro para 16.
+cf5a1c|<strong>Inscríbete con un nombre visible.</strong> No hay cuentas. Puedes inscribirte hasta el comienzo y retirarte antes de él. Un torneo que no ha llenado todas sus plazas cuando empieza se cancela, y puedes inscribirte en el siguiente.
+6f25d4|<strong>Un cuadro por eliminación.</strong> Los emparejamientos se sortean al empezar. Gana tu partida para seguir; si pierdes, quedas fuera. Un torneo de 8 jugadores tiene tres rondas y uno de 16 tiene cuatro, y termina con la final.
+73eca6|<strong>Partidas normales de Quoridor.</strong> Cada partida usa las reglas clásicas, con 32 segundos por jugada y 5 minutos por jugador para toda la partida. No hay revancha, así que cada partida tiene un ganador.
+33743e|<strong>Está presente al empezar.</strong> Mantén esta página abierta y te llevará a cada partida en cuanto esté lista; en otras páginas del sitio aparece un aviso. Un jugador que no abre su partida en 3 minutos la pierde por abandono, y salir de una partida en curso también cuenta como abandono.
+7144dd|<strong>Los nombres son públicos.</strong> Cualquiera puede ver los nombres visibles, el cuadro y los resultados de un torneo mientras figura en la lista, es decir, hasta 24 horas después de que termine.
+18b0e0|¿Eres nuevo en el juego? Lee <a href="/how-to-play-quoridor/">cómo jugar a Quoridor</a> o practica antes <a href="/play/computer/">contra el ordenador</a>.
+21419f|Torneos de Quoridor: preguntas frecuentes
+9f51dd|¿Con qué frecuencia empieza un torneo de Quoridor?
+bc82ae|Uno nuevo empieza cada 8 horas, a las 00:00, 08:00 y 16:00 UTC, en dos tamaños: 8 jugadores y 16 jugadores.
+0850a6|¿Necesito una cuenta para participar en un torneo?
+99627d|No. Te inscribes con un nombre visible y nada más. El nombre solo se usa para mostrarte en el cuadro.
+9008f3|¿Qué pasa si no se inscriben suficientes jugadores?
+a9e196|Un torneo necesita tener todas sus plazas ocupadas cuando empieza. Si no está lleno, se cancela y puedes inscribirte en el siguiente.
+d579f2|¿Y si mi oponente no aparece?
+49a0e3|Un jugador que no abre su partida en 3 minutos la pierde por abandono, y su oponente pasa a la siguiente ronda.
+cdafe3|¿Qué reglas se usan en un torneo?
+753373|Las <a href="/quoridor-rules/">reglas clásicas de Quoridor</a> en un tablero de 9×9 con 10 muros cada uno, con 32 segundos por jugada y 5 minutos por jugador para toda la partida.
+6b2c10|<strong>En resumen:</strong> las partidas contra el ordenador y en un solo dispositivo se quedan en tu navegador; Google Analytics instala cookies para contar visitas (nunca en las páginas de salas en línea); y lo poco que necesita el juego en línea se guarda solo en memoria, durante minutos, o hasta un día en el caso de un torneo.
+433393|<strong>Torneos.</strong> Para inscribirte en un torneo escribes un nombre visible. Nuestro servidor de juego guarda ese nombre, un token de entrada aleatorio que demuestra que la inscripción es tuya, el orden en que se inscribió la gente, y el cuadro y los resultados del torneo, hasta 24 horas después de que termine. Cualquiera que abra la página de torneos puede ver los nombres, el cuadro y los resultados. No interviene ninguna cuenta, correo electrónico ni contraseña.
+bd56ac|Cuando te inscribes en un torneo, tu navegador guarda una pequeña entrada con el nombre <em>quoridor.tour.</em> seguido del identificador del torneo. Contiene tu token de entrada, el nombre visible que elegiste y la hora de comienzo. Permite que el sitio te avise cuando tu partida esté lista y te lleve a ella, también desde otras páginas del sitio. Se elimina cuando te retiras o cuando el torneo deja de aparecer en la lista.
+9efa55|<strong>Torneos.</strong> Los nombres visibles de los jugadores de un torneo, su cuadro y sus resultados se muestran a cualquiera que abra la página de torneos, hasta 24 horas después de que el torneo termine. Cada partida se juega en una sala como las anteriores, creada por el servidor para los dos jugadores. Si el servidor de juego se reinicia, los torneos y sus inscripciones se pierden.
+785458|<strong>Torneos:</strong> un torneo y los nombres visibles que contiene se eliminan 24 horas después de que termine o se cancele. Una inscripción de la que te retiras se elimina de inmediato. Tu token de entrada en el navegador se elimina cuando te retiras o cuando el torneo deja de aparecer en la lista.
+0bbbe0|No vendemos ni compartimos información personal con fines publicitarios, y no te trataremos de forma distinta por ejercer tus derechos. Los datos que nuestro servidor de juego guarda sobre una partida (un nombre visible, un token de asiento y una dirección IP en memoria) se eliminan en cuestión de minutos, y los que guarda sobre un torneo en el plazo de un día, así que normalmente no queda nada que entregarte, corregir o borrar cuando una solicitud pueda responderse. Para hacer una solicitud, contáctanos como se describe en la sección 9. Es posible que necesitemos detalles que nos permitan encontrar los datos y confirmar que son tuyos, y responderemos dentro del plazo que exija la ley.
+game.notArrived|{name} aún no se ha unido a la partida. Perderá por abandono en unos {n} s si no aparece.
+tour.matchLine|Torneo · {round}
+tour.backToTournament|Volver al torneo
+tour.roundFinal|Final
+tour.roundSemi|Semifinal
+tour.roundQuarter|Cuartos de final
+tour.roundOf|Ronda de {n}
+tour.size|Torneo de {n} jugadores
+tour.starts|Empieza {when}
+tour.startsIn|en {left}
+tour.starting|empezando ahora
+tour.seats|{n} de {size} jugadores inscritos
+tour.signedUpList|Jugadores inscritos
+tour.full|Este torneo está lleno.
+tour.nameLabel|Tu nombre visible
+tour.signUp|Inscribirme
+tour.withdraw|Retirarme
+tour.confirmWithdraw|¿Retirarte de este torneo?
+tour.youAreIn|Estás inscrito como {name}.
+tour.cancelled|Cancelado: solo se inscribieron {n} de {size} jugadores.
+tour.champion|Campeón: {name}
+tour.inProgress|En curso · {round}
+tour.showBracket|Mostrar cuadro
+tour.hideBracket|Ocultar cuadro
+tour.loadingBracket|Cargando el cuadro…
+tour.tbd|Por decidir
+tour.won|ganó
+tour.walkover|por incomparecencia
+tour.playingNow|Jugando ahora
+tour.yourMatch|Tu partida contra {name} está lista.
+tour.joinWithin|Abre la partida en 3 minutos o la perderás por abandono.
+tour.taking|Te llevamos a la partida en {n} s…
+tour.playNow|Jugar ahora
+tour.titleReady|Tu partida está lista | {title}
+tour.youChampion|¡Ganaste el torneo!
+tour.youOut|Has quedado fuera de este torneo.
+tour.followBracket|Puedes seguir el resto del cuadro más abajo.
+tour.advanced|Has pasado a la siguiente ronda.
+tour.nextMatchSoon|Tu próxima partida empieza en cuanto termine la otra partida de tu ronda.
+tour.nextLine|Próximo torneo: {when} (en {left}).
+tour.seatsLine|Plazas ocupadas: {a} de 8 y {b} de 16.
+tour.watchIn|Estás inscrito en el torneo que empieza {when}.
+tour.view|Ver torneo
+tour.offerLabel|Partida de torneo lista
+err.no-tournament|Este torneo no está disponible.
+err.tournament-closed|La inscripción en este torneo ya está cerrada.
+err.tournament-full|Este torneo está lleno.
+err.name-taken|Ese nombre ya está inscrito para este comienzo. Elige otro.
+err.not-signed-up|No estás inscrito en este torneo.
+err.tournament-match|Una partida de torneo no se puede repetir.

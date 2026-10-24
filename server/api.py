@@ -23,8 +23,14 @@
   POST   /api/queue/<ticket>/accept                            -> {accepted:true}  (409 if the offer is gone)
   POST   /api/queue/<ticket>/decline                           -> {declined:bool}  (keep searching, not with this player)
   DELETE /api/queue/<ticket>                                   -> {cancelled:true}
+  GET    /api/tournaments                                      -> {now, slotSeconds, tournaments:[{id, size, start, status, players, names?, ...}]}
+           A tournament starts every 8 hours, in two sizes (8 and 16 players); see server/tournaments.py.
+  GET    /api/tournaments/<id>?since=N   X-Seat-Token (optional) -> the tournament in full: players, bracket and, for the holder
+                                                                  of an entry token, `you` with the match to play (waits up to 25 s for news)
+  POST   /api/tournaments/<id>/join      {username}            -> {token, index}  (the entry token is sent back as X-Seat-Token)
+  POST   /api/tournaments/<id>/leave     X-Seat-Token          -> {left:true}  (while sign-up is open)
 
-Seat tokens travel in a header, never in a URL, so they don't end up in logs or referrers.
+Seat tokens (and a tournament's entry token) travel in a header, never in a URL, so they don't end up in logs or referrers.
 """
 
 import json
@@ -183,3 +189,27 @@ def queue_decline(req, ticket):
 @route("DELETE", "/queue/" + ID)
 def queue_cancel(req, ticket):
     return hub.queue_cancel(ticket)
+
+
+@route("GET", "/tournaments")
+def tournaments_list(req):
+    return hub.tournaments.listing(req.ip)
+
+
+@route("GET", "/tournaments/" + ID)
+def tournament_state(req, tid):
+    try:
+        since = int(req.query.get("since", [None])[0])
+    except (TypeError, ValueError):
+        since = None
+    return hub.tournaments.state(req.ip, tid, req.token, since)
+
+
+@route("POST", "/tournaments/" + ID + "/join")
+def tournament_join(req, tid):
+    return hub.tournaments.join(req.ip, tid, req.json().get("username"))
+
+
+@route("POST", "/tournaments/" + ID + "/leave")
+def tournament_leave(req, tid):
+    return hub.tournaments.leave(tid, req.token)

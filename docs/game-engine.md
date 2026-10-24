@@ -9,6 +9,7 @@ How the four ways to play are built. The site spec is in `architecture-spec.md`;
 | Private room | `/play/create-room/`, `/play/join-room/`, `/room/<id>/` | Server is authoritative | Yes |
 | Private room for a variant | a variant page (`/variants/...`), choosing "With invited friends"; then `/room/<id>/` | Server is authoritative | Yes |
 | Online matchmaking | `/play/online/` (then `/room/<id>/`) | Server is authoritative | Yes |
+| Tournament | `/tournaments/` (each match is then a `/room/<id>/`) | Server is authoritative | Yes |
 
 Local and computer play are plain static files, so they work on any static host. Online play needs
 `serve.py` (or anything that mounts `server/api.py`) behind the same origin as the site.
@@ -73,6 +74,8 @@ Moves are `{type:"move", r, c}` or `{type:"wall", o:"h"|"v", r, c}`. Screen name
 | `static/assets/js/play.js` | Setup forms on the `/play/*` pages |
 | `static/assets/js/online.js`, `room.js` | API client, long-poll session, and the `/room/<id>/` page |
 | `server/rooms.py`, `server/api.py` | Rooms, matchmaking, presence, rate limits; HTTP/JSON routes (mounted by `serve.py`) |
+| `server/tournaments.py` | Tournaments: the schedule, sign-up, the bracket, and a room for every match |
+| `static/assets/js/tournaments.js`, `tournament-watch.js` | The `/tournaments/` page; the live line of the tournament strips and the "your match is ready" note on the other pages |
 
 The two engines must agree. `tests/test_parity.py` generates random games with the Python engine and replays them
 through the JavaScript engine in headless Edge/Chrome, comparing pawn moves, the legality of all 128 wall slots,
@@ -192,6 +195,41 @@ tolerated: the name is not remembered, and the tally then lives in memory until 
 
 Timing constants live at the top of `server/rooms.py`.
 
+## Tournaments
+
+A tournament starts every 8 hours, at 00:00, 08:00 and 16:00 UTC (`SLOT_SECONDS` in `server/tournaments.py`), in two sizes: 8 players
+(three rounds) and 16 players (four). Both sizes of the next start are open for sign-up from the moment the previous start has passed, so
+there are always two open tournaments; they are created lazily (any API call, or the sweeper, makes sure they exist). The schedule follows
+the wall clock (`Tournaments.clock`, replaced in the tests), not the server's uptime.
+
+* **Sign-up.** `POST /api/tournaments/<id>/join {username}` returns an entry token, which the browser keeps in `localStorage` under
+  `quoridor.tour.<id>` (with the name and the start time) and sends back in the `X-Seat-Token` header. A name is taken once per start time
+  (case-insensitive, across both sizes), so nobody sits in both tournaments of a start. `.../leave` withdraws while sign-up is open. Names are
+  display names, as everywhere; sign-ups are limited to 6 a minute per address (`JOIN_LIMIT`).
+* **Filling.** A tournament needs every place taken at its start time; otherwise it is cancelled (`status: "cancelled"`, `reason:
+  "not-enough"`) and nobody is carried over: players sign up again for the next start. Nothing starts with fewer players than its size.
+* **The bracket.** At the start the players are drawn by lot into a single-elimination bracket (`bracket[round][slot]`, each match with the
+  indexes `a` and `b` into `players`, a `winner`, a `state` of `waiting`, `live` or `done`, and `by`: `played` or `walkover`). Match `i` of
+  round `r + 1` is fed by matches `2i` and `2i + 1` of round `r` and opens as soon as both are decided, without waiting for the rest of the round.
+* **A match is a room.** `Tournaments._open_match` makes a classic two-player `Room` with both seats filled and the game on
+  (`room.tournament = {id, round, slot, rounds}`, which the snapshot carries). The two players get their seat token in the `you.match` of the
+  tournament view; `tournaments.js` (or `tournament-watch.js` on any other page, room pages included) saves it like any seat
+  (`via: "tournament"`, so no score between friends is kept) and takes the player to `/room/<id>/`. The game screen shows "Tournament · Final" and,
+  once the game is over, a link back to the tournament instead of a rematch (`rematch` answers `tournament-match`).
+* **No-shows.** A tournament seat starts as not `arrived` and not connected; it arrives when its player first uses the seat token. Such a
+  player has `TOURNAMENT_JOIN_GRACE` (3 minutes, `server/rooms.py`) before they forfeit, longer than the minute a dropped connection gets
+  (`players[i].arrived` lets the game screen say "has not joined yet"). Their clock is held until they come. If neither player ever comes the room
+  ends with `reason: "noshow"` and whoever signed up first goes on, so a bracket always finishes. A player who leaves a game in progress, or runs out of time,
+  loses it like in any room. The result reaches the tournament straight from `Hub._finish`, so it is never lost with the room.
+* **Visibility.** `GET /api/tournaments` lists every tournament (with the names of the players of an open one); `GET /api/tournaments/<id>`
+  is the whole view and long-polls with `?since=<version>` like a room. Names, bracket and results are public for everyone, until
+  `KEEP_AFTER_END` (24 hours) after the end. The entry token is only ever sent to its owner. Everything is in memory: a restart loses tournaments
+  and sign-ups (the Privacy Policy says so, see `PRIVACY_HISTORY`).
+* **On the site.** `/tournaments/` is the page; the "Play in a Quoridor tournament" strip (`tournament_strip()` in `pages.py`, the private-room
+  strip's twin) is on the home page (only while online play is on, like every mode), on `/play/` and on `/variants/`. `tournament-watch.js`
+  fills in the line "Next tournament: ... Places taken: ..." and, for a player who signed up, shows a reminder and then the "your match is ready" note.
+  Without a game server the page and the strips say tournaments are coming soon.
+
 ## Running and testing
 
 ```powershell
@@ -199,9 +237,10 @@ python build.py                 # static site into ./public   (online pages say 
 $env:QUORIDOR_ONLINE=1; python build.py     # same, with the online modes switched on
 python serve.py                 # http://localhost:8000, includes the /api server
 
-python -m unittest tests.test_engine tests.test_rooms tests.test_http   # fast: rules, rooms, HTTP API
+python -m unittest tests.test_engine tests.test_rooms tests.test_tournaments tests.test_http   # fast: rules, rooms, tournaments, HTTP API
 python -m unittest tests.test_parity                                    # JS engine == Python engine (needs Edge/Chrome)
 python -m unittest tests.test_ui                                        # real-browser play-throughs of every mode
+python -m unittest tests.test_tournaments_ui                            # real-browser tournaments: the stands, sign-up, a match, the bracket
 python check.py                                                         # site structure, SEO, links
 ```
 

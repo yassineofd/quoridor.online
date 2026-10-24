@@ -4,6 +4,7 @@
    state into the shared game screen, and sends moves as requests the server may refuse.
    A room plays the classic game or a variant (Wallrush, Pointrush for 2 to 4 players, a custom game): the room says which,
    and a room with more than two seats shows a lobby of who has joined until the last seat is taken.
+   A match of a tournament is a room too (the server makes it and seats both players; tournaments.js takes them here).
    Append ?preview=<state> to see the other designed screens with sample data (no server needed). */
 (function () {
   var STATES = ['waiting', 'join', 'starting', 'reconnecting', 'invalid', 'full', 'expired', 'unavailable', 'left', 'game'];
@@ -211,6 +212,7 @@
     return {
       names: snap.players.map(function (p) { return p.name; }),
       connected: snap.players.map(function (p) { return p.connected; }),
+      arrived: snap.players.map(function (p) { return p.arrived; }),
       forfeitIn: snap.forfeitIn, rematch: snap.rematch, reason: snap.reason, round: snap.round,
       quitter: snap.quitter, finished: snap.status === 'finished',
       // The snapshot may have waited out the "both players are in" screen, so take that time off.
@@ -231,6 +233,8 @@
       ui = QuoridorGame.mount(gameHost, {
         mode: 'online', variant: g.variant, players: g.players, options: g.options, names: metaOf(snap).names, seat: snap.you, flip: turned,
         turnSeconds: snap.turnSeconds, remote: session,
+        // A match of a tournament: the game says which round it is and, when it is over, leads back to the tournament.
+        tournament: snap.tournament ? { href: Online.tournamentUrl(snap.tournament.id), round: snap.tournament.round, rounds: snap.tournament.rounds } : undefined,
         scoreId: keepsScore() ? roomId : undefined,
         onExit: function (how) { if (how === 'leave') leaveFlow(true); }  // the game screen already asked
       });

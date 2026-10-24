@@ -106,6 +106,37 @@ class Http(unittest.TestCase):
             status, err, _ = self.call("POST", "/rooms", dict(bad, username="Ana"))
             self.assertEqual((status, err["error"]), (400, "bad-settings"), bad)
 
+    def test_tournaments_over_http(self):
+        status, listing, _ = self.call("GET", "/tournaments")
+        self.assertEqual(status, 200)
+        self.assertEqual(listing["slotSeconds"], 8 * 3600)
+        open_ones = [t for t in listing["tournaments"] if t["status"] == "open"]
+        self.assertEqual(sorted(t["size"] for t in open_ones), [8, 16])
+        self.assertEqual(open_ones[0]["start"] % (8 * 3600), 0)
+        tid = next(t["id"] for t in open_ones if t["size"] == 8)
+
+        status, me, _ = self.call("POST", f"/tournaments/{tid}/join", {"username": "Ana"})
+        self.assertEqual(status, 200)
+        status, err, _ = self.call("POST", f"/tournaments/{tid}/join", {"username": "ana"})
+        self.assertEqual((status, err["error"]), (409, "name-taken"))
+        status, err, _ = self.call("POST", f"/tournaments/{tid}/join", {"username": "x"})
+        self.assertEqual((status, err["error"]), (400, "bad-username"))
+
+        status, view, _ = self.call("GET", f"/tournaments/{tid}", token=me["token"])
+        self.assertEqual((status, view["status"], view["you"]["name"], view["you"]["state"]), (200, "open", "Ana", "in"))
+        self.assertEqual([p["name"] for p in view["players"]], ["Ana"])
+        self.assertIsNone(self.call("GET", f"/tournaments/{tid}")[1]["you"])
+        self.assertNotIn(me["token"], json.dumps(self.call("GET", "/tournaments")[1]))   # the token is only ever shown to its owner
+
+        # Waiting for news: a stale version comes back at once, the current one only when something changes.
+        status, same, _ = self.call("GET", f"/tournaments/{tid}?since=0", token=me["token"])
+        self.assertEqual(same["version"], view["version"])
+
+        self.assertEqual(self.call("POST", f"/tournaments/{tid}/leave", token="nope")[1]["error"], "not-signed-up")
+        self.assertEqual(self.call("POST", f"/tournaments/{tid}/leave", token=me["token"])[1], {"left": True})
+        self.assertEqual(self.call("GET", "/tournaments/t8-12345678")[1]["error"], "no-tournament")
+        self.assertEqual(self.call("POST", "/tournaments")[0], 405)
+
     def test_queue_over_http(self):
         status, a, _ = self.call("POST", "/queue", {"username": "Alex"})
         status, b, _ = self.call("POST", "/queue", {"username": "Sam"})

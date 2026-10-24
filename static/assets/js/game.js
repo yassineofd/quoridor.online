@@ -16,10 +16,13 @@
                   leaving ends the game for everyone, with no winner
      cfg.scoreId  two named players who count their wins against each other (see profile.js): an id for this game (local) or room (online);
                   the finished game is counted once and the score shows under the players. Left out: no score is kept
+     cfg.tournament a match of a tournament (online): { href, round, rounds }. The game says which round it is, there is no rematch, and
+                  the result offers a way back to the tournament at `href`
      cfg.leaveHref where "Leave" goes (local and computer games): drawn as a link to this address
      cfg.onExit   called with 'again' or 'leave' when the player finishes
    For online games the owner pushes server state in with controller.setState(json, meta). meta: connected[], forfeitIn, rematch[],
-   reason, quitter (who left, when the game ended with no winner), finished (the room's game is over), names, turnLeft, clocks.   */
+   reason, quitter (who left, when the game ended with no winner), finished (the room's game is over), names, turnLeft, clocks,
+   arrived[] (false for a tournament player who has not opened the match yet).   */
 (function (root) {
   'use strict';
   var Q = root.Quoridor, B = root.QuoridorBoard;
@@ -160,6 +163,7 @@
     var timerFill = h('span', { 'class': 'turn-timer-fill' });
     var timer = h('div', { 'class': 'turn-timer', hidden: '' }, [timerText, h('span', { 'class': 'turn-timer-bar', 'aria-hidden': 'true' }, [timerFill])]);
     var scoreEl = h('p', { 'class': 'score-line', hidden: '' });
+    var tourEl = h('p', { 'class': 'tour-line', hidden: '' });
     var vs = h('li', { 'class': 'vs-chip', 'aria-hidden': 'true', text: 'VS' });
     var players = h('ul', { 'class': 'players' + (game.nPlayers === 2 ? '' : ' players--multi'), 'aria-label': t('game.players') },
       game.nPlayers === 2 ? [cards[0].card, vs, cards[1].card] : cards.map(function (c) { return c.card; }));
@@ -213,7 +217,7 @@
     if (window.matchMedia && window.matchMedia('(max-width: 899px)').matches) log.removeAttribute('open');
     var announcer = h('div', { 'class': 'sr-only', 'aria-live': 'polite', 'aria-atomic': 'true' });
 
-    var side = h('div', { 'class': 'game-side' }, [banner, players, scoreEl, turn, timer, result, tray, wallRow, hint, controls, keys, log, announcer]);
+    var side = h('div', { 'class': 'game-side' }, [banner, tourEl, players, scoreEl, turn, timer, result, tray, wallRow, hint, controls, keys, log, announcer]);
     host.appendChild(h('div', { 'class': 'game-layout' }, [boardWrap, side]));
 
     function isOver() { return game.winner !== null || ended; }
@@ -349,6 +353,11 @@
         c.card.classList.toggle('is-me', i === seat);
         if (!over && game.turn === i) c.card.setAttribute('aria-current', 'true'); else c.card.removeAttribute('aria-current');
       });
+
+      if (cfg.tournament && root.QuoridorOnline) {
+        tourEl.textContent = t('tour.matchLine', { round: root.QuoridorOnline.roundName(cfg.tournament.round, cfg.tournament.rounds) });
+        tourEl.hidden = false;
+      }
 
       // Names at the two ends of the board: the one at the bottom is the player whose goal is the top row (the other way round when the board is turned).
       if (twoSided) {
@@ -500,9 +509,15 @@
     });
 
     function renderBanner() {
-      var gone = [];
-      if (!isOver() && seat !== null) names.forEach(function (name, i) { if (i !== seat && meta.connected[i] === false) gone.push(name); });
-      if (gone.length) {
+      var gone = [], notYet = [];
+      if (!isOver() && seat !== null) names.forEach(function (name, i) {
+        if (i !== seat && meta.connected[i] === false) (meta.arrived && meta.arrived[i] === false ? notYet : gone).push(name);
+      });
+      if (notYet.length) {
+        // A tournament player who has not opened the match yet is not "disconnected": say they have yet to come.
+        banner.hidden = false;
+        banner.textContent = t('game.notArrived', { name: notYet.join(', '), n: Math.max(0, Math.ceil(meta.forfeitIn || 0)) });
+      } else if (gone.length) {
         var key = game.nPlayers === 2 ? 'game.forfeitIn' : 'game.endsIn'; // with three or four players the game ends, there is no winner to name
         banner.hidden = false;
         banner.textContent = t('game.lostConnection', { name: gone.join(', ') }) + ' ' + (meta.forfeitIn != null ? t(key, { n: Math.max(0, Math.ceil(meta.forfeitIn)) }) : t('game.waitingReturn'));
@@ -543,7 +558,10 @@
       var byMove = !why && !ended && lastMove && lastMove.type === 'move' ? t(game.goalCell ? 'game.reachedCenter' : 'game.reachedEdge', { n: Math.ceil(game.moves.length / game.nPlayers) }) : '';
       resultText.textContent = (why || byMove).trim();
       resultActions.textContent = '';
-      if (mode === 'online') {
+      if (mode === 'online' && cfg.tournament) {
+        // A tournament match is played once: the winner goes on, so the way on is back to the tournament.
+        resultActions.appendChild(link('tour.backToTournament', 'btn--primary', cfg.tournament.href, function () { root.location.href = cfg.tournament.href; }, 'trophy'));
+      } else if (mode === 'online') {
         var wanted = seat !== null && meta.rematch[seat];
         var others = meta.rematch.filter(function (v, i) { return v && i !== seat; }).length;
         var oppWants = seat !== null && others > 0;

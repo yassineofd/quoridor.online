@@ -845,7 +845,6 @@ b4fc90|Während Sie nach einem Gegner suchen, legt Ihr Browser außerdem das Suc
 6fb20f|<strong>Matchmaking-Tickets:</strong> werden nach etwa 20 Sekunden ohne Lebenszeichen verworfen, in jedem Fall nach 10 Minuten.
 e4e550|<strong>IP-Adressen zur Missbrauchsbegrenzung:</strong> werden etwa eine Minute lang im Arbeitsspeicher gehalten.
 31af1c|<strong>Sitz-Token in Ihrem Browser:</strong> wird entfernt, wenn Sie den Raum verlassen. Sie können es auch jederzeit über die Website-Daten-Einstellungen Ihres Browsers löschen.
-de3731|Wir verkaufen oder teilen keine personenbezogenen Daten für Werbezwecke, und wir behandeln Sie nicht anders, wenn Sie Ihre Rechte ausüben. Die Daten, die unser Spielserver zu einer Partie hält (ein Anzeigename, ein Sitz-Token und eine IP-Adresse im Arbeitsspeicher), werden innerhalb von Minuten gelöscht, sodass in der Regel nichts mehr übrig ist, das wir Ihnen herausgeben, berichtigen oder löschen könnten, wenn eine Anfrage beantwortet werden kann. Um eine Anfrage zu stellen, kontaktieren Sie uns wie in Abschnitt 9 beschrieben. Möglicherweise benötigen wir Angaben, mit denen wir die Daten finden und bestätigen können, dass sie Ihnen gehören, und wir antworten innerhalb der gesetzlich vorgeschriebenen Frist.
 f9f002|<strong>Online-Spiel.</strong> Spielen Sie gegen eine andere Person, nachdem Sie einen Anzeigenamen gewählt haben. Ein Konto ist nicht nötig.
 35be30|<strong>Private Räume.</strong> Laden Sie einen bestimmten Freund mit einem Link oder einem kurzen Kopplungscode ein.
 4af664|<strong>Anzeigenamen.</strong> Ein Name besteht aus 2 bis 20 Zeichen und ist kein Konto, er gibt Ihnen also kein Eigentum an dem Namen, und zwei Spieler können denselben wählen. Wählen Sie einen Namen, der Ihnen auch vor einem Fremden nicht unangenehm ist. Verwenden Sie keinen Namen, der beleidigend, hasserfüllt, sexuell explizit oder bedrohlich ist, der eine andere Person oder die Website imitiert oder der persönliche Angaben wie Ihren echten Namen oder Ihre E-Mail-Adresse preisgibt.
@@ -1364,3 +1363,106 @@ room.lobbyEmpty|Warten auf einen Spieler …
 room.hostTag|(Gastgeber)
 room.allConnected|{names} sind verbunden.
 room.confirmLeaveGroup|Diesen Raum verlassen? Die Partie endet für alle.
+be3fed|Turniere
+659a0f|Spiele in einem Quoridor-Turnier
+75c379|Alle 8 Stunden
+e1e24d|Spiele in einem Quoridor-Turnier
+d94b34|Alle 8 Stunden startet ein K.-o.-Turnier für 8 oder 16 Spieler. Turniere kommen bald.
+2ab31e|Über die Turniere
+a91ac8|<svg/> 8 oder 16 Spieler
+784d1d|<svg/> K.-o.-Turnierbaum
+571efb|<svg/> So funktionieren Turniere
+b92fd4|Quoridor-Turniere – Demnächst
+4b5b08|Quoridor-K.-o.-Turniere für 8 oder 16 Spieler kommen bald. Alle 8 Stunden startet ein neues.
+61fac1|Quoridor-Turniere
+80b371|K.-o.-Turniere für 8 oder 16 Spieler, die alle 8 Stunden starten, kommen bald.
+3766cd|Turniere sind noch nicht verfügbar
+07d846|Diese Website hat noch keinen Spielserver, daher kann sich niemand anmelden und kein Turnier startet. Es wurde nichts gesendet.
+8b11b4|Wähle in der Zwischenzeit <a href="/play/">eine andere Spielart</a>.
+988b87|<time datetime="2026-10-24">24. Oktober 2026</time>: Turniere hinzugefügt. Es wurde erklärt, dass die Anmeldung einen Anzeigenamen und ein Eintrittstoken speichert, dass die Namen, der Turnierbaum und die Ergebnisse eines Turniers bis 24 Stunden nach seinem Ende öffentlich sind, und der Browser-Eintrag namens quoridor.tour. beschrieben, mit dem die Website Sie zu Ihrer Partie bringen kann.
+d16754|Alle 8 Stunden startet ein K.-o.-Turnier für 8 oder 16 Spieler. Melde dich mit einem Anzeigenamen an, spiele deine Partien live und versuche, Turniersieger zu werden.
+70b0c6|<svg/> Für ein Turnier anmelden
+7380e1|Quoridor-Turniere – alle 8 Stunden ein neues K.-o.-Turnier
+df1568|Nimm an einem kostenlosen Quoridor-Turnier teil, das alle 8 Stunden startet. Melde dich für ein K.-o.-Turnier mit 8 oder 16 Spielern an und spiele live. Kein Konto nötig.
+247e9a|Alle 8 Stunden startet ein neues K.-o.-Turnier für 8 oder 16 Spieler. Melde dich mit einem Anzeigenamen an, spiele deine Partien live und versuche, Turniersieger zu werden.
+055743|Nächste Turniere
+294f02|Beide Größen starten gleichzeitig. Du kannst dich bis zum Start anmelden und jederzeit davor wieder abmelden. Die Zeiten werden in deiner Zeitzone angezeigt.
+dc96b2|Turniere werden geladen&hellip;
+8658d9|Im Moment ist kein Turnier zur Anmeldung geöffnet. Schau gleich noch einmal nach.
+fb9f51|Laufend und beendet
+701439|Noch hat kein Turnier begonnen. Turniere bleiben nach ihrem Ende 24 Stunden hier.
+56f0c3|So funktionieren Quoridor-Turniere
+bfec76|<strong>Alle 8 Stunden ein neues Turnier.</strong> Sie starten um 00:00, 08:00 und 16:00 UTC, und diese Seite zeigt jeden Start in deiner Zeitzone. Zwei sind gleichzeitig offen, eines für 8 Spieler und eines für 16.
+cf5a1c|<strong>Melde dich mit einem Anzeigenamen an.</strong> Es gibt keine Konten. Du kannst dich bis zum Start anmelden und davor wieder abmelden. Ein Turnier, dessen Plätze beim Start nicht alle vergeben sind, wird abgesagt, und du kannst dich für das nächste anmelden.
+6f25d4|<strong>Ein K.-o.-Turnierbaum.</strong> Die Paarungen werden beim Start ausgelost. Gewinne deine Partie, um weiterzukommen; wer verliert, scheidet aus. Ein Turnier mit 8 Spielern hat drei Runden, eines mit 16 Spielern vier, und es endet mit dem Finale.
+73eca6|<strong>Ganz normale Quoridor-Partien.</strong> Jede Partie folgt den klassischen Regeln, mit 32 Sekunden pro Zug und 5 Minuten pro Spieler für die ganze Partie. Es gibt kein Rückspiel, also hat jede Partie einen Sieger.
+33743e|<strong>Sei zum Start da.</strong> Lass diese Seite geöffnet, dann bringt sie dich zu jeder Partie, sobald sie bereit ist; auf anderen Seiten der Website erscheint stattdessen ein Hinweis. Wer seine Partie nicht innerhalb von 3 Minuten öffnet, verliert sie kampflos, und auch das Verlassen einer laufenden Partie gilt als Aufgabe.
+7144dd|<strong>Namen sind öffentlich.</strong> Jeder kann die Anzeigenamen, den Turnierbaum und die Ergebnisse eines Turniers sehen, solange es aufgelistet ist – also bis 24 Stunden nach seinem Ende.
+18b0e0|Neu im Spiel? Lies <a href="/how-to-play-quoridor/">die Spielanleitung für Quoridor</a> oder übe zuerst <a href="/play/computer/">gegen den Computer</a>.
+21419f|Quoridor-Turniere: häufige Fragen
+9f51dd|Wie oft startet ein Quoridor-Turnier?
+bc82ae|Alle 8 Stunden startet ein neues, um 00:00, 08:00 und 16:00 UTC, in zwei Größen: 8 Spieler und 16 Spieler.
+0850a6|Brauche ich ein Konto, um an einem Turnier teilzunehmen?
+99627d|Nein. Du meldest dich nur mit einem Anzeigenamen an, sonst nichts. Der Name wird nur verwendet, um dich im Turnierbaum anzuzeigen.
+9008f3|Was passiert, wenn sich nicht genug Spieler anmelden?
+a9e196|Ein Turnier braucht beim Start alle Plätze besetzt. Ist es nicht voll, wird es abgesagt, und du kannst dich für das nächste anmelden.
+d579f2|Was, wenn mein Gegner nicht erscheint?
+49a0e3|Wer seine Partie nicht innerhalb von 3 Minuten öffnet, verliert sie kampflos, und der Gegner kommt in die nächste Runde.
+cdafe3|Welche Regeln gelten in einem Turnier?
+753373|Die klassischen <a href="/quoridor-rules/">Quoridor-Regeln</a> auf einem 9×9-Brett mit je 10 Mauern, mit 32 Sekunden pro Zug und 5 Minuten pro Spieler für die ganze Partie.
+6b2c10|<strong>Kurz gesagt:</strong> Partien gegen den Computer und an einem Gerät bleiben in Ihrem Browser; Google Analytics setzt Cookies, um Besuche zu zählen (nie auf Seiten von Online-Räumen); und das Wenige, was das Online-Spiel braucht, wird nur im Arbeitsspeicher gehalten, für wenige Minuten oder bei einem Turnier bis zu einem Tag.
+433393|<strong>Turniere.</strong> Um sich für ein Turnier anzumelden, geben Sie einen Anzeigenamen ein. Unser Spielserver speichert diesen Namen, ein zufälliges Eintrittstoken, das belegt, dass die Anmeldung von Ihnen stammt, die Reihenfolge der Anmeldungen sowie den Turnierbaum und die Ergebnisse des Turniers – bis 24 Stunden nach seinem Ende. Jeder, der die Turnierseite öffnet, kann die Namen, den Turnierbaum und die Ergebnisse sehen. Es sind weder ein Konto noch eine E-Mail-Adresse oder ein Passwort beteiligt.
+bd56ac|Wenn Sie sich für ein Turnier anmelden, speichert Ihr Browser einen kleinen Eintrag mit dem Namen <em>quoridor.tour.</em>, gefolgt von der Kennung des Turniers. Er enthält Ihr Eintrittstoken, den von Ihnen gewählten Anzeigenamen und die Startzeit. Er ermöglicht es der Website, Ihnen zu sagen, wann Ihre Partie bereit ist, und Sie dorthin zu bringen, auch von anderen Seiten der Website aus. Er wird entfernt, wenn Sie sich abmelden oder das Turnier nicht mehr aufgelistet ist.
+9efa55|<strong>Turniere.</strong> Die Anzeigenamen der Spieler eines Turniers, sein Turnierbaum und seine Ergebnisse werden jedem gezeigt, der die Turnierseite öffnet – bis 24 Stunden nach dem Ende des Turniers. Jede Partie wird in einem Raum wie den oben genannten gespielt, den der Server für die beiden Spieler anlegt. Wenn der Spielserver neu startet, gehen Turniere und ihre Anmeldungen verloren.
+785458|<strong>Turniere:</strong> Ein Turnier und die darin enthaltenen Anzeigenamen werden 24 Stunden nach seinem Ende oder seiner Absage gelöscht. Eine Anmeldung, von der Sie sich abmelden, wird sofort gelöscht. Ihr Eintrittstoken im Browser wird entfernt, wenn Sie sich abmelden oder das Turnier nicht mehr aufgelistet ist.
+0bbbe0|Wir verkaufen oder teilen keine personenbezogenen Daten für Werbezwecke, und wir behandeln Sie nicht anders, wenn Sie Ihre Rechte ausüben. Die Daten, die unser Spielserver zu einer Partie hält (ein Anzeigename, ein Sitz-Token und eine IP-Adresse im Arbeitsspeicher), werden innerhalb von Minuten gelöscht, die zu einem Turnier innerhalb eines Tages, sodass in der Regel nichts mehr übrig ist, das wir Ihnen herausgeben, berichtigen oder löschen könnten, wenn eine Anfrage beantwortet werden kann. Um eine Anfrage zu stellen, kontaktieren Sie uns wie in Abschnitt 9 beschrieben. Möglicherweise benötigen wir Angaben, mit denen wir die Daten finden und bestätigen können, dass sie Ihnen gehören, und wir antworten innerhalb der gesetzlich vorgeschriebenen Frist.
+game.notArrived|{name} ist der Partie noch nicht beigetreten. Wer nicht rechtzeitig erscheint, verliert in etwa {n} s kampflos.
+tour.matchLine|Turnier · {round}
+tour.backToTournament|Zurück zum Turnier
+tour.roundFinal|Finale
+tour.roundSemi|Halbfinale
+tour.roundQuarter|Viertelfinale
+tour.roundOf|Runde der letzten {n}
+tour.size|Turnier mit {n} Spielern
+tour.starts|Start: {when}
+tour.startsIn|in {left}
+tour.starting|startet jetzt
+tour.seats|{n} von {size} Spielern angemeldet
+tour.signedUpList|Angemeldete Spieler
+tour.full|Dieses Turnier ist voll.
+tour.nameLabel|Dein Anzeigename
+tour.signUp|Anmelden
+tour.withdraw|Abmelden
+tour.confirmWithdraw|Dich von diesem Turnier abmelden?
+tour.youAreIn|Du bist als {name} angemeldet.
+tour.cancelled|Abgesagt: Nur {n} von {size} Spielern haben sich angemeldet.
+tour.champion|Turniersieger: {name}
+tour.inProgress|Läuft · {round}
+tour.showBracket|Turnierbaum anzeigen
+tour.hideBracket|Turnierbaum ausblenden
+tour.loadingBracket|Turnierbaum wird geladen…
+tour.tbd|Offen
+tour.won|gewonnen
+tour.walkover|kampflos
+tour.playingNow|Läuft gerade
+tour.yourMatch|Deine Partie gegen {name} ist bereit.
+tour.joinWithin|Öffne die Partie innerhalb von 3 Minuten, sonst verlierst du sie kampflos.
+tour.taking|Du kommst in {n} s zur Partie…
+tour.playNow|Jetzt spielen
+tour.titleReady|Deine Partie ist bereit | {title}
+tour.youChampion|Du hast das Turnier gewonnen!
+tour.youOut|Du bist aus diesem Turnier ausgeschieden.
+tour.followBracket|Den Rest des Turnierbaums kannst du unten verfolgen.
+tour.advanced|Du bist in der nächsten Runde.
+tour.nextMatchSoon|Deine nächste Partie beginnt, sobald die andere Partie deiner Runde zu Ende ist.
+tour.nextLine|Nächstes Turnier: {when} (in {left}).
+tour.seatsLine|Belegte Plätze: {a} von 8 und {b} von 16.
+tour.watchIn|Du bist für das Turnier angemeldet, das {when} startet.
+tour.view|Turnier ansehen
+tour.offerLabel|Turnierpartie bereit
+err.no-tournament|Dieses Turnier ist nicht verfügbar.
+err.tournament-closed|Die Anmeldung für dieses Turnier ist geschlossen.
+err.tournament-full|Dieses Turnier ist voll.
+err.name-taken|Dieser Name ist für diesen Start bereits angemeldet. Wähle einen anderen.
+err.not-signed-up|Du bist für dieses Turnier nicht angemeldet.
+err.tournament-match|Eine Turnierpartie kann nicht wiederholt werden.

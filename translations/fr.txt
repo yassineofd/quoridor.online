@@ -845,7 +845,6 @@ b4fc90|Pendant que vous cherchez un adversaire, votre navigateur conserve aussi 
 6fb20f|<strong>Tickets de mise en relation :</strong> abandonnés après environ 20 secondes sans manifestation, et dans tous les cas après 10 minutes.
 e4e550|<strong>Adresses IP utilisées pour limiter les abus :</strong> conservées en mémoire pendant environ une minute.
 31af1c|<strong>Jeton de place dans votre navigateur :</strong> supprimé lorsque vous quittez la salle. Vous pouvez aussi le supprimer à tout moment via les paramètres de données de site de votre navigateur.
-de3731|Nous ne vendons ni ne partageons d'informations personnelles à des fins publicitaires, et nous ne vous traiterons pas différemment parce que vous exercez vos droits. Les données que notre serveur de jeu détient sur une partie (un nom affiché, un jeton de place et une adresse IP en mémoire) sont supprimées en quelques minutes : il ne reste donc généralement plus rien à vous remettre, à corriger ou à effacer au moment où une demande pourrait être traitée. Pour faire une demande, contactez-nous comme indiqué à la section 9. Nous pourrons avoir besoin de précisions nous permettant de retrouver les données et de confirmer qu'elles sont les vôtres, et nous répondrons dans le délai prévu par la loi.
 f9f002|<strong>Jeu en ligne.</strong> Jouez contre une autre personne après avoir choisi un nom affiché. Aucun compte n'est nécessaire.
 35be30|<strong>Salles privées.</strong> Invitez un ami précis avec un lien ou un code d'association court.
 4af664|<strong>Noms affichés.</strong> Un nom compte de 2 à 20 caractères et n'est pas un compte : il ne vous confère aucun droit sur ce nom et deux joueurs peuvent choisir le même. Choisissez un nom que vous accepteriez de voir affiché à un inconnu. N'utilisez pas un nom offensant, haineux, sexuellement explicite ou menaçant, qui usurpe l'identité d'une autre personne ou du site, ou qui révèle des informations personnelles telles que votre vrai nom ou votre adresse e-mail.
@@ -1364,3 +1363,106 @@ room.lobbyEmpty|En attente d'un joueur…
 room.hostTag|(hôte)
 room.allConnected|{names} sont connectés.
 room.confirmLeaveGroup|Quitter cette salle ? La partie se terminera pour tout le monde.
+be3fed|Tournois
+659a0f|Participez à un tournoi de Quoridor
+75c379|Toutes les 8 heures
+e1e24d|Participez à un tournoi de Quoridor
+d94b34|Un tournoi à élimination directe pour 8 ou 16 joueurs commencera toutes les 8 heures. Les tournois arrivent bientôt.
+2ab31e|À propos des tournois
+a91ac8|<svg/> 8 ou 16 joueurs
+784d1d|<svg/> Tableau à élimination directe
+571efb|<svg/> Comment fonctionnent les tournois
+b92fd4|Tournois de Quoridor – Bientôt disponibles
+4b5b08|Les tournois de Quoridor à élimination directe pour 8 ou 16 joueurs arrivent bientôt. Un nouveau commencera toutes les 8 heures.
+61fac1|Tournois de Quoridor
+80b371|Les tournois à élimination directe pour 8 ou 16 joueurs, qui commenceront toutes les 8 heures, arrivent bientôt.
+3766cd|Les tournois ne sont pas encore disponibles
+07d846|Ce site n'a pas encore de serveur de jeu : personne ne peut s'inscrire et aucun tournoi ne démarrera. Rien n'a été envoyé nulle part.
+8b11b4|En attendant, <a href="/play/">choisissez une autre façon de jouer</a>.
+988b87|<time datetime="2026-10-24">24 octobre 2026</time> : ajout des tournois. Il est indiqué que l'inscription conserve un nom affiché et un jeton d'entrée, que les noms, le tableau et les résultats d'un tournoi sont publics jusqu'à 24 heures après sa fin, et l'entrée du navigateur nommée quoridor.tour. qui permet au site de vous emmener à votre match est décrite.
+d16754|Un tournoi à élimination directe pour 8 ou 16 joueurs commence toutes les 8 heures. Inscrivez-vous avec un nom affiché, jouez vos parties en direct et tentez de devenir champion.
+70b0c6|<svg/> S'inscrire à un tournoi
+7380e1|Tournois de Quoridor : un nouveau tournoi toutes les 8 heures
+df1568|Rejoignez un tournoi de Quoridor gratuit qui commence toutes les 8 heures. Inscrivez-vous à un tableau à élimination directe de 8 ou 16 joueurs et jouez en direct. Aucun compte nécessaire.
+247e9a|Toutes les 8 heures, un nouveau tournoi à élimination directe commence pour 8 ou 16 joueurs. Inscrivez-vous avec un nom affiché, jouez vos parties en direct et tentez de devenir champion.
+055743|Prochains tournois
+294f02|Les deux formats commencent en même temps. Vous pouvez vous inscrire jusqu'au début et vous retirer à tout moment avant. Les heures sont affichées dans votre fuseau horaire.
+dc96b2|Chargement des tournois&hellip;
+8658d9|Aucun tournoi n'est ouvert aux inscriptions pour le moment. Revenez dans un instant.
+fb9f51|En cours et terminés
+701439|Aucun tournoi n'a encore commencé. Les tournois restent ici 24 heures après leur fin.
+56f0c3|Comment fonctionnent les tournois de Quoridor
+bfec76|<strong>Un nouveau tournoi toutes les 8 heures.</strong> Ils commencent à 00:00, 08:00 et 16:00 UTC, et cette page affiche chaque début dans votre fuseau horaire. Deux sont ouverts en même temps : un pour 8 joueurs et un pour 16.
+cf5a1c|<strong>Inscrivez-vous avec un nom affiché.</strong> Il n'y a pas de comptes. Vous pouvez vous inscrire jusqu'au début et vous retirer avant. Un tournoi dont toutes les places ne sont pas prises au moment du début est annulé, et vous pouvez vous inscrire au suivant.
+6f25d4|<strong>Un tableau à élimination directe.</strong> Les rencontres sont tirées au sort au début. Gagnez votre match pour continuer ; perdez et vous êtes éliminé. Un tournoi de 8 joueurs compte trois tours et un tournoi de 16 joueurs en compte quatre, jusqu'à la finale.
+73eca6|<strong>De vraies parties de Quoridor.</strong> Chaque match suit les règles classiques, avec 32 secondes par coup et 5 minutes par joueur pour toute la partie. Il n'y a pas de revanche : chaque match a donc un vainqueur.
+33743e|<strong>Soyez là au début.</strong> Laissez cette page ouverte : elle vous emmène à chaque match dès qu'il est prêt ; sur les autres pages du site, une notification apparaît à la place. Un joueur qui n'a pas ouvert son match dans les 3 minutes le perd par forfait, et quitter une partie en cours compte aussi comme un forfait.
+7144dd|<strong>Les noms sont publics.</strong> Tout le monde peut voir les noms affichés, le tableau et les résultats d'un tournoi tant qu'il figure dans la liste, c'est-à-dire jusqu'à 24 heures après sa fin.
+18b0e0|Vous débutez ? Lisez <a href="/how-to-play-quoridor/">comment jouer à Quoridor</a> ou entraînez-vous d'abord <a href="/play/computer/">contre l'ordinateur</a>.
+21419f|Tournois de Quoridor : questions fréquentes
+9f51dd|À quelle fréquence commence un tournoi de Quoridor ?
+bc82ae|Un nouveau commence toutes les 8 heures, à 00:00, 08:00 et 16:00 UTC, en deux formats : 8 joueurs et 16 joueurs.
+0850a6|Ai-je besoin d'un compte pour participer à un tournoi ?
+99627d|Non. Vous vous inscrivez avec un nom affiché et rien d'autre. Ce nom sert uniquement à vous afficher dans le tableau.
+9008f3|Que se passe-t-il si trop peu de joueurs s'inscrivent ?
+a9e196|Un tournoi a besoin que toutes ses places soient prises au moment du début. S'il n'est pas complet, il est annulé et vous pouvez vous inscrire au suivant.
+d579f2|Et si mon adversaire ne se présente pas ?
+49a0e3|Un joueur qui n'a pas ouvert son match dans les 3 minutes le perd par forfait, et l'adversaire passe au tour suivant.
+cdafe3|Quelles règles sont utilisées dans un tournoi ?
+753373|Les <a href="/quoridor-rules/">règles classiques de Quoridor</a> sur un plateau de 9×9 avec 10 murs chacun, avec 32 secondes par coup et 5 minutes par joueur pour toute la partie.
+6b2c10|<strong>En bref :</strong> les parties contre l'ordinateur et sur un seul appareil restent dans votre navigateur ; Google Analytics dépose des cookies pour compter les visites (jamais sur les pages de salles en ligne) ; et le peu dont le jeu en ligne a besoin n'est conservé qu'en mémoire, pendant quelques minutes, ou jusqu'à un jour pour un tournoi.
+433393|<strong>Tournois.</strong> Pour vous inscrire à un tournoi, vous saisissez un nom affiché. Notre serveur de jeu conserve ce nom, un jeton d'entrée aléatoire qui prouve que l'inscription est la vôtre, l'ordre dans lequel les joueurs se sont inscrits, ainsi que le tableau et les résultats du tournoi, jusqu'à 24 heures après sa fin. Toute personne qui ouvre la page des tournois peut voir les noms, le tableau et les résultats. Aucun compte, adresse e-mail ni mot de passe n'est impliqué.
+bd56ac|Lorsque vous vous inscrivez à un tournoi, votre navigateur enregistre une petite entrée portant le nom <em>quoridor.tour.</em> suivi de l'identifiant du tournoi. Elle contient votre jeton d'entrée, le nom affiché que vous avez choisi et l'heure de début. Elle permet au site de vous prévenir quand votre match est prêt et de vous y emmener, y compris depuis d'autres pages du site. Elle est supprimée lorsque vous vous retirez ou lorsque le tournoi ne figure plus dans la liste.
+9efa55|<strong>Tournois.</strong> Les noms affichés des joueurs d'un tournoi, son tableau et ses résultats sont montrés à toute personne qui ouvre la page des tournois, jusqu'à 24 heures après la fin du tournoi. Chaque match se joue dans une salle comme celles ci-dessus, créée par le serveur pour les deux joueurs. Si le serveur de jeu redémarre, les tournois et leurs inscriptions sont perdus.
+785458|<strong>Tournois :</strong> un tournoi et les noms affichés qu'il contient sont supprimés 24 heures après sa fin ou son annulation. Une inscription dont vous vous retirez est supprimée immédiatement. Votre jeton d'entrée dans le navigateur est supprimé lorsque vous vous retirez ou lorsque le tournoi ne figure plus dans la liste.
+0bbbe0|Nous ne vendons ni ne partageons d'informations personnelles à des fins publicitaires, et nous ne vous traiterons pas différemment parce que vous exercez vos droits. Les données que notre serveur de jeu détient sur une partie (un nom affiché, un jeton de place et une adresse IP en mémoire) sont supprimées en quelques minutes, et celles qu'il détient sur un tournoi dans un délai d'un jour : il ne reste donc généralement plus rien à vous remettre, à corriger ou à effacer au moment où une demande pourrait être traitée. Pour faire une demande, contactez-nous comme indiqué à la section 9. Nous pourrons avoir besoin de précisions nous permettant de retrouver les données et de confirmer qu'elles sont les vôtres, et nous répondrons dans le délai prévu par la loi.
+game.notArrived|{name} n'a pas encore rejoint le match. Il perdra par forfait dans environ {n} s s'il ne se présente pas.
+tour.matchLine|Tournoi · {round}
+tour.backToTournament|Retour au tournoi
+tour.roundFinal|Finale
+tour.roundSemi|Demi-finale
+tour.roundQuarter|Quart de finale
+tour.roundOf|Tour de {n}
+tour.size|Tournoi à {n} joueurs
+tour.starts|Début : {when}
+tour.startsIn|dans {left}
+tour.starting|démarrage en cours
+tour.seats|{n} joueurs inscrits sur {size}
+tour.signedUpList|Joueurs inscrits
+tour.full|Ce tournoi est complet.
+tour.nameLabel|Votre nom affiché
+tour.signUp|S'inscrire
+tour.withdraw|Se retirer
+tour.confirmWithdraw|Vous retirer de ce tournoi ?
+tour.youAreIn|Vous êtes inscrit sous le nom {name}.
+tour.cancelled|Annulé : seuls {n} joueurs sur {size} se sont inscrits.
+tour.champion|Champion : {name}
+tour.inProgress|En cours · {round}
+tour.showBracket|Afficher le tableau
+tour.hideBracket|Masquer le tableau
+tour.loadingBracket|Chargement du tableau…
+tour.tbd|À déterminer
+tour.won|a gagné
+tour.walkover|par forfait
+tour.playingNow|En cours de jeu
+tour.yourMatch|Votre match contre {name} est prêt.
+tour.joinWithin|Ouvrez la partie dans les 3 minutes, sinon vous la perdez par forfait.
+tour.taking|Direction la partie dans {n} s…
+tour.playNow|Jouer maintenant
+tour.titleReady|Votre match est prêt | {title}
+tour.youChampion|Vous avez remporté le tournoi !
+tour.youOut|Vous êtes éliminé de ce tournoi.
+tour.followBracket|Vous pouvez suivre la suite du tableau ci-dessous.
+tour.advanced|Vous êtes qualifié pour le tour suivant.
+tour.nextMatchSoon|Votre prochain match commence dès que l'autre partie de votre tour est terminée.
+tour.nextLine|Prochain tournoi : {when} (dans {left}).
+tour.seatsLine|Places prises : {a} sur 8 et {b} sur 16.
+tour.watchIn|Vous êtes inscrit au tournoi qui commence {when}.
+tour.view|Voir le tournoi
+tour.offerLabel|Match de tournoi prêt
+err.no-tournament|Ce tournoi n'est pas disponible.
+err.tournament-closed|Les inscriptions à ce tournoi sont closes.
+err.tournament-full|Ce tournoi est complet.
+err.name-taken|Ce nom est déjà inscrit pour ce départ. Choisissez-en un autre.
+err.not-signed-up|Vous n'êtes pas inscrit à ce tournoi.
+err.tournament-match|Un match de tournoi ne peut pas être rejoué.

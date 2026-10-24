@@ -37,6 +37,7 @@ FOOTER_PLAY = [
     ("/play/online/", "Play Online"),
     ("/play/computer/", "Play vs Computer"),
     ("/play/local/", "Play Locally"),
+    ("/tournaments/", "Tournaments"),
     ("/achievements/", "Achievements"),
 ]
 FOOTER_VARIANTS = [

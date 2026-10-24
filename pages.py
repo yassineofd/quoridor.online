@@ -103,6 +103,44 @@ def private_strip(tag="h2", heading="Play privately with a friend"):
 </div>"""
 
 
+def tournament_strip(tag="h2", heading="Play in a Quoridor tournament"):
+    """The private strip's twin for tournaments (home, Play and Variants). static/assets/js/tournament-watch.js fills in the
+    line with the next start and the free places; without a game server the strip says the tournaments are coming soon."""
+    live = FEATURES["online"]
+    text = (
+        "A knockout tournament for 8 or 16 players starts every 8 hours. Sign up with a display name, play your matches live and try to win the bracket."
+        if live else
+        "A knockout tournament for 8 or 16 players will start every 8 hours. Tournaments are coming soon."
+    )
+    actions = (
+        f'<a class="btn btn--primary btn--lg" href="/tournaments/">{icon("trophy")} Sign up for a tournament</a>'
+        f'<a class="btn btn--secondary btn--lg" href="/tournaments/#how">{icon("book")} How tournaments work</a>'
+        if live else
+        f'<a class="btn btn--primary btn--lg" href="/tournaments/">{icon("book")} How tournaments work</a>'
+    )
+    return f"""
+<div class="private-strip tournament-strip">
+  <span class="icon-badge private-strip__icon">{icon('trophy')}</span>
+  <div class="private-strip__body">
+    <p class="eyebrow">Every 8 hours</p>
+    <{tag}>{heading}</{tag}>
+    <p class="private-strip__text">{text}</p>
+    {'<p class="tournament-strip__live" data-tour-live role="status" data-i18n-skip hidden></p>' if live else ''}
+    <ul class="chip-list" aria-label="About the tournaments">
+      <li>{icon('users')} 8 or 16 players</li>
+      <li>{icon('trophy')} Knockout bracket</li>
+      <li>{icon('check')} No account needed</li>
+    </ul>
+  </div>
+  <div class="btn-row private-strip__actions">{actions}</div>
+</div>"""
+
+
+def tour_scripts():
+    """The tournament note and the live line of the strips (static/assets/js/tournament-watch.js); both need the game server."""
+    return ["/assets/js/online.js", "/assets/js/tournament-watch.js"] if FEATURES["online"] else []
+
+
 def cta_panel(text="Ready to put it into practice?"):
     return f"""
 <div class="card cta-panel">
@@ -235,6 +273,7 @@ def home():
   </div>
 </section>
 {'<section class="section--tight" aria-label="Play privately with a friend"><div class="container">' + private_strip('h3') + '</div></section>' if FEATURES['rooms'] else ''}
+{'<section class="section--tight" aria-label="Play in a Quoridor tournament"><div class="container">' + tournament_strip('h3') + '</div></section>' if FEATURES['online'] else ''}
 
 <section class="section" aria-labelledby="how-h">
   <div class="container grid grid--2">
@@ -284,7 +323,7 @@ def home():
         title="Quoridor Online: Play the Quoridor Game in Your Browser",
         description=desc,
         body=body,
-        nav_key="home",
+        nav_key="home", scripts=tour_scripts(),
         schema=[{"@context": "https://schema.org", "@type": "WebSite", "name": SITE_NAME}, faq_schema],
     )
 
@@ -331,6 +370,7 @@ def play_hub():
   {mode_cards('h3')}
 </div></section>
 <section class="section--tight" aria-label="Play Quoridor online with friends"><div class="container">{private_strip('h2', 'Play Quoridor Online With Friends')}</div></section>
+<section class="section--tight" aria-label="Play in a Quoridor tournament"><div class="container">{tournament_strip('h2')}</div></section>
 <section class="section--tight" aria-labelledby="variants-cta-h"><div class="container">
   <div class="card cta-panel">
     <h2 id="variants-cta-h">Try a Quoridor Variant</h2>
@@ -377,7 +417,7 @@ def play_hub():
             if FEATURES["online"] else
             "Play Quoridor game online for free. Challenge the computer or play with a friend on the same device. No registration required."
         ),
-        body=body, breadcrumbs=[("Play", "/play/")], nav_key="play", schema=[faq_schema],
+        body=body, breadcrumbs=[("Play", "/play/")], nav_key="play", schema=[faq_schema], scripts=tour_scripts(),
     )
 
 
@@ -461,7 +501,7 @@ def mode_page(path, title, desc, h1, lead, crumb, form_kind, panel, label, index
     return Page(
         path=path, title=title, description=desc, body=body,
         indexable=idx, robots=None if idx else "noindex, follow",
-        breadcrumbs=parent + [(crumb, path)], scripts=list(dict.fromkeys(list(scripts) + PROGRESS_SCRIPTS + PLAY_SCRIPTS + watch_scripts(path) + ["/assets/js/play.js"])), nav_key="play",
+        breadcrumbs=parent + [(crumb, path)], scripts=list(dict.fromkeys(list(scripts) + PROGRESS_SCRIPTS + PLAY_SCRIPTS + watch_scripts(path) + tour_scripts() + ["/assets/js/play.js"])), nav_key="play",
     )
 
 
@@ -717,6 +757,7 @@ def variants_hub():
   <div class="grid grid--3 grid--modes">{cards}
   </div>
 </div></section>
+<section class="section--tight" aria-label="Play in a Quoridor tournament"><div class="container">{tournament_strip('h2')}</div></section>
 <section class="section" aria-labelledby="variants-why-h"><div class="container prose">
   <h2 id="variants-why-h">What Is a Quoridor Variant?</h2>
   <p>A variant keeps the heart of Quoridor: on your turn you either move your pawn or place a wall, and you may never close off every route to the goal. What changes is the setup, such as the size of the board, where the pawns start and where they are heading.</p>
@@ -733,7 +774,7 @@ def variants_hub():
         path="/variants/",
         title="Quoridor Variants Online – Wallrush, Pointrush & Custom",
         description="Play free Quoridor variants online: Wallrush, Pointrush for 2 to 4 players, and Custom Quoridor with your own board size, walls and rules. No download, no sign-up.",
-        body=body, breadcrumbs=[("Variants", "/variants/")], nav_key="variants", schema=[faq_schema],
+        body=body, breadcrumbs=[("Variants", "/variants/")], nav_key="variants", schema=[faq_schema], scripts=tour_scripts(),
     )
 
 
@@ -799,7 +840,7 @@ def wallrush():
         title="Wallrush – Free Online Quoridor Variant Race Game",
         description="Play Wallrush online free: a two-player Quoridor variant on a tall 9 by 13 board where both pawns start on one line and race to the same edge, with 10 walls each.",
         body=body, breadcrumbs=parent + [("Wallrush", "/variants/wallrush/")], nav_key="variants", schema=[faq_schema],
-        scripts=GAME_SCRIPTS + PLAY_SCRIPTS + watch_scripts("/variants/wallrush/") + ["/assets/js/play.js"],
+        scripts=list(dict.fromkeys(GAME_SCRIPTS + PLAY_SCRIPTS + watch_scripts("/variants/wallrush/") + tour_scripts() + ["/assets/js/play.js"])),
     )
 
 
@@ -881,7 +922,7 @@ def pointrush():
         title="Pointrush – 4-Player Quoridor Variant, Play Free Online",
         description="Play Pointrush online free: a multiplayer Quoridor variant for 2 to 4 players on an 11 by 11 board where every pawn races to the center square. No download needed.",
         body=body, breadcrumbs=parent + [("Pointrush", "/variants/pointrush/")], nav_key="variants", schema=[faq_schema],
-        scripts=GAME_SCRIPTS + PLAY_SCRIPTS + watch_scripts("/variants/pointrush/") + ["/assets/js/play.js"],
+        scripts=list(dict.fromkeys(GAME_SCRIPTS + PLAY_SCRIPTS + watch_scripts("/variants/pointrush/") + tour_scripts() + ["/assets/js/play.js"])),
     )
 
 
@@ -979,7 +1020,7 @@ def custom_game():
                      if FEATURES["rooms"] else
                      "Play custom Quoridor online free with a friend on one device. Choose the board size from 5×5 to 13×13, the number of walls, borrowed moves and the time per move."),
         body=body, breadcrumbs=parent + [("Custom Game", "/variants/custom/")], nav_key="variants", schema=[faq_schema],
-        scripts=GAME_SCRIPTS + PLAY_SCRIPTS + watch_scripts("/variants/custom/") + ["/assets/js/play.js"],
+        scripts=list(dict.fromkeys(GAME_SCRIPTS + PLAY_SCRIPTS + watch_scripts("/variants/custom/") + tour_scripts() + ["/assets/js/play.js"])),
     )
 
 
@@ -1118,8 +1159,89 @@ def room():
         path="/room/_/", title="Private room | Quoridor Online",
         description="Private Quoridor room.",
         body=body, indexable=False, robots="noindex, nofollow, noarchive",
-        canonical=False, scripts=GAME_SCRIPTS + PLAY_SCRIPTS + watch_scripts("/room/") + ["/assets/js/room.js"],
+        canonical=False, scripts=list(dict.fromkeys(GAME_SCRIPTS + PLAY_SCRIPTS + watch_scripts("/room/") + tour_scripts() + ["/assets/js/room.js"])),
         out_file="room/index.html", generic_social=True, nav_key="play",
+    )
+
+
+TOURNAMENT_FAQ = [
+    ("How often does a Quoridor tournament start?",
+     "A new one starts every 8 hours, at 00:00, 08:00 and 16:00 UTC, in two sizes: 8 players and 16 players."),
+    ("Do I need an account to join a tournament?",
+     "No. You sign up with a display name and nothing else. The name is only used to show you in the bracket."),
+    ("What happens if not enough players sign up?",
+     "A tournament needs all its places taken when it starts. If it is not full it is cancelled, and you can sign up for the next one."),
+    ("What if my opponent does not show up?",
+     "A player who has not opened their match within 3 minutes forfeits it, and the opponent goes on to the next round."),
+    ("Which rules are used in a tournament?",
+     'The classic <a href="/quoridor-rules/">Quoridor rules</a> on a 9×9 board with 10 walls each, with 32 seconds per move and 5 minutes per player for the whole game.'),
+]
+
+
+def tournaments_page():
+    """/tournaments/: sign up for the next tournaments, follow the ones under way, read how they work.
+    static/assets/js/tournaments.js fills the lists from the game server; without one the page only says so."""
+    live = FEATURES["online"]
+    if not live:
+        body = (
+            page_head("Quoridor Tournaments", "Knockout tournaments for 8 or 16 players, starting every 8 hours, are coming soon.", [("Tournaments", None)])
+            + f"""
+<section class="section--tight"><div class="container">
+  <div class="notice" role="status">{icon('info')}<div><h2>Tournaments aren't live yet</h2>
+  <p>There is no game server on this site yet, so nobody can sign up and no tournament will start. Nothing was sent anywhere.</p>
+  <p>Meanwhile, <a href="/play/">choose another way to play</a>.</p></div></div>
+</div></section>"""
+        )
+        return Page(
+            path="/tournaments/", title="Quoridor Tournaments – Coming Soon",
+            description="Knockout Quoridor tournaments for 8 or 16 players are coming soon. A new one will start every 8 hours.",
+            body=body, indexable=False, robots="noindex, follow", breadcrumbs=[("Tournaments", "/tournaments/")], nav_key="play",
+        )
+    faq_html, faq_schema = variant_faq(TOURNAMENT_FAQ, "tour-faq-h", "Quoridor Tournaments: Frequently Asked Questions")
+    body = (
+        page_head(
+            "Quoridor Tournaments",
+            "Every 8 hours a new knockout tournament starts for 8 or 16 players. Sign up with a display name, play your matches live and try to win the bracket.",
+            [("Tournaments", None)],
+        )
+        + f"""
+<div data-tournaments data-live>
+<section class="section--tight" aria-labelledby="tour-next-h"><div class="container">
+  <div data-tour-you hidden role="status" aria-live="polite"></div>
+  <div class="section-head">
+    <h2 id="tour-next-h">Next Tournaments</h2>
+    <p class="text-muted">Both sizes start at the same time. You can sign up until the start and withdraw any time before it. Times are shown in your own time zone.</p>
+  </div>
+  <p class="text-muted" data-tour-loading role="status">Loading the tournaments&hellip;</p>
+  {server_error()}
+  <div class="tour-lists tour-lists--two" data-tour-upcoming></div>
+  <p class="text-muted" data-tour-empty-upcoming hidden>No tournament is open for sign-up at the moment. Check again in a moment.</p>
+</div></section>
+<section class="section--tight" aria-labelledby="tour-recent-h"><div class="container">
+  <div class="section-head"><h2 id="tour-recent-h">In Progress and Finished</h2></div>
+  <div class="tour-lists" data-tour-recent></div>
+  <p class="text-muted" data-tour-empty-recent>No tournament has started yet. Tournaments stay here for 24 hours after they end.</p>
+</div></section>
+</div>
+<section class="section" id="how" aria-labelledby="how-h"><div class="container prose">
+  <h2 id="how-h">How Quoridor Tournaments Work</h2>
+  <ul>
+    <li><strong>A new tournament every 8 hours.</strong> They start at 00:00, 08:00 and 16:00 UTC, and this page shows each start in your own time zone. Two are open at once, one for 8 players and one for 16.</li>
+    <li><strong>Sign up with a display name.</strong> There are no accounts. You can sign up until the start and withdraw before it. A tournament that has not filled all its places when it starts is cancelled, and you can sign up for the next one.</li>
+    <li><strong>A knockout bracket.</strong> The pairings are drawn by lot at the start. Win your match to go on; lose and you are out. An 8-player tournament has three rounds and a 16-player tournament has four, ending with the final.</li>
+    <li><strong>Normal games of Quoridor.</strong> Every match uses the classic rules, with 32 seconds per move and 5 minutes per player for the whole game. There is no rematch, so every match has a winner.</li>
+    <li><strong>Be there at the start.</strong> Keep this page open and it takes you to each match as soon as it is ready; on other pages of the site a note appears instead. A player who has not opened their match within 3 minutes forfeits it, and leaving a game in progress forfeits it too.</li>
+    <li><strong>Names are public.</strong> Everyone can see the display names, the bracket and the results of a tournament while it is listed, which is until 24 hours after it ends.</li>
+  </ul>
+  <p>New to the game? Read <a href="/how-to-play-quoridor/">how to play Quoridor</a> or practise <a href="/play/computer/">against the computer</a> first.</p>
+</div></section>
+""" + faq_html
+    )
+    return Page(
+        path="/tournaments/", title="Quoridor Tournaments – A New Knockout Every 8 Hours",
+        description="Join a free Quoridor tournament that starts every 8 hours. Sign up for an 8-player or 16-player knockout bracket and play live matches. No account needed.",
+        body=body, breadcrumbs=[("Tournaments", "/tournaments/")], nav_key="play", schema=[faq_schema],
+        scripts=["/assets/js/icons.js", "/assets/js/profile.js", "/assets/js/online.js", "/assets/js/tournaments.js"],
     )
 
 
@@ -1898,6 +2020,7 @@ PRIVACY_HISTORY = (
     ("2026-10-23", "23 October 2026", "Described the display name and the win counts between two players that your browser now remembers, in entries named quoridor.username and quoridor.scores."),
     ("2026-10-23", "23 October 2026", "Described the score, rank and achievements that your browser now keeps, in an entry named quoridor.progress."),
     ("2026-10-24", "24 October 2026", "Private rooms can now be set up for a game variant and for up to four players. Said that a room also holds the settings of its game, and that every player in a room sees the display names of the others."),
+    ("2026-10-24", "24 October 2026", "Added tournaments. Said that signing up holds a display name and an entry token, that the names, bracket and results of a tournament are public until 24 hours after it ends, and described the browser entry named quoridor.tour. that lets the site take you to your match."),
 )
 
 LANGUAGE_STORAGE = """<p>If you pick a language with the translate button, your browser keeps the language code (for example <em>es</em>) in an entry named <em>quoridor.lang</em>, so the site opens in that language next time. It is never sent to us, and the game server never learns which language you use. Until you choose, the site reads your browser's language list to pick a first language; that stays in your browser too.</p>"""
@@ -1930,8 +2053,10 @@ def privacy():
     toc_html = "\n".join(f'<li><a href="#{i}">{t}</a></li>' for i, t in toc)
     if online:
         info_online = """<li><strong>Online play.</strong> To play online or in a private room you type a display name. Our game server holds that name, a random seat token that identifies your seat, your moves, the settings of the room's game (such as the variant or the board size), and the time you were last connected, for as long as the game or room exists. No account, email address or password is involved.</li>
+<li><strong>Tournaments.</strong> To sign up for a tournament you type a display name. Our game server holds that name, a random entry token that proves the sign-up is yours, the order in which people signed up, and the bracket and results of the tournament, until 24 hours after it ends. Everyone who opens the tournaments page can see the names, the bracket and the results. No account, email address or password is involved.</li>
 <li><strong>Network address.</strong> Your IP address reaches our server with every request. The game server keeps it in memory for about a minute so it can limit abuse, such as creating rooms too fast.</li>"""
         storage_online = LANGUAGE_STORAGE + THEME_STORAGE + PROFILE_STORAGE_NAME + PROFILE_STORAGE_SCORES.format(where=SCORES_WHERE_ONLINE) + PROGRESS_STORAGE + """<p>When you create or join an online room, your browser stores a small entry under the name <em>quoridor.seat.</em> followed by the room's identifier. It contains your seat token, your seat number and the display name you chose. It lets you reload the page or recover from a dropped connection and keep your seat. The entry is removed when you leave the room. If you close the tab without leaving, it stays until you clear it, but it stops working once the room has expired.</p>
+<p>When you sign up for a tournament, your browser stores a small entry under the name <em>quoridor.tour.</em> followed by the tournament's identifier. It contains your entry token, the display name you chose and the start time. It lets the site tell you when your match is ready and take you to it, also from other pages of the site. It is removed when you withdraw or when the tournament is no longer listed.</p>
 <p>While you search for an opponent, your browser also keeps the search ticket and your display name in <em>session storage</em> (an entry named <em>quoridor.search</em>) for that tab only. It lets the search carry on while you play the computer or open a private room, and lets the search page pick it up again after a reload. It is removed when the search ends and disappears when you close the tab.</p>"""
         rooms_html = """<h2 id="rooms">5. Multiplayer rooms, usernames and shared links</h2>
 <ul>
@@ -1939,14 +2064,16 @@ def privacy():
 <li><strong>Who sees your name.</strong> The other players in your game see your display name. Anyone who opens a private-room invitation before it is full can also see the host's display name and which game the room is for.</li>
 <li><strong>Shared links and codes act like keys.</strong> A private room is reached through a long random link and a short pairing code. Anyone who has the link or code while a seat is open can take that seat, so share it only with the person you want to play. Room pages ask search engines not to index them and are served so that the page address is not passed on to other sites.</li>
 <li><strong>Matchmaking.</strong> If you ask to be matched with a stranger, your display name and a temporary ticket wait in a queue in the server's memory until an opponent is found. The ticket is dropped if your browser stops checking in for about 20 seconds. Your search can keep running while you play the computer or wait in a private room; if an opponent is found then, you are asked whether to join, and nothing starts unless you say yes within about 20 seconds. If you say no, you keep searching but are not offered that player again. If you do not answer, your search ends.</li>
+<li><strong>Tournaments.</strong> The display names of a tournament's players, its bracket and its results are shown to anyone who opens the tournaments page, until 24 hours after the tournament ends. Each match is played in a room like the ones above, made by the server for the two players. If the game server restarts, tournaments and their sign-ups are lost.</li>
 <li><strong>No chat.</strong> There is no free-text chat between players, so the only text you share with an opponent is your display name.</li>
 <li><strong>Everything is in memory.</strong> Rooms are not written to a database or to disk. If the game server restarts, active rooms are lost.</li>
 </ul>"""
         retention_online = """<li><strong>Rooms and display names:</strong> deleted automatically. A room nobody has joined expires after 30 minutes. A finished game stays for up to 10 minutes so that either player can ask for a rematch. A room whose players have both left is deleted after about 5 minutes.</li>
+<li><strong>Tournaments:</strong> a tournament and the display names in it are deleted 24 hours after it ends or is cancelled. A sign-up you withdraw is deleted at once. Your entry token in the browser is removed when you withdraw or when the tournament is no longer listed.</li>
 <li><strong>Matchmaking tickets:</strong> dropped after about 20 seconds without a check-in, and in any case after 10 minutes.</li>
 <li><strong>IP addresses used for abuse limiting:</strong> held in memory for about a minute.</li>
 <li><strong>Seat token in your browser:</strong> removed when you leave the room. You can also delete it at any time through your browser's site-data settings.</li>"""
-        rights_extra = "The data our game server holds about a game (a display name, a seat token and an IP address in memory) is deleted within minutes, so there is usually nothing left to give you, correct or erase by the time a request could be answered. "
+        rights_extra = "The data our game server holds about a game (a display name, a seat token and an IP address in memory) is deleted within minutes, and what it holds about a tournament within a day, so there is usually nothing left to give you, correct or erase by the time a request could be answered. "
     else:
         info_online = "<li><strong>Online play.</strong> Online play and private rooms are not available on this site at the moment, so no display names or seat tokens are collected. This policy will be updated before they are offered.</li>"
         storage_online = LANGUAGE_STORAGE + THEME_STORAGE + PROFILE_STORAGE_NAME + PROFILE_STORAGE_SCORES.format(where=SCORES_WHERE_LOCAL) + PROGRESS_STORAGE + "<p>Nothing else is stored in your browser's local storage. If online play is added later, this section will describe what it stores.</p>"
@@ -1955,10 +2082,11 @@ def privacy():
         retention_online = ""
         rights_extra = ""
     storage_loss = ", and you cannot resume an online seat after a reload" if online else ""
+    memory_time = "for minutes, or up to a day for a tournament" if online else "for minutes"
     history_html = "".join(f'<li><time datetime="{d}">{t}</time>: {note}</li>' for d, t, note in PRIVACY_HISTORY)
     content = TRANSLATION_NOTE + f"""
 <p>This policy explains what information Quoridor.online (&ldquo;we&rdquo;, &ldquo;us&rdquo;) handles when you visit the site, play Quoridor, or contact us. We keep it short because we collect very little: there are no accounts and no advertising, and the only analytics is Google Analytics on our public pages.</p>
-<p><strong>In short:</strong> games against the computer and on one device stay in your browser; Google Analytics sets cookies to count visits (never on online-room pages); and the little that online play needs is kept in memory only, for minutes.</p>
+<p><strong>In short:</strong> games against the computer and on one device stay in your browser; Google Analytics sets cookies to count visits (never on online-room pages); and the little that online play needs is kept in memory only, {memory_time}.</p>
 <nav aria-label="On this page"><p><strong>On this page</strong></p>
 <ol>
 {toc_html}
@@ -2193,6 +2321,6 @@ def not_found():
 def all_pages():
     return [
         home(), play_hub(), play_online(), play_computer(), play_local(), create_room(), join_room(), room(),
-        variants_hub(), wallrush(), pointrush(), custom_game(), achievements(),
+        variants_hub(), wallrush(), pointrush(), custom_game(), tournaments_page(), achievements(),
         how_to_play(), rules(), strategy(), board_game(), about(), contact(), privacy(), terms(), not_found(),
     ]

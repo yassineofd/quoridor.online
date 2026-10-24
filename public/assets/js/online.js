@@ -168,10 +168,73 @@
     };
   }
 
+  // ---- tournaments ----------------------------------------------------------------------
+  // Signing up for a tournament gives an entry token (like a seat token, kept in this browser only), so a reload or another
+  // page of the site can still say "you are in" and take the player to their match. One entry per tournament.
+  var TOUR_PREFIX = 'quoridor.tour.';
+  function saveEntry(id, info) { try { localStorage.setItem(TOUR_PREFIX + id, JSON.stringify(info)); } catch (e) { /* storage blocked */ } }
+  function loadEntry(id) {
+    try { var v = JSON.parse(localStorage.getItem(TOUR_PREFIX + id)); return v && v.token ? v : null; } catch (e) { return null; }
+  }
+  function forgetEntry(id) { try { localStorage.removeItem(TOUR_PREFIX + id); } catch (e) { /* ignore */ } }
+  function entries() {
+    var out = [];
+    try {
+      for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i);
+        if (k && k.indexOf(TOUR_PREFIX) === 0) { var e = loadEntry(k.slice(TOUR_PREFIX.length)); if (e) { e.id = k.slice(TOUR_PREFIX.length); out.push(e); } }
+      }
+    } catch (e) { /* storage blocked */ }
+    return out;
+  }
+  function tournamentUrl(id) { return ROOT + 'tournaments' + (id ? '?t=' + encodeURIComponent(id) : ''); }
+
+  // The name of a round in a bracket of `rounds` rounds (0 is the first): Final, Semifinal, Quarterfinal, then Round of 16.
+  function roundName(round, rounds) {
+    var T = root.QuoridorI18n ? root.QuoridorI18n.t : function (k) { return k; };
+    var left = rounds - round;
+    if (left === 1) return T('tour.roundFinal');
+    if (left === 2) return T('tour.roundSemi');
+    if (left === 3) return T('tour.roundQuarter');
+    return T('tour.roundOf', { n: Math.pow(2, left) });
+  }
+
+  // Follows one tournament: handlers.onState(view) for each change (the first call is at once), onConnection(false|true) for
+  // drops, onGone(err) when it no longer exists. `token` (optional) is the entry token, which adds `you` to the view.
+  // Returns {stop()}.
+  function watchTournament(id, token, handlers) {
+    var since = null, stopped = false, controller = null, failing = false, delay = 500;
+    function loop() {
+      if (stopped) return;
+      controller = new AbortController();
+      call('GET', '/tournaments/' + id + (since === null ? '' : '?since=' + since), undefined, token, controller.signal).then(function (view) {
+        if (stopped) return;
+        if (failing) { failing = false; if (handlers.onConnection) handlers.onConnection(true); }
+        delay = 500;
+        since = view.version;
+        handlers.onState(view);
+        setTimeout(loop, 0);
+      }, function (err) {
+        if (stopped || (err && err.name === 'AbortError')) return;
+        if (err.status === 404) { stopped = true; if (handlers.onGone) handlers.onGone(err); return; }
+        if (!failing) { failing = true; if (handlers.onConnection) handlers.onConnection(false); }
+        delay = Math.min(delay * 2, 8000);
+        setTimeout(loop, delay);
+      });
+    }
+    loop();
+    return { stop: function () { stopped = true; if (controller) controller.abort(); } };
+  }
+
   root.QuoridorOnline = {
     root: ROOT, call: call, ApiFailure: ApiFailure,
     saveSeat: saveSeat, loadSeat: loadSeat, forgetSeat: forgetSeat, roomUrl: roomUrl,
     saveSearch: saveSearch, loadSearch: loadSearch, clearSearch: clearSearch,
+    saveEntry: saveEntry, loadEntry: loadEntry, forgetEntry: forgetEntry, entries: entries, tournamentUrl: tournamentUrl,
+    roundName: roundName, watchTournament: watchTournament,
+    tournaments: function () { return call('GET', '/tournaments'); },
+    joinTournament: function (id, username) { return call('POST', '/tournaments/' + id + '/join', { username: username }); },
+    leaveTournament: function (id, token) { return call('POST', '/tournaments/' + id + '/leave', undefined, token); },
     // settings (optional): { variant, players, options, turnSeconds } for a room that plays a variant (see server/api.py).
     createRoom: function (username, settings) { return call('POST', '/rooms', Object.assign({ username: username }, settings || {})); },
     joinByCode: function (code, username) { return call('POST', '/rooms/join', { code: code, username: username }); },

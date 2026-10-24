@@ -13,8 +13,8 @@ Run `python check.py` to verify status codes, SEO metadata, links, headings, sit
 
 The whole site and the game can be read in English, Spanish, French, German, Arabic, Russian and Chinese (the globe button in the header). The language is only a display choice of each browser: the game server never sees it, so people using different languages play each other in the same queue and rooms. See [docs/i18n.md](docs/i18n.md) for how to change text or add a language (`python i18n.py status`).
 
-Run the game tests with `python -m unittest tests.test_engine tests.test_variants tests.test_rooms tests.test_http tests.test_i18n` (fast), plus
-`tests.test_parity`, `tests.test_parity_variants` and `tests.test_ui` (drive real pages in headless Edge/Chrome; slower).
+Run the game tests with `python -m unittest tests.test_engine tests.test_variants tests.test_rooms tests.test_tournaments tests.test_http tests.test_i18n` (fast), plus
+`tests.test_parity`, `tests.test_parity_variants`, `tests.test_ui` and `tests.test_tournaments_ui` (drive real pages in headless Edge/Chrome; slower).
 
 `python serve.py` also runs the online-play server (`/api/...`, rooms and matchmaking). See [docs/game-engine.md](docs/game-engine.md).
 
@@ -62,6 +62,7 @@ game itself:
 | Private rooms (create / join by link or code) | Working with `serve.py` |
 | Wallrush, Pointrush and Custom games with invited friends (a private room, up to 4 players) | Working with `serve.py` |
 | Online matchmaking | Working with `serve.py` |
+| Tournaments (a knockout for 8 or 16 players every 8 hours) | Working with `serve.py` |
 
 Each browser remembers the display name last used (the name fields come filled in) and keeps a score of wins between two friends, for
 private rooms and for one-device games where both players typed a name. It is stored only in that browser's `localStorage`; see
@@ -78,6 +79,7 @@ always on; `online` and `rooms` follow `online_server` in `site.json`, so a stat
 | `/play/local/` | Two players on one screen; click a highlighted square to move, drag a wall from the tray onto the board to wall; each player has 5 minutes in total and 32 s a move |
 | `/play/computer/` | Pick a level, you move first; Undo takes back your move and the robot's reply |
 | `/play/online/`, `/play/create-room/`, `/play/join-room/` | With online play on: matchmaking, and private rooms (open two browsers) |
+| `/tournaments/` | With online play on: the next 8-player and 16-player tournaments with their countdown and sign-up, the ones under way with their brackets, and how it all works. The same "Play in a Quoridor tournament" strip is on `/`, `/play/` and `/variants/` |
 | `/variants/pointrush/` | With online play on: choose "With invited friends" and 3 players, create the room, and open the invitation link in two more browsers |
 | `/play/online/` (online off) | Enter a 1-character name to see the validation error; a valid one shows the "not live yet" notice |
 | `/room/x/?preview=waiting` | Design previews with sample data: `join`, `starting`, `reconnecting`, `invalid`, `full`, `expired`, `unavailable`, `left` |
@@ -90,7 +92,7 @@ always on; `online` and `rooms` follow `online_server` in `site.json`, so a stat
 - `pages.py` all page content
 - `build.py` layout, metadata, sitemap, robots, headers
 - `serve.py` local server with production-like 404 and room routing, plus the online-play API
-- `server/` authoritative rules engine, rooms, matchmaking (Python, standard library only)
+- `server/` authoritative rules engine, rooms, matchmaking, tournaments (Python, standard library only)
 - `i18n.py`, `translations/` the languages (English, Spanish, French, German, Arabic, Russian, Chinese) and their checks; see [docs/i18n.md](docs/i18n.md)
 - `static/` CSS, JS (game engine, computer opponent, board, game screen, online client), logo, favicon (copied as is)
 - `tests/` rules, server, browser play-through and engine-parity tests; `docs/game-engine.md` explains the design

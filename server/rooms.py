@@ -26,6 +26,7 @@ CODE_LENGTH = 6
 # Timing (seconds)
 PRESENCE = 15            # a seat counts as connected if it polled within this long (or is polling now)
 FORFEIT_GRACE = 60       # a disconnected player forfeits after this long
+TOURNAMENT_JOIN_GRACE = 180   # a tournament player has this long to open their match for the first time (server/tournaments.py)
 WAITING_TTL = 30 * 60    # an unjoined room (and its code) expires
 FINISHED_TTL = 10 * 60   # finished rooms are kept this long so players can ask for a rematch
 ABANDONED_TTL = 5 * 60   # both players gone
@@ -114,6 +115,7 @@ class Seat:
         self.polling = 0
         self.lost_at = None   # when the sweeper first saw this seat disconnected during a game
         self.left = False
+        self.arrived = True   # False for a tournament seat until its player first opens the room (they get longer to do so)
 
     def connected(self, now):
         return not self.left and (self.polling > 0 or now - self.last_seen < PRESENCE)
@@ -137,6 +139,7 @@ class Room:
         self.seats[self.host] = Seat(host_name)
         self.game = Game(self.variant, self.n, self.options)
         self.round = 0                    # games started in this room; a rematch makes the next one
+        self.tournament = None            # {id, round, slot, rounds} for a match of a tournament: no rematch, and the result is reported
         self.version = 1
         # None (reached the goal) | resign | disconnect | timeout | left. With more than two players, resign is not
         # offered, and a player who leaves or stays disconnected ends the game with no winner ("left" / "disconnect",
@@ -168,6 +171,8 @@ class Hub:
         self.tickets = {}  # ticket id -> dict(name, created, polled, result)
         self.hits = {}     # (ip, bucket) -> deque of timestamps
         self._sweeper = None
+        from .tournaments import Tournaments   # (here, not at the top: that module imports this one)
+        self.tournaments = Tournaments(self)
 
     # ---- rate limiting ------------------------------------------------------------------
     def limit(self, ip, bucket, count, per=60):
@@ -219,6 +224,12 @@ class Hub:
         room.finished_at = time.monotonic()
         room.rematch = [False] * room.n
         self._bump(room)
+        if room.tournament:
+            self.tournaments.finished(room)   # the winner goes on to the next round
+
+    def _grace(self, room, seat):
+        """How long a disconnected seat may stay away before it forfeits: longer for a tournament player who has yet to open the match."""
+        return FORFEIT_GRACE if seat.arrived else TOURNAMENT_JOIN_GRACE
 
     def _quit(self, room, seat, reason):
         """A player gives up the game in progress (leaves, or stays away too long). Two players: the other one
@@ -239,6 +250,7 @@ class Hub:
         if isinstance(token, str):
             for i, s in enumerate(room.seats):
                 if s is not None and not s.left and secrets.compare_digest(s.token, token):
+                    s.arrived = True   # whoever holds the token has opened the room
                     return i
         raise ApiError(403, "forbidden", "You are not part of this room.")
 
@@ -252,13 +264,14 @@ class Hub:
         now = time.monotonic()
         players = []
         for s in room.seats:
-            players.append({"name": s.name if s else None, "connected": bool(s and s.connected(now))})
+            players.append({"name": s.name if s else None, "connected": bool(s and s.connected(now)), "arrived": bool(s and s.arrived)})
         forfeit_in = None
         if room.status == "playing":
-            # The longest-gone opponent decides how long the others have to wait for them.
-            gone = [s.lost_at for i, s in enumerate(room.seats) if i != seat_index and s is not None and s.lost_at is not None and not s.connected(now)]
+            # The opponent who will forfeit first decides how long the others have to wait.
+            gone = [self._grace(room, s) - (now - s.lost_at) for i, s in enumerate(room.seats)
+                    if i != seat_index and s is not None and s.lost_at is not None and not s.connected(now)]
             if gone:
-                forfeit_in = max(0.0, FORFEIT_GRACE - (now - min(gone)))
+                forfeit_in = max(0.0, min(gone))
         playing = room.status == "playing"
         elapsed = now - room.turn_started
         clocks = list(room.bank) if room.turn_seconds else None   # no clock: nothing to show
@@ -281,6 +294,7 @@ class Hub:
             "turnLeft": turn_left,
             "clocks": clocks,
             "host": room.host,
+            "tournament": room.tournament,
         }
         if room.status == "waiting" and seat_index == room.host:
             out["code"] = room.code
@@ -424,6 +438,8 @@ class Hub:
         with self.cond:
             room = self._room(room_id)
             idx = self._seat_of(room, token)
+            if room.tournament:
+                raise ApiError(409, "tournament-match", "A tournament match cannot be replayed.")
             if room.status != "finished":
                 raise ApiError(409, "not-finished", "The game is not over yet.")
             if any(s is None or s.left for i, s in enumerate(room.seats) if i != idx):
@@ -682,10 +698,15 @@ class Hub:
                             s.lost_at = None
                         elif s.lost_at is None:
                             s.lost_at = now
-                    for i, s in enumerate(room.seats):
-                        if s.lost_at is not None and now - s.lost_at > FORFEIT_GRACE:
-                            self._quit(room, i, "disconnect")
-                            break
+                    if room.tournament and not any(s.arrived for s in room.seats):
+                        # Nobody has come to this match: the tournament decides who goes on (server/tournaments.py).
+                        if all(s.lost_at is not None and now - s.lost_at > TOURNAMENT_JOIN_GRACE for s in room.seats):
+                            self._finish(room, "noshow")
+                    else:
+                        for i, s in enumerate(room.seats):
+                            if s.lost_at is not None and now - s.lost_at > self._grace(room, s):
+                                self._quit(room, i, "disconnect")
+                                break
                 if room.status == "playing" and room.turn_seconds:
                     # Out of time: play the pawn step that is closest to the goal. A player who is
                     # disconnected keeps their clock stopped (the forfeit timer deals with them).
@@ -713,6 +734,7 @@ class Hub:
                     self._bump(room)
                 if room.status == "finished" and not any(presence) and now - (room.finished_at or now) > ABANDONED_TTL:
                     self._delete(room)
+            self.tournaments.sweep()
 
     def start_sweeper(self):
         if self._sweeper is not None:

@@ -18,6 +18,7 @@ Out of scope: game engine, multiplayer server, matchmaking, final page copy.
 │   ├── /play/create-room/         Create private room              indexable* (while rooms are live), in sitemap
 │   └── /play/join-room/           Join by code/link                noindex, follow, NOT in sitemap
 ├── /room/{roomId}/                Private room + game              noindex, nofollow, NOT in sitemap
+├── /tournaments/                  Tournaments: sign-up, brackets   indexable* (while the game server is live), in sitemap
 ├── /how-to-play-quoridor/         Beginner tutorial                indexable, in sitemap
 ├── /quoridor-rules/               Formal rules                     indexable, in sitemap
 ├── /quoridor-strategy/            Strategy guide                   indexable, in sitemap
@@ -43,6 +44,7 @@ Out of scope: game engine, multiplayer server, matchmaking, final page copy.
 | `/play/create-room/` | Username → create room → show link + code → wait | Transactional |
 | `/play/join-room/` | Enter code (+ username) → validate → join | Transactional |
 | `/room/{roomId}/` | Lobby, waiting state, and the synchronized game for a private room | Application state |
+| `/tournaments/` | A knockout tournament for 8 or 16 players starts every 8 hours: sign-up, the bracket, how it works. Its "Play in a Quoridor tournament" strip (the private-room strip's twin) is on `/`, `/play/` and `/variants/` | Transactional |
 | `/how-to-play-quoridor/` | Teach a beginner to play, in a friendly, narrative order | Informational |
 | `/quoridor-rules/` | Authoritative, scannable rules reference | Informational |
 | `/quoridor-strategy/` | Improve play: tactics and mistakes | Informational |
