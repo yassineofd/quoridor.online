@@ -29,7 +29,7 @@
   var ROOT = siteRoot();
 
   // ---- messages built by scripts ----------------------------------------------------------
-  var NAME_PARAMS = { name: 1, other: 1, who: 1, host: 1 }; // parameters that hold a player's name
+  var NAME_PARAMS = { name: 1, other: 1, who: 1, host: 1, names: 1 }; // parameters that hold a player's name
   var RTL_CHARS = /[֐-ࣿיִ-﷿ﹰ-﻿]/;
 
   // Player names are typed by people in any script. Isolating them keeps a name in one direction from

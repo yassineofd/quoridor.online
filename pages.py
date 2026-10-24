@@ -581,8 +581,44 @@ def play_local():
 
 
 # ---------------------------------------------------------------- variants
-# Each variant is a game of its own (rules in static/assets/js/engine.js, VARIANTS). Add one here, give it a
+# Each variant is a game of its own (rules in static/assets/js/engine.js and server/engine.py, VARIANTS). Add one here, give it a
 # page like wallrush(), and list it in VARIANT_CARDS so the /variants/ page shows it.
+def play_with_choice(live):
+    """Radio buttons on a variant page: play on this device, or open a private room and invite friends (play.js reads them).
+    Without a game server the second choice is shown but cannot be picked."""
+    friends = (
+        "Everyone plays on their own device. You get an invitation link and a short code to send."
+        if live else "Coming soon. The game server that connects the devices is not available on this site yet."
+    )
+    return f"""
+<fieldset class="fieldset"><legend>How do you want to play?</legend><div class="choice-group">
+  <div class="choice"><input type="radio" name="playwith" id="pw-device" value="device" checked>
+    <label class="choice-body" for="pw-device">
+      <span class="check" aria-hidden="true">{icon('check')}</span>
+      <span><span class="choice-title">On this device</span><span class="choice-state"> (selected)</span><br><span class="choice-desc">Share one screen and pass the device after each move.</span></span>
+    </label></div>
+  <div class="choice"><input type="radio" name="playwith" id="pw-friends" value="friends"{'' if live else ' disabled'}>
+    <label class="choice-body" for="pw-friends">
+      <span class="check" aria-hidden="true">{icon('check')}</span>
+      <span><span class="choice-title">With invited friends</span><span class="choice-state"> (selected)</span><br><span class="choice-desc">{friends}</span></span>
+    </label></div>
+</div></fieldset>"""
+
+
+def variant_form(names_html, live, settings_html=""):
+    """The setup form of a variant: where it is played, the settings both ways share, then the names of the players
+    on one device or your own name for a room of friends, and the button for whichever is chosen."""
+    return (
+        play_with_choice(live) + settings_html
+        + f'<div data-device-only>{names_html}</div>'
+        + '<div data-friends-only hidden>' + username_field("2 to 20 characters. Your friends will see this name.")
+        + '<p class="small text-muted">You get an invitation link and a short pairing code to send. The game starts as soon as everyone has joined.</p></div>'
+        + f'<button class="btn btn--primary btn--lg btn--block" type="submit" data-device-only>{icon("play")} Start game</button>'
+        + f'<button class="btn btn--primary btn--lg btn--block" type="submit" data-friends-only hidden>{icon("plus")} Create room</button>'
+        + (server_error() if live else "")
+    )
+
+
 WALLRUSH_PAWNS = [(8, 2, "p1"), (8, 6, "p2")]
 WALLRUSH_GOALS = ((0, "#5EEAD4", 0.16),)  # one goal row, shared by both players
 WALLRUSH_ALT = (
@@ -618,7 +654,7 @@ VARIANT_CARDS = [
      "and sprints for the central square, placing walls to hold the others back.", "Play Pointrush"),
     ("/variants/custom/", "Custom Game", "sliders",
      "Classic Quoridor, set up your way. Pick the board size, how many walls each player gets, whether to borrow moves "
-     "and how long a turn lasts, then play a friend on the same device.", "Set Up a Custom Game"),
+     "and how long a turn lasts, then play a friend on the same device" + (" or in a private room." if FEATURES["rooms"] else "."), "Set Up a Custom Game"),
 ]
 
 
@@ -643,14 +679,19 @@ VARIANTS_FAQ = [
      "Quoridor variants are different ways to play the Quoridor board game: a new board size, a different starting position, "
      "more players or custom rules. Wallrush, Pointrush and Custom Quoridor keep the pawns, walls and path rule of the classic game."),
     ("Can I play Quoridor with 3 or 4 players?",
-     'Yes. <a href="/variants/pointrush/">Pointrush</a> is a Quoridor variant for two, three or four players on one device, '
-     "where every pawn races to the square in the center of the board."),
+     'Yes. <a href="/variants/pointrush/">Pointrush</a> is a Quoridor variant for two, three or four players'
+     + (", on one device or online with invited friends," if FEATURES["rooms"] else " on one device,")
+     + " where every pawn races to the square in the center of the board."),
     ("Can I change the board size or the number of walls in Quoridor?",
      'Yes. <a href="/variants/custom/">Custom Quoridor</a> lets you choose a board from 5 × 5 to 13 × 13, from 0 to 30 walls per player, '
      "borrowed moves and the time per move."),
     ("Are the Quoridor variants free to play?",
      "Yes. All variants are free in your browser, with no download and no account."),
-]
+] + ([
+    ("Can I play a Quoridor variant online with friends?",
+     'Yes. On the Wallrush, Pointrush or Custom Quoridor page choose "With invited friends", create a private room and send your friends the invitation link or pairing code. '
+     "Everyone plays on their own device, and the game starts as soon as all the seats are taken."),
+] if FEATURES["rooms"] else [])
 
 
 def variants_hub():
@@ -707,26 +748,28 @@ WALLRUSH_FAQ = [
     ("How many walls does each player have in Wallrush?",
      "Each player has 10 walls. A wall is two squares long, and you may never block every route to the top row."),
     ("Can I play Wallrush online for free?",
-     "Yes. Wallrush is free in your browser, with no download and no account. Two players take turns on one device."),
+     "Yes. Wallrush is free in your browser, with no download and no account. Two players take turns on one device"
+     + (", or you can invite a friend to a private room and play from separate devices." if FEATURES["rooms"] else ".")),
 ]
 
 
 def wallrush():
     faq_html, faq_schema = variant_faq(WALLRUSH_FAQ, "wr-faq-h", "Wallrush: Frequently Asked Questions")
+    live = FEATURES["rooms"]
     panel = (
-        '<div class="card"><h2 class="h-sm">Two players, one device</h2>'
-        '<p class="text-muted">Share the screen and take turns. Both pawns race to the highlighted row at the top of the board.</p>'
-        '<ul class="text-muted"><li>Both pawns start on the same line, with four rows behind them.</li><li>Each player has 10 walls.</li><li>The first pawn to reach the top row wins.</li></ul></div>'
+        '<div class="card"><h2 class="h-sm">Two players, one race</h2>'
+        '<p class="text-muted">Both pawns race to the highlighted row at the top of the board. '
+        + ("Take turns on one screen, or invite a friend to play from their own device.</p>" if live else "Share the screen and take turns.</p>")
+        + '<ul class="text-muted"><li>Both pawns start on the same line, with four rows behind them.</li><li>Each player has 10 walls.</li><li>The first pawn to reach the top row wins.</li></ul></div>'
         '<div class="spacer"></div>'
-        + name_field(1) + name_field(2)
-        + f'<button class="btn btn--primary btn--lg btn--block" type="submit">{icon("play")} Start game</button>'
+        + variant_form(name_field(1) + name_field(2), live)
     )
     parent = [("Variants", "/variants/")]
     body = (
         '<div class="page-head"><div class="container">'
         + crumbs(parent + [("Wallrush", None)])
         + '<h1>Wallrush: A Quoridor Variant</h1><p class="lead">Play Wallrush free online, a two-player Quoridor race game where both pawns start on the same line of a 9 by 13 board and sprint for the same edge.</p></div></div>'
-        + stage("local", panel, "", live=False, art=wallrush_art(), form_attrs='data-variant="wallrush" data-leave="variants" ')
+        + stage("local", panel, "", live=live, art=wallrush_art(), form_attrs='data-variant="wallrush" data-leave="variants" ')
         + f"""
 <section class="section" aria-labelledby="wr-rules-h"><div class="container prose">
   <h2 id="wr-rules-h">How Wallrush Works</h2>
@@ -776,8 +819,10 @@ POINTRUSH_FAQ = [
      "Pointrush is a free Quoridor variant for two, three or four players on an 11 by 11 board. Every pawn starts in the middle of an edge "
      "and races to the same goal: the square in the center."),
     ("Can you play Quoridor with 4 players?",
-     "Yes. In Pointrush four players share one device and take turns, each starting from a different edge. With three players each has 8 walls, "
-     "and with four players each has 6."),
+     ("Yes. In Pointrush four players take turns, each starting from a different edge. They can share one device, or each play on their own device "
+      "after joining a private room with an invitation link."
+      if FEATURES["rooms"] else "Yes. In Pointrush four players share one device and take turns, each starting from a different edge.")
+     + " With three players each has 8 walls, and with four players each has 6."),
     ("How do you win at Pointrush?",
      "The first pawn to step onto the center square wins. You can place walls to hold the other pawns back, but you may never leave a pawn "
      "with no route to the center."),
@@ -788,21 +833,22 @@ POINTRUSH_FAQ = [
 
 def pointrush():
     faq_html, faq_schema = variant_faq(POINTRUSH_FAQ, "pr-faq-h", "Pointrush: Frequently Asked Questions")
-    names ="".join(f'<div data-player-field="{n}"{" hidden" if n > 2 else ""}>{name_field(n)}</div>' for n in (1, 2, 3, 4))
+    live = FEATURES["rooms"]
+    names = "".join(f'<div data-player-field="{n}"{" hidden" if n > 2 else ""}>{name_field(n)}</div>' for n in (1, 2, 3, 4))
     panel = (
-        '<div class="card"><h2 class="h-sm">Two to four players, one device</h2>'
-        '<p class="text-muted">Share the screen and take turns. Every pawn races to the highlighted square in the center of the board.</p>'
-        '<ul class="text-muted"><li>Pawns start in the middle of the edges, five squares from the center.</li><li>Each player has 12, 8 or 6 walls, with two, three or four players.</li><li>The first pawn to reach the center square wins.</li></ul></div>'
+        '<div class="card"><h2 class="h-sm">Two to four players, one center square</h2>'
+        '<p class="text-muted">Every pawn races to the highlighted square in the center of the board. '
+        + ("Share one screen, or invite friends to join from their own devices.</p>" if live else "Share the screen and take turns.</p>")
+        + '<ul class="text-muted"><li>Pawns start in the middle of the edges, five squares from the center.</li><li>Each player has 12, 8 or 6 walls, with two, three or four players.</li><li>The first pawn to reach the center square wins.</li></ul></div>'
         '<div class="spacer"></div>'
-        + players_choice() + names
-        + f'<button class="btn btn--primary btn--lg btn--block" type="submit">{icon("play")} Start game</button>'
+        + variant_form(names, live, settings_html=players_choice())
     )
     parent = [("Variants", "/variants/")]
     body = (
         '<div class="page-head"><div class="container">'
         + crumbs(parent + [("Pointrush", None)])
         + '<h1>Pointrush: A Quoridor Variant for 2 to 4 Players</h1><p class="lead">Play Pointrush free online, a multiplayer Quoridor variant where two, three or four pawns race for the same square in the center of an 11 by 11 board.</p></div></div>'
-        + stage("local", panel, "", live=False, art=pointrush_art(), form_attrs='data-variant="pointrush" data-leave="variants" ')
+        + stage("local", panel, "", live=live, art=pointrush_art(), form_attrs='data-variant="pointrush" data-leave="variants" ')
         + f"""
 <section class="section" aria-labelledby="pr-rules-h"><div class="container prose">
   <h2 id="pr-rules-h">How Pointrush Works</h2>
@@ -819,7 +865,10 @@ def pointrush():
   <h2 id="pr-tips-h">Things to Think About</h2>
   <p>Every route ends on the same square, so the lanes cross in the middle and the pawns crowd the last few squares. A wall near the center slows everyone, not only the player you aimed at, and with three or four players a wall that holds back one rival can help another. Watch who is closest, and save your walls for the moment the leader is about to arrive.</p>
   <p>For the full wall, jump and side-step rules, read the Quoridor rules. Pointrush uses them, with the center square as the only goal.</p>
-  <div class="btn-row">
+""" + (
+    """  <h2 id="pr-online-h">Playing With Friends Online</h2>
+  <p>Choose "With invited friends", pick the number of players and create a room. You get an invitation link and a short pairing code. Each friend opens the link, or types the code on the <a href="/play/join-room/">join a room</a> page, and picks a name. The game starts as soon as every seat is taken, and the players move in turn, each on their own device. If a player leaves a game of three or four, the game ends for everyone and nobody wins.</p>
+  """ if FEATURES["rooms"] else "") + """<div class="btn-row">
     <a class="btn btn--secondary" href="/quoridor-rules/">Read the Quoridor Rules</a>
     <a class="btn btn--secondary" href="/quoridor-strategy/">Quoridor Strategy</a>
     <a class="btn btn--secondary" href="/variants/">All Variants</a>
@@ -878,19 +927,22 @@ CUSTOM_FAQ = [
     ("Can I play Quoridor with a time limit?",
      "Yes. Choose no clock, or 15 seconds, 32 seconds, 1 minute or 2 minutes per move. When the clock runs out, the game moves your pawn one step along its shortest route."),
     ("Can I play a custom Quoridor game with a friend?",
-     'Yes, on the same device: share the screen and take turns. For a game on two devices, use a <a href="/play/create-room/">private room</a>, which uses the classic rules.'),
+     ('Yes. Play on the same device and take turns, or choose "With invited friends", create a private room and send your friend the invitation link or pairing code. '
+      "The room keeps the board size, walls, borrowed moves and clock you chose."
+      if FEATURES["rooms"] else "Yes, on the same device: share the screen and take turns.")),
 ]
 
 
 def custom_game():
     faq_html, faq_schema = variant_faq(CUSTOM_FAQ, "cg-faq-h", "Custom Quoridor: Frequently Asked Questions")
+    live = FEATURES["rooms"]
     panel = (
         '<div class="card"><h2 class="h-sm">Set up your game</h2>'
-        '<p class="text-muted">Choose the rules, then share the screen with a friend and take turns. The defaults are classic Quoridor.</p></div>'
+        '<p class="text-muted">Choose the rules, then '
+        + ("play on one device or invite a friend." if live else "share the screen with a friend and take turns.")
+        + ' The defaults are classic Quoridor.</p></div>'
         '<div class="spacer"></div>'
-        + custom_settings()
-        + name_field(1) + name_field(2)
-        + f'<button class="btn btn--primary btn--lg btn--block" type="submit">{icon("play")} Start game</button>'
+        + variant_form(name_field(1) + name_field(2), live, settings_html=custom_settings())
     )
     parent = [("Variants", "/variants/")]
     body = (
@@ -898,7 +950,7 @@ def custom_game():
         + crumbs(parent + [("Custom Game", None)])
         + '<h1>Custom Quoridor Game</h1><p class="lead">Play Quoridor with your own rules: choose the board size, the number of walls, borrowed moves and the time per move.</p></div></div>'
         + stage("local", panel, "Custom Game: board game preview with two pawns, shown here at the classic 9 by 9 size.", (), [(8, 4, "p1"), (0, 4, "p2")],
-                form_attrs='data-variant="custom" data-leave="variants" ')
+                live=live, form_attrs='data-variant="custom" data-leave="variants" ')
         + """
 <section class="section" aria-labelledby="cg-rules-h"><div class="container prose">
   <h2 id="cg-rules-h">How a Custom Game Works</h2>
@@ -912,10 +964,9 @@ def custom_game():
   </ol>
   <h2 id="cg-tips-h">Ideas to Try</h2>
   <p>Try a 5 × 5 board with 3 walls each for a game that is over in minutes, or a 13 × 13 board with 20 walls each for a long battle of detours. Both players always get the same number of walls. When you play again, your settings stay in place.</p>
-  <p>This game is played on one device. For a game with a friend on another device, use a private room, which uses the classic rules.</p>
+  <p>""" + ("You can play it on one device, or invite a friend to a private room that keeps your settings: your friend sees them before joining." if FEATURES["rooms"] else "This game is played on one device.") + """</p>
   <div class="btn-row">
     <a class="btn btn--secondary" href="/quoridor-rules/">Read the Quoridor Rules</a>
-    <a class="btn btn--secondary" href="/play/create-room/">Create a Private Room</a>
     <a class="btn btn--secondary" href="/variants/">All Variants</a>
   </div>
 </div></section>
@@ -924,7 +975,9 @@ def custom_game():
     return Page(
         path="/variants/custom/",
         title="Custom Quoridor – Choose Board Size, Walls & Rules Online",
-        description="Play custom Quoridor online free with a friend on one device. Choose the board size from 5×5 to 13×13, the number of walls, borrowed moves and the time per move.",
+        description=("Play custom Quoridor online free on one device or in a private room. Choose the board size from 5×5 to 13×13, the walls, borrowed moves and the time per move."
+                     if FEATURES["rooms"] else
+                     "Play custom Quoridor online free with a friend on one device. Choose the board size from 5×5 to 13×13, the number of walls, borrowed moves and the time per move."),
         body=body, breadcrumbs=parent + [("Custom Game", "/variants/custom/")], nav_key="variants", schema=[faq_schema],
         scripts=GAME_SCRIPTS + PLAY_SCRIPTS + watch_scripts("/variants/custom/") + ["/assets/js/play.js"],
     )
@@ -950,7 +1003,7 @@ def create_room():
         intro=mode_intro(
             "room-how-h", "How to Play Quoridor Online With a Friend",
             "A private room is for playing one specific person, wherever they are. Choose a username and create a room: you get an invitation link and a short pairing code. Send either one to your friend and the game starts as soon as they join. Neither of you needs an account.",
-            'Rooms use the classic rules on a 9×9 board, with 10 walls each. Your friend can open the link, or type the code on the <a href="/play/join-room/">join a room</a> page. Want a quick game against a stranger instead? Try <a href="/play/online/">online matchmaking</a>.',
+            'Rooms made here use the classic rules on a 9×9 board, with 10 walls each. Your friend can open the link, or type the code on the <a href="/play/join-room/">join a room</a> page. Want other rules, a bigger board or up to four players? Open one of the <a href="/variants/">Quoridor variants</a> and choose to invite friends: the invitation link and code work the same way. Want a quick game against a stranger instead? Try <a href="/play/online/">online matchmaking</a>.',
         ) if live else "",
     )
 
@@ -993,21 +1046,31 @@ def room():
   <a class="btn btn--secondary" href="/play/">Back to Play</a>
 </div>""")
 
+    # data-pair-only / data-group-only: the parts of this screen for a room of two seats and for one of three or four (room.js shows one set).
+    # data-host-only / data-guest-only: the host cancels the room, a guest who has joined only steps out.
     waiting = state("waiting", f"""
-<h1 tabindex="-1">Waiting for your opponent</h1>
-<div class="status-line" role="status"><span class="status-dot status-dot--wait" aria-hidden="true"></span><span>Waiting for a second player to join. Connected as host.</span></div>
+<h1 tabindex="-1" data-pair-only>Waiting for your opponent</h1>
+<h1 tabindex="-1" data-group-only hidden>Waiting for your friends</h1>
+<p class="small text-muted" id="waiting-game" data-i18n-skip hidden></p>
+<div class="status-line" role="status" data-pair-only><span class="status-dot status-dot--wait" aria-hidden="true"></span><span>Waiting for a second player to join. Connected as host.</span></div>
+<div class="status-line" role="status" data-group-only hidden><span class="status-dot status-dot--wait" aria-hidden="true"></span><span id="lobby-count" data-i18n-skip></span></div>
+<ul class="lobby" id="lobby" aria-label="Players in this room" data-group-only hidden></ul>
 <h2 class="h-sm">Invitation link</h2>
 <div class="code-box"><div class="value" id="invite-link"></div><button class="btn btn--secondary" type="button" data-copy="invite-link">{icon('copy')} Copy link</button></div>
+<div id="code-section">
 <h2 class="h-sm">Pairing code</h2>
 <div class="code-box"><div class="value value--big" id="invite-code"></div><button class="btn btn--secondary" type="button" data-copy="invite-code">{icon('copy')} Copy code</button></div>
+</div>
 <p class="small text-muted" id="copy-status" role="status" aria-live="polite"></p>
-<div class="btn-row room-actions"><button class="btn btn--secondary" type="button" data-leave>{icon("x")} Cancel room</button></div>""")
+<p class="small text-muted" data-group-only hidden>Send the link or the code to your friends. The game starts as soon as every seat is taken.</p>
+<div class="btn-row room-actions"><button class="btn btn--secondary" type="button" data-leave data-host-only>{icon("x")} Cancel room</button><button class="btn btn--secondary" type="button" data-leave data-guest-only hidden>{icon("logout")} Leave room</button></div>""")
 
     join = state("join", f"""
 <h1 tabindex="-1">Join this room</h1>
 <p class="text-muted"><strong id="host-name">Your friend</strong> invited you to play Quoridor. Choose a username to join.</p>
+<p class="small text-muted" id="join-game" data-i18n-skip hidden></p>
 <form novalidate>
-{username_field('2 to 20 characters. Your opponent will see this name.')}
+{username_field('2 to 20 characters. The other players will see this name.')}
 <button class="btn btn--primary btn--lg btn--block" type="submit">{icon('login')} Join room</button>
 </form>""")
 
@@ -1039,7 +1102,7 @@ def room():
     inner = (
         waiting + join + starting + reconnecting + game
         + msg("invalid", "That code doesn't match a room", "Check the code and try again, or ask your friend to send the invitation link again.")
-        + msg("full", "This room is full", "Two players are already in this room. You can create your own room instead.")
+        + msg("full", "This room is full", "Every seat in this room is already taken. You can create your own room instead.")
         + msg("expired", "This invitation has expired", "Invitations only last for a limited time. Ask your friend for a new one, or create your own room.")
         + msg("unavailable", "This room isn't available", unavailable_text, "info", "notice")
         + left
@@ -1825,7 +1888,7 @@ def contact():
                        scripts=["/assets/js/contact.js"])
 
 
-PRIVACY_EFFECTIVE = ("2026-10-23", "23 October 2026")
+PRIVACY_EFFECTIVE = ("2026-10-24", "24 October 2026")
 PRIVACY_HISTORY = (
     ("2026-10-17", "17 October 2026", "First full version of this Privacy Policy. It replaces the earlier draft placeholder."),
     ("2026-10-17", "17 October 2026", "Explained that an online search can keep running while you play elsewhere on the site, and the session-storage entry that makes this possible."),
@@ -1834,6 +1897,7 @@ PRIVACY_HISTORY = (
     ("2026-10-21", "21 October 2026", "Described the light or dark theme choice that the theme switch keeps in your browser."),
     ("2026-10-23", "23 October 2026", "Described the display name and the win counts between two players that your browser now remembers, in entries named quoridor.username and quoridor.scores."),
     ("2026-10-23", "23 October 2026", "Described the score, rank and achievements that your browser now keeps, in an entry named quoridor.progress."),
+    ("2026-10-24", "24 October 2026", "Private rooms can now be set up for a game variant and for up to four players. Said that a room also holds the settings of its game, and that every player in a room sees the display names of the others."),
 )
 
 LANGUAGE_STORAGE = """<p>If you pick a language with the translate button, your browser keeps the language code (for example <em>es</em>) in an entry named <em>quoridor.lang</em>, so the site opens in that language next time. It is never sent to us, and the game server never learns which language you use. Until you choose, the site reads your browser's language list to pick a first language; that stays in your browser too.</p>"""
@@ -1865,14 +1929,14 @@ def privacy():
     ]
     toc_html = "\n".join(f'<li><a href="#{i}">{t}</a></li>' for i, t in toc)
     if online:
-        info_online = """<li><strong>Online play.</strong> To play online or in a private room you type a display name. Our game server holds that name, a random seat token that identifies your seat, your moves, and the time you were last connected, for as long as the game or room exists. No account, email address or password is involved.</li>
+        info_online = """<li><strong>Online play.</strong> To play online or in a private room you type a display name. Our game server holds that name, a random seat token that identifies your seat, your moves, the settings of the room's game (such as the variant or the board size), and the time you were last connected, for as long as the game or room exists. No account, email address or password is involved.</li>
 <li><strong>Network address.</strong> Your IP address reaches our server with every request. The game server keeps it in memory for about a minute so it can limit abuse, such as creating rooms too fast.</li>"""
         storage_online = LANGUAGE_STORAGE + THEME_STORAGE + PROFILE_STORAGE_NAME + PROFILE_STORAGE_SCORES.format(where=SCORES_WHERE_ONLINE) + PROGRESS_STORAGE + """<p>When you create or join an online room, your browser stores a small entry under the name <em>quoridor.seat.</em> followed by the room's identifier. It contains your seat token, your seat number and the display name you chose. It lets you reload the page or recover from a dropped connection and keep your seat. The entry is removed when you leave the room. If you close the tab without leaving, it stays until you clear it, but it stops working once the room has expired.</p>
 <p>While you search for an opponent, your browser also keeps the search ticket and your display name in <em>session storage</em> (an entry named <em>quoridor.search</em>) for that tab only. It lets the search carry on while you play the computer or open a private room, and lets the search page pick it up again after a reload. It is removed when the search ends and disappears when you close the tab.</p>"""
         rooms_html = """<h2 id="rooms">5. Multiplayer rooms, usernames and shared links</h2>
 <ul>
 <li><strong>Usernames are display names, not accounts.</strong> They are 2 to 20 characters. Please do not use your real name, your email address or anything else that identifies you. Two players may choose the same name.</li>
-<li><strong>Who sees your name.</strong> Your opponent sees your display name. Anyone who opens a private-room invitation before it is full can also see the host's display name.</li>
+<li><strong>Who sees your name.</strong> The other players in your game see your display name. Anyone who opens a private-room invitation before it is full can also see the host's display name and which game the room is for.</li>
 <li><strong>Shared links and codes act like keys.</strong> A private room is reached through a long random link and a short pairing code. Anyone who has the link or code while a seat is open can take that seat, so share it only with the person you want to play. Room pages ask search engines not to index them and are served so that the page address is not passed on to other sites.</li>
 <li><strong>Matchmaking.</strong> If you ask to be matched with a stranger, your display name and a temporary ticket wait in a queue in the server's memory until an opponent is found. The ticket is dropped if your browser stops checking in for about 20 seconds. Your search can keep running while you play the computer or wait in a private room; if an opponent is found then, you are asked whether to join, and nothing starts unless you say yes within about 20 seconds. If you say no, you keep searching but are not offered that player again. If you do not answer, your search ends.</li>
 <li><strong>No chat.</strong> There is no free-text chat between players, so the only text you share with an opponent is your display name.</li>

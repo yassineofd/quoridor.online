@@ -1,5 +1,7 @@
 /* Play-mode pages: validates the setup form, then starts the game for that mode.
      local        two players on one device         (engine.js, board.js, game.js); a variant may offer 2 to 4
+                  A variant page also lets the players invite friends: radio buttons named "playwith" choose between
+                  "device" (the game above) and "friends" (a private room for that variant, see room.js and server/rooms.py).
      computer     one player against the computer  (+ ai.js, ai-worker.js)
      online       matchmaking, then the room page   (online.js, server)
      create-room / join-room   private rooms        (online.js, server)
@@ -45,7 +47,7 @@
   var stage = $('[data-stage]');
   var gameWrap = $('[data-game-wrap]');
   var gameHost = $('[data-game-host]');
-  var nameInput = $('#username', form);
+  var nameInput = $('#username', form);   // (on a variant page: the host's name when inviting friends)
   var nameError = $('#username-error', form);
   var codeInput = $('#code', form);
   var codeError = $('#code-error', form);
@@ -55,8 +57,9 @@
   // The display name used last time is already in the field (on the one-device pages, in the first player's).
   var Profile = window.QuoridorProfile;
   var remembered = Profile ? Profile.name() : '';
-  var firstName = nameInput || $('#name1', form);
-  if (remembered && firstName && !firstName.value) firstName.value = remembered;
+  [nameInput, $('#name1', form)].forEach(function (field) {
+    if (remembered && field && !field.value) field.value = remembered;
+  });
 
   if (nameInput) nameInput.addEventListener('input', function () { clearError(nameInput, nameError); });
   if (codeInput) {
@@ -90,6 +93,24 @@
     controller = QuoridorGame.mount(gameHost, cfg);
     gameWrap.scrollIntoView({ block: 'start' });
   }
+
+  // ---- one device or invited friends ------------------------------------------------------
+  // A variant page offers both. Parts of the form belong to one way of playing: data-device-only (the name fields,
+  // the button that starts the game here) and data-friends-only (your name, the button that opens a room).
+  function playsOnline() {
+    var chosen = $('input[name="playwith"]:checked', form);
+    return !!chosen && chosen.value === 'friends';
+  }
+  function syncPlayWith() {
+    var online = playsOnline();
+    Array.prototype.forEach.call(form.querySelectorAll('[data-device-only]'), function (el) { el.hidden = online; });
+    Array.prototype.forEach.call(form.querySelectorAll('[data-friends-only]'), function (el) { el.hidden = !online; });
+    submitBtn = $('button[type="submit"]:not([hidden])', form);
+    hideServerError();
+  }
+  Array.prototype.forEach.call(form.querySelectorAll('input[name="playwith"]'), function (radio) {
+    radio.addEventListener('change', syncPlayWith);
+  });
 
   // ---- local and computer ---------------------------------------------------------------
   // A variant for more than two players has radio buttons named "players"; the name fields past the chosen count are hidden.
@@ -156,6 +177,25 @@
     openGame({
       mode: 'local', variant: variant, players: count, names: names, nameKeys: nameKeys, options: custom.options, turnSeconds: custom.turnSeconds,
       scoreId: named ? 'local-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8) : undefined
+    });
+  }
+
+  // Friends invited to a variant: open a private room for it and go to the room page, where the invitation link and code are.
+  function startInvite() {
+    var name = checkUsername(nameInput, nameError);
+    if (!name) return;
+    var custom = readCustom();
+    if (!custom) return;
+    if (Profile) Profile.setName(name);
+    if (!live) return showNotice();
+    hideServerError();
+    var settings = { variant: variant };
+    if ($('input[name="players"]', form)) settings.players = playerCount();
+    if (custom.options) { settings.options = custom.options; settings.turnSeconds = custom.turnSeconds; }
+    submitBtn.disabled = true;
+    QuoridorOnline.createRoom(name, settings).then(function (res) { enter(res, name); }, function (err) {
+      submitBtn.disabled = false;
+      showServerError(err);
     });
   }
 
@@ -280,13 +320,15 @@
   window.addEventListener('pagehide', function () { if (searching) searching.detach(); });
   window.addEventListener('pageshow', function (e) { if (e.persisted && QuoridorOnline.loadSearch()) window.location.reload(); });
 
+  syncPlayWith();
+
   var retry = $('[data-retry]', form);
   if (retry) retry.addEventListener('click', function () { hideServerError(); if (submitBtn) submitBtn.focus(); });
 
   // ---- submit ---------------------------------------------------------------------------
   form.addEventListener('submit', function (e) {
     e.preventDefault();
-    if (kind === 'local') return startLocal();
+    if (kind === 'local') return playsOnline() ? startInvite() : startLocal();
     if (kind === 'computer') return startComputer();
 
     var name = nameInput && checkUsername(nameInput, nameError);

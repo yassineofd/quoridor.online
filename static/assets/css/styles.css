@@ -594,6 +594,8 @@ html.i18n-pending body { visibility: hidden; }
 .choice input:checked + .choice-body .check { background: var(--color-accent); border-color: var(--color-accent); }
 .choice input:checked + .choice-body .check svg { opacity: 1; }
 .choice input:focus-visible + .choice-body { outline: 3px solid var(--color-accent); outline-offset: 2px; }
+.choice input:disabled { cursor: not-allowed; }
+.choice input:disabled + .choice-body { opacity: 0.6; }
 .choice-state { display: none; }
 .choice input:checked + .choice-body .choice-state { display: inline; color: var(--color-accent); font-weight: 600; font-size: 0.875rem; margin-inline-start: var(--space-2); }
 
@@ -625,6 +627,18 @@ html.i18n-pending body { visibility: hidden; }
 .code-box .value { flex: 1 1 200px; min-width: 0; padding: var(--space-3) var(--space-4); background: var(--color-bg); border: 2px solid var(--control-border); border-radius: var(--radius-control); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; overflow-wrap: anywhere; }
 .code-box .value--big { font-size: 1.5rem; letter-spacing: 0.25em; font-weight: 700; }
 .room-actions { margin-top: var(--space-5); }
+/* The lobby of a room for three or four players: who has joined, each in the colour of their seat. */
+.lobby { list-style: none; padding: 0; margin: 0 0 var(--space-4); display: grid; gap: var(--space-2); }
+.lobby-player { --pc: var(--color-accent); display: flex; align-items: center; gap: var(--space-3); min-width: 0; padding: var(--space-3) var(--space-4); border: 2px solid rgba(255, 255, 255, 0.14); border: 2px solid color-mix(in srgb, var(--pc) 45%, transparent); border-radius: var(--radius-control); background: var(--color-surface); }
+.lobby-player--1 { --pc: var(--color-player-2); }
+.lobby-player--2 { --pc: var(--color-player-3); }
+.lobby-player--3 { --pc: var(--color-player-4); }
+.lobby-player .pawn-glyph { flex: none; width: 24px; height: 24px; }
+.lobby-name { flex: 1 1 auto; min-width: 0; font-weight: 600; overflow-wrap: anywhere; }
+.lobby-tag { flex: none; font-size: 0.875rem; color: var(--color-text-muted); }
+.lobby-player.is-empty { border-style: dashed; border-color: var(--control-border); }
+.lobby-player.is-empty .pawn-glyph { background: none; border: 2px dashed var(--pc); }
+.lobby-player.is-empty .lobby-name { font-weight: 400; color: var(--color-text-muted); }
 .preview-note { margin-top: var(--space-6); }
 
 /* ---------- Game screen ---------- */

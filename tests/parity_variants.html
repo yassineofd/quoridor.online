@@ -1,0 +1,109 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>variant engine parity</title>
+<pre id="result">running</pre>
+<script src="../static/assets/js/engine.js"></script>
+<script src="_gen/fixtures_variants.js"></script>
+<script>
+(function () {
+  var Q = window.Quoridor, errors = [], checks = 0, games = 0;
+  function fail(msg) { if (errors.length < 20) errors.push(msg); }
+
+  var CODES = { overlap: 'o', cross: 'x', 'blocks-path': 'p', 'no-walls': 'n', 'out-of-bounds': 'b' };
+  function wallString(g) {
+    var s = '';
+    ['h', 'v'].forEach(function (o) {
+      for (var r = 0; r < g.rows - 1; r++) for (var c = 0; c < g.cols - 1; c++) {
+        var e = g.wallError(o, r, c);
+        s += e === null ? '.' : (CODES[e] || '?');
+      }
+    });
+    return s;
+  }
+  function sortMoves(list) { return list.map(function (m) { return m.join(','); }).sort().join(';'); }
+  function firstDiff(a, b) { for (var i = 0; i < Math.max(a.length, b.length); i++) if (a.charAt(i) !== b.charAt(i)) return i; return -1; }
+  function canon(x) {
+    if (Array.isArray(x)) return x.map(canon);
+    if (x && typeof x === 'object') { var o = {}; Object.keys(x).sort().forEach(function (k) { if (x[k] !== undefined) o[k] = canon(x[k]); }); return o; }
+    return x;
+  }
+  function same(a, b) { return JSON.stringify(canon(a)) === JSON.stringify(canon(b)); }
+
+  // game.js plays this move for a player whose clock runs out (fallbackMove); server/engine.py timeout_move() must pick the same one.
+  function timeoutMove(game) {
+    var p = game.turn, from = game.pawns[p], best = null, bestD = Infinity;
+    game.pawnMoves(p).forEach(function (to) {
+      game.pawns[p] = to;
+      var d = game.distance(p);
+      if (d >= 0 && d < bestD) { bestD = d; best = to; }
+    });
+    game.pawns[p] = from;
+    return best ? { type: 'move', r: best[0], c: best[1] } : null;
+  }
+
+  function compare(tag, g, exp) {
+    checks++;
+    if (!same(g.toJSON(), exp.json)) fail(tag + ' snapshot ' + JSON.stringify(canon(g.toJSON())) + ' vs ' + JSON.stringify(canon(exp.json)));
+    for (var p = 0; p < g.nPlayers; p++) {
+      var pm = sortMoves(g.pawnMoves(p));
+      if (pm !== exp.pm[p]) fail(tag + ' pawnMoves(' + p + ') ' + pm + ' vs ' + exp.pm[p]);
+      if (g.distance(p) !== exp.d[p]) fail(tag + ' distance(' + p + ') ' + g.distance(p) + ' vs ' + exp.d[p]);
+    }
+    if (exp.we !== null) {
+      var ws = wallString(g), fd = firstDiff(ws, exp.we);
+      if (fd !== -1) fail(tag + ' walls differ at ' + fd + ' (js ' + ws.charAt(fd) + ' py ' + exp.we.charAt(fd) + ')');
+    }
+    if (!same(timeoutMove(g), exp.tm)) fail(tag + ' timeout move ' + JSON.stringify(timeoutMove(g)) + ' vs ' + JSON.stringify(exp.tm));
+    var path = [], dd = g.distance(g.turn, path);
+    if (dd >= 0 && path.length !== dd + 1) fail(tag + ' path length');
+  }
+
+  window.FIXTURES.configs.forEach(function (cfg, ci) {
+    var name = cfg.variant + '/' + cfg.players + (cfg.options ? JSON.stringify(cfg.options) : '');
+    // Crowded positions that no game would reach: the walls and pawns are set directly.
+    cfg.positions.forEach(function (pos, pi) {
+      var g = new Q.Game(cfg.variant, cfg.players, cfg.options), j = pos.snap.json;
+      j.walls.forEach(function (w) { g._setWall(w[0], w[1], w[2], 1); });
+      g.pawns = j.pawns.map(function (p) { return p.slice(); });
+      g.turn = j.turn;
+      g.wallsLeft = j.wallsLeft.slice();
+      g.moves = j.moves.map(function (m) { return Object.assign({}, m); });
+      compare(name + ' crowded ' + pi, g, pos.snap);
+    });
+    cfg.games.forEach(function (game, gi) {
+      games++;
+      var g = new Q.Game(cfg.variant, cfg.players, cfg.options);
+      var fresh = JSON.stringify(canon(g.toJSON()));
+      compare(name + ' g' + gi + ' start', g, game.start);
+      game.steps.forEach(function (step, si) {
+        var tag = name + ' g' + gi + ' step ' + si;
+        step.bad.forEach(function (b) {
+          var before = JSON.stringify(canon(g.toJSON()));
+          var err = g.apply(b.move);
+          checks++;
+          if (err !== b.err) fail(tag + ' bad move ' + JSON.stringify(b.move) + ' expected ' + b.err + ' got ' + err);
+          if (JSON.stringify(canon(g.toJSON())) !== before) fail(tag + ' bad move changed state');
+        });
+        var err = g.apply(step.move);
+        if (err) { fail(tag + ' rejected ' + JSON.stringify(step.move) + ': ' + err); return; }
+        compare(tag, g, step.after);
+      });
+      // The Python snapshot loads into the JavaScript engine and gives the same game back.
+      var last = game.steps.length ? game.steps[game.steps.length - 1].after.json : game.start.json;
+      checks++;
+      if (!same(Q.Game.fromJSON(last).toJSON(), last)) fail(name + ' g' + gi + ' fromJSON of the python snapshot');
+      // Undoing every move gives back the start; on the way back each position matches what was recorded.
+      while (g.moves.length) {
+        var depth = g.moves.length;
+        g.undo();
+        if (depth - 1 > 0 && depth % 9 === 0) {
+          checks++;
+          if (!same(g.toJSON(), game.steps[depth - 2].after.json)) fail(name + ' g' + gi + ' undo to ' + (depth - 1));
+        }
+      }
+      if (JSON.stringify(canon(g.toJSON())) !== fresh) fail(name + ' g' + gi + ' undo did not restore the start');
+    });
+  });
+  document.getElementById('result').textContent = JSON.stringify({ games: games, checks: checks, errors: errors });
+})();
+</script>

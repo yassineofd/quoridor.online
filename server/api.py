@@ -1,13 +1,18 @@
 """HTTP/JSON surface for online play. serve.py mounts this under /api/.
 
   GET    /api/health
-  POST   /api/rooms                      {username}            -> {roomId, code, token, seat}
+  POST   /api/rooms                      {username, variant?, players?, options?, turnSeconds?}
+                                                               -> {roomId, code, token, seat}
+           variant: "classic" (default) | "wallrush" | "pointrush" | "custom"; players: 2 (default), or 3 or 4 for
+           pointrush; options {size, walls, borrow} and turnSeconds (0, 15, 32, 60, 120) are for "custom" only.
+           The room starts as soon as every seat is taken. 400 "bad-settings" for anything else.
   POST   /api/rooms/join                 {code, username}      -> {roomId, token, seat}
-  GET    /api/rooms/<id>                                       -> {status:"open", host}   (404 / 409 full)
+  GET    /api/rooms/<id>                                       -> {status:"open", host, variant, players, joined, options, turnSeconds}
+                                                                  (404 / 409 full)
   POST   /api/rooms/<id>/join            {username}            -> {roomId, token, seat}
   GET    /api/rooms/<id>/state?since=N   X-Seat-Token          -> snapshot (waits up to 25 s for news)
   POST   /api/rooms/<id>/move            {move}  X-Seat-Token  -> snapshot
-  POST   /api/rooms/<id>/resign          X-Seat-Token          -> snapshot
+  POST   /api/rooms/<id>/resign          X-Seat-Token          -> snapshot   (two-player games only; 409 "not-allowed" otherwise)
   POST   /api/rooms/<id>/leave           X-Seat-Token          -> {left:true}
   POST   /api/rooms/<id>/rematch         X-Seat-Token          -> snapshot
   POST   /api/queue                      {username}            -> {ticket}
@@ -94,7 +99,9 @@ def health(req):
 
 @route("POST", "/rooms")
 def create_room(req):
-    return hub.create_room(req.ip, req.json().get("username"))
+    d = req.json()
+    settings = {k: d[k] for k in ("variant", "players", "options", "turnSeconds") if k in d}
+    return hub.create_room(req.ip, d.get("username"), settings)
 
 
 @route("POST", "/rooms/join")

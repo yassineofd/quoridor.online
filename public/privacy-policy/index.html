@@ -552,6 +552,8 @@ background: var(--color-surface); border: 2px solid var(--control-border); borde
 .choice input:checked + .choice-body .check { background: var(--color-accent); border-color: var(--color-accent); }
 .choice input:checked + .choice-body .check svg { opacity: 1; }
 .choice input:focus-visible + .choice-body { outline: 3px solid var(--color-accent); outline-offset: 2px; }
+.choice input:disabled { cursor: not-allowed; }
+.choice input:disabled + .choice-body { opacity: 0.6; }
 .choice-state { display: none; }
 .choice input:checked + .choice-body .choice-state { display: inline; color: var(--color-accent); font-weight: 600; font-size: 0.875rem; margin-inline-start: var(--space-2); }
 .notice { display: flex; gap: var(--space-3); padding: var(--space-4); border: 1px solid var(--control-border); border-radius: var(--radius-card); background: var(--color-surface); margin-bottom: var(--space-4); }
@@ -578,6 +580,17 @@ background: var(--color-surface); border: 2px solid var(--control-border); borde
 .code-box .value { flex: 1 1 200px; min-width: 0; padding: var(--space-3) var(--space-4); background: var(--color-bg); border: 2px solid var(--control-border); border-radius: var(--radius-control); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; overflow-wrap: anywhere; }
 .code-box .value--big { font-size: 1.5rem; letter-spacing: 0.25em; font-weight: 700; }
 .room-actions { margin-top: var(--space-5); }
+.lobby { list-style: none; padding: 0; margin: 0 0 var(--space-4); display: grid; gap: var(--space-2); }
+.lobby-player { --pc: var(--color-accent); display: flex; align-items: center; gap: var(--space-3); min-width: 0; padding: var(--space-3) var(--space-4); border: 2px solid rgba(255, 255, 255, 0.14); border: 2px solid color-mix(in srgb, var(--pc) 45%, transparent); border-radius: var(--radius-control); background: var(--color-surface); }
+.lobby-player--1 { --pc: var(--color-player-2); }
+.lobby-player--2 { --pc: var(--color-player-3); }
+.lobby-player--3 { --pc: var(--color-player-4); }
+.lobby-player .pawn-glyph { flex: none; width: 24px; height: 24px; }
+.lobby-name { flex: 1 1 auto; min-width: 0; font-weight: 600; overflow-wrap: anywhere; }
+.lobby-tag { flex: none; font-size: 0.875rem; color: var(--color-text-muted); }
+.lobby-player.is-empty { border-style: dashed; border-color: var(--control-border); }
+.lobby-player.is-empty .pawn-glyph { background: none; border: 2px dashed var(--pc); }
+.lobby-player.is-empty .lobby-name { font-weight: 400; color: var(--color-text-muted); }
 .preview-note { margin-top: var(--space-6); }
 .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 .game-wrap { padding-block: var(--space-4) var(--space-7); }
@@ -851,7 +864,7 @@ setTimeout(function () { root.classList.remove('i18n-pending'); }, 3000);
   </div>
 </header>
 <main id="main" tabindex="-1">
-<div class="page-head"><div class="container"><nav class="breadcrumbs" aria-label="Breadcrumb" data-i18n-attr="aria-label:85d36d"><ol><li><a href="/" data-i18n="56dee6">Home</a></li><li><span aria-current="page" data-i18n="8dbcdd">Privacy Policy</span></li></ol></nav><h1 data-i18n="8dbcdd">Privacy Policy</h1><p class="lead" data-i18n="d7762c">What we collect, what we don't, and how long we keep it. Effective 23 October 2026.</p></div></div><div class="container pad-page"><div class="article prose"><p class="small text-muted" data-i18n="433a5f">This page can be read in other languages with the translate button. The translations are provided for convenience; if they differ from the English text, the English text applies.</p>
+<div class="page-head"><div class="container"><nav class="breadcrumbs" aria-label="Breadcrumb" data-i18n-attr="aria-label:85d36d"><ol><li><a href="/" data-i18n="56dee6">Home</a></li><li><span aria-current="page" data-i18n="8dbcdd">Privacy Policy</span></li></ol></nav><h1 data-i18n="8dbcdd">Privacy Policy</h1><p class="lead" data-i18n="e5d215">What we collect, what we don't, and how long we keep it. Effective 24 October 2026.</p></div></div><div class="container pad-page"><div class="article prose"><p class="small text-muted" data-i18n="433a5f">This page can be read in other languages with the translate button. The translations are provided for convenience; if they differ from the English text, the English text applies.</p>
 <p data-i18n="57a0f5">This policy explains what information Quoridor.online (&ldquo;we&rdquo;, &ldquo;us&rdquo;) handles when you visit the site, play Quoridor, or contact us. We keep it short because we collect very little: there are no accounts and no advertising, and the only analytics is Google Analytics on our public pages.</p>
 <p data-i18n="7ed24b"><strong>In short:</strong> games against the computer and on one device stay in your browser; Google Analytics sets cookies to count visits (never on online-room pages); and the little that online play needs is kept in memory only, for minutes.</p>
 <nav aria-label="On this page" data-i18n-attr="aria-label:7ef25d"><p><strong data-i18n="cb1c51">On this page</strong></p>
@@ -871,7 +884,7 @@ setTimeout(function () { root.classList.remove('i18n-pending'); }, 3000);
 <h2 id="information" data-i18n="1f50cd">1. Information we collect and why</h2>
 <ul>
 <li data-i18n="102f55"><strong>Playing against the computer or on one device.</strong> These games run entirely in your browser. Your moves are not sent to us or stored.</li>
-<li data-i18n="5a3f6e"><strong>Online play.</strong> To play online or in a private room you type a display name. Our game server holds that name, a random seat token that identifies your seat, your moves, and the time you were last connected, for as long as the game or room exists. No account, email address or password is involved.</li>
+<li data-i18n="1b702d"><strong>Online play.</strong> To play online or in a private room you type a display name. Our game server holds that name, a random seat token that identifies your seat, your moves, the settings of the room's game (such as the variant or the board size), and the time you were last connected, for as long as the game or room exists. No account, email address or password is involved.</li>
 <li data-i18n="e50442"><strong>Network address.</strong> Your IP address reaches our server with every request. The game server keeps it in memory for about a minute so it can limit abuse, such as creating rooms too fast.</li>
 <li data-i18n="8164ab"><strong>Technical data from your visit.</strong> Like any website, our web server receives your IP address and basic details of each request. Section 2 explains how this is used.</li>
 <li data-i18n="bed681"><strong>Messages you send us.</strong> If you write to us, we receive your message, your email address and anything else you include. Section 9 explains how.</li>
@@ -904,7 +917,7 @@ setTimeout(function () { root.classList.remove('i18n-pending'); }, 3000);
 <h2 id="rooms" data-i18n="924926">5. Multiplayer rooms, usernames and shared links</h2>
 <ul>
 <li data-i18n="95fcb9"><strong>Usernames are display names, not accounts.</strong> They are 2 to 20 characters. Please do not use your real name, your email address or anything else that identifies you. Two players may choose the same name.</li>
-<li data-i18n="064cce"><strong>Who sees your name.</strong> Your opponent sees your display name. Anyone who opens a private-room invitation before it is full can also see the host's display name.</li>
+<li data-i18n="5ae447"><strong>Who sees your name.</strong> The other players in your game see your display name. Anyone who opens a private-room invitation before it is full can also see the host's display name and which game the room is for.</li>
 <li data-i18n="770992"><strong>Shared links and codes act like keys.</strong> A private room is reached through a long random link and a short pairing code. Anyone who has the link or code while a seat is open can take that seat, so share it only with the person you want to play. Room pages ask search engines not to index them and are served so that the page address is not passed on to other sites.</li>
 <li data-i18n="4dabe7"><strong>Matchmaking.</strong> If you ask to be matched with a stranger, your display name and a temporary ticket wait in a queue in the server's memory until an opponent is found. The ticket is dropped if your browser stops checking in for about 20 seconds. Your search can keep running while you play the computer or wait in a private room; if an opponent is found then, you are asked whether to join, and nothing starts unless you say yes within about 20 seconds. If you say no, you keep searching but are not offered that player again. If you do not answer, your search ends.</li>
 <li data-i18n="89484b"><strong>No chat.</strong> There is no free-text chat between players, so the only text you share with an opponent is your display name.</li>
@@ -941,9 +954,9 @@ setTimeout(function () { root.classList.remove('i18n-pending'); }, 3000);
 <p data-i18n="3094c6">For questions about this policy or to make a privacy request, email <a href="mailto:lahssanyassine1@gmail.com">lahssanyassine1@gmail.com</a> or use the <a href="/contact">contact page</a>. Please do not include passwords or other sensitive details in your message.</p>
 
 <h2 id="updates" data-i18n="c45803">10. Effective date and update history</h2>
-<p data-i18n="b6beae">This policy is effective from <time datetime="2026-10-23">23 October 2026</time>. When we change it, we update the date and add an entry below. If a change materially affects how your information is used, we will say so on the site before it takes effect.</p>
+<p data-i18n="3d06a0">This policy is effective from <time datetime="2026-10-24">24 October 2026</time>. When we change it, we update the date and add an entry below. If a change materially affects how your information is used, we will say so on the site before it takes effect.</p>
 <ul>
-<li data-i18n="96cdba"><time datetime="2026-10-17">17 October 2026</time>: First full version of this Privacy Policy. It replaces the earlier draft placeholder.</li><li data-i18n="63a90b"><time datetime="2026-10-17">17 October 2026</time>: Explained that an online search can keep running while you play elsewhere on the site, and the session-storage entry that makes this possible.</li><li data-i18n="d355e5"><time datetime="2026-10-17">17 October 2026</time>: Added Google Analytics (Google tag) on public pages, with its cookies and data processing. It is not loaded on online-room pages.</li><li data-i18n="1756ed"><time datetime="2026-10-17">17 October 2026</time>: Described the language choice that the translate button keeps in your browser, and added translated versions of the site.</li><li data-i18n="9ad599"><time datetime="2026-10-21">21 October 2026</time>: Described the light or dark theme choice that the theme switch keeps in your browser.</li><li data-i18n="dedc2e"><time datetime="2026-10-23">23 October 2026</time>: Described the display name and the win counts between two players that your browser now remembers, in entries named quoridor.username and quoridor.scores.</li><li data-i18n="7e79c7"><time datetime="2026-10-23">23 October 2026</time>: Described the score, rank and achievements that your browser now keeps, in an entry named quoridor.progress.</li>
+<li data-i18n="96cdba"><time datetime="2026-10-17">17 October 2026</time>: First full version of this Privacy Policy. It replaces the earlier draft placeholder.</li><li data-i18n="63a90b"><time datetime="2026-10-17">17 October 2026</time>: Explained that an online search can keep running while you play elsewhere on the site, and the session-storage entry that makes this possible.</li><li data-i18n="d355e5"><time datetime="2026-10-17">17 October 2026</time>: Added Google Analytics (Google tag) on public pages, with its cookies and data processing. It is not loaded on online-room pages.</li><li data-i18n="1756ed"><time datetime="2026-10-17">17 October 2026</time>: Described the language choice that the translate button keeps in your browser, and added translated versions of the site.</li><li data-i18n="9ad599"><time datetime="2026-10-21">21 October 2026</time>: Described the light or dark theme choice that the theme switch keeps in your browser.</li><li data-i18n="dedc2e"><time datetime="2026-10-23">23 October 2026</time>: Described the display name and the win counts between two players that your browser now remembers, in entries named quoridor.username and quoridor.scores.</li><li data-i18n="7e79c7"><time datetime="2026-10-23">23 October 2026</time>: Described the score, rank and achievements that your browser now keeps, in an entry named quoridor.progress.</li><li data-i18n="1cfc4e"><time datetime="2026-10-24">24 October 2026</time>: Private rooms can now be set up for a game variant and for up to four players. Said that a room also holds the settings of its game, and that every player in a room sees the display names of the others.</li>
 </ul></div></div>
 </main>
 

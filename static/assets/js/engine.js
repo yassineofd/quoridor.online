@@ -1,8 +1,8 @@
 /* Quoridor rules engine for the classic game (two players, 10 walls each) and its variants.
    Pure logic, no DOM. Works in pages, in a Web Worker and (via module.exports) in tests.
-   Keep in step with server/engine.py: the server is authoritative for online games and
-   tests/test_parity.py replays games through both implementations (classic only: the variants
-   are played on one device and never reach the server).
+   Keep in step with server/engine.py: the server is authoritative for online games (private rooms play
+   the variants too) and tests/test_parity.py and tests/test_parity_variants.py replay games through
+   both implementations.
 
    A variant is just a board size, start squares, goals and a wall count (VARIANTS below);
    `new Game()` is the classic game, `new Game('wallrush')` a variant, `new Game('pointrush', 4)`

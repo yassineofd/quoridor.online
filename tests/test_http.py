@@ -79,6 +79,33 @@ class Http(unittest.TestCase):
         status, snap3, _ = self.call("POST", f"/rooms/{rid}/resign", token=second["token"])
         self.assertEqual((snap3["status"], snap3["reason"], snap3["game"]["winner"]), ("finished", "resign", 0))
 
+    def test_a_room_for_three_over_http(self):
+        status, host, _ = self.call("POST", "/rooms", {"username": "Ana", "variant": "pointrush", "players": 3})
+        self.assertEqual(status, 200)
+        rid = host["roomId"]
+        status, info, _ = self.call("GET", f"/rooms/{rid}")
+        self.assertEqual((status, info["variant"], info["players"], info["joined"], info["host"]), (200, "pointrush", 3, 1, "Ana"))
+        status, second, _ = self.call("POST", f"/rooms/{rid}/join", {"username": "Ben"})
+        self.assertEqual(status, 200)
+        status, snap, _ = self.call("GET", f"/rooms/{rid}/state", token=second["token"])
+        self.assertEqual((snap["status"], snap["game"]["variant"], snap["game"]["players"], len(snap["players"])), ("waiting", "pointrush", 3, 3))
+        status, third, _ = self.call("POST", "/rooms/join", {"code": host["code"], "username": "Cleo"})
+        self.assertEqual(status, 200)
+        status, snap, _ = self.call("GET", f"/rooms/{rid}/state", token=third["token"])
+        self.assertEqual(snap["status"], "playing")
+        self.assertEqual(self.call("POST", f"/rooms/{rid}/resign", token=third["token"])[1]["error"], "not-allowed")
+        self.assertEqual(self.call("GET", f"/rooms/{rid}")[1]["error"], "full")
+
+    def test_a_custom_room_over_http_and_bad_settings(self):
+        custom = {"username": "Ana", "variant": "custom", "options": {"size": 7, "walls": 5, "borrow": True}, "turnSeconds": 0}
+        status, host, _ = self.call("POST", "/rooms", custom)
+        self.assertEqual(status, 200)
+        info = self.call("GET", f"/rooms/{host['roomId']}")[1]
+        self.assertEqual((info["options"], info["turnSeconds"]), ({"size": 7, "walls": 5, "borrow": True}, 0))
+        for bad in ({"variant": "chess"}, {"variant": "pointrush", "players": 9}, {"variant": "custom", "options": {"size": 8}}):
+            status, err, _ = self.call("POST", "/rooms", dict(bad, username="Ana"))
+            self.assertEqual((status, err["error"]), (400, "bad-settings"), bad)
+
     def test_queue_over_http(self):
         status, a, _ = self.call("POST", "/queue", {"username": "Alex"})
         status, b, _ = self.call("POST", "/queue", {"username": "Sam"})

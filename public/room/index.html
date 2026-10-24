@@ -544,6 +544,8 @@ background: var(--color-surface); border: 2px solid var(--control-border); borde
 .choice input:checked + .choice-body .check { background: var(--color-accent); border-color: var(--color-accent); }
 .choice input:checked + .choice-body .check svg { opacity: 1; }
 .choice input:focus-visible + .choice-body { outline: 3px solid var(--color-accent); outline-offset: 2px; }
+.choice input:disabled { cursor: not-allowed; }
+.choice input:disabled + .choice-body { opacity: 0.6; }
 .choice-state { display: none; }
 .choice input:checked + .choice-body .choice-state { display: inline; color: var(--color-accent); font-weight: 600; font-size: 0.875rem; margin-inline-start: var(--space-2); }
 .notice { display: flex; gap: var(--space-3); padding: var(--space-4); border: 1px solid var(--control-border); border-radius: var(--radius-card); background: var(--color-surface); margin-bottom: var(--space-4); }
@@ -570,6 +572,17 @@ background: var(--color-surface); border: 2px solid var(--control-border); borde
 .code-box .value { flex: 1 1 200px; min-width: 0; padding: var(--space-3) var(--space-4); background: var(--color-bg); border: 2px solid var(--control-border); border-radius: var(--radius-control); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; overflow-wrap: anywhere; }
 .code-box .value--big { font-size: 1.5rem; letter-spacing: 0.25em; font-weight: 700; }
 .room-actions { margin-top: var(--space-5); }
+.lobby { list-style: none; padding: 0; margin: 0 0 var(--space-4); display: grid; gap: var(--space-2); }
+.lobby-player { --pc: var(--color-accent); display: flex; align-items: center; gap: var(--space-3); min-width: 0; padding: var(--space-3) var(--space-4); border: 2px solid rgba(255, 255, 255, 0.14); border: 2px solid color-mix(in srgb, var(--pc) 45%, transparent); border-radius: var(--radius-control); background: var(--color-surface); }
+.lobby-player--1 { --pc: var(--color-player-2); }
+.lobby-player--2 { --pc: var(--color-player-3); }
+.lobby-player--3 { --pc: var(--color-player-4); }
+.lobby-player .pawn-glyph { flex: none; width: 24px; height: 24px; }
+.lobby-name { flex: 1 1 auto; min-width: 0; font-weight: 600; overflow-wrap: anywhere; }
+.lobby-tag { flex: none; font-size: 0.875rem; color: var(--color-text-muted); }
+.lobby-player.is-empty { border-style: dashed; border-color: var(--control-border); }
+.lobby-player.is-empty .pawn-glyph { background: none; border: 2px dashed var(--pc); }
+.lobby-player.is-empty .lobby-name { font-weight: 400; color: var(--color-text-muted); }
 .preview-note { margin-top: var(--space-6); }
 .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 .game-wrap { padding-block: var(--space-4) var(--space-7); }
@@ -845,22 +858,30 @@ setTimeout(function () { root.classList.remove('i18n-pending'); }, 3000);
 <div class="container pad-room" data-room-shell data-live>
   <div class="stage-panel narrow">
     <section data-state="waiting" hidden>
-<h1 tabindex="-1" data-i18n="0fc9a6">Waiting for your opponent</h1>
-<div class="status-line" role="status"><span class="status-dot status-dot--wait" aria-hidden="true"></span><span data-i18n="40e84d">Waiting for a second player to join. Connected as host.</span></div>
+<h1 tabindex="-1" data-pair-only data-i18n="0fc9a6">Waiting for your opponent</h1>
+<h1 tabindex="-1" data-group-only hidden data-i18n="73c1dc">Waiting for your friends</h1>
+<p class="small text-muted" id="waiting-game" data-i18n-skip hidden></p>
+<div class="status-line" role="status" data-pair-only><span class="status-dot status-dot--wait" aria-hidden="true"></span><span data-i18n="40e84d">Waiting for a second player to join. Connected as host.</span></div>
+<div class="status-line" role="status" data-group-only hidden><span class="status-dot status-dot--wait" aria-hidden="true"></span><span id="lobby-count" data-i18n-skip></span></div>
+<ul class="lobby" id="lobby" aria-label="Players in this room" data-group-only hidden data-i18n-attr="aria-label:ad252e"></ul>
 <h2 class="h-sm" data-i18n="bcaf4f">Invitation link</h2>
 <div class="code-box"><div class="value" id="invite-link"></div><button class="btn btn--secondary" type="button" data-copy="invite-link" data-i18n="b08500"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg> Copy link</button></div>
+<div id="code-section">
 <h2 class="h-sm" data-i18n="7c82d0">Pairing code</h2>
 <div class="code-box"><div class="value value--big" id="invite-code"></div><button class="btn btn--secondary" type="button" data-copy="invite-code" data-i18n="f2b2d4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg> Copy code</button></div>
+</div>
 <p class="small text-muted" id="copy-status" role="status" aria-live="polite"></p>
-<div class="btn-row room-actions"><button class="btn btn--secondary" type="button" data-leave data-i18n="dd0686"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg> Cancel room</button></div></section><section data-state="join" hidden>
+<p class="small text-muted" data-group-only hidden data-i18n="47deda">Send the link or the code to your friends. The game starts as soon as every seat is taken.</p>
+<div class="btn-row room-actions"><button class="btn btn--secondary" type="button" data-leave data-host-only data-i18n="dd0686"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg> Cancel room</button><button class="btn btn--secondary" type="button" data-leave data-guest-only hidden data-i18n="852b24"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/></svg> Leave room</button></div></section><section data-state="join" hidden>
 <h1 tabindex="-1" data-i18n="10b3f7">Join this room</h1>
 <p class="text-muted" data-i18n="7792ef"><strong id="host-name">Your friend</strong> invited you to play Quoridor. Choose a username to join.</p>
+<p class="small text-muted" id="join-game" data-i18n-skip hidden></p>
 <form novalidate>
 
 <div class="field">
   <label for="username" data-i18n="df84e2">Username</label>
   <input class="input" id="username" name="username" type="text" autocomplete="nickname" maxlength="20" required aria-describedby="username-hint username-error" spellcheck="false">
-  <span class="hint" id="username-hint" data-i18n="79bd7f">2 to 20 characters. Your opponent will see this name.</span>
+  <span class="hint" id="username-hint" data-i18n="e5ba48">2 to 20 characters. The other players will see this name.</span>
   <div class="field-error" id="username-error" role="alert" hidden></div>
 </div>
 <button class="btn btn--primary btn--lg btn--block" type="submit" data-i18n="859667"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m10 17 5-5-5-5"/><path d="M15 12H3"/><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/></svg> Join room</button>
@@ -880,7 +901,7 @@ setTimeout(function () { root.classList.remove('i18n-pending'); }, 3000);
   <a class="btn btn--secondary" href="/play/join-room" data-i18n="c56f55">Join with a code</a>
   <a class="btn btn--secondary" href="/play" data-i18n="afb7d8">Back to Play</a>
 </div></section><section data-state="full" hidden>
-<div class="notice notice--error"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg><div><h1 tabindex="-1" data-i18n="b2da3f">This room is full</h1><p data-i18n="e426b1">Two players are already in this room. You can create your own room instead.</p></div></div>
+<div class="notice notice--error"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg><div><h1 tabindex="-1" data-i18n="b2da3f">This room is full</h1><p data-i18n="e241da">Every seat in this room is already taken. You can create your own room instead.</p></div></div>
 <div class="btn-row">
   <a class="btn btn--primary" href="/play/create-room" data-i18n="626ef4">Create a Room</a>
   <a class="btn btn--secondary" href="/play/join-room" data-i18n="c56f55">Join with a code</a>

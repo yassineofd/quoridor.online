@@ -202,7 +202,6 @@ be0b87|Comprueba el código e inténtalo de nuevo, o pide a tu amigo que te vuel
 c56f55|Unirse con un código
 afb7d8|Volver a Jugar
 b2da3f|Esta sala está llena
-e426b1|Ya hay dos jugadores en esta sala. Puedes crear tu propia sala en su lugar.
 ebb1c8|Esta invitación ha caducado
 c69419|Las invitaciones solo duran un tiempo limitado. Pide a tu amigo una nueva, o crea tu propia sala.
 0de561|Esta sala no está disponible
@@ -653,7 +652,6 @@ c9d622|Tu información
 d07068|Usamos tu mensaje y tu dirección de correo únicamente para responderte. El formulario no envía nada por sí mismo: abre un borrador en tu propia aplicación de correo y no se envía nada hasta que tú lo envíes. Consulta la <a href="/privacy-policy/">Política de privacidad</a> para saber cómo trata el sitio la información.
 7c0489|Política de privacidad – Quoridor.online
 9451bc|Cómo trata Quoridor.online tu información: qué recopilamos, cookies y almacenamiento del navegador, salas en línea y nombres de usuario, conservación y tus derechos.
-d7762c|Qué recopilamos, qué no recopilamos y cuánto tiempo lo conservamos. En vigor desde el 23 de octubre de 2026.
 433a5f|Esta página puede leerse en otros idiomas con el botón de traducción. Las traducciones se ofrecen por comodidad; si difieren del texto en inglés, prevalece el texto en inglés.
 57a0f5|Esta política explica qué información trata Quoridor.online (&laquo;nosotros&raquo;) cuando visitas el sitio, juegas a Quoridor o nos contactas. La mantenemos breve porque recopilamos muy poco: no hay cuentas ni publicidad, y la única analítica es Google Analytics en nuestras páginas públicas.
 7ed24b|<strong>En resumen:</strong> las partidas contra el ordenador y en un solo dispositivo se quedan en tu navegador; Google Analytics instala cookies para contar visitas (nunca en las páginas de salas en línea); y lo poco que necesita el juego en línea se guarda solo en memoria, durante minutos.
@@ -709,7 +707,6 @@ d49505|presentar una reclamación ante tu autoridad local de protección de dato
 9ef148|9. Información de contacto
 3094c6|Para preguntas sobre esta política o para hacer una solicitud de privacidad, escribe a <a href="mailto:lahssanyassine1@gmail.com">lahssanyassine1@gmail.com</a> o usa la <a href="/contact/">página de contacto</a>. Por favor, no incluyas contraseñas ni otros datos sensibles en tu mensaje.
 c45803|10. Fecha de entrada en vigor e historial de actualizaciones
-b6beae|Esta política entra en vigor el <time datetime="2026-10-23">23 de octubre de 2026</time>. Cuando la modifiquemos, actualizaremos la fecha y añadiremos una entrada más abajo. Si un cambio afecta de forma sustancial al uso de tu información, lo indicaremos en el sitio antes de que entre en vigor.
 96cdba|<time datetime="2026-10-17">17 de octubre de 2026</time>: primera versión completa de esta Política de privacidad. Sustituye al borrador provisional anterior.
 63a90b|<time datetime="2026-10-17">17 de octubre de 2026</time>: se explicó que una búsqueda en línea puede seguir ejecutándose mientras juegas en otra parte del sitio, y la entrada de almacenamiento de sesión que lo hace posible.
 d355e5|<time datetime="2026-10-17">17 de octubre de 2026</time>: se añadió Google Analytics (etiqueta de Google) en las páginas públicas, con sus cookies y su tratamiento de datos. No se carga en las páginas de salas en línea.
@@ -835,13 +832,11 @@ ebc1aa|En línea contra otra persona, contra el ordenador o con un amigo en el m
 348bf2|<strong><a href="/play/online/">Jugar en línea</a>.</strong> Juega contra otra persona tras elegir un nombre visible. No hace falta registrarse.
 405028|<strong><a href="/play/create-room/">Salas privadas</a>.</strong> Invita a un amigo concreto con un enlace o un código de emparejamiento corto.
 dbf4a8|<strong>Para todos.</strong> El sitio y el juego pueden mostrarse en inglés, español, francés, alemán, árabe, ruso o chino con el botón de traducción. Los jugadores que usan idiomas distintos pueden jugar entre sí en línea, porque el idioma solo cambia lo que ve cada persona.
-5a3f6e|<strong>Juego en línea.</strong> Para jugar en línea o en una sala privada escribes un nombre visible. Nuestro servidor de juego guarda ese nombre, un token de asiento aleatorio que identifica tu asiento, tus movimientos y la hora de tu última conexión, mientras exista la partida o la sala. No interviene ninguna cuenta, dirección de correo ni contraseña.
 e50442|<strong>Dirección de red.</strong> Tu dirección IP llega a nuestro servidor con cada solicitud. El servidor de juego la guarda en memoria durante aproximadamente un minuto para poder limitar abusos, como crear salas demasiado rápido.
 bac18f|Cuando creas o te unes a una sala en línea, tu navegador guarda una pequeña entrada con el nombre <em>quoridor.seat.</em> seguido del identificador de la sala. Contiene tu token de asiento, tu número de asiento y el nombre visible que elegiste. Te permite recargar la página o recuperarte de una conexión interrumpida y conservar tu asiento. La entrada se elimina cuando sales de la sala. Si cierras la pestaña sin salir, permanece hasta que la borres, pero deja de funcionar cuando la sala haya caducado.
 b4fc90|Mientras buscas un oponente, tu navegador también guarda el ticket de búsqueda y tu nombre visible en el <em>almacenamiento de sesión</em> (una entrada llamada <em>quoridor.search</em>) solo para esa pestaña. Permite que la búsqueda continúe mientras juegas contra el ordenador o abres una sala privada, y que la página de búsqueda la retome tras una recarga. Se elimina cuando termina la búsqueda y desaparece al cerrar la pestaña.
 30c9cd|El almacenamiento local se usa solo para que el sitio funcione como pediste, nunca para el seguimiento. Si lo bloqueas o lo borras, el sitio sigue funcionando; solo tendrás que elegir de nuevo tu idioma, escribir otra vez tu nombre y empezar de cero tus marcadores, y no podrás retomar un asiento en línea tras una recarga.
 95fcb9|<strong>Los nombres de usuario son nombres visibles, no cuentas.</strong> Tienen de 2 a 20 caracteres. Por favor, no uses tu nombre real, tu dirección de correo ni nada que te identifique. Dos jugadores pueden elegir el mismo nombre.
-064cce|<strong>Quién ve tu nombre.</strong> Tu oponente ve tu nombre visible. Cualquiera que abra la invitación a una sala privada antes de que esté llena también puede ver el nombre visible del anfitrión.
 770992|<strong>Los enlaces y códigos compartidos actúan como llaves.</strong> A una sala privada se accede mediante un enlace largo y aleatorio y un código de emparejamiento corto. Cualquiera que tenga el enlace o el código mientras haya un asiento libre puede ocupar ese asiento, así que compártelo solo con la persona con quien quieres jugar. Las páginas de sala piden a los motores de búsqueda que no las indexen y se sirven de modo que la dirección de la página no se transmita a otros sitios.
 4dabe7|<strong>Emparejamiento.</strong> Si pides que te emparejen con un desconocido, tu nombre visible y un ticket temporal esperan en una cola en la memoria del servidor hasta que se encuentre un oponente. El ticket se descarta si tu navegador deja de avisar durante unos 20 segundos. Tu búsqueda puede seguir ejecutándose mientras juegas contra el ordenador o esperas en una sala privada; si entonces se encuentra un oponente, se te pregunta si quieres unirte, y no empieza nada a menos que digas que sí en unos 20 segundos. Si dices que no, sigues buscando pero no se te vuelve a ofrecer ese jugador. Si no respondes, tu búsqueda termina.
 89484b|<strong>Sin chat.</strong> No hay chat de texto libre entre jugadores, así que el único texto que compartes con un oponente es tu nombre visible.
@@ -947,7 +942,7 @@ err.rate-limited|Demasiados intentos. Inténtalo de nuevo en un minuto.
 err.busy|El servidor está ocupado. Inténtalo de nuevo en un momento.
 err.forbidden|No formas parte de esta sala.
 err.unavailable|Esta sala no está disponible.
-err.full|Esta sala ya tiene dos jugadores.
+err.full|Esta sala ya está llena.
 err.invalid|Ese código no corresponde a ninguna sala. Compruébalo e inténtalo de nuevo.
 err.not-playing|La partida no está en curso.
 err.not-your-turn|No es tu turno.
@@ -1052,7 +1047,6 @@ c31ec3|Una variante conserva el corazón de Quoridor: en tu turno mueves tu peó
 fc63b4|Si eres nuevo con los muros y los peones, empieza con el juego clásico. Las variantes se disfrutan más cuando sabes cómo un muro desvía un camino.
 9af05b|Jugar a Quoridor clásico
 996e6d|Con el tiempo se añadirán más variantes aquí.
-3c4e07|Compartan la pantalla y jueguen por turnos. Ambos peones corren hacia la fila resaltada en la parte superior del tablero.
 ce61a3|Ambos peones empiezan en la misma línea, con cuatro filas detrás.
 c9abc2|Gana el primer peón que llegue a la fila superior.
 6904fa|Tablero de Wallrush al comienzo de una partida: una cuadrícula alta, de 9 casillas de ancho y 13 de alto. Dos peones están uno junto al otro en la misma fila, con cuatro filas detrás, y la fila superior está resaltada como meta para ambos jugadores.
@@ -1069,8 +1063,6 @@ ba26fa|Cosas en las que pensar
 7f513f|Como ambos peones comparten una meta, corres por el mismo carril que tu rival. Un muro que lo frena a él también puede frenarte a ti si las rutas de ambos se solapan, así que mira ambas rutas antes de colocarlo. El espacio detrás de la línea de salida es tuyo para usarlo: moverte de lado hacia una columna libre puede ser mejor que chocar de frente contra un muro.
 0f22ff|Para conocer todas las reglas de muros, saltos y pasos laterales, lee las reglas de Quoridor. Wallrush las usa, además de los movimientos prestados de arriba.
 54eb20|Todas las variantes
-787a3f|De dos a cuatro jugadores, un dispositivo
-b4ca34|Compartan la pantalla y jueguen por turnos. Todos los peones corren hacia la casilla resaltada en el centro del tablero.
 90ac30|Los peones empiezan en el medio de los bordes, a cinco casillas del centro.
 3d1055|Cada jugador tiene 12, 8 o 6 muros, con dos, tres o cuatro jugadores.
 a281dd|Gana el primer peón que llegue a la casilla central.
@@ -1125,8 +1117,6 @@ d43ac9|<strong>Movimientos prestados.</strong> Si activas esta opción, un peón
 9ab22e|<strong>Tiempo por jugada.</strong> Juega sin reloj o elige 15 segundos, 32 segundos, 1 minuto o 2 minutos. Cuando se agota el tiempo, el juego mueve tu peón un paso por su ruta más corta. Con reloj, cada jugador también tiene 5 minutos para toda la partida.
 778aaf|Ideas para probar
 e3327f|Prueba un tablero de 5 × 5 con 3 muros cada uno para una partida que termina en minutos, o un tablero de 13 × 13 con 20 muros cada uno para una larga batalla de rodeos. Los dos jugadores siempre tienen el mismo número de muros. Al volver a jugar, tu configuración se mantiene.
-4bc4b3|Esta partida se juega en un solo dispositivo. Para jugar con un amigo en otro dispositivo, usa una sala privada, que sigue las reglas clásicas.
-459fae|Crear una sala privada
 0172b3|Variantes de Quoridor en línea – Wallrush, Pointrush y personalizado
 746a90|Juega gratis a variantes de Quoridor en línea: Wallrush, Pointrush para 2 a 4 jugadores y Quoridor personalizado con el tamaño de tablero, los muros y las reglas que elijas. Sin descargas ni registro.
 cb591b|Variantes de Quoridor en línea
@@ -1178,7 +1168,6 @@ dce2da|¿Cuántos muros puede tener cada jugador en una partida personalizada?
 18f1f7|¿Puedo jugar a Quoridor con límite de tiempo?
 f39515|Sí. Elige sin reloj, o 15 segundos, 32 segundos, 1 minuto o 2 minutos por jugada. Cuando se agota el tiempo, el juego mueve tu peón un paso por su ruta más corta.
 37098b|¿Puedo jugar una partida personalizada de Quoridor con un amigo?
-0ee7f8|Sí, en el mismo dispositivo: comparte la pantalla y túrnate. Para jugar en dos dispositivos, usa una <a href="/play/create-room/">sala privada</a>, que usa las reglas clásicas.
 7eb334|Tema claro
 4a45c9|Tema claro
 feda4b|Si eliges un tema con el interruptor de tema del menú, tu navegador guarda tu elección (<em>light</em> o <em>dark</em>) en una entrada llamada <em>quoridor.theme</em>, para que el sitio se abra con ese tema la próxima vez. Nunca se nos envía.
@@ -1300,7 +1289,6 @@ e11a01|Ver tus logros <svg/>
 7e9f89|Tus logros se guardan en tu navegador y necesitan JavaScript para mostrarse.
 09aba9|Juega codo con codo en una sola pantalla
 1a7dbb|Se aplican las reglas habituales de Quoridor. En cada turno mueves tu peón o colocas un muro, y un muro nunca puede cortar todos los caminos hacia la meta. ¿Prefieres jugar con alguien que conoces? <a href="/play/create-room/">Crea una sala privada</a> y envía a tu amigo el enlace de invitación, o entrena antes <a href="/play/computer/">contra el ordenador</a>.
-47f79e|Las salas usan las reglas clásicas en un tablero de 9×9, con 10 muros para cada jugador. Tu amigo puede abrir el enlace o escribir el código en la página para <a href="/play/join-room/">unirse a una sala</a>. ¿Prefieres una partida rápida contra un desconocido? Prueba el <a href="/play/online/">emparejamiento en línea</a>.
 7e381f|Cómo funciona el emparejamiento en línea
 8151c7|Practica Quoridor contra el ordenador
 81adfa|Escribe un nombre de usuario y pulsa Buscar un oponente. El sitio te empareja con la siguiente persona que esté buscando partida, y el juego empieza en cuanto se encuentra un oponente. No hay nada que instalar ni cuenta que crear: tu nombre de usuario es solo un nombre visible en la partida.
@@ -1312,3 +1300,67 @@ bfc57f|El oponente informático se ejecuta en tu navegador, así que la partida 
 cebb15|Una sala privada sirve para jugar con una persona concreta, esté donde esté. Elige un nombre de usuario y crea una sala: recibes un enlace de invitación y un código de emparejamiento corto. Envía cualquiera de los dos a tu amigo y la partida empieza en cuanto se una. Ninguno de los dos necesita una cuenta.
 7fc164|Para guardar tu puntuación, rango y logros, tu navegador conserva un recuento de las partidas que terminas, en una entrada llamada <em>quoridor.progress</em>. Contiene cuántas partidas has jugado y ganado, cuántos muros has colocado, tus mejores rachas, el último día que jugaste, los puntos que has conseguido y los logros que has desbloqueado, con el día en que desbloqueaste cada uno. Nunca contiene tus movimientos ni tu nombre visible, y nunca se nos envía. Si borras los datos del sitio, o pulsas Reiniciar progreso en la página de Logros, tu puntuación, rango y logros vuelven a empezar.
 7e79c7|<time datetime="2026-10-23">23 de octubre de 2026</time>: se describieron la puntuación, el rango y los logros que ahora guarda tu navegador, en una entrada llamada quoridor.progress.
+73c1dc|Esperando a tus amigos
+ad252e|Jugadores en esta sala
+47deda|Envía el enlace o el código a tus amigos. La partida empieza en cuanto se ocupan todos los asientos.
+e5ba48|De 2 a 20 caracteres. Los demás jugadores verán este nombre.
+e241da|Todos los asientos de esta sala ya están ocupados. Puedes crear tu propia sala en su lugar.
+620836|Dos jugadores, una carrera
+d7cfda|Ambos peones corren hacia la fila resaltada en la parte superior del tablero. Compartan la pantalla y jueguen por turnos.
+15dcb5|¿Cómo quieres jugar?
+5f6755|En este dispositivo
+7323b0|Compartan una pantalla y pásense el dispositivo después de cada movimiento.
+9944b3|Con amigos invitados
+28ad1a|Próximamente. El servidor de juego que conecta los dispositivos aún no está disponible en este sitio.
+80a4ff|De 2 a 20 caracteres. Tus amigos verán este nombre.
+51e966|Recibirás un enlace de invitación y un código de emparejamiento corto para enviar. La partida empieza en cuanto todos se hayan unido.
+4cb580|De dos a cuatro jugadores, una casilla central
+383ee1|Todos los peones corren hacia la casilla resaltada en el centro del tablero. Compartan la pantalla y jueguen por turnos.
+8e46fa|Esta partida se juega en un solo dispositivo.
+b0b2a5|Sí, en el mismo dispositivo: comparte la pantalla y túrnate.
+e5d215|Qué recopilamos, qué no recopilamos y cuánto tiempo lo conservamos. En vigor desde el 24 de octubre de 2026.
+3d06a0|Esta política entra en vigor el <time datetime="2026-10-24">24 de octubre de 2026</time>. Cuando la modifiquemos, actualizaremos la fecha y añadiremos una entrada más abajo. Si un cambio afecta de forma sustancial al uso de tu información, lo indicaremos en el sitio antes de que entre en vigor.
+1cfc4e|<time datetime="2026-10-24">24 de octubre de 2026</time>: ahora las salas privadas pueden prepararse para una variante del juego y para hasta cuatro jugadores. Se indicó que una sala también guarda los ajustes de su partida y que cada jugador de una sala ve los nombres visibles de los demás.
+0eb30a|Las salas creadas aquí usan las reglas clásicas en un tablero de 9×9, con 10 muros para cada jugador. Tu amigo puede abrir el enlace o escribir el código en la página para <a href="/play/join-room/">unirse a una sala</a>. ¿Quieres otras reglas, un tablero más grande o hasta cuatro jugadores? Abre una de las <a href="/variants/">variantes de Quoridor</a> y elige invitar a amigos: el enlace de invitación y el código funcionan igual. ¿Prefieres una partida rápida contra un desconocido? Prueba el <a href="/play/online/">emparejamiento en línea</a>.
+3d698c|Quoridor clásico, configurado a tu manera. Elige el tamaño del tablero, cuántos muros recibe cada jugador, los movimientos prestados y cuánto dura un turno, y juega con un amigo en el mismo dispositivo o en una sala privada.
+199bcd|Sí. <a href="/variants/pointrush/">Pointrush</a> es una variante de Quoridor para dos, tres o cuatro jugadores, en un mismo dispositivo o en línea con amigos invitados, en la que todos los peones corren hacia la casilla del centro del tablero.
+d16fa2|¿Puedo jugar una variante de Quoridor en línea con amigos?
+7023a8|Sí. En la página de Wallrush, de Pointrush o de la partida personalizada elige «Con amigos invitados», crea una sala privada y envía a tus amigos el enlace de invitación o el código de emparejamiento. Cada uno juega en su propio dispositivo, y la partida empieza en cuanto se ocupan todos los asientos.
+11129e|Ambos peones corren hacia la fila resaltada en la parte superior del tablero. Jueguen por turnos en una pantalla, o invita a un amigo a jugar desde su propio dispositivo.
+8b8674|Cada uno juega en su propio dispositivo. Recibes un enlace de invitación y un código corto para enviar.
+97ed5c|Sí. Wallrush es gratis en tu navegador, sin descargas y sin cuenta. Dos jugadores se turnan en un mismo dispositivo, o puedes invitar a un amigo a una sala privada y jugar desde dispositivos distintos.
+2820fb|Todos los peones corren hacia la casilla resaltada en el centro del tablero. Compartan una pantalla, o invita a amigos a unirse desde sus propios dispositivos.
+315b4e|Jugar en línea con amigos
+46f99b|Elige «Con amigos invitados», selecciona el número de jugadores y crea una sala. Recibes un enlace de invitación y un código de emparejamiento corto. Cada amigo abre el enlace, o escribe el código en la página para <a href="/play/join-room/">unirse a una sala</a>, y elige un nombre. La partida empieza en cuanto se ocupan todos los asientos, y los jugadores mueven por turnos, cada uno en su propio dispositivo. Si un jugador abandona una partida de tres o cuatro, la partida termina para todos y nadie gana.
+96f7f0|Sí. En Pointrush cuatro jugadores se turnan, cada uno desde un borde distinto. Pueden compartir un dispositivo, o jugar cada uno en el suyo tras unirse a una sala privada con un enlace de invitación. Con tres jugadores cada uno tiene 8 muros, y con cuatro, 6.
+730b24|Juega gratis a Quoridor personalizado en línea, en un dispositivo o en una sala privada. Elige el tamaño del tablero de 5×5 a 13×13, los muros, los movimientos prestados y el tiempo por jugada.
+c4502a|Elige las reglas y juega en un dispositivo o invita a un amigo. Los valores predeterminados son los del Quoridor clásico.
+4f3012|Puedes jugarlo en un solo dispositivo, o invitar a un amigo a una sala privada que conserva tus ajustes: tu amigo los ve antes de unirse.
+6c5e28|Sí. Juega en el mismo dispositivo y túrnate, o elige «Con amigos invitados», crea una sala privada y envía a tu amigo el enlace de invitación o el código de emparejamiento. La sala conserva el tamaño del tablero, los muros, los movimientos prestados y el reloj que elegiste.
+1b702d|<strong>Juego en línea.</strong> Para jugar en línea o en una sala privada escribes un nombre visible. Nuestro servidor de juego guarda ese nombre, un token de asiento aleatorio que identifica tu asiento, tus movimientos, los ajustes de la partida de la sala (como la variante o el tamaño del tablero) y la hora de tu última conexión, mientras exista la partida o la sala. No interviene ninguna cuenta, dirección de correo ni contraseña.
+5ae447|<strong>Quién ve tu nombre.</strong> Los demás jugadores de tu partida ven tu nombre visible. Cualquiera que abra la invitación a una sala privada antes de que esté llena también puede ver el nombre visible del anfitrión y para qué partida es la sala.
+game.gameOver|Fin de la partida
+game.leftSelf|Saliste de la partida.
+game.leftName|{name} salió de la partida, así que la partida terminó.
+game.disconnectedName|{name} perdió la conexión, así que la partida terminó.
+game.endsIn|La partida terminará en unos {n} s si no vuelven.
+game.rematchCount|{n} de {total} jugadores quieren la revancha.
+game.confirmLeaveGroup|¿Salir de esta partida? Terminará para todos y nadie ganará.
+err.not-allowed|Solo las partidas de dos jugadores admiten rendirse. Sal de la partida en su lugar.
+err.bad-settings|Esos ajustes de partida no están disponibles.
+room.game.classic|Quoridor clásico
+room.game.wallrush|Wallrush
+room.game.pointrush|Pointrush
+room.game.custom|Partida personalizada de Quoridor
+room.gameLine|Juego: {game}
+room.setPlayers|Jugadores: {n}
+room.setBoard|Tablero: {size} × {size}
+room.setWalls|Muros por jugador: {n}
+room.setBorrow|Movimientos prestados
+room.setClock|{n} s por jugada
+room.setClockOff|Sin límite de tiempo
+room.lobbyCount|{n} de {total} jugadores se han unido.
+room.lobbyEmpty|Esperando a un jugador…
+room.hostTag|(anfitrión)
+room.allConnected|{names} están conectados.
+room.confirmLeaveGroup|¿Salir de esta sala? La partida terminará para todos.

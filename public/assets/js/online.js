@@ -172,7 +172,8 @@
     root: ROOT, call: call, ApiFailure: ApiFailure,
     saveSeat: saveSeat, loadSeat: loadSeat, forgetSeat: forgetSeat, roomUrl: roomUrl,
     saveSearch: saveSearch, loadSearch: loadSearch, clearSearch: clearSearch,
-    createRoom: function (username) { return call('POST', '/rooms', { username: username }); },
+    // settings (optional): { variant, players, options, turnSeconds } for a room that plays a variant (see server/api.py).
+    createRoom: function (username, settings) { return call('POST', '/rooms', Object.assign({ username: username }, settings || {})); },
     joinByCode: function (code, username) { return call('POST', '/rooms/join', { code: code, username: username }); },
     peek: function (roomId) { return call('GET', '/rooms/' + roomId); },
     joinById: function (roomId, username) { return call('POST', '/rooms/' + roomId + '/join', { username: username }); },

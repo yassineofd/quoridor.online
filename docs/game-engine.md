@@ -7,6 +7,7 @@ How the four ways to play are built. The site spec is in `architecture-spec.md`;
 | Play with a friend (same device) | `/play/local/` | Browser | No |
 | Play against the robot | `/play/computer/` | Browser (computer opponent in a Web Worker) | No |
 | Private room | `/play/create-room/`, `/play/join-room/`, `/room/<id>/` | Server is authoritative | Yes |
+| Private room for a variant | a variant page (`/variants/...`), choosing "With invited friends"; then `/room/<id>/` | Server is authoritative | Yes |
 | Online matchmaking | `/play/online/` (then `/room/<id>/`) | Server is authoritative | Yes |
 
 Local and computer play are plain static files, so they work on any static host. Online play needs
@@ -34,9 +35,12 @@ snapshots still load.
 | Pointrush | `/variants/pointrush/` | 11 x 11, 2 to 4 players; 12, 8 or 6 walls each | middle of each edge (bottom, left, top, right), 5 squares from the centre | all race to the centre square (5,5) |
 | Custom Game | `/variants/custom/` | square, 5 to 13 (odd), 0 to 30 walls each, chosen by the players | middle of the bottom and top rows | opposite row, as in classic |
 
-Variants are played on one device only: the Python engine and the online server know only the classic game, so `tests/test_parity.py`
-covers classic only. To add a variant: add its row to `VARIANTS`, give it a page like `wallrush()` in `pages.py` (a form with
-`data-play-form="local" data-variant="<key>" data-leave="variants"`), and list it in `VARIANT_CARDS` so `/variants/` shows it.
+A variant is played on one device, or online in a private room with invited friends (see "Rooms for variants" below). Both engines know
+every variant: `server/engine.py` has the same `VARIANTS` table and `Game(variant, players, options)`, and `tests/test_parity.py` (classic)
+and `tests/test_parity_variants.py` (every variant) check that the two agree. To add a variant: add its row to `VARIANTS` in **both**
+engines (and to `VARIANT_NAMES` in `server/rooms.py`), give it a page like `wallrush()` in `pages.py` (a form with
+`data-play-form="local" data-variant="<key>" data-leave="variants"`, built with `variant_form()`, which adds the "On this device / With
+invited friends" choice), and list it in `VARIANT_CARDS` so `/variants/` shows it.
 Custom Game is the one variant that is not a fixed row: `new Quoridor.Game('custom', 2, {size, walls, borrow})` builds its row from
 the options (`customOptions` checks them against `CUSTOM_LIMITS` and throws on anything else). The options are part of a snapshot
 (`toJSON().options`), so `fromJSON`, `clone` and undo keep the setup; classic snapshots have no such key. The turn clock is not a
@@ -48,7 +52,8 @@ instead of goal rows, so `distance()` and the win test look for that square. Tur
 `moves[i]` belongs to player `i % nPlayers`); no one is ever eliminated. A pawn is never a destination: a jump needs the square behind the
 pawn to be free, otherwise it side-steps, and a side-step square must be free too. A wall must leave a route for every pawn. Snapshots carry
 `players` (missing means 2). The setup form (`players` radio buttons, `data-player-field` name fields) is read by `play.js`; the board draws
-the four player colours (`PAWN_COLORS` in `board.js`) and rings the goal square. There is no computer opponent or online mode for it.
+the four player colours (`PAWN_COLORS` in `board.js`) and rings the goal square. There is no computer opponent for it; it can be played online
+in a private room of up to four seats.
 Screen names for squares and walls use the board's own height (`game.squareName`, `game.wallName`, `game.moveName`).
 
 Coordinates (classic) are rows 0..8 from the top and columns 0..8 from the left. A wall `("h", r, c)` lies below row `r`
@@ -61,7 +66,7 @@ Moves are `{type:"move", r, c}` or `{type:"wall", o:"h"|"v", r, c}`. Screen name
 | File | Role |
 |---|---|
 | `static/assets/js/engine.js` | Rules engine for the browser: legal moves, wall legality, shortest-path check, apply/undo, JSON snapshot |
-| `server/engine.py` | The same rules in Python. The server uses this one; clients are never trusted |
+| `server/engine.py` | The same rules in Python, for the classic game and every variant. The server uses this one; clients are never trusted |
 | `static/assets/js/ai.js`, `ai-worker.js` | Computer opponent (four levels) and the worker that runs it off the main thread |
 | `static/assets/js/board.js` | Accessible SVG board: drawing, mouse / touch / keyboard input. Only reports intent |
 | `static/assets/js/game.js` | Game screen shared by all modes: turn bar, players, controls, move list, result |
@@ -72,6 +77,9 @@ Moves are `{type:"move", r, c}` or `{type:"wall", o:"h"|"v", r, c}`. Screen name
 The two engines must agree. `tests/test_parity.py` generates random games with the Python engine and replays them
 through the JavaScript engine in headless Edge/Chrome, comparing pawn moves, the legality of all 128 wall slots,
 and path lengths after every move (about 21,000 checks), plus undo and snapshot round-trips.
+`tests/test_parity_variants.py` does the same for Wallrush, Pointrush (2, 3 and 4 players) and custom games of several shapes. Random play
+rarely puts three pawns in a line, so it also compares a few hundred "crowded" positions (pawns squeezed into a 3 x 3 window among random
+walls), looking at the moves of every player, and it checks the move played when a clock runs out and Python snapshots loaded into the JS engine.
 
 Known gap: a player whose only way out of a one-square-wide dead end is blocked by the opponent's pawn (with the jump
 and side-steps walled off) has no legal pawn move; if they also have no walls left the game cannot continue. The published
@@ -130,12 +138,27 @@ intent (a move) and receive the resulting state; the server validates everything
   version changes. Every change bumps the version; the response is a full snapshot.
 * **Presence and forfeit.** A seat is connected while it has a poll in flight or polled in the last 15 s. A seat that
   is gone for 60 s forfeits (`reason: "disconnect"`); the opponent sees a countdown.
-* **Clocks.** Each move must be made within 32 s (`TURN_SECONDS`, plus 1 s of grace), and each player also has 5 minutes for the
+* **Clocks.** Each move must be made within 32 s (`TURN_SECONDS`, plus 1 s of grace; the host of a custom room may choose another limit, or none), and each player also has 5 minutes for the
   whole game (`BANK_SECONDS`) that only runs on their own turn. When a move's 32 s run out the sweeper plays the pawn step that
   leaves the shortest route (`Game.timeout_move`) and charges the time to that player's bank. A player whose bank reaches zero loses
   (`reason: "timeout"`). A disconnected player's clock is held. The snapshot carries `turnLeft` (seconds, the smaller of the move
   limit and the bank) and `clocks` (each seat's bank in seconds, live for the player to move) for the on-screen clocks. Same-device
   and computer games run the same clocks in the browser (`game.js`).
+* **Rooms for variants.** `POST /api/rooms` takes optional `variant` (`classic`, `wallrush`, `pointrush`, `custom`), `players` (2; 3 or 4 for
+  Pointrush), and for `custom` only `options` (`{size, walls, borrow}`) and `turnSeconds` (0, 15, 32, 60 or 120). Anything else is refused with
+  `bad-settings` (`room_settings` in `server/rooms.py`). A room has one seat per player; the host takes a random seat, each guest a random free one
+  (the seat number is the turn order and the pawn colour), and the game starts when the last seat is taken. Until then everybody sees a lobby (the
+  snapshot is `status: "waiting"`, `players` lists the names with `null` for an empty seat, `host` says whose seat is the host's); the pairing code
+  stays valid and only the host receives it. A guest can step out (`leave`) and the seat opens again, and a guest who closes the page without
+  leaving loses their seat after the forfeit grace. `GET /api/rooms/<id>` (what an invitation shows) names the game: `variant`, `players`,
+  `joined`, `options`, `turnSeconds`. The snapshot's `game` carries `variant`, `players` and, for `custom`, `options`, so a client builds the
+  right board from it; `turnSeconds` is the room's move clock (0: none, then `turnLeft` and `clocks` are `null`).
+* **More than two players.** A forfeit needs a winner, and with three or four players there is none to name: a player who leaves
+  (`reason: "left"`) or stays disconnected for 60 s (`reason: "disconnect"`) ends the game for everybody, with `winner: null` and `quitter` set to
+  their seat. Resigning is therefore two-player only (`POST .../resign` answers `not-allowed` otherwise). Running out of time keeps the rule of
+  the one-device game: the player's bank is empty, they lose, and the next player in turn order is shown as the winner (`reason: "timeout"`).
+  A rematch needs every seat to ask, and the seats rotate by one so the next player moves first (with two players that is the swap it always was);
+  nobody can ask once a player has left. Scores between friends are kept for two-player rooms only.
 * **Matchmaking.** `POST /api/queue` returns a ticket; `GET /api/queue/<ticket>` long-polls until matched, then returns
   the room id and seat token. Tickets not polled for 20 s are dropped.
 * **Limits.** Per address, per minute: 10 room creations, 12 join attempts (code guessing), 15 searches, 240 moves.

@@ -674,6 +674,257 @@ class UI(unittest.TestCase):
         guest.click("button[type=submit]")
         guest.wait_for("!document.querySelector('#code-error').hidden")
 
+    # ---- online: private rooms for the variants (invite friends instead of sharing one device) ----------------
+    def make_variant_room(self, host, variant, name="Hana", players=None, setup=None):
+        """Opens a variant page, chooses 'With invited friends', creates the room and returns the invitation link."""
+        host.goto(self.base + f"/variants/{variant}/")
+        if players:
+            host.js(f"document.querySelector('#players-{players}').click()")
+        if setup:
+            setup(host)
+        host.js("document.querySelector('#pw-friends').click()")
+        host.type_text("#username", name)
+        host.click("button[type=submit]:not([hidden])")
+        try:
+            host.wait_for("location.pathname.indexOf('/room/') === 0 && document.getElementById('invite-link').textContent.length > 10")
+        except AssertionError:   # say what the page shows: a refused request is explained on the form
+            shown = host.js("JSON.stringify({url: location.href, ready: document.readyState, screen: Array.from(document.querySelectorAll('[data-state]')).filter(function(e){return !e.hidden}).map(function(e){return e.getAttribute('data-state')}), link: (document.getElementById('invite-link') || {}).textContent, error: (document.querySelector('[data-error-text]') || {}).textContent, field: (document.getElementById('username-error') || {}).textContent})")
+            raise AssertionError(f"no room was made: {shown} console={host.console[-5:]}")
+        return host.js("document.getElementById('invite-link').textContent")
+
+    def join_by_link(self, guest, link, name):
+        guest.goto(link)
+        guest.wait_for("!document.querySelector('[data-state=join]').hidden")
+        guest.type_text("#username", name)
+        guest.click("[data-state=join] button[type=submit]")
+
+    def seat_of(self, p):
+        return p.js("Array.from(document.querySelectorAll('.player-card')).findIndex(function(c){return c.classList.contains('is-me')})")
+
+    def test_a_variant_page_offers_one_device_or_invited_friends(self):
+        p = self.page()
+        p.goto(self.base + "/variants/wallrush/")
+        # one device to begin with: the two name fields and the button that starts the game
+        self.assertTrue(p.js("document.querySelector('#pw-device').checked"))
+        self.assertFalse(p.js("document.querySelector('#pw-friends').disabled"))
+        self.assertFalse(p.js("document.querySelector('#name1').closest('[data-device-only]').hidden"))
+        self.assertTrue(p.js("document.querySelector('#username').closest('[data-friends-only]').hidden"))
+        self.shot(p, "variant-form-device.png")
+        p.js("document.querySelector('#pw-friends').click()")
+        self.shot(p, "variant-form-friends.png")
+        self.assertTrue(p.js("document.querySelector('#name1').closest('[data-device-only]').hidden"))
+        self.assertFalse(p.js("document.querySelector('#username').closest('[data-friends-only]').hidden"))
+        self.assertEqual(p.js("Array.from(document.querySelectorAll('button[type=submit]')).filter(function(b){return !b.hidden}).map(function(b){return b.textContent.trim()}).join()"), "Create room")
+        # the name rule is checked before any room is made
+        p.type_text("#username", "x")
+        p.click("button[type=submit]:not([hidden])")
+        self.assertFalse(p.js("document.getElementById('username-error').hidden"))
+        self.assertEqual(p.js("location.pathname.indexOf('/room/')"), -1)
+        # and the same page still plays on one device
+        p.js("document.querySelector('#pw-device').click()")
+        p.click("button[type=submit]:not([hidden])")
+        p.wait_for("document.querySelector('svg.board')")
+        self.assertEqual(self.turn(p), "Player 1's turn")
+        self.no_errors(p)
+
+    def test_the_static_build_shows_invited_friends_as_coming_soon(self):
+        p = self.page()
+        p.goto(self.static_base + "/variants/pointrush/")
+        self.assertTrue(p.js("document.querySelector('#pw-friends').disabled"))
+        self.assertIn("Coming soon", p.js("document.querySelector('#pw-friends').closest('.choice').textContent"))
+        self.assertIsNone(p.js("document.querySelector('[data-error]')"))
+        p.click("button[type=submit]")
+        p.wait_for("document.querySelector('svg.board')")            # the one-device game is untouched
+        self.assertEqual(self.walls_left(p), ["Walls: 12", "Walls: 12"])
+
+    def test_wallrush_room_between_two_browsers(self):
+        host, guest = self.page(height=1400), self.page(height=1400)
+        link = self.make_variant_room(host, "wallrush", "Hana")
+        host.wait_for("document.getElementById('invite-code').textContent.length === 6")
+        self.assertFalse(host.js("document.getElementById('waiting-game').hidden"))
+        self.assertEqual(host.js("document.getElementById('waiting-game').textContent"), "Game: Wallrush")
+        self.assertTrue(host.js("document.getElementById('lobby').hidden"))              # two seats: no lobby, the usual waiting screen
+        # the invitation says which game it is for
+        guest.goto(link)
+        guest.wait_for("!document.querySelector('[data-state=join]').hidden")
+        self.assertEqual(guest.js("document.getElementById('join-game').textContent"), "Game: Wallrush")
+        guest.type_text("#username", "Gus")
+        guest.click("[data-state=join] button[type=submit]")
+        for p in (host, guest):
+            p.wait_for("document.querySelector('svg.board')", timeout=15)
+            self.assertEqual(p.js("document.querySelectorAll('svg.board rect[fill=\"#111c30\"]').length"), 13 * 9)
+            self.assertEqual(p.js("document.querySelector('svg.board').getAttribute('viewBox')"), f"0 0 {self.WR_W} {self.WR_H}")
+            self.assertFalse(p.js("!!document.querySelector('svg.board > g[transform]')"))   # both pawns share a line: nobody gets a turned board
+            self.assertEqual(self.walls_left(p), ["Walls: 10", "Walls: 10"])
+        mover, waiter = (host, guest) if self.turn(host) == "Your turn" else (guest, host)
+        first = self.seat_of(mover)
+        self.assertEqual(first, 0)
+        mover.click_at(*self.wr_cell(mover, 7, 2))                     # the first seat starts on column 2 of row 8
+        waiter.wait_for("document.querySelectorAll('.move-log li').length === 1 && document.querySelector('.turn-bar').textContent === 'Your turn'", timeout=10)
+        waiter.click_at(*self.wr_cell(waiter, 7, 6))
+        mover.wait_for("document.querySelectorAll('.move-log li').length === 2", timeout=10)
+        self.assertEqual(self.turn(mover), "Your turn")
+        self.shot(host, "wallrush-room.png")
+        self.no_errors(host)
+        self.no_errors(guest)
+
+    def test_pointrush_room_for_three_friends(self):
+        a, b, c = self.page(), self.page(), self.page()
+        link = self.make_variant_room(a, "pointrush", "Ana", players=3)
+        a.wait_for("document.getElementById('invite-code').textContent.length === 6")
+        # the lobby: the room waits until all three seats are taken
+        self.assertEqual(a.js("document.querySelector('[data-state=waiting] h1:not([hidden])').textContent"), "Waiting for your friends")
+        self.assertEqual(a.js("document.getElementById('lobby-count').textContent"), "1 of 3 players have joined.")
+        self.assertEqual(a.js("document.getElementById('waiting-game').textContent"), "Game: Pointrush · Players: 3")
+        self.assertEqual(a.js("document.querySelectorAll('#lobby li').length"), 3)
+        self.assertEqual(a.js("document.querySelectorAll('#lobby li.is-empty').length"), 2)
+        self.assertIn("(you)", a.js("document.querySelector('#lobby li:not(.is-empty)').textContent"))
+        self.shot(a, "lobby-1-of-3.png")
+        self.join_by_link(b, link, "Ben")
+        b.wait_for("!document.querySelector('[data-state=waiting]').hidden && document.getElementById('lobby-count').textContent.indexOf('2 of 3') === 0", timeout=15)
+        a.wait_for("document.getElementById('lobby-count').textContent.indexOf('2 of 3') === 0", timeout=15)
+        self.assertTrue(b.js("document.getElementById('code-section').hidden"))          # only the host holds the pairing code
+        self.assertFalse(a.js("document.getElementById('code-section').hidden"))
+        self.assertEqual(sorted(a.js("Array.from(document.querySelectorAll('#lobby .lobby-name')).map(function(e){return e.textContent})")), sorted(["Ana", "Ben", "Waiting for a player…"]))
+        self.assertFalse(b.js("document.querySelector('[data-state=waiting] [data-guest-only]').hidden"))   # a guest can step out
+        self.assertTrue(b.js("document.querySelector('[data-state=waiting] [data-host-only]').hidden"))
+        self.shot(b, "lobby-2-of-3.png")
+        self.join_by_link(c, link, "Cleo")
+        pages = [a, b, c]
+        for p in pages:
+            p.wait_for("document.querySelector('svg.board')", timeout=20)
+            self.assertEqual(p.js("document.querySelector('svg.board').getAttribute('viewBox')"), f"0 0 {self.PR} {self.PR}")
+            self.assertEqual(p.js("document.querySelectorAll('.player-card').length"), 3)
+            self.assertEqual(self.walls_left(p), ["Walls: 8"] * 3)
+            self.assertFalse(p.js("!!document.querySelector('svg.board > g[transform]')"))   # with three players everyone sees the board the same way
+            self.assertEqual(p.js("document.querySelectorAll('.game-controls .btn').length"), 1)   # no Resign: only Leave
+        seats = [self.seat_of(p) for p in pages]
+        self.assertEqual(sorted(seats), [0, 1, 2])
+        by_seat = {self.seat_of(p): p for p in pages}
+        self.assertEqual(self.turn(by_seat[0]), "Your turn")
+        # each seat walks one step in from its own edge, and every page sees all three moves
+        steps = {0: (9, 5), 1: (5, 1), 2: (1, 5)}
+        for seat in (0, 1, 2):
+            by_seat[seat].wait_for("document.querySelector('.turn-bar').textContent === 'Your turn'", timeout=10)
+            self.pr_click(by_seat[seat], *steps[seat])
+        for p in pages:
+            p.wait_for("document.querySelectorAll('.move-log li').length === 3", timeout=10)
+        by_seat[0].wait_for("document.querySelector('.turn-bar').textContent === 'Your turn'", timeout=10)
+        self.shot(by_seat[0], "pointrush-room.png")
+        # a player who leaves a game of three ends it for everybody, and nobody wins
+        leaver, stay1, stay2 = by_seat[1], by_seat[0], by_seat[2]
+        leaver_name = leaver.js("document.querySelector('.player-card.is-me .player-name').textContent")
+        leaver.js("window.confirm = function () { return true; }")
+        leaver.click(".game-controls .btn")
+        leaver.wait_for("!document.querySelector('[data-state=left]').hidden", timeout=10)
+        for p in (stay1, stay2):
+            p.wait_for("document.querySelector('.result') && !document.querySelector('.result').hidden", timeout=10)
+            self.assertEqual(p.js("document.querySelector('.result h2').textContent"), "Game over")
+            self.assertEqual(p.js("document.querySelector('.result p').textContent"), f"{leaver_name} left the game, so the game ended.")
+            self.assertEqual(self.turn(p), "Game over")
+            self.assertTrue(p.js("document.querySelector('.wall-tray').hidden"))
+            self.assertEqual(p.js("document.querySelectorAll('.result .btn--primary').length"), 0)     # no rematch with a player who left
+        self.shot(stay1, "pointrush-room-ended.png")
+        for p in pages:
+            self.no_errors(p)
+
+    def test_a_guest_who_steps_out_of_the_lobby_frees_the_seat(self):
+        a, b, c = self.page(), self.page(), self.page()
+        link = self.make_variant_room(a, "pointrush", "Ana", players=4)
+        self.join_by_link(b, link, "Ben")
+        b.wait_for("!document.querySelector('[data-state=waiting]').hidden", timeout=15)
+        a.wait_for("document.getElementById('lobby-count').textContent.indexOf('2 of 4') === 0", timeout=15)
+        b.js("window.confirm = function () { return true; }")
+        b.click("[data-state=waiting] [data-guest-only]")
+        b.wait_for("!document.querySelector('[data-state=left]').hidden")
+        a.wait_for("document.getElementById('lobby-count').textContent.indexOf('1 of 4') === 0", timeout=15)
+        self.join_by_link(c, link, "Cleo")                                  # the link still works
+        a.wait_for("document.getElementById('lobby-count').textContent.indexOf('2 of 4') === 0", timeout=15)
+
+    def test_custom_room_keeps_the_hosts_settings(self):
+        host, guest = self.page(), self.page()
+
+        def setup(p):
+            self.set_field(p, "#size", "5")
+            self.set_field(p, "#walls", "3")
+            self.set_field(p, "#clock", "60")
+            p.js("document.querySelector('#borrow').click()")
+
+        link = self.make_variant_room(host, "custom", "Hana", setup=setup)
+        host.wait_for("document.getElementById('invite-code').textContent.length === 6")
+        expected = "Game: Custom Quoridor · Board: 5 × 5 · Walls each: 3 · Borrowed moves · 60 s per move"
+        self.assertEqual(host.js("document.getElementById('waiting-game').textContent"), expected)
+        guest.goto(link)
+        guest.wait_for("!document.querySelector('[data-state=join]').hidden")
+        self.assertEqual(guest.js("document.getElementById('join-game').textContent"), expected)     # the friend sees the rules before joining
+        guest.type_text("#username", "Gus")
+        guest.click("[data-state=join] button[type=submit]")
+        small = PAD * 2 + 5 * CELL + 4 * (PITCH - CELL)
+        for p in (host, guest):
+            p.wait_for("document.querySelector('svg.board')", timeout=15)
+            self.assertEqual(p.js("document.querySelector('svg.board').getAttribute('viewBox')"), f"0 0 {small} {small}")
+            self.assertEqual(self.walls_left(p), ["Walls: 3", "Walls: 3"])
+            p.wait_for("document.querySelector('.turn-timer') && !document.querySelector('.turn-timer').hidden")
+            seconds = int(p.js("document.querySelector('.turn-timer-text').textContent.match(/(\\d+)s left/)[1]"))
+            self.assertGreater(seconds, 32)                                   # the room's 60-second clock, not the usual 32
+            self.assertLessEqual(seconds, 60)
+        # the second seat sees the board turned round, as in the classic game
+        self.assertNotEqual(host.js("!!document.querySelector('svg.board > g[transform]')"), guest.js("!!document.querySelector('svg.board > g[transform]')"))
+        self.no_errors(host)
+        self.no_errors(guest)
+
+    def test_custom_room_without_a_clock(self):
+        host, guest = self.page(), self.page()
+        link = self.make_variant_room(host, "custom", "Hana", setup=lambda p: self.set_field(p, "#clock", "0"))
+        host.wait_for("document.getElementById('invite-code').textContent.length === 6")
+        self.assertIn("No time limit", host.js("document.getElementById('waiting-game').textContent"))
+        self.join_by_link(guest, link, "Gus")
+        for p in (host, guest):
+            p.wait_for("document.querySelector('svg.board')", timeout=15)
+            self.assertTrue(p.js("document.querySelector('.turn-timer').hidden"))
+            self.assertEqual(self.clocks(p), ["", ""])
+        self.no_errors(host)
+        self.no_errors(guest)
+
+    def test_the_lobby_and_the_invitation_speak_the_visitors_language(self):
+        a, b = self.page(), self.page()
+        a.goto(self.base + "/variants/pointrush/?lang=es")
+        a.wait_for("document.documentElement.lang === 'es'")
+        a.js("document.querySelector('#players-3').click()")
+        a.js("document.querySelector('#pw-friends').click()")
+        a.type_text("#username", "Ana")
+        a.click("button[type=submit]:not([hidden])")
+        a.wait_for("location.pathname.indexOf('/room/') === 0 && document.getElementById('invite-link').textContent.length > 10")
+        self.assertEqual(a.js("document.querySelector('[data-state=waiting] h1:not([hidden])').textContent"), "Esperando a tus amigos")
+        self.assertEqual(a.js("document.getElementById('lobby-count').textContent"), "1 de 3 jugadores se han unido.")
+        self.assertEqual(a.js("document.getElementById('waiting-game').textContent"), "Juego: Pointrush · Jugadores: 3")
+        link = a.js("document.getElementById('invite-link').textContent")
+        b.goto(link + "?lang=de")
+        b.wait_for("document.documentElement.lang === 'de' && !document.querySelector('[data-state=join]').hidden")
+        self.assertEqual(b.js("document.getElementById('join-game').textContent"), "Spiel: Pointrush · Spieler: 3")
+        # changing the language rewrites the lobby too
+        a.js("QuoridorI18n.setLanguage('fr')")
+        a.wait_for("document.getElementById('lobby-count').textContent.indexOf('joueurs sur 3') > -1")
+        self.assertEqual(a.js("document.getElementById('waiting-game').textContent"), "Jeu : Pointrush · Joueurs : 3")
+        self.no_errors(a)
+
+    def test_leaving_a_game_of_two_in_a_variant_room_still_forfeits(self):
+        host, guest = self.page(), self.page()
+        link = self.make_variant_room(host, "pointrush", "Hana", players=2)
+        self.join_by_link(guest, link, "Gus")
+        for p in (host, guest):
+            p.wait_for("document.querySelector('svg.board')", timeout=15)
+            self.assertEqual(self.walls_left(p), ["Walls: 12", "Walls: 12"])
+            self.assertEqual(p.js("document.querySelectorAll('.game-controls .btn').length"), 2)    # Resign and Leave
+        turned = [host.js("!!document.querySelector('svg.board > g[transform]')"), guest.js("!!document.querySelector('svg.board > g[transform]')")]
+        self.assertEqual(sorted(turned), [False, True])                      # the second seat sees the board turned round
+        host.js("window.confirm = function () { return true; }")
+        host.click(".game-controls .btn:nth-child(1)")                       # Resign
+        for p in (host, guest):
+            p.wait_for("document.querySelector('.result') && !document.querySelector('.result').hidden", timeout=10)
+        self.assertIn("resigned", guest.js("document.querySelector('.result p').textContent"))
+        self.assertIn("won", guest.js("document.querySelector('.result h2').textContent"))
+
     # ---- the static build (online play switched off) ----------------------------------------
     def test_static_build_is_honest_about_online_but_plays_offline_modes(self):
         p = self.page()

@@ -5,6 +5,7 @@ authoritative: clients only ever send *intent* (a move) and receive the resultin
 
 Privacy-relevant facts (keep docs/privacy-policy in step with these):
   * stored per player while a room exists: display name, a random seat token, last-seen time
+  * stored per room: the game it was set up for (variant, number of players, board size / walls / clock of a custom game)
   * rooms are deleted shortly after the game ends or the players leave (see the *_TTL values)
   * IP addresses are held in memory only, for rate limiting, and dropped after a minute
 """
@@ -17,7 +18,7 @@ import time
 import unicodedata
 from collections import deque
 
-from .engine import Game
+from .engine import Game, custom_options, players_allowed
 
 CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"  # no 0/O/1/I
 CODE_LENGTH = 6
@@ -37,6 +38,12 @@ LONG_POLL = 25           # max time a state request waits for news
 
 MAX_ROOMS = 5000
 MAX_QUEUE = 500
+
+# A private room can be set up for a variant (see server/engine.py). Only a custom game lets the host choose the
+# move clock, from these (seconds per move, 0 = no clock; mirrors CUSTOM_CLOCKS in pages.py). Every other game
+# uses TURN_SECONDS.
+CLOCK_CHOICES = (0, 15, 32, 60, 120)
+VARIANT_NAMES = ("classic", "wallrush", "pointrush", "custom")
 
 
 class ApiError(Exception):
@@ -64,6 +71,41 @@ def clean_username(value):
     return name
 
 
+def room_settings(data):
+    """The game a new private room is for, checked: {variant, players, options, clock}.
+    `data` is whatever the client sent; every value may be anything. A game the engine cannot play is refused.
+    clock: the seconds per move a custom game's host chose (0: none), or None for the standard clock."""
+    bad = ApiError(400, "bad-settings", "Those game settings are not available.")
+    data = data if isinstance(data, dict) else {}
+    variant = data.get("variant", "classic")
+    if not isinstance(variant, str) or variant not in VARIANT_NAMES:
+        raise bad
+    players = data.get("players", 2)
+    if not players_allowed(variant, players):
+        raise bad
+    options, turn_seconds = data.get("options"), data.get("turnSeconds")
+    if variant == "custom":
+        # Strict about types here (a string is not a board size, "false" is not a switch): the engine itself is lenient.
+        if options is None:
+            options = {}
+        if not isinstance(options, dict) or not set(options) <= {"size", "walls", "borrow"}:
+            raise bad
+        if "borrow" in options and not isinstance(options["borrow"], bool):
+            raise bad
+        try:
+            options = custom_options(options)
+        except ValueError:
+            raise bad
+        if turn_seconds is None:
+            turn_seconds = 32
+        if type(turn_seconds) is not int or turn_seconds not in CLOCK_CHOICES:
+            raise bad
+    elif options is not None or turn_seconds is not None:
+        raise bad
+    # clock: seconds per move chosen for a custom game; None = the standard clock (TURN_SECONDS)
+    return {"variant": variant, "players": players, "options": options, "clock": turn_seconds}
+
+
 class Seat:
     def __init__(self, name):
         self.name = name
@@ -78,25 +120,44 @@ class Seat:
 
 
 class Room:
-    def __init__(self, room_id, code, host_name):
+    def __init__(self, room_id, code, host_name, settings=None):
         now = time.monotonic()
+        s = settings or room_settings({})
         self.id = room_id
         self.code = code
         self.created = now
         self.touched = now
+        self.variant = s["variant"]
+        self.n = s["players"]             # seats: the room starts when all of them are taken
+        self.options = s["options"]       # custom games only
+        self.clock = s["clock"]
         self.status = "waiting"           # waiting | playing | finished
-        self.seats = [None, None]
-        self.host = random.randrange(2)   # seat index the host will occupy
+        self.seats = [None] * self.n
+        self.host = random.randrange(self.n)   # seat index the host will occupy
         self.seats[self.host] = Seat(host_name)
-        self.game = Game()
+        self.game = Game(self.variant, self.n, self.options)
         self.round = 0                    # games started in this room; a rematch makes the next one
         self.version = 1
-        self.reason = None                # None (reached the edge) | resign | disconnect
-        self.rematch = [False, False]
-        self.presence = (True, True)
+        # None (reached the goal) | resign | disconnect | timeout | left. With more than two players, resign is not
+        # offered, and a player who leaves or stays disconnected ends the game with no winner ("left" / "disconnect",
+        # `quitter` says who): the others cannot go on without a pawn that has gone.
+        self.reason = None
+        self.quitter = None
+        self.rematch = [False] * self.n
+        self.presence = (True,) * self.n
         self.finished_at = None
         self.turn_started = now           # when the player to move got the turn
-        self.bank = [float(BANK_SECONDS)] * 2   # seconds left per seat, as of the start of the current turn
+        self.bank = [float(self.bank_seconds)] * self.n   # seconds left per seat, as of the start of the current turn
+
+    @property
+    def turn_seconds(self):
+        """Seconds a move may take (0: no clock). A custom game's host chooses; every other game uses TURN_SECONDS."""
+        return TURN_SECONDS if self.clock is None else self.clock
+
+    @property
+    def bank_seconds(self):
+        """Seconds each player has for the whole game (0: no clock, so no bank either)."""
+        return BANK_SECONDS if self.turn_seconds else 0
 
 
 class Hub:
@@ -119,7 +180,7 @@ class Hub:
         q.append(now)
 
     # ---- helpers ------------------------------------------------------------------------
-    def _new_room(self, host_name):
+    def _new_room(self, host_name, settings=None):
         if len(self.rooms) >= MAX_ROOMS:
             raise ApiError(503, "busy", "The server is busy. Try again in a moment.")
         room_id = secrets.token_urlsafe(16)  # 128 bits
@@ -127,7 +188,7 @@ class Hub:
             code = "".join(secrets.choice(CODE_ALPHABET) for _ in range(CODE_LENGTH))
             if code not in self.codes:
                 break
-        room = Room(room_id, code, host_name)
+        room = Room(room_id, code, host_name, settings)
         self.rooms[room_id] = room
         self.codes[code] = room_id
         return room
@@ -140,12 +201,13 @@ class Hub:
     def _start(self, room):
         room.status = "playing"
         room.round += 1
-        room.game = Game()
+        room.game = Game(room.variant, room.n, room.options)
         room.reason = None
-        room.rematch = [False, False]
+        room.quitter = None
+        room.rematch = [False] * room.n
         room.finished_at = None
         room.turn_started = time.monotonic()
-        room.bank = [float(BANK_SECONDS)] * 2
+        room.bank = [float(room.bank_seconds)] * room.n
         for s in room.seats:
             s.lost_at = None
         self.codes.pop(room.code, None)
@@ -155,12 +217,23 @@ class Hub:
         room.status = "finished"
         room.reason = reason
         room.finished_at = time.monotonic()
-        room.rematch = [False, False]
+        room.rematch = [False] * room.n
         self._bump(room)
+
+    def _quit(self, room, seat, reason):
+        """A player gives up the game in progress (leaves, or stays away too long). Two players: the other one
+        wins. More: the game ends with no winner, and `quitter` says who left."""
+        if room.n == 2:
+            room.game.resign(seat)
+            self._finish(room, "resign" if reason == "left" else reason)
+        else:
+            room.quitter = seat
+            self._finish(room, reason)
 
     def _charge(self, room, seat, now):
         """Take the time the player to move has used this turn off their bank."""
-        room.bank[seat] = max(0.0, room.bank[seat] - (now - room.turn_started))
+        if room.turn_seconds:
+            room.bank[seat] = max(0.0, room.bank[seat] - (now - room.turn_started))
 
     def _seat_of(self, room, token):
         if isinstance(token, str):
@@ -177,20 +250,22 @@ class Hub:
 
     def snapshot(self, room, seat_index):
         now = time.monotonic()
-        other = room.seats[1 - seat_index]
         players = []
         for s in room.seats:
             players.append({"name": s.name if s else None, "connected": bool(s and s.connected(now))})
         forfeit_in = None
-        if room.status == "playing" and other is not None and not other.connected(now) and other.lost_at is not None:
-            forfeit_in = max(0.0, FORFEIT_GRACE - (now - other.lost_at))
+        if room.status == "playing":
+            # The longest-gone opponent decides how long the others have to wait for them.
+            gone = [s.lost_at for i, s in enumerate(room.seats) if i != seat_index and s is not None and s.lost_at is not None and not s.connected(now)]
+            if gone:
+                forfeit_in = max(0.0, FORFEIT_GRACE - (now - min(gone)))
         playing = room.status == "playing"
         elapsed = now - room.turn_started
-        clocks = list(room.bank)
+        clocks = list(room.bank) if room.turn_seconds else None   # no clock: nothing to show
         turn_left = None
-        if playing:
+        if playing and clocks is not None:
             clocks[room.game.turn] = max(0.0, clocks[room.game.turn] - elapsed)
-            turn_left = max(0.0, min(TURN_SECONDS - elapsed, clocks[room.game.turn]))
+            turn_left = max(0.0, min(room.turn_seconds - elapsed, clocks[room.game.turn]))
         out = {
             "version": room.version,
             "status": room.status,
@@ -199,41 +274,53 @@ class Hub:
             "players": players,
             "game": room.game.to_dict(),
             "reason": room.reason,
+            "quitter": room.quitter,
             "rematch": list(room.rematch),
             "forfeitIn": forfeit_in,
+            "turnSeconds": room.turn_seconds,
             "turnLeft": turn_left,
             "clocks": clocks,
+            "host": room.host,
         }
         if room.status == "waiting" and seat_index == room.host:
             out["code"] = room.code
         return out
 
     # ---- private rooms ------------------------------------------------------------------
-    def create_room(self, ip, username):
+    def create_room(self, ip, username, settings=None):
+        """settings: {variant, players, options, turnSeconds} as the client sent them (see room_settings); the classic game when left out."""
         with self.cond:
             self.limit(ip, "create", 10)
             name = clean_username(username)
-            room = self._new_room(name)
+            room = self._new_room(name, room_settings(settings))
             seat = room.seats[room.host]
             return {"roomId": room.id, "code": room.code, "token": seat.token, "seat": room.host}
 
     def peek(self, ip, room_id):
-        """Can a stranger holding this link join? (They hold the unguessable id, so 'full' may be said.)"""
+        """Can a stranger holding this link join? (They hold the unguessable id, so 'full' may be said.)
+        Says which game it is, so the invitation can name it before the guest picks a name."""
         with self.cond:
             self.limit(ip, "peek", 60)
             room = self.rooms.get(room_id)
             if room is None or room.status == "finished" and all(s is None or s.left for s in room.seats):
                 raise ApiError(404, "unavailable", "This room isn't available.")
-            if room.status != "waiting":
-                raise ApiError(409, "full", "This room already has two players.")
-            return {"status": "open", "host": room.seats[room.host].name}
+            if room.status != "waiting" or all(s is not None for s in room.seats):
+                raise ApiError(409, "full", "This room is already full.")
+            return {
+                "status": "open", "host": room.seats[room.host].name, "variant": room.variant, "players": room.n,
+                "joined": sum(s is not None for s in room.seats), "options": room.options, "turnSeconds": room.turn_seconds,
+            }
 
     def _join(self, room, name):
-        if room.status != "waiting":
-            raise ApiError(409, "full", "This room already has two players.")
-        idx = 1 - room.host
+        free = [i for i, s in enumerate(room.seats) if s is None]
+        if room.status != "waiting" or not free:
+            raise ApiError(409, "full", "This room is already full.")
+        idx = random.choice(free)
         room.seats[idx] = Seat(name)
-        self._start(room)
+        if free[1:]:
+            self._bump(room)       # more seats to fill: everyone waiting sees the new player
+        else:
+            self._start(room)
         return {"roomId": room.id, "token": room.seats[idx].token, "seat": idx}
 
     def join_by_id(self, ip, room_id, username):
@@ -305,6 +392,9 @@ class Hub:
         with self.cond:
             room = self._room(room_id)
             idx = self._seat_of(room, token)
+            if room.n > 2:
+                # Giving up would end the game for everyone with no winner; that is what leaving does, openly.
+                raise ApiError(409, "not-allowed", "Only two-player games can be resigned. Leave the game instead.")
             if room.status == "playing":
                 room.game.resign(idx)
                 self._finish(room, "resign")
@@ -314,14 +404,17 @@ class Hub:
         with self.cond:
             room = self._room(room_id)
             idx = self._seat_of(room, token)
-            if room.status == "playing":
-                room.game.resign(idx)
-                self._finish(room, "resign")
             if room.status == "waiting":
-                self._delete(room)
+                if idx == room.host:
+                    self._delete(room)       # the host cancels the room
+                else:
+                    room.seats[idx] = None   # a guest steps out; their seat is open again
+                    self._bump(room)
                 return {"left": True}
+            if room.status == "playing":
+                self._quit(room, idx, "left")
             room.seats[idx].left = True
-            room.rematch = [False, False]
+            room.rematch = [False] * room.n
             self._bump(room)
             if all(s is None or s.left for s in room.seats):
                 self._delete(room)
@@ -333,14 +426,13 @@ class Hub:
             idx = self._seat_of(room, token)
             if room.status != "finished":
                 raise ApiError(409, "not-finished", "The game is not over yet.")
-            other = room.seats[1 - idx]
-            if other is None or other.left:
-                raise ApiError(409, "opponent-left", "Your opponent has left the room.")
+            if any(s is None or s.left for i, s in enumerate(room.seats) if i != idx):
+                raise ApiError(409, "opponent-left", "Another player has left the room.")
             room.rematch[idx] = True
             if all(room.rematch):
-                room.seats.reverse()   # swap who moves first, so seat numbers change
-                room.host = 1 - room.host
-                idx = 1 - idx
+                room.seats = room.seats[1:] + room.seats[:1]   # the next player moves first, so seat numbers change
+                room.host = (room.host - 1) % room.n
+                idx = (idx - 1) % room.n
                 self._start(room)
             else:
                 self._bump(room)
@@ -567,6 +659,16 @@ class Hub:
                 if room.status == "waiting":
                     if now - room.created > WAITING_TTL:
                         self._delete(room)
+                        continue
+                    # A guest who closed the page without leaving gives their seat back; the host's stays (the room expires).
+                    for i, s in enumerate(room.seats):
+                        if s is not None and i != room.host and not s.polling and now - s.last_seen > FORFEIT_GRACE:
+                            room.seats[i] = None
+                            self._bump(room)
+                    presence = tuple(bool(s and s.connected(now)) for s in room.seats)
+                    if presence != room.presence:
+                        room.presence = presence
+                        self._bump(room)
                     continue
                 if room.status == "finished":
                     gone = all(s is None or s.left or not s.connected(now) for s in room.seats)
@@ -582,22 +684,24 @@ class Hub:
                             s.lost_at = now
                     for i, s in enumerate(room.seats):
                         if s.lost_at is not None and now - s.lost_at > FORFEIT_GRACE:
-                            room.game.resign(i)
-                            self._finish(room, "disconnect")
+                            self._quit(room, i, "disconnect")
                             break
-                if room.status == "playing":
+                if room.status == "playing" and room.turn_seconds:
                     # Out of time: play the pawn step that is closest to the goal. A player who is
                     # disconnected keeps their clock stopped (the forfeit timer deals with them).
-                    if not presence[room.game.turn]:
+                    mover = room.game.turn
+                    if not presence[mover]:
                         room.turn_started = now
-                    elif room.bank[room.game.turn] - (now - room.turn_started) < -TURN_GRACE:
+                    elif room.bank[mover] - (now - room.turn_started) < -TURN_GRACE:
                         # The player's whole 5 minutes are gone: they lose on time.
-                        room.bank[room.game.turn] = 0.0
-                        room.game.resign(room.game.turn)
+                        room.bank[mover] = 0.0
+                        room.game.resign(mover)
                         self._finish(room, "timeout")
-                    elif now - room.turn_started > TURN_SECONDS + TURN_GRACE:
-                        mover = room.game.turn
-                        room.game.apply(room.game.timeout_move())
+                    elif now - room.turn_started > room.turn_seconds + TURN_GRACE:
+                        step = room.game.timeout_move()
+                        if step is not None:
+                            room.game.apply(step)
+                        # A pawn with no step to take (a rare dead end) just loses the time.
                         self._charge(room, mover, now)
                         room.turn_started = now
                         if room.game.winner is not None:

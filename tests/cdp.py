@@ -152,11 +152,26 @@ class Page:
         self.touch = touch
 
     def goto(self, url, wait=0.6):
+        # Wait for the new page's own load event. Not document.readyState: right after Page.navigate the old document
+        # (about:blank at first) still answers "complete". Not the first load event either: the old document's may arrive late.
+        # So the new document must commit first, and only a load event after that counts. (A click made before the page's
+        # deferred scripts have run would be a native form submission.)
+        seen = len(self.events)
         self.send("Page.navigate", url=url)
-        for _ in range(100):
-            if self.js("document.readyState") == "complete":
-                break
-            time.sleep(0.1)
+        end = time.time() + 30
+        committed = None
+        while time.time() < end:
+            for i in range(seen, len(self.events)):
+                m = self.events[i]
+                if committed is None and m.get("method") == "Page.frameNavigated":
+                    frame = m["params"]["frame"]
+                    if "parentId" not in frame and frame.get("url") != "about:blank":
+                        committed = i
+                elif committed is not None and i > committed and m.get("method") == "Page.loadEventFired":
+                    end = 0
+                    break
+            if end:
+                self.pump(0.05)
         self.pump(wait)
 
     def js(self, expr):
@@ -242,6 +257,16 @@ class Page:
             f.write(base64.b64decode(data))
 
     def close(self):
+        # Ask the browser to shut itself down. Not Popen.terminate(): on Windows the process started here is only a launcher
+        # that exits at once, the real browser (and its renderer, GPU and utility processes) is another one and would run on.
+        # Run after run they pile up by the hundred and starve the machine, which makes the tests time out.
+        try:
+            self.ws.sock.settimeout(5)
+            self.ws.send(json.dumps({"id": 1_000_000, "method": "Browser.close"}))
+            while True:
+                self.ws.recv()          # until the browser closes the connection
+        except Exception:
+            pass
         try:
             self.proc.terminate()
             self.proc.wait(10)

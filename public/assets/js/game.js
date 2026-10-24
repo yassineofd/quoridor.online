@@ -5,19 +5,21 @@
      cfg.variant  which game to play (a key of Quoridor.VARIANTS); the classic game when left out
      cfg.players  how many play (2 unless the variant allows more); cfg.names then has one name per player
      cfg.options  the setup of a 'custom' game: { size, walls, borrow } (see Quoridor.CUSTOM_LIMITS)
-     cfg.turnSeconds time to move in a local or computer game; 0 = no clock (32 when left out)
+     cfg.turnSeconds time to move; 0 = no clock (32 when left out). Online it is the room's clock (the server enforces it)
      cfg.bankSeconds each player's time for the whole local or computer game (300 when left out); ignored when there is no clock
      cfg.names    [name for player 0, name for player 1, ...]
      cfg.nameKeys optional [message key | null, ...]: names made up by the site, which are written again when the language changes
      cfg.seat     which player "you" are (computer / online); null for hot-seat
      cfg.flip     draw the board rotated so that `seat` is at the bottom
      cfg.level    computer difficulty
-     cfg.remote   online only: { send(move) -> Promise, resign(), leave(), rematch() }
+     cfg.remote   online only: { send(move) -> Promise, resign(), leave(), rematch() }. With more than two players there is no resign:
+                  leaving ends the game for everyone, with no winner
      cfg.scoreId  two named players who count their wins against each other (see profile.js): an id for this game (local) or room (online);
                   the finished game is counted once and the score shows under the players. Left out: no score is kept
      cfg.leaveHref where "Leave" goes (local and computer games): drawn as a link to this address
      cfg.onExit   called with 'again' or 'leave' when the player finishes
-   For online games the owner pushes server state in with controller.setState(json, meta).      */
+   For online games the owner pushes server state in with controller.setState(json, meta). meta: connected[], forfeitIn, rematch[],
+   reason, quitter (who left, when the game ended with no winner), finished (the room's game is over), names, turnLeft, clocks.   */
 (function (root) {
   'use strict';
   var Q = root.Quoridor, B = root.QuoridorBoard;
@@ -117,11 +119,16 @@
     var game = new Q.Game(cfg.variant, cfg.players, cfg.options);
     var turnSeconds = cfg.turnSeconds === undefined ? TURN_SECONDS : cfg.turnSeconds; // 0: the players take as long as they like
     var bankSeconds = cfg.bankSeconds === undefined ? BANK_SECONDS : cfg.bankSeconds;
-    var bankOn = mode === 'online' || (turnSeconds > 0 && bankSeconds > 0);
+    var bankOn = turnSeconds > 0 && (mode === 'online' || bankSeconds > 0);
     var banks = game.pawns.map(function () { return bankSeconds; }); // seconds left per player as of turnMark
     var turnMark = Date.now();                                        // when the player to move started using their bank
     var names = (cfg.names || [t('game.player1'), t('game.player2'), t('game.player3'), t('game.player4')].slice(0, game.nPlayers)).slice();
-    var meta = { connected: [true, true], forfeitIn: null, rematch: [false, false], reason: null };
+    function blankMeta(n) {
+      var all = function (v) { var a = []; for (var i = 0; i < n; i++) a.push(v); return a; };
+      return { connected: all(true), forfeitIn: null, rematch: all(false), reason: null };
+    }
+    var meta = blankMeta(game.nPlayers);
+    var ended = false; // an online game that is over although nobody won (a player left a game of three or four)
     var thinker = mode === 'computer' ? createThinker(cfg.level || 'medium') : null;
     var thinking = false, busy = false, destroyed = false, lastTurn = -1, lastCount = 0;
     var botName = names[1 - (seat === null ? 0 : seat)];
@@ -181,7 +188,8 @@
     var keys = h('p', { 'class': 'small text-muted game-keys', text: t('game.keys') });
 
     var undoBtn = mode !== 'online' ? button('game.undo', 'btn--secondary', onUndo, 'undo') : null;
-    var resignBtn = mode !== 'local' ? button('game.resign', 'btn--secondary', onResign, 'flag') : null;
+    // Resigning is for two players. With three or four, giving up would end the game for everyone, which is what Leave says plainly.
+    var resignBtn = mode !== 'local' && game.nPlayers === 2 ? button('game.resign', 'btn--secondary', onResign, 'flag') : null;
     var restartBtn = mode !== 'online' ? button('game.restart', 'btn--secondary', onRestart, 'restart') : null;
     // Leaving a game that never touches the server is just a trip to cfg.leaveHref (when the page gave one).
     function leaveControl(labelKey, cls, onClick) {
@@ -208,6 +216,8 @@
     var side = h('div', { 'class': 'game-side' }, [banner, players, scoreEl, turn, timer, result, tray, wallRow, hint, controls, keys, log, announcer]);
     host.appendChild(h('div', { 'class': 'game-layout' }, [boardWrap, side]));
 
+    function isOver() { return game.winner !== null || ended; }
+
     // ---- clocks ---------------------------------------------------------------------------
     // Two clocks run: the move clock (turnSeconds, the bar under the players) and each player's bank for the
     // whole game, which drains only on their own turn. Hot-seat and computer games count down here: the move
@@ -216,7 +226,7 @@
     var deadline = null, timerKey = null, warned = false;
 
     function timerRunning() {
-      if (game.winner !== null || destroyed) return false;
+      if (isOver() || destroyed) return false;
       if (mode !== 'online' && !turnSeconds) return false;
       if (mode === 'online') return deadline !== null;
       return mode === 'local' || (game.turn === seat && !thinking);
@@ -224,7 +234,7 @@
     // Seconds left in player i's bank, counting the time their current turn has used so far.
     function liveBank(i) {
       var left = banks[i];
-      if (i === game.turn && game.winner === null && !destroyed && (mode === 'online' || timerRunning())) left -= (Date.now() - turnMark) / 1000;
+      if (i === game.turn && !isOver() && !destroyed && (mode === 'online' || timerRunning())) left -= (Date.now() - turnMark) / 1000;
       return Math.max(0, left);
     }
     function chargeBank(i) { if (bankOn && mode !== 'online') banks[i] = liveBank(i); }
@@ -254,7 +264,7 @@
       var left = Math.max(0, deadline - Date.now());
       var secs = Math.ceil(left / 1000);
       timerText.textContent = t('game.timerLeft', { who: sayWho(game.turn), n: secs });
-      timerFill.style.width = Math.min(100, left / ((mode === 'online' ? TURN_SECONDS : turnSeconds) * 10)) + '%';
+      timerFill.style.width = Math.min(100, left / (turnSeconds * 10)) + '%';
       timer.classList.toggle('is-low', secs <= 5);
       if (secs <= 5 && !warned && left > 0 && (mode === 'local' || game.turn === seat)) { warned = true; announce(t('game.secondsLeft', { n: secs })); }
       if (left <= 0 && mode !== 'online') { if (bankOn && liveBank(game.turn) <= 0.05) outOfTime(game.turn); else timeUp(); }
@@ -293,7 +303,7 @@
 
     // ---- who may act ------------------------------------------------------------------
     function actor() {
-      if (game.winner !== null || destroyed) return null;
+      if (isOver() || destroyed) return null;
       if (mode === 'local') return game.turn;
       if (thinking || busy) return null;
       return game.turn === seat ? seat : null;
@@ -328,7 +338,7 @@
       board.setLast(game.moves.length ? game.moves[game.moves.length - 1] : null);
       board.refresh();
 
-      var over = game.winner !== null;
+      var over = isOver();
       if (!over) { seenLive = true; recorded = false; reward = null; rewardHost.textContent = ''; } // a game in progress (a rematch starts here too)
       cards.forEach(function (c, i) {
         c.name.textContent = names[i];
@@ -352,7 +362,8 @@
 
       // Turn bar
       var text;
-      if (over) text = (game.winner === seat ? t('game.youWin') : t(seat === null ? 'game.nameWinsBang' : 'game.nameWins', { name: names[game.winner] }));
+      if (ended) text = t('game.gameOver');
+      else if (over) text = (game.winner === seat ? t('game.youWin') : t(seat === null ? 'game.nameWinsBang' : 'game.nameWins', { name: names[game.winner] }));
       else if (mode === 'local') text = t('game.turnOf', { name: names[game.turn] });
       else if (game.turn === seat) text = t('game.yourTurn');
       else text = mode === 'computer' ? t('game.thinking', { name: botName }) : t('game.turnOf', { name: names[game.turn] });
@@ -409,7 +420,7 @@
       confirmBtn.disabled = !(sel && sel.legal);
       cancelBtn.disabled = !sel;
       if (act && m === 'wall' && sel && !sel.legal) hint.textContent = sel.reason;
-      var over = game.winner !== null;
+      var over = isOver();
       tray.hidden = over;
       if (undoBtn) undoBtn.disabled = over || thinking || game.moves.length < (mode === 'computer' ? 2 : 1) || (mode === 'computer' && game.turn !== seat);
       if (resignBtn) resignBtn.disabled = over || (mode === 'computer' && thinking);
@@ -489,10 +500,12 @@
     });
 
     function renderBanner() {
-      var opp = seat === null ? null : 1 - seat;
-      if (game.winner === null && opp !== null && meta.connected[opp] === false) {
+      var gone = [];
+      if (!isOver() && seat !== null) names.forEach(function (name, i) { if (i !== seat && meta.connected[i] === false) gone.push(name); });
+      if (gone.length) {
+        var key = game.nPlayers === 2 ? 'game.forfeitIn' : 'game.endsIn'; // with three or four players the game ends, there is no winner to name
         banner.hidden = false;
-        banner.textContent = t('game.lostConnection', { name: names[opp] }) + ' ' + (meta.forfeitIn != null ? t('game.forfeitIn', { n: Math.max(0, Math.ceil(meta.forfeitIn)) }) : t('game.waitingReturn'));
+        banner.textContent = t('game.lostConnection', { name: gone.join(', ') }) + ' ' + (meta.forfeitIn != null ? t(key, { n: Math.max(0, Math.ceil(meta.forfeitIn)) }) : t('game.waitingReturn'));
       } else if (meta.notice) {
         banner.hidden = false; banner.textContent = meta.notice;
       } else {
@@ -504,6 +517,7 @@
     function showReward() {
       var A = root.QuoridorAchievements, UI = root.QuoridorAchievementsUI;
       if (!A || !UI) return;
+      if (ended) { rewardHost.hidden = true; return; } // the game was called off: nothing to score
       try {
         if (seenLive && !recorded) {
           recorded = true;
@@ -516,29 +530,39 @@
 
     function showResult() {
       var youWon = seat !== null && game.winner === seat;
-      resultTitle.textContent = seat === null ? t('game.nameWins', { name: names[game.winner] }) : (youWon ? t('game.youWon') : t('game.nameWon', { name: names[game.winner] }));
-      var why = meta.reason === 'resign' ? t(youWon ? 'game.resignedOpp' : 'game.resignedSelf')
+      resultTitle.textContent = ended ? t('game.gameOver')
+        : seat === null ? t('game.nameWins', { name: names[game.winner] }) : (youWon ? t('game.youWon') : t('game.nameWon', { name: names[game.winner] }));
+      var quitter = meta.quitter === undefined || meta.quitter === null ? null : meta.quitter;
+      var why = ended ? (quitter === null ? '' : quitter === seat ? t(meta.reason === 'disconnect' ? 'game.disconnectedSelf' : 'game.leftSelf')
+          : t(meta.reason === 'disconnect' ? 'game.disconnectedName' : 'game.leftName', { name: names[quitter] }))
+        : meta.reason === 'resign' ? t(youWon ? 'game.resignedOpp' : 'game.resignedSelf')
         : meta.reason === 'disconnect' ? t(youWon ? 'game.leftOpp' : 'game.disconnectedSelf')
         : meta.reason === 'timeout' ? (seat !== null && !youWon ? t('game.timedOutSelf') : t('game.timedOutName', { name: names[(game.winner + game.nPlayers - 1) % game.nPlayers] }))
         : '';
       var lastMove = game.moves[game.moves.length - 1];
-      var byMove = !why && lastMove && lastMove.type === 'move' ? t(game.goalCell ? 'game.reachedCenter' : 'game.reachedEdge', { n: Math.ceil(game.moves.length / game.nPlayers) }) : '';
+      var byMove = !why && !ended && lastMove && lastMove.type === 'move' ? t(game.goalCell ? 'game.reachedCenter' : 'game.reachedEdge', { n: Math.ceil(game.moves.length / game.nPlayers) }) : '';
       resultText.textContent = (why || byMove).trim();
       resultActions.textContent = '';
       if (mode === 'online') {
         var wanted = seat !== null && meta.rematch[seat];
-        var oppWants = seat !== null && meta.rematch[1 - seat];
-        var rb = button(wanted ? 'game.rematchRequested' : (oppWants ? 'game.rematchAccept' : 'game.rematchRequest'), 'btn--primary', function () { cfg.remote.rematch(); }, 'restart');
-        rb.disabled = wanted;
-        resultActions.appendChild(rb);
-        if (oppWants && !wanted) resultText.textContent += ' ' + t('game.rematchWanted');
+        var others = meta.rematch.filter(function (v, i) { return v && i !== seat; }).length;
+        var oppWants = seat !== null && others > 0;
+        var gone = ended && meta.reason === 'left'; // a player who has left cannot play again, so there is nothing to ask for
+        if (!gone) {
+          var rb = button(wanted ? 'game.rematchRequested' : (oppWants ? 'game.rematchAccept' : 'game.rematchRequest'), 'btn--primary', function () { cfg.remote.rematch(); }, 'restart');
+          rb.disabled = wanted;
+          resultActions.appendChild(rb);
+        }
+        if (game.nPlayers > 2) {
+          if (!gone && others + (wanted ? 1 : 0) > 0) resultText.textContent += ' ' + t('game.rematchCount', { n: others + (wanted ? 1 : 0), total: game.nPlayers });
+        } else if (oppWants && !wanted) resultText.textContent += ' ' + t('game.rematchWanted');
       } else {
         resultActions.appendChild(button('game.playAgain', 'btn--primary', function () { exit('again'); }, 'restart'));
       }
       resultActions.appendChild(leaveControl('game.leave', 'btn--secondary', function () { exit('leave'); }));
       showReward();
-      if (!result.dataset.announced || result.dataset.announced !== String(game.winner) + game.moves.length) {
-        result.dataset.announced = String(game.winner) + game.moves.length;
+      if (!result.dataset.announced || result.dataset.announced !== String(game.winner) + ':' + meta.reason + ':' + game.moves.length) {
+        result.dataset.announced = String(game.winner) + ':' + meta.reason + ':' + game.moves.length;
         announce(resultTitle.textContent + '. ' + resultText.textContent + (scoreText ? ' ' + scoreText : '') + (reward ? ' ' + root.QuoridorAchievementsUI.sentence(reward) : ''));
         resultTitle.focus();
       }
@@ -599,8 +623,8 @@
       render();
     }
     function onLeave() {
-      var live = game.winner === null && game.moves.length > 0;
-      var text = t(mode === 'online' && live ? 'game.confirmLeaveOnline' : 'game.confirmLeave');
+      var live = !isOver() && game.moves.length > 0;
+      var text = t(mode === 'online' && live ? (game.nPlayers > 2 ? 'game.confirmLeaveGroup' : 'game.confirmLeaveOnline') : 'game.confirmLeave');
       if ((live || mode === 'online') && !window.confirm(text)) return;
       exit('leave');
     }
@@ -651,7 +675,8 @@
       setState: function (json, m) {
         var prev = game.moves.length;
         game = Q.Game.fromJSON(json);
-        meta = Object.assign({ connected: [true, true], forfeitIn: null, rematch: [false, false], reason: null }, m || {});
+        meta = Object.assign(blankMeta(game.nPlayers), m || {});
+        ended = !!meta.finished && game.winner === null;
         if (meta.names) { names = meta.names.slice(); }
         if (game.moves.length < prev) { logList.textContent = ''; }
         if (game.moves.length > prev && prev > 0 || (game.moves.length > 0 && prev === 0 && lastCount === 0)) {
