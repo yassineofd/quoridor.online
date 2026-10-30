@@ -61,6 +61,7 @@ FOOTER_SITE = [
 # Headers applied by serve.py and written to public/_headers for Netlify/Cloudflare-style hosts.
 GA_ID = "G-70NW0H4444"  # Google tag; the matching config call is in static/assets/js/gtag-init.js
 BING_VERIFICATION = "68EAA51FF9D2F5EB36A699740C95E884"  # Bing Webmaster Tools meta tag; keep it so the site stays verified
+ADSENSE_ACCOUNT = "ca-pub-4907294761433235"  # AdSense site-ownership meta tag; Google asks for it on every page
 GA_HOSTS = "https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com"
 
 
@@ -204,6 +205,7 @@ def render(page, units=None):
         f'<meta name="robots" content="{robots}">',
         '<meta name="theme-color" content="#0B1220">',
         '<meta name="color-scheme" content="dark">',
+        f'<meta name="google-adsense-account" content="{ADSENSE_ACCOUNT}">',
     ]
     if page.path == "/":  # Bing Webmaster Tools ownership verification: must stay on the home page
         head.append(f'<meta name="msvalidate.01" content="{BING_VERIFICATION}">')
