@@ -62,6 +62,7 @@ FOOTER_SITE = [
 GA_ID = "G-70NW0H4444"  # Google tag; the matching config call is in static/assets/js/gtag-init.js
 BING_VERIFICATION = "68EAA51FF9D2F5EB36A699740C95E884"  # Bing Webmaster Tools meta tag; keep it so the site stays verified
 ADSENSE_ACCOUNT = "ca-pub-4907294761433235"  # AdSense site-ownership meta tag; Google asks for it on every page
+ADS_TXT = "google.com, pub-4907294761433235, DIRECT, f08c47fec0942fa0"  # AdSense ads.txt line; must be served at the domain root
 GA_HOSTS = "https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com"
 
 
@@ -322,6 +323,7 @@ def main():
         (OUT / "sitemap.xml").write_text("\n".join(sm) + "\n", encoding="utf-8")
         robots += f"\nSitemap: {BASE_URL}{BASE_PATH}/sitemap.xml\n"
     (OUT / "robots.txt").write_text(robots, encoding="utf-8")
+    (OUT / "ads.txt").write_text(ADS_TXT + "\n", encoding="utf-8")  # AdSense ownership/authorised-seller file
 
     # Host config files (ignored by hosts that don't use them).
     (OUT / ".nojekyll").write_text("", encoding="utf-8")  # GitHub Pages: serve every file as-is

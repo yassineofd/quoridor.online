@@ -308,6 +308,9 @@ def main():
     status, _, rb = get("/robots.txt")
     if f"Disallow: {BASE_PATH}/room/" not in rb:
         fail("robots.txt must disallow the room path")
+    status, _, ads = get("/ads.txt")
+    if status != 200 or "pub-4907294761433235, DIRECT, f08c47fec0942fa0" not in ads:
+        fail("ads.txt must be served at the root with the AdSense line")
     status, _, sm = get("/sitemap.xml")
     if BASE_URL:
         locs = re.findall(r"<loc>([^<]+)</loc>", sm)
